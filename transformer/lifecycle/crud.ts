@@ -8,7 +8,7 @@ import type {
 } from '../types';
 import { xalorCentralContext, XalorRoutesService } from '../service';
 import {
-  resolveModifiedKeyName,
+  // resolveModifiedKeyName,
   isRegistryModified,
   isManifestModified,
   isBlueprintModified,
@@ -53,52 +53,116 @@ export function determineCUDMode({
   newAnchor,
   newShape,
 }: TEvaluateCUDMutationParams): TCudExecutionMode {
-  // Attempt a direct hit lookup (assuming the key name did NOT change)
-  let existingPayload = xalorCentralContext.globalKeyRegistry.get(newKeyName);
-  let isKeyModified: boolean;
+  const historicalKeyAtThisAnchor = xalorCentralContext.getKeyByAnchor(
+    newFilePath,
+    newAnchor,
+  );
 
-  // =========================================================================
-  // STEP 1 & 2: RESOLVE IDENTITY (NAME CHANGE VS TRUE CREATE)
-  // =========================================================================
-  if (!existingPayload) {
-    existingPayload = Array.from(
-      xalorCentralContext.globalKeyRegistry.values(),
-    ).find(
-      (record) =>
-        record.filePath === newFilePath && record.symbolName === newSymbolName,
+  let existingPayload = xalorCentralContext.globalKeyRegistry.get(newKeyName);
+  let isKeyModified = false;
+
+  if (historicalKeyAtThisAnchor && historicalKeyAtThisAnchor !== newKeyName) {
+    console.log(
+      `🔄 [Xalor Rename Interceptor] Detected key migration: "${historicalKeyAtThisAnchor}" ➔ "${newKeyName}"`,
     );
-    if (!existingPayload) return CUD_EXECUTION_MODES.create;
+
+    // 1. Fetch the data envelope belonging to the old name setting context
+    existingPayload = xalorCentralContext.globalKeyRegistry.get(
+      historicalKeyAtThisAnchor,
+    );
+
+    // 2. Clean out the historical key records completely from memory before committing the update
+    if (existingPayload) {
+      xalorCentralContext.deleteGlobalAndSession({
+        keyName: historicalKeyAtThisAnchor,
+        filePath: newFilePath,
+      });
+    }
 
     isKeyModified = true;
-  } else {
-    // If found directly, check if the interior key property structurally drifted
-    const oldKeyName = existingPayload.key ?? 'unknown';
-    const migrationCheck = resolveModifiedKeyName(oldKeyName, newKeyName);
-    isKeyModified = migrationCheck.isModified;
   }
 
   // =========================================================================
-  // STEP 3: EVALUATE INTERNAL DATA DRIFT
+  // STANDARD DATA DRIFT FALLBACK EVALUATION
   // =========================================================================
-  // 3. QUESTION 3: Compare internal structures using the recovered vault payload
-  /* prettier-ignore */
-  const isRegUpdated = isRegistryModified({ existingPayload, newTypeName, newSymbolName });
-  /* prettier-ignore */
-  const isManiUpdated = isManifestModified({ existingPayload, newArea, newFilePath, newAnchor });
-  /* prettier-ignore */
-  const isBlueprintUpdated = isBlueprintModified(existingPayload, newShape);
-  /* prettier-ignore */
-  const isInternalDataChanged = isRegUpdated || isManiUpdated || isBlueprintUpdated;
+  if (!existingPayload) {
+    return CUD_EXECUTION_MODES.create;
+  }
 
-  if (isKeyModified || isInternalDataChanged) {
+  const isRegUpdated = isRegistryModified({
+    existingPayload,
+    newTypeName,
+    newSymbolName,
+  });
+  const isManiUpdated = isManifestModified({
+    existingPayload,
+    newArea,
+    newFilePath,
+    newAnchor,
+  });
+  const isBlueprintUpdated = isBlueprintModified(existingPayload, newShape);
+
+  if (isKeyModified || isRegUpdated || isManiUpdated || isBlueprintUpdated) {
     return CUD_EXECUTION_MODES.update;
   }
-  // =========================================================================
-  // STEP 4: NOOP BYPASS
-  // =========================================================================
-  // 4. QUESTION 4: Complete match. Key is the same, internal payload is unchanged.
+
   return CUD_EXECUTION_MODES.noop;
 }
+// export function determineCUDMode({
+//   keyName: newKeyName,
+//   newTypeName,
+//   newSymbolName,
+//   newArea,
+//   newFilePath,
+//   newAnchor,
+//   newShape,
+// }: TEvaluateCUDMutationParams): TCudExecutionMode {
+//   // Attempt a direct hit lookup (assuming the key name did NOT change)
+//   let existingPayload = xalorCentralContext.globalKeyRegistry.get(newKeyName);
+//   let isKeyModified: boolean;
+
+//   // =========================================================================
+//   // STEP 1 & 2: RESOLVE IDENTITY (NAME CHANGE VS TRUE CREATE)
+//   // =========================================================================
+//   if (!existingPayload) {
+//     existingPayload = Array.from(
+//       xalorCentralContext.globalKeyRegistry.values(),
+//     ).find(
+//       (record) =>
+//         record.filePath === newFilePath && record.symbolName === newSymbolName,
+//     );
+//     if (!existingPayload) return CUD_EXECUTION_MODES.create;
+
+//     isKeyModified = true;
+//   } else {
+//     // If found directly, check if the interior key property structurally drifted
+//     const oldKeyName = existingPayload.key ?? 'unknown';
+//     const migrationCheck = resolveModifiedKeyName(oldKeyName, newKeyName);
+//     isKeyModified = migrationCheck.isModified;
+//   }
+
+//   // =========================================================================
+//   // STEP 3: EVALUATE INTERNAL DATA DRIFT
+//   // =========================================================================
+//   // 3. QUESTION 3: Compare internal structures using the recovered vault payload
+//   /* prettier-ignore */
+//   const isRegUpdated = isRegistryModified({ existingPayload, newTypeName, newSymbolName });
+//   /* prettier-ignore */
+//   const isManiUpdated = isManifestModified({ existingPayload, newArea, newFilePath, newAnchor });
+//   /* prettier-ignore */
+//   const isBlueprintUpdated = isBlueprintModified(existingPayload, newShape);
+//   /* prettier-ignore */
+//   const isInternalDataChanged = isRegUpdated || isManiUpdated || isBlueprintUpdated;
+
+//   if (isKeyModified || isInternalDataChanged) {
+//     return CUD_EXECUTION_MODES.update;
+//   }
+//   // =========================================================================
+//   // STEP 4: NOOP BYPASS
+//   // =========================================================================
+//   // 4. QUESTION 4: Complete match. Key is the same, internal payload is unchanged.
+//   return CUD_EXECUTION_MODES.noop;
+// }
 
 /**
  * 🪐 THE UMBRELLA CUD MUTATOR HUB
@@ -158,63 +222,3 @@ export function executeVaultMutation({
     activeMutationPass();
   }
 }
-
-// export function executeVaultMutation({
-//   mode,
-//   globalKeyRegistry,
-//   sessionRegistry,
-//   payload,
-//   identityArea, // This is your 'newAnchor' string variable being fed in
-//   keyName,
-// }: TExecuteCUDMutationParams): void {
-//   const lifecycle = resolveXalorLifecycle();
-//   const resolvedKeyName = payload?.key ?? keyName ?? 'unknown';
-
-//   const MUTATION_STRATEGY_MAPPER: Record<TCudExecutionMode, () => void> = {
-//     create: () => {
-//       if (payload && identityArea) {
-//         globalKeyRegistry.set(resolvedKeyName, payload);
-//         sessionRegistry.set(resolvedKeyName, identityArea);
-//         if (lifecycle.isDevelopmentPass) printCudLog(CUD_EXECUTION_MODES.create, resolvedKeyName);
-//       }
-//     },
-//     update: () => {
-//       if (payload && identityArea) {
-//         // --- 🧠 ANCHOR-BASED REVERSE RENAME LOOKUP ---
-//         // Find if an old, stale key name currently claims this physical file occurrence index
-//         let historicalKeyName: string | null = null;
-
-//         for (const [registeredKey, registeredAnchor] of sessionRegistry.entries()) {
-//           if (registeredAnchor === identityArea && registeredKey !== resolvedKeyName) {
-//             historicalKeyName = registeredKey;
-//             break; // Rename target detected!
-//           }
-//         }
-
-//         // If an old key was found at this index, delete its old footprint from memory
-//         if (historicalKeyName) {
-//           globalKeyRegistry.delete(historicalKeyName);
-//           sessionRegistry.delete(historicalKeyName);
-//           if (lifecycle.isDevelopmentPass) printCudLog(CUD_EXECUTION_MODES.delete, historicalKeyName);
-//         }
-
-//         // Commit your new key name and its complete validated payload parameters
-//         globalKeyRegistry.set(resolvedKeyName, payload);
-//         sessionRegistry.set(resolvedKeyName, identityArea);
-
-//         if (lifecycle.isDevelopmentPass) printCudLog(CUD_EXECUTION_MODES.update, resolvedKeyName);
-//       }
-//     },
-//     delete: () => {
-//       globalKeyRegistry.delete(resolvedKeyName);
-//       sessionRegistry.delete(resolvedKeyName);
-//       if (lifecycle.isDevelopmentPass) printCudLog(CUD_EXECUTION_MODES.delete, resolvedKeyName);
-//     },
-//     noop: () => {},
-//   } satisfies Record<TCudExecutionMode, () => void>;
-
-//   const activeMutationPass = MUTATION_STRATEGY_MAPPER[mode];
-//   if (activeMutationPass) {
-//     activeMutationPass();
-//   }
-// }

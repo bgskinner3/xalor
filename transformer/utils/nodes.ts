@@ -1,7 +1,7 @@
 // models/guards/transformer/nodes.ts
 import ts from 'typescript';
-import { SENTRY_TRIGGER_NAMES, isKeyOfArray } from '../../shared';
-import type { TSentryTriggerName } from '../../shared';
+import { SENTRY_TRIGGER_NAMES } from '../../shared';
+
 /**
  * # IS SOLID CALL #####
  * Identifies the 'isSolid' function call within the AST.

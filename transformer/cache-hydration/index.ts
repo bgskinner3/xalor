@@ -57,7 +57,10 @@ export function hydrateCacheToRegistries(
         /* prettier-ignore */
         const projectKey = XalorRoutesService.getProjectRelativeKey(metadata.filePath);
         if (!sessionRegistry[projectKey]) {
-          sessionRegistry[projectKey] = {};
+          sessionRegistry[projectKey] = {
+            keys: {},
+            anchors: {},
+          };
         }
 
         sessionRegistry[projectKey][metadata.key] = {

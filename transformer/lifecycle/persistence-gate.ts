@@ -27,10 +27,10 @@ export function persistenceGate({
     // Code is structurally broken/incomplete right now. Exit early to protect our memory caches.
     return file;
   }
+
   const { globalKeyRegistry, activePassKeys } = xalorCentralContext.context;
   const { isDevelopmentPass, isTestEnvironment } =
     XalorRoutesService.resolveXalorLifecycle();
-
   const currentFileAbsolute = path.resolve(file.fileName);
 
   // ====================================================================================
@@ -40,8 +40,9 @@ export function persistenceGate({
     xalorCentralContext.getCurrentSessionPath(currentFileAbsolute);
 
   if (currentSessionPath) {
-    // Only extract keys if the current session path physically exists to block runtime crashes
-    Object.keys(currentSessionPath).forEach((key) => {
+    // 🎯 🟢 TWIN-MAP REFINE ENTRANCE MARKER:
+    // We explicitly call Object.keys() on the sub-matrix `.keys` object drawer to read history!
+    Object.keys(currentSessionPath.keys).forEach((key) => {
       const payload = globalKeyRegistry.get(key);
       if (!payload || key.includes('$')) return;
 
@@ -72,7 +73,6 @@ export function persistenceGate({
   if (shouldTriggerFlush || isWatchLoopActive) {
     if (!isTestEnvironment) {
       const cacheKeySnapshot = Array.from(globalKeyRegistry.keys());
-
       cacheKeySnapshot.forEach((key) => {
         const payload = globalKeyRegistry.get(key);
         if (!payload) return;

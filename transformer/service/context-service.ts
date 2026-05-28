@@ -75,28 +75,51 @@ class XalorContextService {
   public addSessionRegistry(props: TUpdateSessionRegistry) {
     const { area, anchor, filePath, keyName } = props;
     const projectKey = XalorRoutesService.getProjectRelativeKey(filePath);
-    this.sessionRegistry[projectKey] ||= {};
-    this.sessionRegistry[projectKey][keyName] = { area, anchor, filePath };
+
+    // Initialize the bi-directional session container if empty
+    this.sessionRegistry[projectKey] ||= { keys: {}, anchors: {} };
+    const session = this.sessionRegistry[projectKey];
+
+    // 1. Map Key -> Anchor details
+    session.keys[keyName] = { anchor, area, filePath };
+
+    session.anchors[anchor] = { keyName, area, filePath };
   }
   public deleteFromSessionRegistry(props: TDeleteSessionRegistry) {
     const { filePath, keyName } = props;
     const projectKey = XalorRoutesService.getProjectRelativeKey(filePath);
-    if (!this.sessionRegistry[projectKey]) return;
 
-    delete this.sessionRegistry[projectKey][keyName];
+    const session = this.sessionRegistry[projectKey];
+    if (!session) return;
 
-    if (Object.keys(this.sessionRegistry[projectKey]).length === 0) {
+    // Locate the attached anchor before clearing the key slot
+    const meta = session.keys[keyName];
+    if (meta) {
+      delete session.anchors[meta.anchor];
+    }
+    delete session.keys[keyName];
+
+    // Self-garbage-collect the file track if no keys remain active
+    if (Object.keys(session.keys).length === 0) {
       delete this.sessionRegistry[projectKey];
     }
   }
 
   public getCurrentSessionPath(filePath: string): TSessionPathKeys {
     const projectKey = XalorRoutesService.getProjectRelativeKey(filePath);
-    if (!this.sessionRegistry[projectKey]) return {};
+    if (!this.sessionRegistry[projectKey]) {
+      return {
+        keys: {},
+        anchors: {},
+      };
+    }
 
     return this.sessionRegistry[projectKey];
   }
-
+  public getKeyByAnchor(filePath: string, anchor: string): string | undefined {
+    const projectKey = XalorRoutesService.getProjectRelativeKey(filePath);
+    return this.sessionRegistry[projectKey]?.anchors[anchor]?.keyName;
+  }
   // ============================================================================================
   // GLOBAL REGISTRY
   // ============================================================================================

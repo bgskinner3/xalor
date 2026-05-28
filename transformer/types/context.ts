@@ -25,16 +25,50 @@ export type TXalorTransformerRootContext = {
 
 export type TGlobalKeyRegistry = Map<string, TVaultSyncPayload>;
 
+// ==============================================================================
+// 🪐 TWIN-MAP BIDIRECTIONAL METADATA STRUCTURES
+// ==============================================================================
+export type TSessionKeyMeta = {
+  readonly anchor: string;
+  readonly area: string;
+  readonly filePath: string;
+};
+
+export type TSessionAnchorMeta = {
+  readonly keyName: string;
+  readonly area: string;
+  readonly filePath: string;
+};
+
+/**
+ * TSessionPathKeys
+ * Encapsulates the twin lookup tables isolated for a single file path context.
+ */
 export type TSessionPathKeys = {
-  [invocationName: string]: {
-    area: string;
-    anchor: string;
-    filePath: string;
-  };
+  // Key Name -> Structural Metadata (Anchor Location)
+  readonly keys: Record<string, TSessionKeyMeta>;
+  // Position Anchor -> Structural Metadata (Key Name Location)
+  readonly anchors: Record<string, TSessionAnchorMeta>;
 };
+
+/**
+ * TSessionRegistry
+ * The global process memory ledger mapping project-relative file paths
+ * straight to their respective Twin-Map session tracking objects.
+ */
 export type TSessionRegistry = {
-  [filePath: string]: TSessionPathKeys;
+  [projectRelativeFilePath: string]: TSessionPathKeys;
 };
+// export type TSessionPathKeys = {
+//   [invocationName: string]: {
+//     area: string;
+//     anchor: string;
+//     filePath: string;
+//   };
+// };
+// export type TSessionRegistry = {
+//   [filePath: string]: TSessionPathKeys;
+// };
 
 // ==============================================================================
 // ==============================================================================
