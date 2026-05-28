@@ -1,5 +1,6 @@
+import ts from 'typescript';
 import { runMiningPass, persistenceGate } from '../lifecycle';
-import { shouldProcessFile } from './resolvers';
+import { shouldProcessFile, handleEmptyFileWipeout } from './resolvers';
 import type { TMineFilePass } from '../types';
 import type { SourceFile } from 'typescript';
 
@@ -10,6 +11,15 @@ export function executeFileMiningPass({
   bridgeDir,
 }: TMineFilePass): SourceFile {
   try {
+    const currentFileAbsolute = ts.sys.resolvePath(sourceFile.fileName);
+
+    // ====================================================================================
+    // 📭 BRANCH A: THE VOID SHIELD (Empty File Guard)
+    // ====================================================================================
+    // Executes cache purges in memory and fast-tracks the blank file directly to the flusher
+    if (handleEmptyFileWipeout(sourceFile, currentFileAbsolute)) {
+      return persistenceGate({ file: sourceFile, program, rootDir: bridgeDir });
+    }
     if (!shouldProcessFile(sourceFile)) {
       return persistenceGate({
         file: sourceFile,

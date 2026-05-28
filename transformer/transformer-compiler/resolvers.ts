@@ -6,7 +6,8 @@ import {
 } from '../../shared/constants';
 import type { TXalorLifecycleContext, TModePriorityRule } from '../types';
 import type { TTransformerExecuteMode } from '../../shared';
-import { XalorRoutesService } from '../service';
+import { XalorRoutesService, xalorCentralContext } from '../service';
+import { executeVaultMutation } from '../lifecycle';
 /**
  * resolveTransformerBootAnchor
  *
@@ -85,4 +86,45 @@ export function shouldProcessFile(file: ts.SourceFile): boolean {
   return SENTRY_TRIGGER_NAMES.some((apiTokenName) => {
     return file.text.includes(apiTokenName);
   });
+}
+/**
+ * HANDLE EMPTY FILE WIPEOUT
+ *
+ * ROLE:
+ * Upfront Performance Bailout & Registry Purge.
+ *
+ * STRATEGY:
+ * Inspects raw file characters before any parsing happens. If the file is completely
+ * empty, it immediately checks the twin-map history, purges obsolete cache records from
+ * RAM, and returns true to signal that standard mining should be bypassed.
+ */
+export function handleEmptyFileWipeout(
+  sourceFile: ts.SourceFile,
+  currentFileAbsolute: string,
+): boolean {
+  // 1. Core Condition: Is the text content completely empty?
+  if (!sourceFile.text || sourceFile.text.trim().length === 0) {
+    const historicalSession =
+      xalorCentralContext.getCurrentSessionPath(currentFileAbsolute);
+
+    // 2. Clear Loop: If this file has old entries in the database, wipe them instantly!
+    if (historicalSession) {
+      console.log(
+        `🧹 [Xalor Clear Loop] Empty file wipeout triggered for: ${sourceFile.fileName}`,
+      );
+
+      Object.keys(historicalSession.keys).forEach((staleKey) => {
+        const payload = xalorCentralContext.globalKeyRegistry.get(staleKey);
+        executeVaultMutation({
+          mode: 'delete',
+          keyName: staleKey,
+          payload,
+        });
+      });
+    }
+
+    return true; // Match found! Signal to halt further visitor processing
+  }
+
+  return false; // File contains active text data, proceed as normal
 }
