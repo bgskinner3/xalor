@@ -1,0 +1,51 @@
+__tests__/
+playground/
+tools/
+docs/
+node_modules/
+jest.config.cjs
+tsconfig.json
+tsconfig.build.json
+tsconfig.test.json
+tsup.config.ts
+
+# packages/xalor/.npmignore
+
+# TESTING SUITES & PLATFORMS
+__tests__/
+*.test.ts
+*.spec.ts
+
+# DESIGN GRAPHICS & DOCUMENTATION MARKDOWNS
+assets/
+docs/
+docs.md
+tree.md
+
+# INTERNAL HOVER LEDGERS
+intellisense-docs.d.ts
+
+# SYSTEM COMPILER & JEST WORKSPACES
+jest.config.cjs
+tsconfig.json
+tsconfig.build.json
+tsconfig.test.json
+tsup.config.ts
+tools/
+
+# We strip these out because tsup has already flat-packed them into your dist/ folder files.
+src/
+shared/
+transformer/
+
+
+# We block the root copy of static-templates/ to prevent duplicate files, 
+# but we do NOT write a flat "static-templates" rule because that would accidentally 
+# delete your required compiled asset folder sitting safely inside dist/static-templates/!
+/static-templates/
+
+# 🗄️ ENVIRONMENT NODES & LOG FILES
+node_modules/
+.cache/
+npm-debug.log*
+.DS_Store

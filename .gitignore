@@ -1,0 +1,55 @@
+/node_modules
+node_modules/
+.DS_Store
+node_modules/
+
+dist/
+.DS_Store
+.turbo/
+.next/
+*.log
+
+# local env files
+.env.local
+.env.*.local
+.env
+
+package-lock.json
+
+# notes
+TODO.md
+notes.md
+save.md
+tree.md
+docs.md
+# Build files
+/dist
+dist/
+/notes.md
+
+# docs 
+is-solid-docs.d.ts
+core.md
+arrays.md
+objects.md
+strings.md
+async.md
+unions.md
+test-notes.md
+hold.md
+skeleton/
+cb-docs/
+
+
+# # .npmignore
+# src/
+# transformer/
+# __tests__/
+# playground/
+# jest.config.cjs
+# tools/
+# models/
+
+//
+test.JSON
+tsup-test.ts

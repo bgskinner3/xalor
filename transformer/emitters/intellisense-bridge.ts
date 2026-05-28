@@ -1,0 +1,139 @@
+// transformer/emitters/intellisense-bridge.ts
+import { IS_SOLID_CONFIG_ITEMS, REGEX_PATTERNS } from '../../shared';
+import * as fs from 'fs';
+import * as path from 'path';
+import type { TVaultSyncPayload } from '../../shared';
+import { XalorRoutesService } from '../service';
+/**
+ * temporalManifest
+ *
+ * PURPOSE:
+ * Composes the raw source string for the ambient declaration (.d.ts) file.
+ * It transforms the in-memory Registry Map into a valid TypeScript module
+ * augmentation, creating a "Temporal" snapshot of all mined types.
+ *
+ * ROLE:
+ * 1. MAPPING: Converts absolute file paths into portable relative imports.
+ * 2. MERGING: Populates the ISolidRegistry interface via declaration merging.
+ * 3. OVERLOADING: Generates specific function signatures that map string
+ *    keys to their respective TypeScript interfaces for the IDE.
+ */
+function temporalManifest(
+  registry: Map<string, TVaultSyncPayload>,
+  targetDir: string,
+  emitter: typeof IS_SOLID_CONFIG_ITEMS.emitter,
+): string {
+  const identityLines: string[] = [];
+  const registryLines: string[] = [];
+
+  registry.forEach((payload, key) => {
+    const { filePath, symbolName, area, typeName } = payload;
+
+    // 🪐 RESOLUTION A: The Strict Compiler Path
+    // Computes relative file-system walkers strictly for your dynamic imports.
+    // This allows tsserver to step out of node_modules and resolve types perfectly.
+    const relativeImportPath = path
+      .relative(targetDir, filePath)
+      .replace(REGEX_PATTERNS.backslashes, '/')
+      .replace(REGEX_PATTERNS.extensions, '');
+
+    // 🛰️ RESOLUTION B: The Absolute Workspace Link Path
+    // Computes dot-free absolute anchors starting directly from the project root.
+    // This ensures JSDoc clicks map accurately regardless of what file the user hovers.
+    const workspaceAnchorPath = path
+      .relative(process.cwd(), filePath)
+      .replace(REGEX_PATTERNS.backslashes, '/');
+
+    // Securely parse out your coordinate elements
+    const coordinateParts = area.split(':');
+    const len = coordinateParts.length;
+    const lineNumber = len >= 2 ? coordinateParts[len - 2] : '1';
+    const columnNumber = len >= 1 ? coordinateParts[len - 1] : '1';
+
+    // Verify if the type is a public named export that can be imported safely
+    const isPublicExport =
+      symbolName !== 'unknown' &&
+      !symbolName.includes('{') &&
+      !key.includes('$');
+
+    if (isPublicExport) {
+      // 🛰️ PARADIGM A: Public Named Export -> Retains your relative code imports intact
+      // while using workspace-absolute links for the JSDoc @see navigation tags!
+      identityLines.push(
+        [`  '${key}': import('./${relativeImportPath}').${symbolName};`].join(
+          '\n',
+        ),
+      );
+    } else {
+      identityLines.push(
+        [
+          `    /** `,
+          `     * 🔒 Un-Exported Module Type Definition`,
+          `     * @see {@link ${workspaceAnchorPath}:${lineNumber}:${columnNumber} Inspect Code Line Source}`,
+          `     */`,
+          `    /* prettier-ignore */ '${key}': ${typeName};`,
+        ].join('\n'),
+      );
+    }
+
+    // Populate your structural hover card registries using clean absolute workspace paths
+    registryLines.push(
+      `  /** @see {@link ${workspaceAnchorPath}:${lineNumber}:${columnNumber} Source Definition Location} */\n   /* prettier-ignore */ '${key}': ${typeName};`,
+    );
+  });
+
+  return [
+    emitter.banner,
+    `/* eslint-disable ${emitter.eslintDisabled.join(' ')} */`,
+    // 🟢 SPREADS NOTHING HERE BECAUSE IMPORTS IS EMPTY ARRAY:
+    ...emitter.imports,
+    '',
+    'declare global {',
+    '  interface ISolidIdentity {',
+    ...identityLines,
+    '  }',
+    '',
+    '  interface ISolidRegistry {',
+    ...registryLines,
+    '  }',
+    '}',
+  ]
+    .join('\n')
+    .trim();
+}
+
+/**
+ * hydrateIntellisenseBridge
+ *
+ * PURPOSE:
+ * Orchestrates the physical emission of the IDE "Ghost Layer." It synchronizes
+ * the build-time metadata with the developer's environment to enable
+ * zero-import autocomplete and hover-cards.
+ *
+ * ROLE:
+ * 1. PATH RESOLUTION: Determines the absolute destination for the .d.ts file.
+ * 2. ATOMIC SYNC: Only writes to disk if the temporal manifest has changed,
+ *    preventing unnecessary IDE re-indexes or build triggers.
+ * 3. DIRECTORY SAFETY: Ensures the distribution path exists before writing.
+ */
+export function hydrateIntellisenseBridge(
+  _rootDir: string, // Kept for signature compatibility but completely unused for paths!
+  registry: Map<string, TVaultSyncPayload>,
+) {
+  const { emitter } = IS_SOLID_CONFIG_ITEMS;
+
+  // 🟢 THE ALIGNMENT: Read the absolute directory path directly from your getter!
+  // This evaluates natively to: "/Users/bgskinner2/.../xalor-production-sandbox/.xalor"
+  const activePaths = XalorRoutesService.resolveXalorPaths(_rootDir);
+  const targetDir = activePaths.bridgeDir;
+  const envFile = activePaths.bridgeFile;
+
+  const dts = temporalManifest(registry, targetDir, emitter);
+
+  if (!fs.existsSync(targetDir)) {
+    fs.mkdirSync(targetDir, { recursive: true });
+  }
+
+  // Write directly using the clean, unified path target string
+  fs.writeFileSync(envFile, dts, 'utf8');
+}

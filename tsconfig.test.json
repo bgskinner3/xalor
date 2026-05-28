@@ -1,0 +1,27 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "incremental": false,
+    "noEmit": true,
+    "skipLibCheck": false,
+    "isolatedModules": false,
+    "verbatimModuleSyntax": false,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node", "jest"],
+    "paths": {
+      "@bgskinner2/xalor": ["./src/index.ts"],
+      "@bgskinner2/xalor/generated": [
+        "./node_modules/.cache/xalor/solid-env.ts"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "transformer/**/*",
+    "__tests__/**/*",
+    "models/**/*",
+    "node_modules/@bgskinner2/xalor/dist/generated/solid-env.ts"
+  ]
+}

@@ -1,0 +1,35 @@
+/**
+ * 💎 XALOR SYSTEM INTELLISENSE BRIDGE (COLD-START BASELINE TEMPLATE)
+ * 
+ * DESIGN SPECIFICATIONS:
+ * This file acts as an open ambient type bucket initialized during your initial package download pass.
+ * It prevents the IDE language server ('tsserver') from throwing missing-dependency errors or module 
+ * resolution blockades before the build-time Miner executes its first full extraction sweep.
+ * 
+ * LIFECYCLE MANAGEMENT:
+ * 1. INITIAL PASS: Seeded directly into the project root via 'scripts/postinstall.js' upon installation.
+ * 2. RUNTIME RE-INDEX: The build-time Transformer or background CLI watcher will completely overwrite 
+ *    this layout with your active mined AST type mappings the exact millisecond a project file is saved.
+ */
+/* eslint-disable @typescript-eslint/no-unused-vars @typescript-eslint/no-explicit-any */
+
+declare global {
+  /**
+   * 🔗 ISOLID IDENTITY (COLD-START MATRIX)
+   * Captures nominal import bindings. The open string mapping signature guarantees that 
+   * 'registerXalor' arguments stay legal before your types database populates.
+   */
+  interface ISolidIdentity {
+    [key: string]: any;
+  }
+
+  /**
+   * 🗄️ ISOLID REGISTRY (COLD-START MANIFEST)
+   * The global interface registry container. This catch-all index placeholder structure 
+   * tricks the compiler's autocomplete engine into popping open single quotes immediately, 
+   * providing zero-import suggestions before your primary extraction loops complete.
+   */
+  interface ISolidRegistry {
+    [key: string]: any;
+  }
+}

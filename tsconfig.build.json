@@ -1,0 +1,35 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // 🧠 THE PLUMBING RESOLUTION ANCHOR:
+    // Forces the compiler to evaluate the root package folder as the baseline path.
+    // This allows tsup to cleanly map and preserve your public entry layouts
+    // without creating deeply nested dist/src or dist/transformer subdivisions!
+    "rootDir": ".",
+    "outDir": "dist",
+    "composite": false,
+    "incremental": false,
+    "declaration": true,
+    "declarationMap": true,
+    "noEmit": false,
+    "skipLibCheck": false,
+    "verbatimModuleSyntax": false,
+    "ignoreDeprecations": "5.0"
+  },
+  "include": [
+    "src/**/*",
+    "transformer/**/*",
+    "shared/**/*",
+    "scripts/**/*",
+    "cli/**/*"
+  ],
+  "exclude": [
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "jest.config.cjs",
+    "tsup.config.ts",
+    "dist",
+    "node_modules"
+  ]
+}
