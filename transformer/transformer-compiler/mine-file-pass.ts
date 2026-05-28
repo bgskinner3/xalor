@@ -1,25 +1,55 @@
 import { runMiningPass, persistenceGate } from '../lifecycle';
 import { shouldProcessFile } from './resolvers';
 import type { TMineFilePass } from '../types';
+import type { SourceFile } from 'typescript';
 
 export function executeFileMiningPass({
   program,
   context,
   sourceFile,
   bridgeDir,
-}: TMineFilePass) {
-  if (!shouldProcessFile(sourceFile)) {
+}: TMineFilePass): SourceFile {
+  try {
+    if (!shouldProcessFile(sourceFile)) {
+      return persistenceGate({
+        file: sourceFile,
+        program,
+        rootDir: bridgeDir,
+      });
+    }
+    const transformedFile = runMiningPass(program, context, sourceFile);
+
     return persistenceGate({
-      file: sourceFile,
+      file: transformedFile,
       program,
       rootDir: bridgeDir,
     });
-  }
-  const transformedFile = runMiningPass(program, context, sourceFile);
+  } catch (error) {
+    // ====================================================================================
+    // 🪐 SAFE EMERGENCY ESCAPE HANDSHAKE
+    // ====================================================================================
+    // If the miner chokes on broken, un-parsable user types, capture it gracefully.
+    const rawMessage =
+      error instanceof Error
+        ? error.message
+        : 'Unknown AST compilation anomaly.';
 
-  return persistenceGate({
-    file: transformedFile,
-    program,
-    rootDir: bridgeDir,
-  });
+    console.log(
+      '\n======================================================================',
+    );
+    console.log(
+      `⚠️  [Xalor Shield] INTERCEPTED TRANSFORMATION EXECUTION FAULT`,
+    );
+    console.log(`📂 Broken File Target: ${sourceFile.fileName}`);
+    console.log(`💥 Diagnostic Message: ${rawMessage}`);
+    console.log(
+      `🔒 Action: Safeguarding process. Watch thread remaining ALIVE.`,
+    );
+    console.log(
+      '======================================================================\n',
+    );
+
+    // Return the untouched source file to the compiler tree so the developer's stream is unbroken
+    return sourceFile;
+  }
 }
