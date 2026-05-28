@@ -1,3 +1,128 @@
 {
-  "cSpell.words": ["bgskinner", "xalor"]
+  "editor.tabSize": 2,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  // Highlight the active line (optional, helps see errors visually)
+  "editor.renderLineHighlight": "all", // 🔹 new
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[mdx]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[glsl]": {
+    "editor.defaultFormatter": "raczzalan.webgl-glsl-editor",
+    "editor.formatOnSave": true
+  },
+  // Ensure the extension looks for the /* glsl */ tag
+  "webgl-glsl-editor.format.enabled": true,
+  "tailwindCSS.experimental.classRegex": [
+    [
+      "cn\\(([^)]*)\\)",
+      "(?:'|\"|`)([^'\"`]*)(?:'|\"|`)"
+    ],
+    [
+      "cva\\(([^)]*)\\)",
+      "[\"'`]([^\"'`]* archival)[\"'`]"
+    ]
+  ],
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "containerClass",
+    "subContainerClass",
+    "labelClassName",
+    "indicatorClassName",
+    "circleClassName",
+    "counterClassName",
+    "fontClassName",
+    "tw",
+    "cx"
+  ],
+  "cSpell.words": [
+    "bgskinner",
+    "xalor"
+  ],
+  "eslint.enable": true,
+  "eslint.format.enable": true,
+  "eslint.lintTask.enable": true,
+  "eslint.run": "onType",
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "typescriptreact",
+    "javascriptreact",
+    "mdx"
+  ],
+  // Optional: show code lens for ESLint errors/warnings
+  "editor.codeLens": true, // 🔹 new
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "material-icon-theme.folders.customClones": [
+    {
+      "base": "folder-layout",
+      "color": "red-700",
+      "folderNames": [
+        "page-modules"
+      ],
+      "name": "page-modules",
+      "rootFolderNames": [
+        "page-modules"
+      ]
+    },
+    {
+      "base": "folder-container",
+      "color": "blue-700",
+      "folderNames": [
+        "mutations"
+      ],
+      "name": "mutations",
+      "rootFolderNames": [
+        "mutations"
+      ]
+    },
+    {
+      "base": "folder-library", // icon style
+      "color": "green-500", // pick any color you like
+      "folderNames": [
+        "api",
+        "api-helpers",
+        "api-service"
+      ], // exact folder names
+      "rootFolderNames": [
+        "api",
+        "api-helpers",
+        "api-service"
+      ],
+      "name": "API" // display name in VS Code tooltip
+    }
+  ],
+  "prettier.requireConfig": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+  "typescript.tsserver.log": "off",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  //new
+  "eslint.useFlatConfig": true,
+  "quokka.autoStart": false, // Manual start (recommended)
+  "quokka.compilers": {
+    "**/*.ts": "ts-node/register" // For TypeScript
+  },
+  "eslint.experimental.useWorkspaceServer": true
 }

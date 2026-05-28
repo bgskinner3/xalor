@@ -1,12 +1,7 @@
 import type { TSolidShape, TVaultSyncPayload } from '../../../shared/types';
 import { isStringMirrored } from './predicate-guards';
+import type { TManifestChecks } from '../../types';
 
-type TManifestChecks = {
-  readonly existingPayload: TVaultSyncPayload;
-  readonly newFilePath: TVaultSyncPayload['filePath'];
-  readonly newArea: TVaultSyncPayload['area'];
-  readonly newAnchor: TVaultSyncPayload['anchor'];
-};
 export function isManifestModified({
   existingPayload,
   newArea,

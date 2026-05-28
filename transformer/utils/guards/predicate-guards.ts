@@ -7,12 +7,9 @@ import type {
   TProgramContext,
 } from '../../types';
 import type {
-  // TSolidShape,
-  // TNarrowingPairGuard,
   TMirrorBrand,
   TTupleGuard,
   TTypeGuard,
-  // TSerializedShape,
 } from '../../../shared/types';
 import {
   isKeyInObject,

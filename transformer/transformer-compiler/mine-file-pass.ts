@@ -1,13 +1,6 @@
-import ts from 'typescript';
 import { runMiningPass, persistenceGate } from '../lifecycle';
 import { shouldProcessFile } from './resolvers';
-// import { xalorCentralContext } from '../service';
-type TMineFilePass = {
-  program: ts.Program;
-  context: ts.TransformationContext;
-  sourceFile: ts.SourceFile;
-  bridgeDir: string;
-};
+import type { TMineFilePass } from '../types';
 
 export function executeFileMiningPass({
   program,

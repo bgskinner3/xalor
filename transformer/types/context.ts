@@ -24,6 +24,7 @@ export type TXalorTransformerRootContext = {
 };
 
 export type TGlobalKeyRegistry = Map<string, TVaultSyncPayload>;
+
 export type TSessionPathKeys = {
   [invocationName: string]: {
     area: string;

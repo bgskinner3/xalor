@@ -3,6 +3,7 @@ import type {
   TCudExecutionMode,
   TTransformerExecuteMode,
 } from '../../shared';
+import type { SourceFile, Program } from 'typescript';
 
 export type TXalorLifecycleContext = {
   readonly isWatchMode: boolean;
@@ -81,4 +82,10 @@ export type TCollisionGuardParams = {
 export type TModePriorityRule = {
   readonly guard: boolean;
   readonly mode: TTransformerExecuteMode;
+};
+
+export type TPersistenceGateParams = {
+  readonly file: SourceFile;
+  readonly program: Program;
+  readonly rootDir: string;
 };

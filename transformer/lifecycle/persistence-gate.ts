@@ -1,4 +1,3 @@
-import ts from 'typescript';
 import type { SourceFile } from 'typescript';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -10,12 +9,7 @@ import {
   injectTestReifiedBlueprints,
 } from './pipeline';
 import { xalorCentralContext, XalorRoutesService } from '../service';
-
-export type TPersistenceGateParams = {
-  readonly file: ts.SourceFile;
-  readonly program: ts.Program;
-  readonly rootDir: string;
-};
+import type { TPersistenceGateParams } from '../types';
 
 /**
  * persistenceGate

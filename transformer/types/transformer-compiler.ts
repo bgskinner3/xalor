@@ -3,7 +3,7 @@ import type {
   TTransformerExecuteMode,
 } from '../../shared';
 import type { Program, TransformationContext, SourceFile } from 'typescript';
-
+import type { TMineFilePass } from './the-miners';
 export type TBootStrategyParams = {
   /** The isolated sample file path coordinates used to boot your builders */
   readonly sampleFile: string;
@@ -29,14 +29,6 @@ export type TBootLoaderMapper = Record<
 export type TProgramContext = {
   readonly getProgram: () => Program;
 } & TransformationContext;
-
-export type TMineFilePass = {
-  readonly program: Program;
-  readonly context: TransformationContext;
-  readonly sourceFile: SourceFile;
-  readonly bridgeDir: string;
-  // readonly rootContext: TXalorEngineContext;
-};
 
 export type TVacuumFilePass = {
   /* prettier-ignore */ readonly program: Program;

@@ -67,7 +67,7 @@ export type TInterfaceOrType = {
  * @property sourceFile - Parent file node text buffer container actively compiling right now.
  * @property currentActiveAbsoluteFile - Absolute fully normalized hardware path of the file compiling on save.
  * @property freshKeysHarvestedInThisPass - Ephemeral tracker Set dedicated strictly to logging keys read *just now*.
- * @property globalKeyRegistry - The master long-lived Map holding full type DNA transport payload objects.
+ * @property globalKeyRegistry - The master long-lived Map holding full type DNA transport payload objec
  * @property sessionRegistry - The active watch session Map tracking unique key-to-area location strings.
  */
 export type TMinerCorParams = {
@@ -96,10 +96,9 @@ export type TTypeResolutionParams = {
   readonly checker: TypeChecker;
 };
 
-/**
- * PERSISTANCE
- */
-export type TPersistenceGateParams = {
-  readonly file: SourceFile;
+export type TMineFilePass = {
   readonly program: Program;
+  readonly context: TransformationContext;
+  readonly sourceFile: SourceFile;
+  readonly bridgeDir: string;
 };

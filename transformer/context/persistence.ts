@@ -7,8 +7,8 @@ import {
   logDev,
 } from '../../shared';
 import type { TVaultSyncPayload, TTripleKV } from '../../shared/types';
-// import { xalorCentralContext } from './store';
 import { XalorRoutesService, xalorCentralContext } from '../service';
+
 function buildSnapshotFromRegistry(
   rootDir: string,
   registry: Map<string, TVaultSyncPayload>,
