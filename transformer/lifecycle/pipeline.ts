@@ -18,9 +18,6 @@ export function runMiningPass(
     program,
     context,
     sourceFile,
-    // globalKeyRegistry: globalRegistry,
-    // sessionRegistry,
-    // activePassKeys,
   });
 
   return visitNode(sourceFile, visitor) as ts.SourceFile;

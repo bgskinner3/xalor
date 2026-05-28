@@ -1,28 +1,15 @@
+// /transformer/mappers/boot-loader-mapper.ts
 import type { TBootStrategyParams, TBootLoaderMapper } from '../types';
 import { isUndefined } from '../../shared';
 import { xalorCentralContext } from '../service';
 import { hydrateCacheToRegistries } from '../cache-hydration';
-// import { sweepAndPurgeKeys, serializeAndFlushVault } from '../utils';
-// import { hydrateIntellisenseBridge } from '../emitters';
 
 /**
  * BOOT_MODE_STRATEGY_MAPPER
  *
- * ROLE:
  * Master Boot-Time Environment Configuration Routing Engine.
  *
- * STRATEGY:
- * Configures hard drive directory baseline structures and initializes process RAM
- * memory channels exactly ONCE switchlessly on the absolute initial boot millisecond.
- * Leverages the `satisfies` operator to enforce strict type checking across all keys.
- *
- * BRANCH DETAILS:
- * - watch   ➔ Provisions cold-start bridge files for the IDE and hydrates your
- *             long-lived memory maps from disk metadata if the process cache is empty.
- * - compile ➔ Purges stale in-memory data states completely to guarantee a 100% clean,
- *             non-polluted single-pass development workspace sync execution run.
- * - vacuum  ➔ Wipes out process maps to isolate resources, optimizing background system
- *             cycles for flat production-ready schema compilation and minification.
+ * @see {@link TransformerDocs.BOOT_MODE_STRATEGY_MAPPER  }
  */
 export const BOOT_MODE_STRATEGY_MAPPER: TBootLoaderMapper = {
   watch: ({ sampleFile }: TBootStrategyParams) => {

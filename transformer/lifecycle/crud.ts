@@ -34,7 +34,7 @@ function printCudLog(mode: TCudExecutionMode, keyName: string): void {
   }
 }
 /**
- * 🪐 THE CENTRAL CONDITION DETERMINATOR
+ * THE CENTRAL CONDITION DETERMINATOR
  *
  * ROLE:
  * Central presence-based change-detection radar scanner.

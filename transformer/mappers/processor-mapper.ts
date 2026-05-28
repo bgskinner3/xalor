@@ -1,3 +1,4 @@
+// /transformer/mappers/processor-mapper.ts
 import { generateShapeAST } from '../reifiers';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared';
 import type { TProcessorRewriteMap } from '../types';

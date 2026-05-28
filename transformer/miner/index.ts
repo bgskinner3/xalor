@@ -11,7 +11,7 @@ import {
 } from '../utils';
 import type { Visitor, Node } from 'typescript';
 import { resolveAndRegisterType } from './resolve-and-register';
-import { markAsPure } from './resolvers';
+import { markAsPure } from '../utils';
 import type { TSolidShape } from '../../shared';
 import type { TMinerCorParams } from '../types';
 

@@ -1,3 +1,4 @@
+// /transformer/mappers/miner-router-mapper.ts
 import type {
   TXalorMinerRouterMap,
   TRegisterRawPayload,

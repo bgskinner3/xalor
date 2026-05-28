@@ -9,7 +9,7 @@ import type {
 import * as path from 'path';
 import { getSpatialIdentity } from './spatial-identity';
 import { reifyType } from '../reifiers';
-import { createMiningCtx } from './resolvers';
+import { createMiningCtx } from '../utils';
 import { executeVaultMutation, determineCUDMode } from '../lifecycle';
 import { xalorCentralContext } from '../service';
 /**

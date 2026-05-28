@@ -1,4 +1,4 @@
 export * from './nodes';
 export * from './guards';
 export * from './vault-serializer';
-// export * from './paths-resolver';
+export * from './ast-helpers';
