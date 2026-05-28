@@ -2,7 +2,7 @@ import type { SourceFile } from 'typescript';
 import * as fs from 'fs';
 import * as path from 'path';
 import { hydrateIntellisenseBridge } from '../emitters';
-import { serializeAndFlushVault } from '../utils/vault-serializer';
+import { serializeAndFlushVault } from '../context';
 import { executeVaultMutation } from './crud';
 import {
   isCompilationLoopTerminated,
@@ -93,7 +93,10 @@ export function persistenceGate({
       });
 
       // Commit changes to disk and update intellisense configurations
-      serializeAndFlushVault(rootDir, globalKeyRegistry);
+      // serializeAndFlushVault(rootDir, globalKeyRegistry);
+      serializeAndFlushVault(rootDir).catch((err) => {
+        console.error('❌ Asynchronous vault sync failure:', err);
+      });
 
       if (isDevelopmentPass) {
         hydrateIntellisenseBridge(rootDir, globalKeyRegistry);

@@ -2,7 +2,7 @@ import ts from 'typescript';
 import xalorTransformerPlugin from '../../transformer/index.js';
 
 /**
- * RUN SYNC COMMAND
+ * RUN COMPILE COMMAND
  *
  * Executes a one-shot, linear development workspace compilation crawl.
  * Tracks matching behaviors to watch command, but exits cleanly after a single pass.
@@ -83,13 +83,25 @@ export function runCompileCommand(projectRootPath: string): void {
   const diagnostics = ts
     .getPreEmitDiagnostics(program)
     .concat(emitResult.diagnostics);
+
   diagnostics.forEach((diagnostic) => {
     console.log(
-      `⚠️  [TS Build Note]: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`,
+      `⚠️ [TS Build Note]: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`,
     );
   });
 
-  console.log(
-    '\n✅ [Xalor CLI] Workspace snapshot synced and locked successfully!\n',
-  );
+  console.log('💾 Freezing workspace metadata and flushing cache registers...');
+
+  // ====================================================================================
+  // 🏛️ NATIVE ASYNC TICK BUFFER
+  // ====================================================================================
+  // Because the final file's persistenceGate triggers an async write operation, we pass
+  // execution to a single event loop tick. This allows the background I/O thread pool
+  // to cleanly finish writing the database to disk before our process closes.
+  setTimeout(() => {
+    console.log(
+      '\n✅ [Xalor CLI] Workspace snapshot synced and locked successfully!\n',
+    );
+    process.exit(0);
+  }, 20);
 }
