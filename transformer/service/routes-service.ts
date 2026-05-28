@@ -60,11 +60,15 @@ export class XalorRoutesService {
 
   public static getProjectRelativeKey(absoluteFilePath: string): string {
     const rootDir = xalorCentralContext.rootDir;
+
     // Compute the relative difference route natively
     const relativePath = path.relative(rootDir, absoluteFilePath);
 
-    // Normalize Windows backslashes (\) to standard web forward slashes (/)
-    const standardizedPath = relativePath.split(path.sep).join('/');
+    // 🚀 THE OMNI-OS FIX: Chain .toLowerCase() directly onto your existing slash replacement line!
+    const standardizedPath = relativePath
+      .split(path.sep)
+      .join('/')
+      .toLowerCase();
 
     // Prepend a leading forward slash if it doesn't already have one to seal the format contract
     return standardizedPath.startsWith('/')
