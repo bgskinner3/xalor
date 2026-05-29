@@ -10,7 +10,7 @@ import type {
 import * as path from 'path';
 import { getSpatialIdentity } from './spatial-identity';
 import { reifyType } from '../reifiers';
-import { createMiningCtx } from '../utils';
+import { createMiningCtx, validateCollisionBorders } from '../utils';
 import { executeVaultMutation, determineCUDMode } from '../lifecycle';
 import { xalorCentralContext, XalorRoutesService } from '../service';
 import { verifyTypeResolvability } from './type-resolver';
@@ -140,29 +140,36 @@ export function resolveAndRegisterType({
   const shape: TSolidShape = reifyType({ type: shapeType, checker, ctx });
   /* prettier-ignore */
   const payload: TVaultSyncPayload = createPayLoad({ keyName, sourceFile, shape, identity });
-
-  const assignedCudMode = determineCUDMode({
+  const isCollision = validateCollisionBorders({
     keyName,
-    newTypeName: identity.typeName,
-    newArea: identity.area,
-    newSymbolName: identity.symbolName,
-    newFilePath: identity.filePath,
-    newShape: payload.shape,
-    newAnchor: identity.anchor,
+    activeAreaString: identity.area,
+    activeAnchorString: identity.anchor,
+    currentActiveAbsoluteFile: sourceFile.fileName,
   });
+  if (!isCollision) {
+    const assignedCudMode = determineCUDMode({
+      keyName,
+      newTypeName: identity.typeName,
+      newArea: identity.area,
+      newSymbolName: identity.symbolName,
+      newFilePath: identity.filePath,
+      newShape: payload.shape,
+      newAnchor: identity.anchor,
+    });
 
-  // Execute terminal logs and initial delta checks
-  executeVaultMutation({
-    mode: assignedCudMode,
-    payload,
-    identityArea: identity.area,
-  });
+    // Execute terminal logs and initial delta checks
+    executeVaultMutation({
+      mode: assignedCudMode,
+      payload,
+      identityArea: identity.area,
+    });
 
-  flushToRegistry({
-    key: keyName,
-    fragments,
-    payload,
-  });
+    flushToRegistry({
+      key: keyName,
+      fragments,
+      payload,
+    });
+  }
 
   return shape;
 }

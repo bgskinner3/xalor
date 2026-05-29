@@ -1,9 +1,10 @@
 import { inflateAndNormalizeShape } from '../utils';
 import type { TSolidMetadata } from '../../shared/types';
 import { logDev } from '../../shared/utils';
-
+import { TransformerReportService } from '../error';
+import { XalorRoutesService } from '../service';
 /**
- * 🌿 PURE STREAMING HYDRATION ENGINE
+ * PURE STREAMING HYDRATION ENGINE
  *
  * ROLE:
  * Decoupled, environment-agnostic blueprint processing loop.
@@ -56,45 +57,15 @@ export function processGenesisHydration(
 
     /* prettier-ignore */
     logDev(`[xalor:shared] 🌿 Hydration loop processed ${nominalKeys.length} type models into target memory map.`, { service: 'transformer/boot' });
-  } catch (error) {
-    // TODO: ERROR HANDLER
-    //     // ========================================================================
-    // // 🛰️ THE NON-CRASHING ENVIRONMENT HYDRATION LANE (The Bootloader Shield)
-    // // ========================================================================
-    // const rawErrorMessage = error instanceof Error ? error.message : 'JSON serialization payload corruption.';
-    // const lifecycle = XalorRoutesService.resolveXalorLifecycle();
-
-    // /**
-    //  * 🪐 ENVIRONMENT-AWARE ANSI GENESIS HYDRATION DISCREPANCY BLOCK
-    //  *
-    //  * ROLE:
-    //  * Conceptually bundles, aggregates, and transforms raw snapshot ingestion anomalies
-    //  * (such as corrupted JSON string content, version mismatches, or malformed blueprint segments)
-    //  * into a standardized, color-mapped ANSI panel visualization report.
-    //  *
-    //  * WHY:
-    //  * Satisfies Commandment I (Single Source of Truth) and Commandment IV (Operation Isolation).
-    //  * It pipes parameters point-free to the centralized scribe service, ensuring zero-allocation
-    //  * validation. This allows the bootloader to gracefully recognize that the file was corrupted,
-    //  * bypass old records safely, print a gorgeous diagnostic trace, and cleanly write a pristine
-    //  * replacement snapshot block on the next code save cycle without ever crashing the process thread.
-    //  */
-    // const hydrationErrorReportPanel = TransformerReportService.generateTerminalPanel({
-    //   keyName: 'GENESIS_HYDRATION_FAULT',
-    //   fileLocation: 'shared/genesis/hydrate-from-genesis.ts ↳ processGenesisHydration',
-    //   message: `Genesis Hydration structural parsing failed: ${rawErrorMessage}\n` +
-    //            `Action: Resetting local cache parameters. A clean snapshot block will be rewritten on next save.`,
-    //   rule: 'snapshot_corruption',
-    //   mode: lifecycle.mode,
-    // });
-
-    // logDev(hydrationErrorReportPanel, {
-    //   type: 'error',
-    //   service: 'transformer/boot',
-    //   override: true,
-    // });
-    /* prettier-ignore */
-    logDev(`[xalor:shared] 🚨 Genesis Hydration structural parsing failed: ${error}`, { type: 'error', service: 'transformer/boot', override: true });
+  } catch (error: unknown) {
+    const paths = XalorRoutesService.resolveXalorPaths(process.cwd());
+    const executeMode = XalorRoutesService.xalorCLIMode();
+    TransformerReportService.logAnomaly({
+      keyName: 'GENESIS_HYDRATION_FAULT',
+      fileLocation: paths.vaultFile,
+      error,
+      mode: executeMode,
+    });
     // 🛡️ CRASH PROTECTION: We return cleanly instead of throwing a fatal process crash.
     // This allows the bootloader to gracefully recognize that the file was corrupted,
     // bypass the old records safely, and cleanly write a pristine replacement block on the next save cycle.

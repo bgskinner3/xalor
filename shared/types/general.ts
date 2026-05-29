@@ -30,6 +30,7 @@ import type { TSolidShapeKinds } from './const-types';
 /* prettier-ignore */ export type TNarrowingPairGuard<A extends T, B extends T, T = unknown> = ( value: [T, T], ) => value is [A, B];
 /* prettier-ignore */ export type TPrimitive = string | number | boolean | bigint;
 /* prettier-ignore */ export type TAnyFunction = (...args: unknown[]) => unknown;
+/* prettier-ignore */ export type TStringFunction = (dynamicValue?: string) => string;
 /* prettier-ignore */ export type TAssert<T> = (value: unknown, message?: string) => asserts value is T;
 
 /**

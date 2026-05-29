@@ -10,6 +10,8 @@ import type {
 } from '../../shared/types';
 import { extractAndNormalizeShape } from '../utils';
 import { XalorRoutesService, xalorCentralContext } from '../service';
+import { TransformerReportService } from '../error';
+
 /**
  * RECONSTRUCT ARCHIVE SNAPSHOT (The Snapshot Master Builder)
  *
@@ -136,42 +138,13 @@ export async function serializeAndFlushVault(rootDir: string): Promise<void> {
         service: 'vault-archive.ts-persist',
       },
     );
-  } catch (error) {
-    // TODO: ERROR HANDLER
-    // const errorMsg =
-    //   error instanceof Error
-    //     ? error.message
-    //     : 'Filesystem access restriction occurred.';
-    // logDev(`[xalor-persist] Cache Shield deployment failure: ${errorMsg}`, {
-    //   type: 'error',
-    //   service: 'vault-archive.ts-persist',
-    //   override: true,
-    // });
-    const rawErrorMessage =
-      error instanceof Error
-        ? error.message
-        : 'Filesystem access restriction occurred.';
-    // const lifecycle = XalorRoutesService.resolveXalorLifecycle();
-
-    // 🟢 FIXED: Format a professional, colored ANSI panel error string using your loose report service!
-    // This isolates the error message layout without letting a raw system crash break the build.
-    // const fileSystemErrorReport =
-    //   TransformerReportService.generateTerminalPanel({
-    //     keyName: 'VAULT_FLUSH_IO_FAULT',
-    //     fileLocation: paths.vaultFile,
-    //     message:
-    //       `Cache Shield deployment failure: ${rawErrorMessage}\n` +
-    //       `Check write permissions or process locks on target directories.`,
-    //     rule: 'filesystem_lock',
-    //     mode: lifecycle.mode, // Automatically formats as a yellow warning block or red box natively based on mode
-    //   });
-
-    // 🟢 FIXED: Safely pipe the complete, beautiful error panel directly to logDev without throwing!
-    // This keeps your background compiler watch thread 100% stable, alive, and functional.
-    logDev(rawErrorMessage, {
-      type: 'error',
-      service: 'vault-archive.ts-persist',
-      override: true,
+  } catch (error: unknown) {
+    const mode = XalorRoutesService.xalorCLIMode();
+    TransformerReportService.logAnomaly({
+      keyName: 'VAULT_FLUSH_IO_FAULT',
+      fileLocation: paths.vaultFile,
+      error,
+      mode: mode,
     });
   }
 }

@@ -2,11 +2,12 @@
 import * as fs from 'fs';
 import { isString, isVaultSyncPayload } from '../../shared/utils/guards';
 import { processGenesisHydration } from './hydrate-from-genesis';
-import { XalorRoutesService } from '../service';
 import { deployBaseline } from './deployer';
 import type { TGlobalKeyRegistry, TSessionRegistry } from '../types';
 import type { TXalorResolvedPaths } from '../../shared';
-// Track execution statistics globally at the module level
+import { TransformerReportService } from '../error';
+import { XalorRoutesService } from '../service';
+
 let loadedNumber: number = 0;
 
 /**
@@ -78,11 +79,13 @@ export function hydrateCacheToRegistries(
         );
       }
     });
-  } catch (error) {
-    // Absorb unexpected parsing crashes quietly so your watch loop never dies
-    console.warn(
-      '[xalor:boot] 🚨 Safe evacuation on broken data string stream: ',
+  } catch (error: unknown) {
+    const mode = XalorRoutesService.xalorCLIMode();
+    TransformerReportService.logAnomaly({
+      keyName: 'GENESIS_STREAM_FAULT',
+      fileLocation: paths.vaultFile,
       error,
-    );
+      mode: mode,
+    });
   }
 }

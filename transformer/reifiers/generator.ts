@@ -19,7 +19,8 @@ import {
   isString,
 } from '../../shared';
 import type { TSolidShape } from '../../shared';
-
+import { XalorRoutesService } from '../service';
+import { TransformerReportService } from '../error';
 /**
  *  The AST Generator (Build-Time Emission)
  *
@@ -160,29 +161,16 @@ export function generateShapeAST(
       f.createPropertyAssignment('name', f.createStringLiteral(shape.name)),
     ]);
   }
-  // TODO: ERROR HANDLER
-  // throw new Error(`[xalor] Unhandled shape kind: ${_exhaustive.kind}`);
-  // ========================================================================
-  // 🛰️ THE NON-CRASHING ANOMALY REPORTING LANE (The Code-Gen Shield)
-  // ========================================================================
-  // const lifecycle = XalorRoutesService.resolveXalorLifecycle();
 
-  // // 🟢 FIXED: Construct a rich ANSI visualization report panel instead of throwing!
-  // const anomalyPanelText = TransformerReportService.generateTerminalPanel({
-  //   keyName: 'AST_GENERATION_ANOMALY',
-  //   fileLocation: 'transformer/miner/processor.ts ↳ generateShapeAST',
-  //   message:
-  //     `Code-generation loop intercepted a structural shape kind discrepancy.\n` +
-  //     `Encountered Unknown Kind: "${_exhaustive.kind || 'undefined'}"\n` +
-  //     `Action: Substituting with a baseline safe 'unknown' primitive fallback schema.`,
-  //   rule: 'codegen_discrepancy',
-  //   mode: lifecycle.mode,
-  // });
+  const executeMode = XalorRoutesService.xalorCLIMode();
 
-  // Log the complete colored warning box directly to the console stream
-  console.warn(`[xalor] Unhandled shape kind: ${_exhaustive.kind}`);
+  TransformerReportService.logAnomaly({
+    keyName: 'AST_GENERATION_ANOMALY',
+    fileLocation: 'transformer/miner/processor.ts ↳ generateShapeAST',
+    error: _exhaustive.kind || 'undefined',
+    mode: executeMode,
+  });
 
-  // 🟢 FIXED: Instead of crashing the compiler, return a safe fallback 'unknown' primitive AST expression!
   // This guarantees complete data integrity, prevents crashing the server, and isolates the error gracefully.
   return f.createObjectLiteralExpression([
     f.createPropertyAssignment('kind', f.createStringLiteral('primitive')),

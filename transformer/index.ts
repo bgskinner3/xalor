@@ -57,7 +57,7 @@ export default function xalorTransformerPlugin(
       // inside THIS single file during THIS specific save-triggered compilation frame run.
       xalorCentralContext.resetActivePassKeys();
       xalorCentralContext.resetFileCounters(sourceFile.fileName);
-
+      xalorCentralContext.resetBlacklist();
       const program = isGetProgram(context)
         ? context.getProgram()
         : compilerFactoryProgram;

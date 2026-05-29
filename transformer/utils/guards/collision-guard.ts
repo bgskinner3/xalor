@@ -1,96 +1,165 @@
 // transformer/utils/collision-guard.ts
 //
-// import { resolveXalorLifecycle } from '../../context';
-// import type { TCollisionGuardParams } from '../../types';
-// import type { TSolidShape } from '../../../shared';
-// import * as fs from 'fs';
-// import * as path from 'path';
+import { XalorRoutesService, xalorCentralContext } from '../../service';
+import { XalorInvalidTypeError, TransformerReportService } from '../../error';
+import type { TCollisionGuardParams } from '../../types';
 
-/**
- * Centralized Multi-Dimensional Collision Guard Engine.
- *
- * Extracted out of the miner loop to isolate validation edge cases from raw AST parsing streams.
- *
- * @see {@link TransformerDocs.validateCollisionBorders}
- */
-// export function validateCollisionBorders({
-//   keyName,
-//   activeAreaString,
-//   currentActiveAbsoluteFile,
-//   sessionRegistry,
-//   rootDir,
-// }: TCollisionGuardParams): TSolidShape | undefined {
-//   const existingAreaRegistration = sessionRegistry.get(keyName);
+export function validateCollisionBorders(
+  params: TCollisionGuardParams,
+): boolean {
+  const {
+    keyName,
+    activeAreaString,
+    activeAnchorString,
+    currentActiveAbsoluteFile,
+  } = params;
 
-//   if (!existingAreaRegistration) {
-//     return undefined; // Clean Pass - Key is pristine and unregistered
-//   }
+  const executeMode = XalorRoutesService.xalorCLIMode();
+  const isWatch = executeMode === 'watch' || executeMode === 'studio';
 
-//   if (existingAreaRegistration === activeAreaString) {
-//     return undefined;
-//   }
+  // 1. Query long-lived session variables and transient blacklist pointers point-free
+  const { sessionRegistry, activePassKeys, blacklistedKeys } =
+    xalorCentralContext.context;
 
-//   const locationSegments = existingAreaRegistration.split(':');
-//   const existingRegisteredFile =
-//     locationSegments.length > 0 ? locationSegments[0] : undefined;
-//   const lifecycle = resolveXalorLifecycle();
+  // 🪐 THE ANCHORED DELETION SHIELD INTERCEPTOR
+  // 🟢 FIXED: If this UUID key name has already been blacklisted during this compilation pass frame,
+  // short-circuit instantly! This completely blocks any multi-pass re-addition attempts.
+  if (blacklistedKeys.has(keyName)) {
+    return true;
+  }
 
-//   const isSameFileDuplication =
-//     existingRegisteredFile &&
-//     currentActiveAbsoluteFile.endsWith(existingRegisteredFile);
+  // Standardize the active file path string token natively
+  const relativeProjectKey = XalorRoutesService.getProjectRelativeKey(
+    currentActiveAbsoluteFile,
+  );
 
-//   if (isSameFileDuplication) {
-//     const errorMsg =
-//       `[xalor] 🚨 SAME-FILE DUPLICATION: Key "${keyName}" is duplicated inside the same file! ` +
-//       `First declared at [${existingAreaRegistration}], duplicated at [${activeAreaString}]. ` +
-//       `Every validation node must utilize a completely unique UUID string primitive.`;
+  // ========================================================================
+  // 🪐 INTEGRATED INTERCEPT LANE A: CROSS-FILE REGISTER HIJACKS
+  // ========================================================================
+  const registryFileKeys = Object.keys(sessionRegistry);
+  const registryLen = registryFileKeys.length;
 
-//     if (lifecycle.isWatchMode) {
-//       console.error(`\n⚠️  ${errorMsg}\n`);
-//       const watchFallbackShape: TSolidShape = {
-//         kind: 'primitive',
-//         type: 'unknown',
-//       };
-//       return watchFallbackShape;
-//     }
+  for (let i = 0; i < registryLen; i++) {
+    const activeScanPath = registryFileKeys[i];
+    if (activeScanPath === undefined || activeScanPath === relativeProjectKey) {
+      continue;
+    }
 
-//     console.error(`\n❌ Fatal Build Error: ${errorMsg}\n`);
-//     process.exit(1);
-//   }
+    const targetFileSlice = sessionRegistry[activeScanPath];
+    if (targetFileSlice === undefined) continue;
 
-//   if (existingRegisteredFile && existingRegisteredFile !== '') {
-//     const absoluteOldFileLocation = path.resolve(
-//       rootDir,
-//       existingRegisteredFile,
-//     );
+    const existingKeyClaim = targetFileSlice.keys[keyName];
+    if (existingKeyClaim !== undefined) {
+      // The In-Memory Ghost Key Clearance
+      if (activePassKeys.has(keyName) && !activePassKeys.has(keyName)) {
+        xalorCentralContext.deleteFromSessionRegistry({
+          keyName,
+          filePath: existingKeyClaim.filePath,
+        });
+        continue;
+      }
 
-//     if (fs.existsSync(absoluteOldFileLocation)) {
-//       const oldFileTextBuffer = fs.readFileSync(
-//         absoluteOldFileLocation,
-//         'utf8',
-//       );
-//       const isKeyStillPresentInOldFile = oldFileTextBuffer.includes(keyName);
+      const crossFileFailure = {
+        rule: 'terminal_contradiction',
+        message:
+          `CROSS-FILE COLLISION: Unique identifier key "${keyName}" has been claimed by multiple files!\n` +
+          `First Claimed By: [${activeScanPath} ↳ ${existingKeyClaim.area}]\n` +
+          `Attempted Hijack: [${relativeProjectKey} ↳ ${activeAreaString}]\n` +
+          `Action: Xalor requires unique global keys. Change the target literal string key name.`,
+      } as const;
 
-//       if (!isKeyStillPresentInOldFile) {
-//         return undefined;
-//       }
-//     } else {
-//       return undefined;
-//     }
-//   }
-//   const errorMsg =
-//     `[xalor] 🚨 CROSS-FILE COLLISION: Key "${keyName}" already claimed by module [${existingAreaRegistration}]. ` +
-//     `Attempted duplicate hijack assignment at location [${activeAreaString}].`;
+      // 🪐 THE WATCH-MODE SELF-CLEANING Handshake:
+      if (isWatch) {
+        const coloredAnsiPanelText =
+          TransformerReportService.generateTerminalPanel({
+            keyName,
+            fileLocation: currentActiveAbsoluteFile,
+            message: crossFileFailure.message,
+            rule: crossFileFailure.rule,
+            mode: executeMode,
+          });
 
-//   if (lifecycle.isWatchMode) {
-//     console.error(`\n⚠️  ${errorMsg}\n`);
-//     const watchFallbackShape: TSolidShape = {
-//       kind: 'primitive',
-//       type: 'unknown',
-//     };
-//     return watchFallbackShape;
-//   }
+        console.warn(coloredAnsiPanelText);
 
-//   console.error(`\n❌ Fatal Build Error: ${errorMsg}\n`);
-//   process.exit(1);
-// }
+        // 🟢 FIXED: Lock this key down inside the blacklist collection BEFORE mutating state!
+        // This permanently bars the compiler from allowing this duplicate key to re-register.
+        xalorCentralContext.addBlacklistKey(keyName);
+
+        // 🟢 FIXED: Clean out the duplicate from both the global key registry map
+        // AND your session bidirectional lookup maps cleanly in RAM.
+        xalorCentralContext.deleteGlobalAndSession({
+          keyName,
+          filePath: currentActiveAbsoluteFile,
+        });
+
+        return true;
+      }
+
+      // 🛑 PRODUCTION SYSTEM LAWS: Hard throw to stop compile and vacuum passes instantly
+      throw new XalorInvalidTypeError(
+        keyName,
+        currentActiveAbsoluteFile,
+        crossFileFailure,
+        executeMode,
+      );
+    }
+  }
+
+  // ========================================================================
+  // 🪐 INTEGRATED INTERCEPT LANE B: SAME-FILE COPY-PASTE DUPLICATIONS
+  // ========================================================================
+  const currentFileSlice = sessionRegistry[relativeProjectKey];
+  if (currentFileSlice === undefined) {
+    return false;
+  }
+
+  const historicalKeyMatch = currentFileSlice.keys[keyName];
+
+  if (historicalKeyMatch !== undefined) {
+    if (historicalKeyMatch.anchor !== activeAnchorString) {
+      const sameFileFailure = {
+        rule: 'terminal_contradiction',
+        message:
+          `SAME-FILE DUPLICATION: Key "${keyName}" is duplicated inside the same file boundary context!\n` +
+          `First Declared: [${historicalKeyMatch.area} ↳ ${historicalKeyMatch.anchor}]\n` +
+          `Duplicated At: [${activeAreaString} ↳ ${activeAnchorString}]\n` +
+          `Action: Unique tracking boundaries require distinct string identifiers to avoid cache drifting.`,
+      } as const;
+
+      // 🪐 THE WATCH-MODE SELF-CLEANING Handshake:
+      if (isWatch) {
+        const coloredAnsiPanelText =
+          TransformerReportService.generateTerminalPanel({
+            keyName,
+            fileLocation: currentActiveAbsoluteFile,
+            message: sameFileFailure.message,
+            rule: sameFileFailure.rule,
+            mode: executeMode,
+          });
+
+        console.warn(coloredAnsiPanelText);
+
+        // 🟢 FIXED: Lock this key down inside the blacklist collection BEFORE mutating state!
+        xalorCentralContext.addBlacklistKey(keyName);
+
+        // 🟢 FIXED: Evict the duplicated same-file tracking keys out of both global registries
+        // and session twin-maps simultaneously to prevent database cache corruption.
+        xalorCentralContext.deleteGlobalAndSession({
+          keyName,
+          filePath: currentActiveAbsoluteFile,
+        });
+
+        return true;
+      }
+
+      throw new XalorInvalidTypeError(
+        keyName,
+        currentActiveAbsoluteFile,
+        sameFileFailure,
+        executeMode,
+      );
+    }
+  }
+
+  return false;
+}

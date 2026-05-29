@@ -2,9 +2,19 @@ import {
   ANSI_COLOR_CODES,
   getCallerLocation,
   isInstanceOf,
+  isStringFunction,
+  isUndefined,
 } from '../../shared';
-import { REPORT_SERVICE_MODE_ROUTER } from '../constants';
-import type { THeaderModes, TReportServiceContext } from '../types';
+import {
+  REPORT_SERVICE_MODE_ROUTER,
+  COMPILER_DIAGNOSTIC_FALLBACKS,
+} from '../constants';
+import type {
+  THeaderModes,
+  TReportServiceContext,
+  TCompilerAnomalyKey,
+  TLogAnomalyParams,
+} from '../types';
 
 /**
  * TransformerReportService
@@ -58,7 +68,7 @@ export class TransformerReportService {
     const invocationCallSite = getCallerLocation();
 
     /* prettier-ignore */
-    const ruleLabel = rule !== undefined && rule.length > 0 ? rule.toUpperCase() : 'GENERAL_FAULT';
+    const ruleLabel = !isUndefined(rule) && rule.length > 0 ? rule.toUpperCase() : 'GENERAL_FAULT';
 
     const reportBuffer: string[] = [
       `\n${ansiColors.gray}┌────────────────────────────────────────────────────────────────────────────┐${ansiColors.reset}`,
@@ -80,9 +90,67 @@ export class TransformerReportService {
     return reportBuffer.join('\n');
   }
 
-  public static getErrorMessage(error: unknown) {
-    if (isInstanceOf(error, Error)) return error.message;
-    // TODO: complie error messages
-    return 'Filesystem access restriction occurred.';
+  /**
+   * getErrorMessage
+   * 🪐 THE STRUCTURAL NORMALIZATION RESOLVER
+   *
+   * ROLE:
+   * Safely isolates error string extraction metrics. It intercepts raw exceptions,
+   * maps them point-free to your template fallbacks dictionary, and resolves
+   * clean contextual layouts switchlessly without heap allocation churn.
+   */
+  public static getErrorMessage(
+    compilerKey: TCompilerAnomalyKey,
+    error?: unknown,
+  ): string {
+    // 1. Isolate the raw underlying error text point-free
+    const rawExceptionString = isInstanceOf(error, Error)
+      ? error.message
+      : String(error ?? '');
+
+    const config = COMPILER_DIAGNOSTIC_FALLBACKS[compilerKey];
+    if (isUndefined(config)) {
+      return rawExceptionString.length > 0
+        ? rawExceptionString
+        : 'An unrecognized compiler anomaly occurred.';
+    }
+    const template = config.messageTemplate;
+
+    return isStringFunction(template)
+      ? template(rawExceptionString.length > 0 ? rawExceptionString : undefined)
+      : template;
+  }
+
+  /**
+   * logAnomaly
+   * 🪐 CENTRAL LOGGING GATEWAY
+   *
+   * ROLE:
+   * Stateless printing endpoint that automatically normalizes text and pipes
+   * beautifully formatted ANSI border panels cleanly straight to console streams.
+   */
+  public static logAnomaly(params: TLogAnomalyParams): void {
+    const { keyName, fileLocation, error, mode } = params;
+
+    // Direct O(1) fallback rule extraction
+    const ruleToken =
+      COMPILER_DIAGNOSTIC_FALLBACKS[keyName]?.rule ?? 'general_fault';
+
+    const finalizedMessage = this.getErrorMessage(keyName, error);
+
+    const panelText = this.generateTerminalPanel({
+      keyName,
+      fileLocation,
+      message: finalizedMessage,
+      rule: ruleToken,
+      mode,
+    });
+
+    const targetVisualMode = this.MODE_ROUTER[mode];
+    if (targetVisualMode === 'hard') {
+      process.stderr.write(panelText);
+    } else {
+      console.warn(panelText);
+    }
   }
 }

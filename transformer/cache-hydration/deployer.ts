@@ -3,14 +3,15 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared';
-import { XalorRoutesService } from '../service';
 import type { TXalorResolvedPaths } from '../../shared';
+import { TransformerReportService } from '../error';
+import { XalorRoutesService } from '../service';
 // 🪐 Safe ESM file coordinate parsing calculated ONCE at module level
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 /**
  * deployBaselineInfrastructure
- * 🛡️ COLD-START FILESYSTEM SHIELD
+ * COLD-START FILESYSTEM SHIELD
  *
  * ROLE:
  * Guarantees all local workspace folders and baseline configuration templates
@@ -25,15 +26,17 @@ export function deployBaseline(paths: TXalorResolvedPaths) {
   const templateSourceDir = path.join(packageDistDir, 'static-templates');
   /* prettier-ignore */
   const templateSnapshotPath = path.join(templateSourceDir, fileNames.vaultFileName);
-
+  const mode = XalorRoutesService.xalorCLIMode();
   if (!fs.existsSync(paths.cacheDir)) {
     try {
       fs.mkdirSync(paths.cacheDir, { recursive: true });
-    } catch (error) {
-      console.warn(
-        '[xalor:boot]: Cold-Start Shield deployment exception:, ',
+    } catch (error: unknown) {
+      TransformerReportService.logAnomaly({
+        keyName: 'COLD_START_INFRASTRUCTURE_FAULT',
+        fileLocation: paths.cacheDir,
         error,
-      );
+        mode: mode,
+      });
       return;
     }
   }
@@ -54,11 +57,13 @@ export function deployBaseline(paths: TXalorResolvedPaths) {
           fs.copyFileSync(srcDts, paths.bridgeFile);
         }
       }
-    } catch (error) {
-      console.warn(
-        '[xalor:boot]: Baseline templates initialization deferred:, ',
+    } catch (error: unknown) {
+      TransformerReportService.logAnomaly({
+        keyName: 'TEMPLATE_SEED_FAULT',
+        fileLocation: paths.vaultFile,
         error,
-      );
+        mode: mode,
+      });
     }
   }
 }

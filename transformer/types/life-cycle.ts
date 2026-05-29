@@ -75,8 +75,8 @@ export type TExecuteCUDMutationParams = {
 export type TCollisionGuardParams = {
   readonly keyName: string;
   readonly activeAreaString: string;
+  readonly activeAnchorString: string;
   readonly currentActiveAbsoluteFile: string;
-  readonly rootDir: string;
 };
 
 export type TModePriorityRule = {

@@ -52,6 +52,7 @@ export const XALOR_INVALID_TYPE_COMPLIANCE_RULE_KEYS = Object.freeze([
   'unserializable_executable',
   'catastrophic_compiler_error',
   'terminal_contradiction',
+  // 'terminal_contradiction'
 ] as const);
 /**
  * 🪐 TRANSFORMER EXECUTION MODE ROUTER (The Visual Lane Allocator)

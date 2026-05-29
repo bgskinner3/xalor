@@ -45,3 +45,30 @@ export type TXalorTypeGuardFailure = {
 };
 
 export type TXalorErrorFormatVariant = 'original' | 'formatted';
+
+export type TCompilerAnomalyKey =
+  | 'COMPILER_MECHANICAL_FAULT'
+  | 'GENESIS_HYDRATION_FAULT'
+  | 'VAULT_FLUSH_IO_FAULT'
+  | 'AST_GENERATION_ANOMALY'
+  | 'UNKNOWN_API_TRIGGER'
+  | 'COLD_START_INFRASTRUCTURE_FAULT'
+  | 'TEMPLATE_SEED_FAULT'
+  | 'GENESIS_STREAM_FAULT';
+
+export type TDiagnosticFallbackConfig = {
+  readonly rule: string;
+  readonly messageTemplate: string | ((dynamicValue?: string) => string);
+};
+
+export type TCompilerDiagnosticMapper = Record<
+  TCompilerAnomalyKey,
+  TDiagnosticFallbackConfig
+>;
+
+export type TLogAnomalyParams = {
+  readonly keyName: TCompilerAnomalyKey;
+  readonly fileLocation: string;
+  readonly error?: unknown;
+  readonly mode: TTransformerExecuteMode;
+};
