@@ -47,4 +47,14 @@ export const BOOT_MODE_STRATEGY_MAPPER: TBootLoaderMapper = {
       globalThis.__XALOR_SESSION_REGISTRY__.clear();
     }
   },
+  studio: ({ runtimePaths: _ }: TBootStrategyParams) => {
+    // Production vacuuming completely cleans registries to optimize system cycles
+    // for flat minified production artifact generation
+    if (!isUndefined(globalThis.__XALOR_GLOBAL_KEY_REGISTRY__)) {
+      globalThis.__XALOR_GLOBAL_KEY_REGISTRY__.clear();
+    }
+    if (!isUndefined(globalThis.__XALOR_SESSION_REGISTRY__)) {
+      globalThis.__XALOR_SESSION_REGISTRY__.clear();
+    }
+  },
 } satisfies TBootLoaderMapper;

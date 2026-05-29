@@ -13,4 +13,7 @@ export const PASS_STRATEGY_MAPPER: TPassStrategyMapper = {
   vacuum: (props: TPassStrategyPayloadMap['vacuum']) => {
     return executeFileMiningPass({ bridgeDir: '', ...props });
   },
+  studio: (props: TPassStrategyPayloadMap['studio']) => {
+    return executeFileMiningPass(props);
+  },
 } satisfies TPassStrategyMapper;

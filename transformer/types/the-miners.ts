@@ -103,6 +103,7 @@ export type TVerifyAndValidateType = {
   readonly shapeType: Type;
   readonly checker: TypeChecker;
   readonly keyName: string;
+  readonly sourceFile: SourceFile;
 };
 export type TMineFilePass = {
   readonly program: Program;

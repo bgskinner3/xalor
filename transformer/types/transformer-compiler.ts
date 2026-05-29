@@ -59,6 +59,8 @@ export type TPassStrategyPayloadMap = {
   compile: TMineFilePass;
   /** Vacuum mode tracks final production passes and can omit local IDE directory structures completely */
   vacuum: TVacuumFilePass;
+
+  studio: TMineFilePass;
 };
 /**
  * TPassStrategyMapper

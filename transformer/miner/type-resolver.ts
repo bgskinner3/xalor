@@ -1,29 +1,8 @@
 // transformer/miner/type-resolver.ts
 import type { Type, TypeChecker } from 'typescript';
 import { TypeFlags } from 'typescript';
-import type { TXalorTypeGuardFailure } from '../../shared';
+import type { TXalorTypeGuardFailure } from '../types';
 
-/**
- * XalorInvalidTypeError
- * 🛡️ SYSTEM EXTRACTION EXCEPTION CONTAINER
- *
- * ROLE:
- * An explicit, nominal error subclass used to distinguish predictable build-time
- * data rule violations from wild, unexpected compiler thread crashes.
- */
-// TODO: MIGRATE TO TRANSFORMER ERROR HANDLER
-export class XalorInvalidTypeError extends Error {
-  public readonly failure: TXalorTypeGuardFailure;
-
-  constructor(message: string, failure: TXalorTypeGuardFailure) {
-    super(message);
-
-    // Set the prototype explicitly to preserve accurate 'instanceof' narrowing across compilation steps
-    Object.setPrototypeOf(this, XalorInvalidTypeError.prototype);
-    this.name = 'XalorInvalidTypeError';
-    this.failure = failure;
-  }
-}
 /**
  * VERIFY TYPE RESOLVABILITY (The System Build-Time Compatibility Radar)
  *

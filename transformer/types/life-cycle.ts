@@ -9,7 +9,7 @@ export type TXalorLifecycleContext = {
   readonly isWatchMode: boolean;
   readonly isOneShotCompileMode: boolean;
   readonly isProductionVacuumMode: boolean;
-  readonly isClearMode: boolean;
+  readonly isStudioMode: boolean;
   readonly isTestEnvironment: boolean;
   /** High-level operational flag uniting watch and compile as dev-active cycles */
   readonly isDevelopmentPass: boolean;

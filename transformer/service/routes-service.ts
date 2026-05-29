@@ -1,7 +1,10 @@
 // transformer/service/routes-service.ts
 import * as fs from 'fs';
 import * as path from 'path';
-import type { TXalorResolvedPaths } from '../../shared';
+import type {
+  TXalorResolvedPaths,
+  TTransformerExecuteMode,
+} from '../../shared';
 import { IS_SOLID_CONFIG_ITEMS, XALOR_ENV_KEYS } from '../../shared';
 import type { TXalorLifecycleContext } from '../types';
 import { xalorCentralContext } from './context-service';
@@ -34,13 +37,13 @@ export class XalorRoutesService {
     const watchFlag = process.env[XALOR_ENV_KEYS.watch] === 'true';
     const compileFlag = process.env[XALOR_ENV_KEYS.compile] === 'true';
     const vacuumFlag = process.env[XALOR_ENV_KEYS.vacuum] === 'true';
-    const clearFlag = process.env[XALOR_ENV_KEYS.clear] === 'true';
+    const studioFlag = process.env[XALOR_ENV_KEYS.studio] === 'true';
     const nodeEnv = process.env.NODE_ENV;
     const isTestEnvironment = nodeEnv === 'test';
 
     const isWatchMode = watchFlag && !isTestEnvironment;
     const isOneShotCompileMode = compileFlag && !isTestEnvironment;
-    const isClearMode = clearFlag && !isTestEnvironment; // 🚀 Isolated clear mode tracking frame
+    const isStudioMode = studioFlag && !isTestEnvironment; // 🚀 Isolated clear mode tracking frame
 
     // Enforce production vacuum if flag is present OR if executing a native production build pass
     const isProductionVacuumMode =
@@ -54,8 +57,27 @@ export class XalorRoutesService {
       isProductionVacuumMode,
       isTestEnvironment,
       isDevelopmentPass,
-      isClearMode,
+      isStudioMode,
     };
+  }
+  /**
+   * xalorCLIMode
+   * 🪐 THE TRANSFORMER RUNTIME RESOLVER
+   *
+   * ROLE:
+   * Isolates and returns the specific execution mode the AST engine requires.
+   * Switchlessly resolves boolean cascades directly into strict string tokens.
+   */
+  public static xalorCLIMode(): TTransformerExecuteMode {
+    const lifecycle = XalorRoutesService.resolveXalorLifecycle();
+
+    // 🟢 OPTIMIZED: Cascade downwards point-free to map ONLY the core transformer targets.
+    // This removes initialization/reporting bloat from the core compilation pipeline context.
+    if (lifecycle.isProductionVacuumMode) return 'vacuum';
+    if (lifecycle.isOneShotCompileMode) return 'compile';
+    if (lifecycle.isStudioMode) return 'studio';
+
+    return 'watch'; // Default core operational state for interactive developer runs
   }
 
   public static getProjectRelativeKey(absoluteFilePath: string): string {

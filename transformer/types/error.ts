@@ -1,0 +1,47 @@
+import type { TTransformerExecuteMode } from '../../shared';
+import { XALOR_COMPLIANCE_RULE_KEYS } from '../constants';
+/**
+ * TReportServiceContext
+ * 🪐 OMNI-REPORTER DATA MATRIX
+ *
+ * ROLE:
+ * A flattened, loosely bound parameters contract allowing ANY build-time,
+ * route, or file-system error type to utilize the universal ANSI board scribe.
+ */
+export type TReportServiceContext = {
+  readonly keyName: string;
+  readonly fileLocation: string;
+  readonly message: string;
+  readonly rule?: string;
+  readonly mode: TTransformerExecuteMode;
+};
+
+export type THeaderModes = 'hard' | 'watch' | 'soft';
+
+export type TModeRouter = Record<TTransformerExecuteMode, THeaderModes>;
+
+/**
+ * TXALORCOMPLIANCERULEKEYS
+ * The refined literal string union type matching your active build-time error categories.
+ */
+export type TXalorComplianceRuleKeys =
+  (typeof XALOR_COMPLIANCE_RULE_KEYS)[number];
+
+/**
+ * TXALOR TYPE GUARD FAILURE DIAGNOSTIC
+ *
+ * ROLE:
+ * A strict immutable data contract capturing precise build-time validation faults.
+ * It maps structural type anomalies directly to isolated error categories.
+ *
+ * WHY:
+ * Satisfies Commandment VI (Determinism & Traceability). By explicitly categorizing
+ * the failure rule with a clear message, it enables the compiler engine to halt
+ * and output a zero-allocation, highly precise diagnostic trace back to the developer.
+ */
+export type TXalorTypeGuardFailure = {
+  readonly rule: TXalorComplianceRuleKeys;
+  readonly message: string;
+};
+
+export type TXalorErrorFormatVariant = 'original' | 'formatted';

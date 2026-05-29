@@ -4,7 +4,7 @@ import { runMiningPass, persistenceGate } from '../lifecycle';
 import { shouldProcessFile, handleEmptyFileWipeout } from './resolvers';
 import type { TMineFilePass } from '../types';
 import type { SourceFile } from 'typescript';
-import { XalorInvalidTypeError } from '../miner/type-resolver';
+import { XalorInvalidTypeError } from '../error';
 import { isInstanceOf } from '../../shared';
 import { XalorRoutesService } from '../service';
 
@@ -50,9 +50,10 @@ export function executeFileMiningPass({
         throw error;
       }
 
-      // ⚠️ WATCH MODE DECORATION: Dev watch loop intercepts the violation beautifully without crashing the thread process
-      const { rule, message } = error.failure;
+      //   ⚠️ WATCH MODE DECORATION: Dev watch loop intercepts the violation beautifully without crashing the thread process
 
+      const message = error.failure?.message ?? '';
+      const rule = error.failure?.rule ?? '';
       console.warn(
         '\n======================================================================',
       );

@@ -12,11 +12,9 @@ import { getSpatialIdentity } from './spatial-identity';
 import { reifyType } from '../reifiers';
 import { createMiningCtx } from '../utils';
 import { executeVaultMutation, determineCUDMode } from '../lifecycle';
-import { xalorCentralContext } from '../service';
-import {
-  verifyTypeResolvability,
-  XalorInvalidTypeError,
-} from './type-resolver';
+import { xalorCentralContext, XalorRoutesService } from '../service';
+import { verifyTypeResolvability } from './type-resolver';
+import { XalorInvalidTypeError } from '../error';
 /**
  * flushToRegistry
  *
@@ -100,7 +98,8 @@ const createPayLoad = ({
  * It immediately halts the build process if a type breaks our data invariants.
  */
 const verifyAndValidateType = (params: TVerifyAndValidateType): void => {
-  const { shapeType, checker, keyName } = params;
+  const { shapeType, checker, keyName, sourceFile } = params;
+  const mode = XalorRoutesService.xalorCLIMode();
   const validationFailure = verifyTypeResolvability(
     shapeType,
     checker,
@@ -109,8 +108,10 @@ const verifyAndValidateType = (params: TVerifyAndValidateType): void => {
 
   if (validationFailure && validationFailure.rule) {
     throw new XalorInvalidTypeError(
-      `Target key '${keyName}' broke rule: ${validationFailure.rule.toUpperCase()}\n${validationFailure.message}`,
+      keyName,
+      sourceFile.fileName,
       validationFailure,
+      mode,
     );
   }
 };
@@ -128,7 +129,7 @@ export function resolveAndRegisterType({
   sourceFile,
   checker,
 }: TTypeResolutionParams): TSolidShape {
-  verifyAndValidateType({ shapeType, checker, keyName });
+  verifyAndValidateType({ shapeType, checker, keyName, sourceFile });
 
   const identity = getSpatialIdentity({ node, sourceFile, shapeType, checker });
 
