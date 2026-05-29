@@ -12,7 +12,7 @@ import { XalorRoutesService, xalorCentralContext } from '../../service';
 import {
   isCompilerTypePure,
   isTypeContractResolvabilityPure,
-} from '../purity-detector';
+} from '../sentry-layer';
 import { TransformerReportService, XalorInvalidTypeError } from '../../error';
 
 /**

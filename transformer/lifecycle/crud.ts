@@ -145,7 +145,7 @@ export function executeVaultMutation({
       }
     },
     noop: () => {
-      // 🚀 THE UNCHANGED BYPASS CELL: Bypasses modifications completely to protect execution speeds
+      // THE UNCHANGED BYPASS CELL: Bypasses modifications completely to protect execution speeds
     },
   } satisfies Record<TCudExecutionMode, () => void>;
 

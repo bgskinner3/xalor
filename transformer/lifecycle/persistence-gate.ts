@@ -14,6 +14,10 @@ import type { TPersistenceGateParams } from '../types';
 
 /**
  * persistenceGate
+ *
+ * ROLE: Governs the terminal state of the compilation lifecycle. Monitors the arriving file
+ * execution stream to intercept the true termination boundary of the compiler pass
+ *
  * @see {@link TransformerDocs.persistenceGate}
  */
 export function persistenceGate({

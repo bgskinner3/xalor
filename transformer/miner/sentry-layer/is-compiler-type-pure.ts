@@ -4,27 +4,33 @@ import {
   isUnionType,
   isIntersectionType,
   isTypeReference,
-} from '../../utils'; // Adjust paths to your type guards location
+} from '../../utils';
 
 /**
  * isCompilerTypePure
- * 🛰️ THE COMPILER-LEVEL PURITY GATEKEEPER
+ * 🛰️ THE COMPILER-LEVEL PURITY GATEKEEPER (Cyclic Defused Edition)
  *
  * ROLE:
  * Analyzes raw ts.Type symbols directly off the AST context before reification.
- * Intercepts native closures, runtime function handles, and raw JS unique symbols.
+ * Intercepts native closures, function handles, and raw JS unique symbols.
+ *
+ * STRATEGY:
+ * Tracks evaluated ts.Type references point-free inside a stack Set context frame.
+ * If a type is re-encountered, it flags an active circular dependency cyclic link,
+ * short-circuiting recursion immediately to shield the V8 call stack from RangeErrors.
  */
 export function isCompilerTypePure(
   type: ts.Type,
   checker: ts.TypeChecker,
+  visitedTypes: Set<ts.Type> = new Set<ts.Type>(),
 ): boolean {
+  if (visitedTypes.has(type)) {
+    return true;
+  }
+
   const flags = type.getFlags();
 
-  // ========================================================================
-  // 🪐 A. INTERCEPT RAW FORBIDDEN COMPILED PRIMITIVES
-  // ========================================================================
-  // If the node represents an internal compiler 'ESSymbol' (unique symbol)
-  // or a raw execution 'ESSymbolLike', reject it completely.
+  // DETECT RAW FORBIDDEN COMPILED PRIMITIVES
   if (
     (flags & ts.TypeFlags.ESSymbol) !== 0 ||
     (flags & ts.TypeFlags.ESSymbolLike) !== 0
@@ -32,7 +38,30 @@ export function isCompilerTypePure(
     return false;
   }
 
-  // If a developer tries to register an executable function macro or closure block
+  // THE STRUCTURAL ARRAY CONTAINER SHIELD
+  const isNativeArray = checker.isArrayType(type);
+  const isNativeTuple =
+    (flags & ts.TypeFlags.Object) !== 0 && checker.isTupleType?.(type);
+
+  if (isNativeArray || isNativeTuple) {
+    if (isTypeReference(type)) {
+      const typeArguments = checker.getTypeArguments(type);
+      const argLen = typeArguments.length;
+
+      for (let i = 0; i < argLen; i++) {
+        const arg = typeArguments[i];
+        if (
+          arg !== undefined &&
+          !isCompilerTypePure(arg, checker, visitedTypes)
+        ) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  //  HIGH-PRECISION CALL SIGNATURE BARRIER FOR REGULAR OBJECTS
   if (
     (flags & ts.TypeFlags.Object) !== 0 &&
     type.getCallSignatures().length > 0
@@ -40,53 +69,67 @@ export function isCompilerTypePure(
     return false;
   }
 
+  visitedTypes.add(type);
+
   // ========================================================================
-  // 🪐 B. RECURSIVE UNION SECTOR SWEEP
+  // B. RECURSIVE UNION SECTOR SWEEP
   // ========================================================================
   if (isUnionType(type)) {
     const constituents = type.types;
     const len = constituents.length;
     for (let i = 0; i < len; i++) {
       const childType = constituents[i];
-      if (childType !== undefined && !isCompilerTypePure(childType, checker)) {
+      if (
+        childType !== undefined &&
+        !isCompilerTypePure(childType, checker, visitedTypes)
+      ) {
+        visitedTypes.delete(type);
         return false;
       }
     }
+    visitedTypes.delete(type);
     return true;
   }
 
   // ========================================================================
-  // 🪐 C. RECURSIVE INTERSECTION SECTOR SWEEP
+  // C. RECURSIVE INTERSECTION SECTOR SWEEP
   // ========================================================================
   if (isIntersectionType(type)) {
     const constituents = type.types;
     const len = constituents.length;
     for (let i = 0; i < len; i++) {
       const childType = constituents[i];
-      if (childType !== undefined && !isCompilerTypePure(childType, checker)) {
+      if (
+        childType !== undefined &&
+        !isCompilerTypePure(childType, checker, visitedTypes)
+      ) {
+        visitedTypes.delete(type);
         return false;
       }
     }
+    visitedTypes.delete(type);
     return true;
   }
 
   // ========================================================================
-  // 🪐 D. OBJECT & GENERIC TYPE REFERENCE SECTOR SWEEP
+  // D. STANDARD OBJECT & RECURSIVE PROPERTY SECTOR SWEEP
   // ========================================================================
   if (isObjectTypeGuard(type)) {
-    // If it's a generic type reference (e.g. Array<T>, Record<K, V>), inspect arguments
     if (isTypeReference(type)) {
       const typeArguments = checker.getTypeArguments(type);
       const argLen = typeArguments.length;
       for (let i = 0; i < argLen; i++) {
         const arg = typeArguments[i];
-        if (arg !== undefined && !isCompilerTypePure(arg, checker)) {
+        if (
+          arg !== undefined &&
+          !isCompilerTypePure(arg, checker, visitedTypes)
+        ) {
+          visitedTypes.delete(type);
           return false;
         }
       }
     }
 
-    // Inspect individual object properties mapping definitions line-by-line
     const symbols = type.getProperties();
     const symbolLen = symbols.length;
 
@@ -95,20 +138,18 @@ export function isCompilerTypePure(
       if (sym === undefined) continue;
 
       const key = sym.getName();
-      // Enforce the prefix boundary layout rules right inside the type parser
       if (key.startsWith('_') || key.startsWith('$')) {
+        visitedTypes.delete(type);
         return false;
       }
 
-      // 🟢 FIXED: Safe, statement-driven node resolution bypassing unsafe non-null optional assertions entirely!
       const targetDeclarationNode =
         sym.valueDeclaration !== undefined
           ? sym.valueDeclaration
           : sym.declarations !== undefined && sym.declarations.length > 0
-            ? sym.declarations[0]
+            ? sym.declarations[0] // Isolate index 0 safely
             : undefined;
 
-      // If the node cannot be isolated, skip parsing this implicit symbol line to prevent engine crashes
       if (targetDeclarationNode === undefined) {
         continue;
       }
@@ -117,11 +158,16 @@ export function isCompilerTypePure(
         sym,
         targetDeclarationNode,
       );
-      if (propType !== undefined && !isCompilerTypePure(propType, checker)) {
+      if (
+        propType !== undefined &&
+        !isCompilerTypePure(propType, checker, visitedTypes)
+      ) {
+        visitedTypes.delete(type);
         return false;
       }
     }
   }
 
-  return true; // Type structure contains completely pure data types
+  visitedTypes.delete(type);
+  return true;
 }

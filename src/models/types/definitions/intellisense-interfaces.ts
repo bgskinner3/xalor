@@ -8,6 +8,18 @@
  */
 declare global {
   /**
+   * XalorCyclicToken
+   * 🪐 GLOBAL RECURSIVE METADATA SHIELD
+   *
+   * ROLE:
+   * Acts as an opaque structural wrapper tracking cyclic loop boundaries
+   * point-free inside generated Intellisense bridges without crashing compilation.
+   */
+  export type TXalorCyclicToken<T extends string> = {
+    readonly __xalor_cyclic_marker__: true;
+    readonly __target_type_name__: T;
+  };
+  /**
    * 🔗 ISOLID IDENTITY
    *
    * Stores the "Nominal" link (the import path) to the original interface.
