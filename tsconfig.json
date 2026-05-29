@@ -1,62 +1,45 @@
 {
-    "compilerOptions": {
-        "target": "ESNext",
-        "module": "ESNext",
-        "moduleResolution": "Bundler",
-        "lib": [
-            "ESNext",
-            "DOM",
-            "DOM.Iterable",
-            "ESNext.AsyncIterable"
-        ],
-        "strict": true,
-        "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "forceConsistentCasingInFileNames": true,
-        "declaration": true,
-        "declarationMap": true,
-        "sourceMap": true,
-        "composite": false,
-        "incremental": false,
-        "skipLibCheck": true,
-        "ignoreDeprecations": "5.0",
-        // "baseUrl": ".",
-        "esModuleInterop": true,
-        "isolatedModules": false,
-        "resolveJsonModule": true,
-        "stripInternal": true,
-        "verbatimModuleSyntax": false,
-        "rootDir": ".",
-        "outDir": "./dist",
-        "noImplicitAny": false,
-        "types": [
-            "node",
-            "jest"
-        ]
-    },
-    "ignoreDiagnostics": [
-        5023,
-        5024,
-        5039,
-        5072,
-        5103
-    ],
-    "include": [
-        "src/**/*",
-        "transformer/**/*",
-        "shared/**/*",
-        "scripts/**/*",
-        "cli/**/*",
-        "tsup.config.ts",
-        "__tests__",
-        "intellisense-docs.d.ts",
-        "cli",
-        "tsup.config.ts"
-    ],
-    "exclude": [
-        "dist",
-        "node_modules"
-    ]
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ESNext", "DOM", "DOM.Iterable", "ESNext.AsyncIterable"],
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": false,
+    "incremental": false,
+    "skipLibCheck": true,
+    "ignoreDeprecations": "5.0",
+    // "baseUrl": ".",
+    "esModuleInterop": true,
+    "isolatedModules": false,
+    "resolveJsonModule": true,
+    "stripInternal": true,
+    "verbatimModuleSyntax": false,
+    "rootDir": ".",
+    "outDir": "./dist",
+    "noImplicitAny": false,
+    "types": ["node", "jest"]
+  },
+  "ignoreDiagnostics": [5023, 5024, 5039, 5072, 5103],
+  "include": [
+    "src/**/*",
+    "transformer/**/*",
+    "shared/**/*",
+    "scripts/**/*",
+    "cli/**/*",
+    "tsup.config.ts",
+    "__tests__",
+    "intellisense-docs.d.ts",
+    "cli",
+    "tsup.config.ts"
+  ],
+  "exclude": ["dist", "node_modules"]
 }

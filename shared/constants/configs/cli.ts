@@ -32,13 +32,14 @@ export const XALOR_ENV_KEYS = Object.freeze({
   /** Terminal production minification and flat JS baking (Stage 2) */
   vacuum: 'XALOR_CLI_VACUUM',
 
-  clear: 'XALOR_CLI_CLEAR',
+  studio: 'XALOR_CLI_STUDIO',
 });
 
 export const TRANSFORMER_EXECUTE_MODES = Object.freeze({
   watch: 'watch',
   compile: 'compile',
   vacuum: 'vacuum',
+  studio: 'studio',
 } as const);
 
 /**

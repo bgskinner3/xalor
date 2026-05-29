@@ -29,6 +29,8 @@ export function runStudioCommand(projectRootPath: string): void {
   console.log(`🔒 Active Handshake Key: ${xalorSecuritySecret}`);
   console.log('====================================================\n');
 
+  process.env.XALOR_CLI_STUDIO = 'true';
+
   const server = http.createServer((req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');

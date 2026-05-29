@@ -103,12 +103,11 @@
     "test": "jest",
     "release:canary": "npm run test && npm version prerelease --preid=alpha && npm publish --tag alpha",
     "postinstall": "node dist/scripts/postinstall.js",
-
     "lint": "tsc --noEmit && eslint --ext .js,.ts,.tsx .",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --write '**/*.{js,ts,jsx,tsx,json,css,md,mdx}'",
     "format:check": "prettier --check '**/*.{js,ts,jsx,tsx,json,css,md,mdx}'",
-        "sandbox:pack": "pnpm run clean:pack && pnpm run build && pnpm pack"
+    "sandbox:pack": "pnpm run clean:pack && pnpm run build && pnpm pack"
   },
   "publishConfig": {
     "access": "public",

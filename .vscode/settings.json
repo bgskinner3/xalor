@@ -31,14 +31,8 @@
   // Ensure the extension looks for the /* glsl */ tag
   "webgl-glsl-editor.format.enabled": true,
   "tailwindCSS.experimental.classRegex": [
-    [
-      "cn\\(([^)]*)\\)",
-      "(?:'|\"|`)([^'\"`]*)(?:'|\"|`)"
-    ],
-    [
-      "cva\\(([^)]*)\\)",
-      "[\"'`]([^\"'`]* archival)[\"'`]"
-    ]
+    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^'\"`]*)(?:'|\"|`)"],
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]* archival)[\"'`]"]
   ],
   "tailwindCSS.classAttributes": [
     "class",
@@ -80,38 +74,22 @@
     {
       "base": "folder-layout",
       "color": "red-700",
-      "folderNames": [
-        "page-modules"
-      ],
+      "folderNames": ["page-modules"],
       "name": "page-modules",
-      "rootFolderNames": [
-        "page-modules"
-      ]
+      "rootFolderNames": ["page-modules"]
     },
     {
       "base": "folder-container",
       "color": "blue-700",
-      "folderNames": [
-        "mutations"
-      ],
+      "folderNames": ["mutations"],
       "name": "mutations",
-      "rootFolderNames": [
-        "mutations"
-      ]
+      "rootFolderNames": ["mutations"]
     },
     {
       "base": "folder-library", // icon style
       "color": "green-500", // pick any color you like
-      "folderNames": [
-        "api",
-        "api-helpers",
-        "api-service"
-      ], // exact folder names
-      "rootFolderNames": [
-        "api",
-        "api-helpers",
-        "api-service"
-      ],
+      "folderNames": ["api", "api-helpers", "api-service"], // exact folder names
+      "rootFolderNames": ["api", "api-helpers", "api-service"],
       "name": "API" // display name in VS Code tooltip
     }
   ],

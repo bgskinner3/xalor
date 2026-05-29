@@ -1,6 +1,5 @@
 import type { TSolidShape } from './blueprints';
 import type { TSolidError } from './vault';
-import type { TXalorComplianceRuleKeys } from './const-types';
 
 /**
  * 🛰️ TSOLID METADATA
@@ -78,20 +77,4 @@ export type TValidationContext = {
   errors: TSolidError[];
   currentKey?: string;
   depth: number;
-};
-/**
- * TXALOR TYPE GUARD FAILURE DIAGNOSTIC
- *
- * ROLE:
- * A strict immutable data contract capturing precise build-time validation faults.
- * It maps structural type anomalies directly to isolated error categories.
- *
- * WHY:
- * Satisfies Commandment VI (Determinism & Traceability). By explicitly categorizing
- * the failure rule with a clear message, it enables the compiler engine to halt
- * and output a zero-allocation, highly precise diagnostic trace back to the developer.
- */
-export type TXalorTypeGuardFailure = {
-  readonly rule: TXalorComplianceRuleKeys;
-  readonly message: string;
 };
