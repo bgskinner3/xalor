@@ -4,6 +4,7 @@ import {
   isVacuumMode,
   isReportMode,
   isCompileMode,
+  isStudioMode,
 } from '../../shared';
 
 export function determineCLIConfig(argv: readonly string[]): ICLIConfig {
@@ -14,7 +15,8 @@ export function determineCLIConfig(argv: readonly string[]): ICLIConfig {
       isCompileMode(token) ||
       isWatchMode(token) ||
       isVacuumMode(token) ||
-      isReportMode(token)
+      isReportMode(token) ||
+      isStudioMode(token)
     );
   });
 
@@ -23,7 +25,7 @@ export function determineCLIConfig(argv: readonly string[]): ICLIConfig {
     if (isCompileMode(token)) return 'compile';
     if (isWatchMode(token)) return 'watch';
     if (isVacuumMode(token)) return 'vacuum';
-
+    if (isStudioMode(token)) return 'studio';
     return 'report';
   }
 

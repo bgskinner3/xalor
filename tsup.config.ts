@@ -14,6 +14,9 @@ export default defineConfig({
     'scripts/postinstall': 'scripts/postinstall.ts',
     'cli/bin': 'cli/bin.ts',
   },
+  loader: {
+    '.html': 'text',
+  },
   format: ['cjs', 'esm'],
   platform: 'node',
   clean: true,

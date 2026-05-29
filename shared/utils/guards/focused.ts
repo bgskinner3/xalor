@@ -61,7 +61,17 @@ export const isWatchMode: TTypeGuard<TXalorCLIModesMap['watch']> = (
 ): value is TXalorCLIModesMap['watch'] => {
   return value === 'watch' || value === '--watch' || value === '-w';
 };
-
+/**
+ * @utilType Guard
+ * @name isWatchMode
+ * @category Guards Primitive
+ * @description Validates that a string value maps exactly to watch execution states.
+ */
+export const isStudioMode: TTypeGuard<TXalorCLIModesMap['studio']> = (
+  value: unknown,
+): value is TXalorCLIModesMap['studio'] => {
+  return value === 'studio' || value === '--studio';
+};
 /**
  * @utilType Guard
  * @name isVacuumMode

@@ -15,7 +15,8 @@ export const CLI_COMMAND_MODES = Object.freeze({
   compile: 'compile', // 🚀 Added: One-shot development sync pass
   vacuum: 'vacuum',
   report: 'report',
-  clear: 'clear',
+
+  studio: 'studio',
 } as const);
 /**
  * XALOR_ENV_KEYS

@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 // src/cli/bin.ts
 // import * as path from 'path';
-import { runWatchCommand, runCompileCommand } from './commands';
+import {
+  runWatchCommand,
+  runCompileCommand,
+  runStudioCommand,
+} from './commands';
 import { determineCLIConfig } from './utils';
 import type { TCommandRouterMapper } from '../shared';
 
@@ -28,8 +32,9 @@ const COMMAND_ROUTER: TCommandRouterMapper = {
     console.log(`📊 [Xalor CLI]  report Audit Ledger Map...`);
     console.log(`📂 Target Workspace Anchor: ${projectRoot}`);
   },
-  clear: (projectRoot) => {
-    console.log(`📊 [Xalor CLI]  clear Audit Ledger Map...`);
+  studio: (projectRoot) => {
+    console.log(`📊 [Xalor CLI]  STUDIO Audit Ledger Map...`);
+    runStudioCommand(projectRoot);
     console.log(`📂 Target Workspace Anchor: ${projectRoot}`);
   },
 } satisfies TCommandRouterMapper;
