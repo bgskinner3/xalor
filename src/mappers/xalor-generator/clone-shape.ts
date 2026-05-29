@@ -67,29 +67,6 @@ export const CLONE_SHAPE_SANITIZER_MAPPER: TShapeCloneMapperMap = {
     return matchingBranch ? recurse(data, matchingBranch, seen, depth) : null;
   },
 
-  intersection: (shape, data, seen, depth, recurse) => {
-    let merged: Record<string, unknown> | unknown = undefined;
-
-    for (const part of shape.parts) {
-      // 🎯 THE FIX: Pass 'data' first, and the blueprint 'part' second
-      const clonedPart = recurse(data, part, seen, depth);
-
-      if (clonedPart === null || clonedPart === undefined) continue;
-
-      if (typeof clonedPart === 'object' && !Array.isArray(clonedPart)) {
-        const currentObj = clonedPart as Record<string, unknown>;
-
-        merged =
-          merged && typeof merged === 'object' && !Array.isArray(merged)
-            ? { ...(merged as Record<string, unknown>), ...currentObj }
-            : currentObj;
-      } else {
-        merged = clonedPart;
-      }
-    }
-    return merged;
-  },
-
   reference: (shape, data, seen, depth, recurse) => {
     const subShape = XalethorVaultKeeper.peek('blueprint', shape.name);
     return subShape ? recurse(data, subShape, seen, depth) : data;

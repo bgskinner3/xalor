@@ -1,4 +1,4 @@
-// models/guards/transformer/nodes.ts
+// transformer/utils/nodes.ts
 import ts from 'typescript';
 import { SENTRY_TRIGGER_NAMES } from '../../shared';
 

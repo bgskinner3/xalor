@@ -4,6 +4,9 @@ import {
   isTypeReference,
   isObjectTypeGuard,
   getFormattedPosition,
+  isUnionType,
+  isIntersectionType,
+  isClassOrInterfaceType,
 } from '../utils';
 import type {
   TPrintGhostStructure,
@@ -13,57 +16,96 @@ import type {
 import { xalorCentralContext } from '../service';
 
 /**
+ * printGhostStructure
+ * 🛰️ TOOLING GEAR: GHOST TYPE STRINGIFIE
  *
  * @see {@link TransformerDocs.printGhostStructure}
  */
-export function printGhostStructure({
-  type,
-  checker,
-  node,
-}: TPrintGhostStructure): string {
+export function printGhostStructure(params: TPrintGhostStructure): string {
+  // 🟢 OPTIMIZED: Deconstruct context variables exactly once at the entry boundary gateway
+  const { type, checker, node } = params;
+  return executeUnrollPass(type, checker, node);
+}
+
+/**
+ * executeUnrollPass
+ * 🪐 THE STATIC UNROLLING MACHINE
+ *
+ * ROLE:
+ * Pure, stateless execution loop that unwinds shapes recursively on the stack
+ * without instantiating temporary configuration objects on the heap.
+ */
+function executeUnrollPass(
+  type: ts.Type,
+  checker: ts.TypeChecker,
+  node: ts.Node,
+): string {
   if (checker.isArrayType(type) && isTypeReference(type)) {
     const typeArgs = checker.getTypeArguments(type);
 
-    // Verify layout length boundaries explicitly
-    // to prevent multidimensional array metadata from collapsing into 'unknown[]'
-    const targetItemType = typeArgs.length > 0 ? typeArgs[0] : undefined;
-
-    const itemString = targetItemType
-      ? printGhostStructure({ type: targetItemType, checker, node })
-      : 'unknown';
+    // 🟢 OPTIMIZED: Synchronized logical check to evaluate array existence before probing length
+    const itemString =
+      typeArgs && typeArgs.length > 0
+        ? executeUnrollPass(typeArgs[0], checker, node)
+        : 'unknown';
 
     return `${itemString}[]`;
   }
 
-  if (type.isClassOrInterface() || isObjectTypeGuard(type)) {
-    const props = checker.getPropertiesOfType(type);
-    let propertyStringBuffer = '';
-    const propLen = props.length;
+  if (isUnionType(type)) {
+    const constituents = type.types;
+    const unionLen = constituents.length;
+    const unionStringTokens: string[] = [];
 
-    // THE HARDENED OPERATOR OPTIMIZATION:
-    // leverage array allocation pools with a primitive linear loop string builder.
-    // This reduces runtime garbage collection overhead to near zero during rapid watcher saves.
+    for (let i = 0; i < unionLen; i++) {
+      const variant = constituents[i];
+      if (variant) {
+        unionStringTokens.push(executeUnrollPass(variant, checker, node));
+      }
+    }
+    return unionStringTokens.join(' | ');
+  }
+
+  const isClassOrInterface = isClassOrInterfaceType(type);
+  const isObject = isObjectTypeGuard(type);
+  const isIntersection = isIntersectionType(type);
+
+  if (isClassOrInterface || isObject || isIntersection) {
+    const coreProperties = checker.getPropertiesOfType(type);
+    const propLen = coreProperties.length;
+
+    // Commandment VIII — Zero allocation immutable token buffering
+    const structuralTokenBuffer: string[] = [];
+
     for (let i = 0; i < propLen; i++) {
-      const p = props[i];
+      const p = coreProperties[i];
       if (p) {
-        const pType = checker.getTypeOfSymbolAtLocation(p, node);
+        const pDeclaration = p.valueDeclaration || p.declarations?.[0];
+
+        const pType = pDeclaration
+          ? checker.getTypeOfSymbolAtLocation(p, pDeclaration)
+          : checker.getDeclaredTypeOfSymbol(p);
+
+        if (pType.getFlags() & ts.TypeFlags.Never) {
+          continue;
+        }
+
         const isOptional =
           (p.getFlags() & ts.SymbolFlags.Optional) !== 0 ? '?' : '';
+        const structure = executeUnrollPass(pType, checker, node);
 
-        const structure = pType
-          ? printGhostStructure({ type: pType, checker, node })
-          : 'unknown';
-
-        propertyStringBuffer += `${p.getName()}${isOptional}: ${structure}; `;
+        structuralTokenBuffer.push(
+          `${p.getName()}${isOptional}: ${structure};`,
+        );
       }
     }
 
-    return `{ ${propertyStringBuffer.trim()} }`;
+    return `{ ${structuralTokenBuffer.join(' ')} }`;
   }
 
+  // Fallback cleanly to built-in scalar token naming if it's a pure baseline primitive keyword
   return checker.typeToString(type, node, ts.TypeFormatFlags.NoTruncation);
 }
-
 /**
  *
  * @see {@link TransformerDocs.resolveSpatialAndExportMeta}

@@ -5,6 +5,7 @@ import type {
   TFlushToRegistryParams,
   TCreateVaultSyncPayLoad,
   TTypeResolutionParams,
+  TVerifyAndValidateType,
 } from '../types';
 import * as path from 'path';
 import { getSpatialIdentity } from './spatial-identity';
@@ -12,10 +13,15 @@ import { reifyType } from '../reifiers';
 import { createMiningCtx } from '../utils';
 import { executeVaultMutation, determineCUDMode } from '../lifecycle';
 import { xalorCentralContext } from '../service';
+import {
+  verifyTypeResolvability,
+  XalorInvalidTypeError,
+} from './type-resolver';
 /**
- *  flushToRegistry
+ * flushToRegistry
  *
- *  Unpacks and registers recursive child sub-fragments inside the global process cache.
+ * Unpacks and registers the parent type along with recursive child
+ * sub-fragments inside the global process context maps.
  *
  * @see {@link TransformerDocs.flushToRegistry}
  */
@@ -24,13 +30,24 @@ function flushToRegistry({
   fragments,
   payload,
 }: TFlushToRegistryParams): void {
+  // track the parent key as part of the active compilation pass
   xalorCentralContext.activePassKeys.add(key);
+
+  // prevent from dropping out during 'noop' dev-watch saves!
+  xalorCentralContext.addGlobalRegistry(payload);
+  xalorCentralContext.addSessionRegistry({
+    keyName: payload.key,
+    area: payload.area,
+    anchor: payload.anchor,
+    filePath: payload.filePath,
+  });
 
   const normalizedRelativePath = path
     .relative(process.cwd(), payload.filePath)
     .split(path.sep)
     .join('/');
 
+  // Flush the remaining shredded sub-fragments cleanly into the database drawers
   fragments.forEach((fShape, fKey) => {
     xalorCentralContext.activePassKeys.add(fKey);
     xalorCentralContext.addGlobalRegistry({
@@ -42,6 +59,7 @@ function flushToRegistry({
       shape: fShape,
       filePath: normalizedRelativePath,
     });
+
     xalorCentralContext.addSessionRegistry({
       keyName: fKey,
       area: payload.area,
@@ -50,6 +68,7 @@ function flushToRegistry({
     });
   });
 }
+
 /**
  * createPayLoad
  *
@@ -67,15 +86,38 @@ const createPayLoad = ({
   area: identity.area,
   symbolName: identity.symbolName ?? 'unknown',
   typeName: identity.typeName,
-  anchor: identity?.anchor,
+  anchor: identity.anchor,
   shape,
   version: IS_SOLID_CONFIG_ITEMS.solidVersion,
 });
 
 /**
- *  resolveAndRegisterType
+ * verifyAndValidateType
+ * THE EXTRACTION GUARDHOUSE FILTER
  *
- *  Centralized Type Extraction, Validation, and Flat Ingestion Coordinator.
+ * ROLE:
+ * Executes the structural eligibility check for a call-site registration type.
+ * It immediately halts the build process if a type breaks our data invariants.
+ */
+const verifyAndValidateType = (params: TVerifyAndValidateType): void => {
+  const { shapeType, checker, keyName } = params;
+  const validationFailure = verifyTypeResolvability(
+    shapeType,
+    checker,
+    keyName,
+  );
+
+  if (validationFailure && validationFailure.rule) {
+    throw new XalorInvalidTypeError(
+      `Target key '${keyName}' broke rule: ${validationFailure.rule.toUpperCase()}\n${validationFailure.message}`,
+      validationFailure,
+    );
+  }
+};
+/**
+ * resolveAndRegisterType
+ *
+ * Centralized Type Extraction, Validation, and Flat Ingestion Coordinator.
  *
  * @see {@link TransformerDocs.resolveAndRegisterType}
  */
@@ -86,16 +128,15 @@ export function resolveAndRegisterType({
   sourceFile,
   checker,
 }: TTypeResolutionParams): TSolidShape {
-  // const lifecycle = resolveXalorLifecycle();
+  verifyAndValidateType({ shapeType, checker, keyName });
 
-  // 1. Compute spatial origin metrics safely passing sourceFile
   const identity = getSpatialIdentity({ node, sourceFile, shapeType, checker });
 
   const fragments = new Map<string, TSolidShape>();
   const ctx = createMiningCtx(keyName, fragments);
+
   /* prettier-ignore */
   const shape: TSolidShape = reifyType({ type: shapeType, checker, ctx });
-
   /* prettier-ignore */
   const payload: TVaultSyncPayload = createPayLoad({ keyName, sourceFile, shape, identity });
 
@@ -109,13 +150,13 @@ export function resolveAndRegisterType({
     newAnchor: identity.anchor,
   });
 
+  // Execute terminal logs and initial delta checks
   executeVaultMutation({
     mode: assignedCudMode,
     payload,
     identityArea: identity.area,
   });
 
-  // THE REGISTRATION FLUSH HANDSHAKE:
   flushToRegistry({
     key: keyName,
     fragments,

@@ -7,6 +7,7 @@ import type {
   IntersectionType,
   ObjectType,
   TypeReference,
+  InterfaceType,
 } from 'typescript';
 import ts from 'typescript';
 /**
@@ -52,7 +53,14 @@ export function isObjectType(type: Type): boolean {
 export function isObjectTypeGuard(type: Type): type is ObjectType {
   return (type.getFlags() & ts.TypeFlags.Object) !== 0;
 }
-
+/**
+ * IS CLASS OR INTERFACE TYPE GUARD
+ * Narrows a baseline ts.Type down to an explicit, property-probed ts.InterfaceType.
+ * Captures explicit class and interface declaration structures natively.
+ */
+export function isClassOrInterfaceType(type: Type): type is InterfaceType {
+  return type.isClassOrInterface();
+}
 /**
  * IS TYPE REFERENCE
  * Detects generic references (e.g., Array<T>, Map<K,V>) or named interfaces.
@@ -63,4 +71,11 @@ export function isTypeReference(type: Type): type is TypeReference {
     return (type.objectFlags & ts.ObjectFlags.Reference) !== 0;
   }
   return false;
+}
+/**
+ * 🛡️ IS TUPLE TYPE TYPE GUARD
+ * Probes the internal declaration target property to safely isolate a ts.TupleType.
+ */
+export function isTupleType(target: ts.ObjectType): target is ts.TupleType {
+  return (target.objectFlags & ts.ObjectFlags.Tuple) !== 0;
 }

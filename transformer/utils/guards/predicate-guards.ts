@@ -77,21 +77,6 @@ export const isGetProgram: TTypeGuard<TProgramContext> = (
   isKeyInObject('getProgram')(context) &&
   isFunction(context.getProgram);
 
-// /**
-//  *  TUPLE PREDICATE GUARD: VALIDATE SHAPE PAIRS
-//  *
-//  * Narrows a pair of unknown inputs into a type-safe tuple of two validated
-//  * `TSolidShape` objects.
-//  *
-//  * @see {@link TransformerDocs.areTShapeEquivalents}
-//  */
-// export const isShapeTSolidShape: TNarrowingPairGuard<
-//   TSolidShape,
-//   TSolidShape,
-//   TSolidShape
-// > = (vals: [TSolidShape, TSolidShape]): vals is [TSolidShape, TSolidShape] =>
-//   isBlueprintShapeString(vals[0]) && isBlueprintShapeString(vals[1]);
-
 /**
  *  areShapesIdenticalStrings
  *

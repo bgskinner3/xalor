@@ -1,56 +1,69 @@
 // transformer/reifiers/registry/array.ts
+import ts from 'typescript';
 import { registerReifier } from './core';
-import { isTypeReference } from '../../utils';
-import { ObjectFlags } from 'typescript';
-import type { TypeReference } from 'typescript';
+import { isObjectTypeGuard, isTypeReference, isTupleType } from '../../utils';
+import type { TSolidShape } from '../../../shared';
+
+// TODO: OPTIMIZE
 registerReifier((type, checker, next, ctx) => {
-  const objectFlags = Reflect.get(type, 'objectFlags');
+  // 🛡️ Guard 1: Instantly exit if this isn't an object type flag
+  if (!isObjectTypeGuard(type)) return undefined;
+
+  const objectFlags = type.objectFlags;
 
   // 🔍 1. TUPLE SUB-CLASSIFICATION MINING
-  // Check if objectFlags carries the native compiler Tuple mask
-  if (typeof objectFlags === 'number' && objectFlags & ObjectFlags.Tuple) {
-    // Safely extract type arguments using the official Checker API without custom 'as' casts
-    const typeReference = type as unknown as TypeReference;
-    const typeArguments = checker.getTypeArguments(typeReference) || [];
+  if (objectFlags & ts.ObjectFlags.Tuple) {
+    // 🛡️ Guard 2: Safely narrow to TypeReference using our predicate guard instead of an 'as' cast
+    if (!isTypeReference(type)) return undefined;
 
-    // Fall back smoothly to an 'any' token if structural elements are blank
+    const typeArguments = checker.getTypeArguments(type) || [];
     const fallbackItemType = checker.getAnyType ? checker.getAnyType() : type;
 
-    // Recursively analyze and transform each positional element shape index-by-index
-    const elementShapes = typeArguments.map((element, idx) => {
-      return next(element, {
-        ...ctx,
-        depth: ctx.depth + 1,
-        parentKey: `${ctx.parentKey}[${idx}]`,
-      });
-    });
+    const len = typeArguments.length;
+    const itemsBuffer: TSolidShape[] = [];
 
-    // Extract length and rest metrics straight out of the compiler target object properties
-    const target = Reflect.get(type, 'target');
-    const minLength =
-      typeof target === 'object' && target !== null
-        ? Reflect.get(target, 'minLength')
-        : 0;
-    const hasRestElement =
-      typeof target === 'object' && target !== null
-        ? Reflect.get(target, 'hasRestElement')
-        : false;
+    for (let i = 0; i < len; i++) {
+      const element = typeArguments[i];
+      if (element) {
+        itemsBuffer.push(
+          next(element, {
+            ...ctx,
+            depth: ctx.depth + 1,
+            parentKey: `${ctx.parentKey}[${i}]`,
+          }),
+        );
+      }
+    }
+
+    const targetType = type.target;
+    // Guard 3: Prove the target is a valid TupleType structure before reading metrics
+    const isTuple = isObjectTypeGuard(targetType) && isTupleType(targetType);
+    const minLengthValue = isTuple ? targetType.minLength : 0;
+    const hasRestValue = isTuple ? targetType.hasRestElement : false;
+
+    // Resolve the first element type safely using array indices without casting overrides
+    const firstArg = typeArguments[0];
+    const itemsShape = firstArg
+      ? next(firstArg, ctx)
+      : next(fallbackItemType, ctx);
 
     return {
       kind: 'array',
-      items: typeArguments[0]
-        ? next(typeArguments[0], ctx)
-        : next(fallbackItemType, ctx),
-      elementShapes,
-      minLength: typeof minLength === 'number' ? minLength : 0,
-      hasRest: typeof hasRestElement === 'boolean' ? hasRestElement : false,
+      items: itemsShape,
+      elementShapes: itemsBuffer,
+      minLength: minLengthValue,
+      hasRest: hasRestValue,
     };
   }
 
   // 📦 2. STANDARD GENERIC ARRAY FALLBACK
-  if (checker.isArrayType(type) && isTypeReference(type)) {
-    const typeArgs = checker.getTypeArguments(type);
-    const itemType = typeArgs[0] ?? checker.getAnyType();
+  if (checker.isArrayType(type)) {
+    if (!isTypeReference(type)) return undefined;
+
+    const typeArgs = checker.getTypeArguments(type) || [];
+    const firstArg = typeArgs[0];
+    const itemType =
+      firstArg ?? (checker.getAnyType ? checker.getAnyType() : type);
 
     return {
       kind: 'array',
@@ -59,6 +72,9 @@ registerReifier((type, checker, next, ctx) => {
         depth: ctx.depth + 1,
         parentKey: `${ctx.parentKey}[]`,
       }),
+      elementShapes: undefined,
+      minLength: 0,
+      hasRest: false,
     };
   }
 

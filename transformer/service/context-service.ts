@@ -86,22 +86,29 @@ class XalorContextService {
 
     session.anchors[anchor] = { keyName, area, filePath };
   }
+  // TODO: OPTMIZE (BREAK ??)
   public deleteFromSessionRegistry(props: TDeleteSessionRegistry) {
     const { filePath, keyName } = props;
     const projectKey = XalorRoutesService.getProjectRelativeKey(filePath);
-
     const session = this.sessionRegistry[projectKey];
+
     if (!session) return;
 
-    // Locate the attached anchor before clearing the key slot
     const meta = session.keys[keyName];
     if (meta) {
       delete session.anchors[meta.anchor];
     }
     delete session.keys[keyName];
 
-    // Self-garbage-collect the file track if no keys remain active
-    if (Object.keys(session.keys).length === 0) {
+    let hasActiveKeys = false;
+    for (const remainingKey in session.keys) {
+      if (Reflect.has(session.keys, remainingKey)) {
+        hasActiveKeys = true;
+        break;
+      }
+    }
+
+    if (!hasActiveKeys) {
       delete this.sessionRegistry[projectKey];
     }
   }

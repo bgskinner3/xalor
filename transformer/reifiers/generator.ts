@@ -10,7 +10,6 @@ import {
   isObjectShape,
   isArrayShape,
   isBrandedShape,
-  isIntersectionShape,
   isUnionShape,
   isReferenceShape,
   mapIterableLazy,
@@ -107,27 +106,23 @@ export function generateShapeAST(
   }
 
   if (isUnionShape(shape)) {
+    // Explicitly seed type parameters to prevent type degradation to unknown
+    const expressionIterator = mapIterableLazy<TSolidShape, Expression>(
+      shape.values,
+      (v) => {
+        return generateShapeAST(f, v);
+      },
+    );
+
     return f.createObjectLiteralExpression([
       f.createPropertyAssignment('kind', f.createStringLiteral('union')),
       f.createPropertyAssignment(
         'values',
-        f.createArrayLiteralExpression([
-          ...mapIterableLazy(shape.values, (v) => generateShapeAST(f, v)),
-        ]),
+        f.createArrayLiteralExpression([...expressionIterator]),
       ),
     ]);
   }
-  if (isIntersectionShape(shape)) {
-    return f.createObjectLiteralExpression([
-      f.createPropertyAssignment('kind', f.createStringLiteral('intersection')),
-      f.createPropertyAssignment(
-        'parts',
-        f.createArrayLiteralExpression(
-          shape.parts.map((p) => generateShapeAST(f, p)),
-        ),
-      ),
-    ]);
-  }
+
   if (isBrandedShape(shape)) {
     return f.createObjectLiteralExpression([
       f.createPropertyAssignment('kind', f.createStringLiteral('branded')),
@@ -165,5 +160,6 @@ export function generateShapeAST(
       f.createPropertyAssignment('name', f.createStringLiteral(shape.name)),
     ]);
   }
+  // TODO: ADD TO ERROR AHNDLER
   throw new Error(`[xalor] Unhandled shape kind: ${_exhaustive.kind}`);
 }

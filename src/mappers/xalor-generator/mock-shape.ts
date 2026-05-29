@@ -1,7 +1,6 @@
 import type { TShapeMockMapperMap } from '../../models/types';
 import { ObjectUtils } from '../../../shared';
 import { generateRandomString } from '../../utils/transformers';
-import { isArray } from '../../../shared';
 import { XalethorVaultKeeper } from '../../xalor-service/vault-keeper';
 import type { TSolidShape } from '../../../shared';
 
@@ -57,26 +56,6 @@ export const MOCK_SHAPE_MATERIALIZER: TShapeMockMapperMap = {
     const randomIndex = Math.floor(Math.random() * shape.values.length);
     const targetBranch = shape.values[randomIndex];
     return targetBranch ? recurse(targetBranch, depth + 1) : undefined;
-  },
-
-  intersection: (shape, depth, recurse) => {
-    let merged: Record<string, unknown> | unknown = undefined;
-
-    for (const part of shape.parts) {
-      const mockedPart = recurse(part, depth);
-      if (mockedPart === null || mockedPart === undefined) continue;
-
-      if (typeof mockedPart === 'object' && !isArray(mockedPart)) {
-        const currentObj = mockedPart as Record<string, unknown>;
-        merged =
-          merged && typeof merged === 'object' && !isArray(merged)
-            ? { ...(merged as Record<string, unknown>), ...currentObj }
-            : currentObj;
-      } else {
-        merged = mockedPart;
-      }
-    }
-    return merged;
   },
 
   reference: (shape, depth, recurse) => {

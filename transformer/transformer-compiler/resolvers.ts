@@ -113,18 +113,19 @@ export function handleEmptyFileWipeout(
         `🧹 [Xalor Clear Loop] Empty file wipeout triggered for: ${sourceFile.fileName}`,
       );
 
-      Object.keys(historicalSession.keys).forEach((staleKey) => {
-        const payload = xalorCentralContext.globalKeyRegistry.get(staleKey);
-        executeVaultMutation({
-          mode: 'delete',
-          keyName: staleKey,
-          payload,
-        });
-      });
+      for (const staleKey in historicalSession.keys) {
+        if (Reflect.has(historicalSession.keys, staleKey)) {
+          const payload = xalorCentralContext.globalKeyRegistry.get(staleKey);
+
+          executeVaultMutation({
+            mode: 'delete',
+            keyName: staleKey,
+            payload,
+          });
+        }
+      }
     }
-
-    return true; // Match found! Signal to halt further visitor processing
+    return true;
   }
-
-  return false; // File contains active text data, proceed as normal
+  return false;
 }

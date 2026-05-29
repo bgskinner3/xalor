@@ -8,8 +8,7 @@ declare global {
   class TransformerDocs {
     static example(): void;
     static example(): void;
-    static example(): void;
-    static example(): void;
+
     /**
      * BOOT_MODE_STRATEGY_MAPPER
      *

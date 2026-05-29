@@ -9,7 +9,6 @@
  */
 
 import './branded'; // Check for __brand first
-import './intersections'; // Check for & (Generic)
 import './unions'; // Check for |
 import './array'; // Check for []
 import './objects'; // Check for {} / interfaces

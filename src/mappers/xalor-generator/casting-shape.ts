@@ -117,25 +117,6 @@ export const CAST_SHAPE_MAPPER: TShapeCastMapperMapper = {
 
     return data;
   },
-  intersection: (shape, data, depth, recurse) => {
-    let merged: Record<string, unknown> | unknown = undefined;
-
-    for (const part of shape.parts) {
-      const castedPart = recurse(part, data, depth);
-      if (isUndefined(castedPart) || isNull(castedPart)) continue;
-
-      if (isObject(castedPart) && !isArray(castedPart)) {
-        const shouldMerge = merged && isObject(merged) && !isArray(merged);
-        const currentObj: Record<string, unknown> = { ...castedPart };
-        merged = shouldMerge
-          ? { ...(merged as Record<string, unknown>), ...currentObj }
-          : currentObj;
-      } else {
-        merged = castedPart;
-      }
-    }
-    return merged;
-  },
   reference: (shape, data, depth, recurse) => {
     // Resolve dynamic content-addressable storage layout links inside the global vault pointer mapping
     const resolvedBlueprint =

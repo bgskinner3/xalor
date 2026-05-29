@@ -95,7 +95,15 @@ export type TTypeResolutionParams = {
   readonly sourceFile: SourceFile;
   readonly checker: TypeChecker;
 };
-
+/**
+ * 🪐 TVERIFYANDVALIDATETYPE PARAMETER MATRIX
+ * Strict, read-only object contract bundling everything needed by the validation radar.
+ */
+export type TVerifyAndValidateType = {
+  readonly shapeType: Type;
+  readonly checker: TypeChecker;
+  readonly keyName: string;
+};
 export type TMineFilePass = {
   readonly program: Program;
   readonly context: TransformationContext;

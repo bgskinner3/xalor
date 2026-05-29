@@ -57,6 +57,7 @@
     "bgskinner",
     "debouncer",
     "Materializer",
+    "Xalethor",
     "xalor"
   ],
   "eslint.enable": true,

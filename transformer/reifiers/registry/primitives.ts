@@ -2,7 +2,17 @@
 import { TypeFlags } from 'typescript';
 import { isStringLiteralType, isNumberLiteralType } from '../../utils';
 import { registerReifier, maxStringLength } from './core';
-import { isKeyOfArray } from '../../../shared';
+import { isKeyOfArray, isString } from '../../../shared';
+
+// TODO: ADD TO CONST FILE
+const PRIMITIVE_PLATFORM_SCALARS = [
+  'Date',
+  'RegExp',
+  'Map',
+  'Set',
+  'Promise',
+  'URL',
+] as const;
 
 /**
  * LEAF NODE REIFIER
@@ -15,49 +25,56 @@ import { isKeyOfArray } from '../../../shared';
  * are registered before base types to ensure specificity.
  */
 registerReifier((type, _checker, _next, _ctx) => {
-  if (isStringLiteralType(type)) return { kind: 'literal', value: type.value };
-  if (isNumberLiteralType(type)) return { kind: 'literal', value: type.value };
-
   const flags = type.getFlags();
 
+  // 🪐 1. HARDCODED VALUE LITERAL SHAPES (Aligned with Phase 1 strictly)
+  if (isStringLiteralType(type)) {
+    return { kind: 'literal', type: 'string', value: type.value };
+  }
+  if (isNumberLiteralType(type)) {
+    return { kind: 'literal', type: 'number', value: type.value };
+  }
   if (flags & TypeFlags.BooleanLiteral) {
     const intrinsicName = Reflect.get(type, 'intrinsicName');
-    if (typeof intrinsicName === 'string') {
-      return { kind: 'literal', value: intrinsicName === 'true' };
+    if (isString(intrinsicName)) {
+      return {
+        kind: 'literal',
+        type: 'boolean',
+        value: intrinsicName === 'true',
+      };
     }
   }
 
-  if (flags & TypeFlags.Any) {
-    return { kind: 'primitive', type: 'any' };
-  }
-
-  if (flags & TypeFlags.Unknown) {
-    return { kind: 'primitive', type: 'unknown' };
-  }
-
-  if (flags & TypeFlags.String) {
-    return { kind: 'primitive', type: 'string', maxLength: maxStringLength };
-  }
-
+  // 🪐 2. BASE SCALAR PRIMITIVE KEYWORD SHAPES
+  /* prettier-ignore */
+  if (flags & TypeFlags.String) return { kind: 'primitive', type: 'string', maxLength: maxStringLength };
+  /* prettier-ignore */
   if (flags & TypeFlags.Number) return { kind: 'primitive', type: 'number' };
+  /* prettier-ignore */
   if (flags & TypeFlags.Boolean) return { kind: 'primitive', type: 'boolean' };
+  /* prettier-ignore */
   if (flags & TypeFlags.BigInt) return { kind: 'primitive', type: 'bigint' };
-
+  /* prettier-ignore */
   if (flags & TypeFlags.Null) return { kind: 'primitive', type: 'null' };
-  if (flags & TypeFlags.Undefined)
-    return { kind: 'primitive', type: 'undefined' };
+  /* prettier-ignore */
+  if (flags & TypeFlags.Undefined) return { kind: 'primitive', type: 'undefined' };
+  /* prettier-ignore */
+  if (flags & TypeFlags.Void) return { kind: 'primitive', type: 'void' };
+  /* prettier-ignore */
+  if (flags & TypeFlags.Any) return { kind: 'primitive', type: 'any' };
+  /* prettier-ignore */
+  if (flags & TypeFlags.Unknown) return { kind: 'primitive', type: 'unknown' };
+  /* prettier-ignore */
+  if (flags & TypeFlags.Never) return { kind: 'primitive', type: 'never' };
 
-  const symbol = type.getSymbol() || type.aliasSymbol;
-  if (symbol) {
-    const symbolName = symbol.getName();
-    /* prettier-ignore */ const platformScalars = ['Date', 'RegExp', 'Map', 'Set', 'Promise', 'URL'] as const;
+  // 🪐 3. OPAQUE GLOBAL PROTOTYPE EXCLUSIONS (Zero allocation checking)
+  const symbolName = (type.getSymbol() ?? type.aliasSymbol)?.getName();
 
-    // Create an array slice to feed the type guard
-    const scalarList = Array.from(platformScalars);
-
-    if (isKeyOfArray(scalarList)(symbolName)) {
-      return { kind: 'primitive', type: symbolName };
-    }
+  if (isKeyOfArray(PRIMITIVE_PLATFORM_SCALARS)(symbolName)) {
+    return {
+      kind: 'primitive',
+      type: symbolName,
+    };
   }
 
   return undefined;

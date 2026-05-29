@@ -10,6 +10,7 @@ import {
   CLI_COMMAND_MODES,
   CUD_EXECUTION_MODES,
   TRANSFORMER_EXECUTE_MODES,
+  XALOR_COMPLIANCE_RULE_KEYS,
 } from '../constants';
 
 /**
@@ -115,3 +116,9 @@ export type TCudExecutionMode = keyof typeof CUD_EXECUTION_MODES;
  * Strict union type matching only: 'watch' | 'compile' | 'vacuum'
  */
 export type TTransformerExecuteMode = keyof typeof TRANSFORMER_EXECUTE_MODES;
+/**
+ * TXALORCOMPLIANCERULEKEYS
+ * The refined literal string union type matching your active build-time error categories.
+ */
+export type TXalorComplianceRuleKeys =
+  (typeof XALOR_COMPLIANCE_RULE_KEYS)[number];

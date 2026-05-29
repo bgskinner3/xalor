@@ -39,26 +39,6 @@ export const DEFAULT_SHAPE_MATERIALIZER: TShapeDefaultMaterializeMap = {
     return firstBranch ? recurse(firstBranch, depth + 1) : undefined;
   },
 
-  intersection: (shape, depth, recurse) => {
-    let merged: Record<string, unknown> | unknown = undefined;
-
-    for (const part of shape.parts) {
-      const defaultPart = recurse(part, depth);
-      if (defaultPart === null || defaultPart === undefined) continue;
-
-      if (typeof defaultPart === 'object' && !Array.isArray(defaultPart)) {
-        const currentObj = defaultPart as Record<string, unknown>;
-        merged =
-          merged && typeof merged === 'object' && !Array.isArray(merged)
-            ? { ...(merged as Record<string, unknown>), ...currentObj }
-            : currentObj;
-      } else {
-        merged = defaultPart;
-      }
-    }
-    return merged;
-  },
-
   reference: (shape, depth, recurse) => {
     const subShape = XalethorVaultKeeper.peek('blueprint', shape.name);
     return subShape ? recurse(subShape, depth + 1) : undefined;

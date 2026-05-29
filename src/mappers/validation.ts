@@ -1,7 +1,6 @@
 import {
   validateArray,
   validateReference,
-  validateIntersection,
   validateUnion,
   validateObject,
   validatePrimitive,
@@ -14,7 +13,6 @@ import {
   isObjectShape,
   isArrayShape,
   isBrandedShape,
-  isIntersectionShape,
   isUnionShape,
   isReferenceShape,
 } from '../../shared';
@@ -53,11 +51,6 @@ export const SHAPE_VALIDATION_MAPPER: TValidatorMapper = {
     if (!isArrayShape(shape)) return false;
     return validateArray(data, shape, ctx);
   },
-  intersection: (data, shape, ctx) => {
-    if (!isIntersectionShape(shape)) return false;
-    return validateIntersection(data, shape, ctx);
-  },
-
   reference: (data, shape, ctx) => {
     if (!isReferenceShape(shape)) return false;
     return validateReference(data, shape, ctx);

@@ -6,11 +6,37 @@ import {
   extractAndNormalizeShape,
   isReferenceShape,
   logDev,
+  computeStringHash,
 } from '../../shared';
-import type { TVaultSyncPayload, TTripleKV } from '../../shared/types';
+import type {
+  TVaultSyncPayload,
+  TTripleKV,
+  TSolidShape,
+} from '../../shared/types';
 import { XalorRoutesService, xalorCentralContext } from '../service';
-
-function buildSnapshotFromRegistry(
+/**
+ * RECONSTRUCT ARCHIVE SNAPSHOT (The Snapshot Master Builder)
+ *
+ * ROLE:
+ * Master orchestration block coordinating the final memory-to-disk cache serialization.
+ * It translates long-lived volatile in-memory registry vectors into a rigid, portable,
+ * normalized JSON data layout (`TTripleKV`) to write a canonical ledger file.
+ *
+ * STRATEGY:
+ * Sweeps through your live process state ledger maps and converts raw layout schemas
+ * into content-addressed references. For simple interfaces, it extracts nested parts natively.
+ * For unrolled complex generic models or distributive unions, it passes shapes to an isolated
+ * interning engine to build deterministic `sh_` hash pointers. It standardizes multi-OS file
+ * markers to forward slashes and formats clean, coordinate metadata mappings point-free,
+ * switchlessly neutralizing loop churn and data leakages.
+ *
+ * WHY:
+ * Satisfies Commandment III (Runtime Consumption Rule) and Commandment V (Graph Integrity).
+ * It strips all complex compiler abstractions away, exporting your type graph down to a dead-flat
+ * dictionary layout. This allows the lightweight runtime validation engine to execute ultra-fast
+ * single-pass linear verification routines with absolute zero computational overhead.
+ */
+export function buildSnapshotFromRegistry(
   rootDir: string,
   registry: Map<string, TVaultSyncPayload>,
 ): TTripleKV {
@@ -23,22 +49,54 @@ function buildSnapshotFromRegistry(
   } satisfies TTripleKV;
 
   registry.forEach((meta, key) => {
-    /* prettier-ignore */
     const { shape, area, anchor, symbolName, typeName } = meta;
-    /* prettier-ignore */
-    const filePath = path.relative(rootDir, meta.filePath).split(path.sep).join('/');
-    /* prettier-ignore */
-    const pointerReference = extractAndNormalizeShape(shape, snapshot.blueprints);
-    /* prettier-ignore */
-    const reference = isReferenceShape(pointerReference) ? pointerReference.name : key;
+    const filePath = path
+      .relative(rootDir, meta.filePath)
+      .split(path.sep)
+      .join('/');
 
-    snapshot.references[key] = reference;
+    const pointerReference = extractAndNormalizeShape(
+      shape,
+      snapshot.blueprints,
+    );
+
+    const targetReferenceString = isReferenceShape(pointerReference)
+      ? pointerReference.name
+      : internAndRegisterShape(shape, snapshot.blueprints);
+
+    snapshot.references[key] = targetReferenceString;
     snapshot.manifest[key] = { area, filePath, anchor };
     snapshot.registry[key] = { symbolName, typeName };
   });
 
   return snapshot;
 }
+/**
+ * internAndRegisterShape
+ * THE BLUCPRINT INTERNING MACHINE
+ *
+ * ROLE:
+ * Generates a deterministic content-addressed identifier token for a raw
+ * structural shape layout and caches it securely in the blueprints collection vault.
+ *
+ * WHY:
+ * Satisfies Commandment VIII (Internal Efficiency). By operating as a pure,
+ * stateless function, it eliminates the heap closure allocation costs of inline
+ * IIFEs during intensive development watch-mode compilation passes.
+ */
+export function internAndRegisterShape(
+  shape: TSolidShape,
+  blueprints: Record<string, TSolidShape>,
+): string {
+  const serializedString = JSON.stringify(shape);
+
+  const uniqueStructuralHash = computeStringHash(serializedString);
+
+  blueprints[uniqueStructuralHash] = shape;
+
+  return uniqueStructuralHash;
+}
+
 /**
  * THE ATOMIC CHANGE SHIELD
  * Compares incoming bytes against current disk storage to intercept redundant mutations.
@@ -83,6 +141,7 @@ export async function serializeAndFlushVault(rootDir: string): Promise<void> {
       },
     );
   } catch (error) {
+    // TODO: ADD TO TRANSFORMER ERROR HANDLER
     const errorMsg =
       error instanceof Error
         ? error.message

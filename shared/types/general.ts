@@ -14,7 +14,6 @@ import type { TSolidShapeKinds } from './const-types';
 /* prettier-ignore */ export type TSolidObjectShape    = Extract<TSolidShape, { kind: 'object' }>;
 /* prettier-ignore */ export type TSolidArrayShape     = Extract<TSolidShape, { kind: 'array' }>;
 /* prettier-ignore */ export type TSolidBrandedShape   = Extract<TSolidShape, { kind: 'branded' }>;
-/* prettier-ignore */ export type TSolidIntersectionShape = Extract<TSolidShape, { kind: 'intersection' }>;
 /* prettier-ignore */ export type TSolidReferenceShape = Extract<TSolidShape, { kind: 'reference' }>;
 
 /**

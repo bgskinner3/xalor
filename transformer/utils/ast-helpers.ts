@@ -1,3 +1,4 @@
+// transformer/utils/ast-helpers.ts
 import { SENTRY_TRIGGER_NAMES, isKeyOfArray } from '../../shared';
 import type { TSentryTriggerName } from '../../shared';
 import {

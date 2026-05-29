@@ -71,11 +71,6 @@ export const EXTRACT_SHAPE_NORMALIZERS: TShapeNormalizerMapper = {
     values: shape.values.map((v) => recurse(v, flatPool)),
   }),
 
-  intersection: (shape, flatPool, recurse) => ({
-    ...shape,
-    parts: shape.parts.map((p) => recurse(p, flatPool)),
-  }),
-
   branded: (shape, flatPool, recurse) => ({
     ...shape,
     base: recurse(shape.base, flatPool),
@@ -165,11 +160,6 @@ export const BUILD_SHAPE_INFLATORS: TShapeInflatorMapper = {
   union: (shape, blueprintsPool, recurse, _seen) => ({
     ...shape,
     values: shape.values.map((v) => recurse(v, blueprintsPool)),
-  }),
-
-  intersection: (shape, blueprintsPool, recurse, _seen) => ({
-    ...shape,
-    parts: shape.parts.map((p) => recurse(p, blueprintsPool)),
   }),
 
   branded: (shape, blueprintsPool, recurse, _seen) => ({

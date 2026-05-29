@@ -5,7 +5,6 @@ import type {
   TValidationContext,
   TSolidObjectRawShape,
   TSolidShape,
-  TSolidIntersectionShape,
   TSolidReferenceShape,
   TSolidLiteralShape,
   TSolidPrimitiveShape,
@@ -23,7 +22,7 @@ import {
   isBoolean,
   isBigInt,
 } from '../../shared';
-import { yieldEntries, yieldFiltered } from '../../shared';
+import { yieldEntries } from '../../shared';
 import { XalethorService } from '../xalor-service';
 import { PROTO_EXPLOIT_KEYS } from '../models/constants';
 
@@ -154,22 +153,7 @@ export function validateUnion(
   }
   return reportError(ctx, shape, data);
 }
-export function validateIntersection(
-  data: unknown,
-  shape: TSolidIntersectionShape,
-  ctx: TValidationContext,
-): boolean {
-  const parts = yieldFiltered(
-    shape.parts,
-    (_part): _part is TSolidShape => true,
-  );
-  for (const part of parts) {
-    if (!validateShape(data, part, ctx)) {
-      return false;
-    }
-  }
-  return true;
-}
+
 /**
  * 💎 Ambient Database Bridge
  * Handles "Solid" type resolution via the Global Vault.

@@ -2,7 +2,6 @@ import type {
   TUniversalTransformMapper,
   TShapeFlattenMapper,
 } from '../../models/types';
-// import { isUndefined } from '../../../shared';
 import { XalethorVaultKeeper } from '../../xalor-service/vault-keeper';
 import { validateShape, createInitialContext } from '../../validation';
 import { transformerMapperObject } from './mapper-object';
@@ -56,17 +55,6 @@ export const TRANSFORM_SHAPE_MAPPER: TUniversalTransformMapper = {
       : null;
   },
 
-  intersection: (shape, data, dependency, depth, recurse) => {
-    let merged = {};
-    for (const part of shape.parts) {
-      const transformedPart = recurse(data, part, dependency, depth);
-      if (transformedPart && typeof transformedPart === 'object') {
-        merged = { ...merged, ...transformedPart };
-      }
-    }
-    return merged;
-  },
-
   reference: (shape, data, dependency, depth, recurse) => {
     const subShape = XalethorVaultKeeper.peek('blueprint', shape.name);
     return subShape ? recurse(data, subShape, dependency, depth + 1) : null;
@@ -85,38 +73,26 @@ export const TRANSFORM_SHAPE_MAPPER: TUniversalTransformMapper = {
  * Encapsulates the unique linear state accumulator pattern with zero switch-case nesting blocks.
  */
 export const TRANSFORM_FLATTEN_MAPPER: TShapeFlattenMapper = {
-  // primitive: (shape, data, accumulator, currentPath) => {
-  //   if (data === undefined || data === null) return;
-
-  //   // Safely rejects malicious type objects when the schema strictly dictates string/number/boolean.
-  //   const actualType = typeof data;
-  //   const expectedType = shape.type;
-
-  //   if (actualType === expectedType) {
-  //     accumulator[currentPath] = data as string | number | boolean;
-  //   }
-  //   // Toxic type mismatches are cleanly ignored and pruned from the flat dictionary output natively!
-  // },
   primitive: (shape, data, accumulator, currentPath) => {
     if (data === undefined) return;
 
-    // ✔️ FIX A: Explicit null value primitives pass through cleanly to the dictionary map layout!
     if (data === null) {
       accumulator[currentPath] = null;
       return;
     }
 
-    // Verify type safety matching rules for other runtime values
     const actualType = typeof data;
     const expectedType = shape.type;
 
     if (actualType === expectedType) {
+      // TODO: FIX TYPE
       accumulator[currentPath] = data as string | number | boolean;
     }
   },
 
   literal: (shape, data, accumulator, currentPath) => {
     if (data === shape.value) {
+      // TODO: FIX TYPE
       accumulator[currentPath] = data as string | number | boolean;
     }
   },
@@ -156,12 +132,6 @@ export const TRANSFORM_FLATTEN_MAPPER: TShapeFlattenMapper = {
     
     if (matchingBranch) {
        /* prettier-ignore */ recurse(val, matchingBranch, accumulator, currentPath, depth, seenObjectsMap);
-    }
-  },
-
-  /* prettier-ignore */ intersection: (shape, val, accumulator, currentPath, depth, seenObjectsMap, recurse) => {
-    for (const part of shape.parts) {
-       /* prettier-ignore */ recurse(val, part, accumulator, currentPath, depth, seenObjectsMap);
     }
   },
 

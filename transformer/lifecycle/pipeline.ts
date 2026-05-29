@@ -20,7 +20,7 @@ export function runMiningPass(
     context,
     sourceFile,
   });
-
+  // TODO: REMOVE AS
   return visitNode(sourceFile, visitor) as ts.SourceFile;
 }
 

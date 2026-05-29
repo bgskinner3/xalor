@@ -25,7 +25,6 @@ import {
 /* prettier-ignore */ export const isObjectShape = (s: TSolidShape): s is Extract<TSolidShape, { kind: 'object' }> => s.kind === 'object';
 /* prettier-ignore */ export const isArrayShape = (s: TSolidShape): s is Extract<TSolidShape, { kind: 'array' }> => s.kind === 'array';
 /* prettier-ignore */ export const isBrandedShape = (s: TSolidShape): s is Extract<TSolidShape, { kind: 'branded' }> => s.kind === 'branded';
-/* prettier-ignore */ export const isIntersectionShape = (s: TSolidShape): s is Extract<TSolidShape, { kind: 'intersection' }> => s.kind === 'intersection';
 /* prettier-ignore */ export const isReferenceShape = (s: TSolidShape): s is Extract<TSolidShape, { kind: 'reference' }> => s.kind === 'reference';
 
 /**
