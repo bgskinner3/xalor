@@ -52,7 +52,7 @@ export function isRegistryModified({
 
 /**
  * isKeyNameModified
- * 🔑 ANCHOR SHIELD: UNIQUE KEY MATCH ROUTINE
+ * ANCHOR SHIELD: UNIQUE KEY MATCH ROUTINE
  *
  * ROLE:
  * Evaluates whether an incoming key identifier name differs from its historical target.

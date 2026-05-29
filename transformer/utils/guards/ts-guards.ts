@@ -73,7 +73,7 @@ export function isTypeReference(type: Type): type is TypeReference {
   return false;
 }
 /**
- * 🛡️ IS TUPLE TYPE TYPE GUARD
+ * IS TUPLE TYPE TYPE GUARD
  * Probes the internal declaration target property to safely isolate a ts.TupleType.
  */
 export function isTupleType(target: ts.ObjectType): target is ts.TupleType {

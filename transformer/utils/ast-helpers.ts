@@ -55,7 +55,7 @@ export function getAPIName(
 }
 /**
  * getFormattedPosition
- * 🛰️ TOOLING GEAR: CODE POSITION FORMATTER
+ * TOOLING GEAR: CODE POSITION FORMATTER
  *
  * ROLE:
  * Converts a raw TypeScript AST position index into a human-readable

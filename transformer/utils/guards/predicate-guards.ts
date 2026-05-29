@@ -24,7 +24,7 @@ import type { TransformationContext } from 'typescript';
 // ========================================================================
 
 /**
- * 🛡️ IS REGISTRATION TARGET TYPE GUARD
+ * IS REGISTRATION TARGET TYPE GUARD
  * Verifies if an extracted target payload belongs to a type-producing registration node.
  */
 export function isRegisterTarget(
