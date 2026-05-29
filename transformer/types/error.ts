@@ -54,7 +54,8 @@ export type TCompilerAnomalyKey =
   | 'UNKNOWN_API_TRIGGER'
   | 'COLD_START_INFRASTRUCTURE_FAULT'
   | 'TEMPLATE_SEED_FAULT'
-  | 'GENESIS_STREAM_FAULT';
+  | 'GENESIS_STREAM_FAULT'
+  | 'REGISTRATION_REJECTED_BREACH';
 
 export type TDiagnosticFallbackConfig = {
   readonly rule: string;

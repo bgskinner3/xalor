@@ -63,6 +63,13 @@ export const COMPILER_DIAGNOSTIC_FALLBACKS: TCompilerDiagnosticMapper = {
     messageTemplate: (msg) =>
       `Safe evacuation triggered on broken snapshot data string stream loop.\n🚨 Message: ${msg ?? 'Stream read interruption.'}`,
   },
+  REGISTRATION_REJECTED_BREACH: {
+    rule: 'invalid_type_contract',
+    messageTemplate: (details) =>
+      `Xalor Ingestion Filter Gateway explicitly rejected this type registration assignment!\n` +
+      `Reason: ${details ?? 'Encountered an un-resolvable, volatile, or non-serializable type contract.'}\n` +
+      `Action: Dismissed registration. Convert your data model into a clean, explicit primitive DTO.`,
+  },
 } satisfies TCompilerDiagnosticMapper;
 
 // ================================================================================
