@@ -2,6 +2,8 @@
 import type { Type, TypeChecker } from 'typescript';
 import { TypeFlags } from 'typescript';
 import type { TXalorTypeGuardFailure } from '../types';
+import { TYPE_RESOLVER_RULE_MAPPER } from '../constants';
+import { isTypeRecursive } from './sentry-layer';
 
 /**
  * VERIFY TYPE RESOLVABILITY (The System Build-Time Compatibility Radar)
@@ -81,20 +83,20 @@ export function verifyTypeResolvability(
   //  1: Catch Abstract Unbound Generics (Type Parameters)
   if ((flags & TypeFlags.TypeParameter) !== 0) {
     return {
-      rule: 'unbound_generic',
-      message:
-        `Target key '${keyName}' is bound to an abstract uninstantiated generic variable.\n` +
-        `Action: You must explicitly pass concrete parameters into your utility type definitions at the registration call-site.`,
+      /* prettier-ignore */
+      rule: TYPE_RESOLVER_RULE_MAPPER.UNBOUND_GENERIC_PARAMETER.rule,
+      /* prettier-ignore */
+      message: TYPE_RESOLVER_RULE_MAPPER.UNBOUND_GENERIC_PARAMETER.message(keyName),
     };
   }
 
   //  2: Catch Unresolved Deferred Conditional Equations
   if ((flags & TypeFlags.Conditional) !== 0) {
     return {
-      rule: 'unbound_generic',
-      message:
-        `Target key '${keyName}' contains an unresolved conditional type equation branch.\n` +
-        `Action: The generic formula must be fully evaluated with concrete types at the registration call-site.`,
+      /* prettier-ignore */
+      rule: TYPE_RESOLVER_RULE_MAPPER.UNBOUND_GENERIC_CONDITIONAL.rule,
+      /* prettier-ignore */
+      message: TYPE_RESOLVER_RULE_MAPPER.UNBOUND_GENERIC_CONDITIONAL.message(keyName),
     };
   }
 
@@ -103,18 +105,18 @@ export function verifyTypeResolvability(
     const symbol = type.getSymbol();
     if (!symbol) {
       return {
-        rule: 'catastrophic_compiler_error',
-        message:
-          `Target type for key '${keyName}' points to a broken reference that cannot be located by the compiler.\n` +
-          `Action: Check for missing file imports, syntax errors, or broken type definitions preceding this call site.`,
+        /* prettier-ignore */
+        rule: TYPE_RESOLVER_RULE_MAPPER.CATASTROPHIC_COMPILER_ERROR.rule,
+        /* prettier-ignore */
+        message: TYPE_RESOLVER_RULE_MAPPER.CATASTROPHIC_COMPILER_ERROR.message(keyName),
       };
     }
     if (symbol.getName() !== 'any') {
       return {
-        rule: 'computational_collapse',
-        message:
-          `Target type equation for key '${keyName}' failed to resolve and collapsed into a blank 'any' node.\n` +
-          `Reason: This indicates infinite recursion traps or breaching TypeScript's structural compilation depth limits.`,
+        /* prettier-ignore */
+        rule: TYPE_RESOLVER_RULE_MAPPER.COMPUTATIONAL_COLLAPSE_ANY_NODE.rule,
+        /* prettier-ignore */
+        message: TYPE_RESOLVER_RULE_MAPPER.COMPUTATIONAL_COLLAPSE_ANY_NODE.message(keyName),
       };
     }
   }
@@ -122,10 +124,10 @@ export function verifyTypeResolvability(
   //  4: Catch Root Primitive Contradictions (e.g., string & number)
   if ((flags & TypeFlags.Never) !== 0) {
     return {
-      rule: 'terminal_contradiction',
-      message:
-        `Target key '${keyName}' resolved directly to a terminal 'never' state.\n` +
-        `Reason: This indicates a contradictory root-level intersection (e.g., string & number) which can never hold data.`,
+      /* prettier-ignore */
+      rule: TYPE_RESOLVER_RULE_MAPPER.TERMINAL_CONTRADICTION.rule,
+      /* prettier-ignore */
+      message: TYPE_RESOLVER_RULE_MAPPER.TERMINAL_CONTRADICTION.message(keyName),
     };
   }
 
@@ -138,10 +140,10 @@ export function verifyTypeResolvability(
     (flags & TypeFlags.ESSymbol) !== 0
   ) {
     return {
-      rule: 'unserializable_executable',
-      message:
-        `Target key '${keyName}' contains executable function parameters, class constructors, or unique runtime Symbols.\n` +
-        `Action: Xalor enforces pure data schemas. Remove dynamic methods from your type definitions before registration.`,
+      /* prettier-ignore */
+      rule: TYPE_RESOLVER_RULE_MAPPER.UNSERIALIZABLE_EXECUTABLE.rule,
+      /* prettier-ignore */
+      message: TYPE_RESOLVER_RULE_MAPPER.UNSERIALIZABLE_EXECUTABLE.message(keyName),
     };
   }
 
@@ -149,13 +151,14 @@ export function verifyTypeResolvability(
   if ((flags & TypeFlags.Object) !== 0) {
     if (type.aliasSymbol) {
       const aliasName = type.aliasSymbol.getName();
+      const isRunawayCalculation = isTypeRecursive(type, checker);
       // If the alias name matches your custom infinite loop tester or a known runaway equation
-      if (aliasName === 'TInfiniteLoop' || keyName.includes('CHECK_4')) {
+      if (isRunawayCalculation) {
         return {
-          rule: 'computational_collapse',
-          message:
-            `Target type alias '${aliasName}' for key '${keyName}' contains an un-terminated recursive loop calculation.\n` +
-            `Action: Aborted compilation tracking pass to safeguard call stack integrity frameworks.`,
+          /* prettier-ignore */
+          rule: TYPE_RESOLVER_RULE_MAPPER.COMPUTATIONAL_COLLAPSE_RECURSIVE_LOOP.rule,
+          /* prettier-ignore */
+          message: TYPE_RESOLVER_RULE_MAPPER.COMPUTATIONAL_COLLAPSE_RECURSIVE_LOOP.message(keyName, aliasName),
         };
       }
     }
@@ -165,10 +168,10 @@ export function verifyTypeResolvability(
 
     if (coreProperties.length === 0 && indexInfos.length > 0) {
       return {
-        rule: 'open_index_signature',
-        message:
-          `Target structure for key '${keyName}' utilizes an open-ended index dictionary signature.\n` +
-          `Action: Xalor requires explicit object property layouts. Convert your mapping to an explicit record schema layout.`,
+        /* prettier-ignore */
+        rule: TYPE_RESOLVER_RULE_MAPPER.OPEN_INDEX_SIGNATURE.rule,
+        /* prettier-ignore */
+        message: TYPE_RESOLVER_RULE_MAPPER.OPEN_INDEX_SIGNATURE.message(keyName),
       };
     }
   }

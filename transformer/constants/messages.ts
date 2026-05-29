@@ -1,6 +1,7 @@
 import type {
   TCompilerDiagnosticMapper,
   TCollisionBorderFailureMapper,
+  TTypeResolverRuleMapper,
 } from '../types';
 /**
  * COMPILER_DIAGNOSTIC_FALLBACKS
@@ -103,3 +104,66 @@ export const COLLISION_BORDER_FAILURE_MAPPER: TCollisionBorderFailureMapper = {
       `Action: Xalor requires unique global keys. Change the target literal string key name.`,
   },
 } satisfies TCollisionBorderFailureMapper;
+/**
+ * TYPE_RESOLVER_RULE_MAPPER
+ * 🪐 THE TYPE RESOLVER BOUNDARY EXCEPTION BLUEPRINTS
+ *
+ * ROLE:
+ * A pre-allocated, immutable dictionary map storing structural rule identifiers
+ * and context-aware string template factories used to format terminal compiler errors.
+ * This structure decouples diagnostic text generation from complex loop traversal.
+ */
+export const TYPE_RESOLVER_RULE_MAPPER: TTypeResolverRuleMapper = {
+  UNBOUND_GENERIC_PARAMETER: {
+    rule: 'unbound_generic',
+    message: (keyName: string) =>
+      `Target key '${keyName}' is bound to an abstract uninstantiated generic variable.\n` +
+      `Action: You must explicitly pass concrete parameters into your utility type definitions at the registration call-site.`,
+  },
+  UNBOUND_GENERIC_CONDITIONAL: {
+    rule: 'unbound_generic',
+    message: (keyName: string) =>
+      `Target key '${keyName}' contains an unresolved conditional type equation branch.\n` +
+      `Action: The generic formula must be fully evaluated with concrete types at the registration call-site.`,
+  },
+  CATASTROPHIC_COMPILER_ERROR: {
+    rule: 'catastrophic_compiler_error',
+    message: (keyName: string) =>
+      `Target type for key '${keyName}' points to a broken reference that cannot be located by the compiler.\n` +
+      `Action: Check for missing file imports, syntax errors, or broken type definitions preceding this call site.`,
+  },
+  COMPUTATIONAL_COLLAPSE_ANY_NODE: {
+    rule: 'computational_collapse',
+    message: (keyName: string) =>
+      `Target type equation for key '${keyName}' failed to resolve and collapsed into a blank 'any' node.\n` +
+      `Reason: This indicates infinite recursion traps or breaching TypeScript's structural compilation depth limits.`,
+  },
+  COMPUTATIONAL_COLLAPSE_RECURSIVE_LOOP: {
+    rule: 'computational_collapse',
+    message: (keyName: string, aliasName?: string) =>
+      `Target type alias '${aliasName}' for key '${keyName}' contains an un-terminated recursive loop calculation.\n` +
+      `Action: Aborted compilation tracking pass to safeguard call stack integrity frameworks.`,
+  },
+  TERMINAL_CONTRADICTION: {
+    rule: 'terminal_contradiction',
+    message: (keyName: string) =>
+      `Target key '${keyName}' resolved directly to a terminal 'never' state.\n` +
+      `Reason: This indicates a contradictory root-level intersection (e.g., string & number) which can never hold data.`,
+  },
+
+  // Unique Rule String: 'unserializable_executable'
+  UNSERIALIZABLE_EXECUTABLE: {
+    rule: 'unserializable_executable',
+    message: (keyName: string) =>
+      `Target key '${keyName}' contains executable function parameters, class constructors, or unique runtime Symbols.\n` +
+      `Action: Xalor enforces pure data schemas. Remove dynamic methods from your type definitions before registration.`,
+  },
+
+  // Unique Rule String: 'open_index_signature'
+  OPEN_INDEX_SIGNATURE: {
+    rule: 'open_index_signature',
+    message: (keyName: string) =>
+      `Target structure for key '${keyName}' utilizes an open-ended index dictionary signature.\n` +
+      `Action: Xalor requires explicit object property layouts. Convert your mapping to an explicit record schema layout.`,
+  },
+} satisfies TTypeResolverRuleMapper;

@@ -182,3 +182,25 @@ export type TCollisionGuardParams = {
   readonly activeAnchorString: string;
   readonly currentActiveAbsoluteFile: string;
 };
+// ================================================================================
+// ================================================================================
+// TYPE RESOLVER MAPPER
+// ================================================================================
+// ================================================================================
+export type TTypeResolverKeys =
+  | 'OPEN_INDEX_SIGNATURE'
+  | 'UNSERIALIZABLE_EXECUTABLE'
+  | 'TERMINAL_CONTRADICTION'
+  | 'COMPUTATIONAL_COLLAPSE_RECURSIVE_LOOP'
+  | 'COMPUTATIONAL_COLLAPSE_ANY_NODE'
+  | 'CATASTROPHIC_COMPILER_ERROR'
+  | 'UNBOUND_GENERIC_CONDITIONAL'
+  | 'UNBOUND_GENERIC_PARAMETER';
+export type TTypeResolverRuleResult = {
+  readonly rule: TXalorComplianceRuleKeys;
+  readonly message: (keyName: string, aliasName?: string) => string;
+};
+export type TTypeResolverRuleMapper = Record<
+  TTypeResolverKeys,
+  TTypeResolverRuleResult
+>;
