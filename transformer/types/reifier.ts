@@ -24,7 +24,6 @@ export type TReifierContext = {
 export type TReifier = (
   type: Type,
   checker: TypeChecker,
-  // 🛡️ FIX: next must accept the Type AND the Context
   next: (type: Type, ctx: TReifyCTX) => TSolidShape,
   ctx: TReifyCTX,
 ) => TSolidShape | undefined;
@@ -44,9 +43,9 @@ export type TReifier = (
  */
 export type TReifyCTX = {
   depth: number;
-  maxDepth: number; // 🛡️ From our Limits constant
-  fragments: Map<string, TSolidShape>; // 🪣 The "Chop" Bucket
-  parentKey: string; // 🔑 For naming fragments
+  maxDepth: number;
+  fragments: Map<string, TSolidShape>;
+  parentKey: string;
   seen: Set<Type>;
 };
 
@@ -54,4 +53,11 @@ export type TReifyDispatcherBuild = {
   type: Type;
   checker: TypeChecker;
   ctx: TReifyCTX;
+};
+export type TReifyObjectPropertiesConfig = {
+  type: Type;
+  checker: TypeChecker;
+  next: (type: Type, ctx: TReifyCTX) => TSolidShape;
+  ctx: TReifyCTX;
+  maxObjectProperties: number;
 };

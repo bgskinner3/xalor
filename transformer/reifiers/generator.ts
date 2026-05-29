@@ -94,7 +94,6 @@ export function generateShapeAST(
     return f.createObjectLiteralExpression(arrayElements);
   }
 
-  // 2. Handle Literals
   if (isLiteralShape(shape)) {
     let valueNode: Expression;
     /* prettier-ignore */ if (isString(shape.value )) valueNode = f.createStringLiteral(shape.value);
@@ -107,7 +106,6 @@ export function generateShapeAST(
   }
 
   if (isUnionShape(shape)) {
-    // Explicitly seed type parameters to prevent type degradation to unknown
     const expressionIterator = mapIterableLazy<TSolidShape, Expression>(
       shape.values,
       (v) => {
@@ -171,7 +169,8 @@ export function generateShapeAST(
     mode: executeMode,
   });
 
-  // This guarantees complete data integrity, prevents crashing the server, and isolates the error gracefully.
+  // This guarantees complete data integrity, prevents crashing the server,
+  // and isolates the error gracefully.
   return f.createObjectLiteralExpression([
     f.createPropertyAssignment('kind', f.createStringLiteral('primitive')),
     f.createPropertyAssignment('type', f.createStringLiteral('unknown')),

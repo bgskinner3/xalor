@@ -3,16 +3,7 @@ import { TypeFlags } from 'typescript';
 import { isStringLiteralType, isNumberLiteralType } from '../../utils';
 import { registerReifier, maxStringLength } from './core';
 import { isKeyOfArray, isString } from '../../../shared';
-
-// TODO: ADD TO CONST FILE
-const PRIMITIVE_PLATFORM_SCALARS = [
-  'Date',
-  'RegExp',
-  'Map',
-  'Set',
-  'Promise',
-  'URL',
-] as const;
+import { PRIMITIVE_PLATFORM_SCALARS } from '../../constants';
 
 /**
  * LEAF NODE REIFIER
@@ -27,7 +18,6 @@ const PRIMITIVE_PLATFORM_SCALARS = [
 registerReifier((type, _checker, _next, _ctx) => {
   const flags = type.getFlags();
 
-  // 🪐 1. HARDCODED VALUE LITERAL SHAPES (Aligned with Phase 1 strictly)
   if (isStringLiteralType(type)) {
     return { kind: 'literal', type: 'string', value: type.value };
   }
@@ -45,7 +35,6 @@ registerReifier((type, _checker, _next, _ctx) => {
     }
   }
 
-  // 🪐 2. BASE SCALAR PRIMITIVE KEYWORD SHAPES
   /* prettier-ignore */
   if (flags & TypeFlags.String) return { kind: 'primitive', type: 'string', maxLength: maxStringLength };
   /* prettier-ignore */
@@ -67,7 +56,6 @@ registerReifier((type, _checker, _next, _ctx) => {
   /* prettier-ignore */
   if (flags & TypeFlags.Never) return { kind: 'primitive', type: 'never' };
 
-  // 🪐 3. OPAQUE GLOBAL PROTOTYPE EXCLUSIONS (Zero allocation checking)
   const symbolName = (type.getSymbol() ?? type.aliasSymbol)?.getName();
 
   if (isKeyOfArray(PRIMITIVE_PLATFORM_SCALARS)(symbolName)) {

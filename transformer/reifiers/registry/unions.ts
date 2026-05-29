@@ -8,6 +8,7 @@ import {
 import { registerReifier, maxUnionVariants } from './core';
 import type { TSolidShape } from '../../../shared';
 import type { TReifyCTX } from '../../types';
+import { isString, isNumber } from '../../../shared';
 /**
  * Extracts literal values safely without using 'any' or 'as'.
  */
@@ -20,7 +21,6 @@ export function getUnionValues(
     if (isStringLiteralType(t) || isNumberLiteralType(t)) {
       values.push(t.value);
     } else if (t.getFlags() & ts.TypeFlags.BooleanLiteral) {
-      // 🟢 OPTIMIZED: Reflect lookup replacing forbidden 'as' object-casting bypass
       const intrinsicName = Reflect.get(t, 'intrinsicName');
       if (intrinsicName === 'true') values.push(true);
       if (intrinsicName === 'false') values.push(false);
@@ -55,9 +55,8 @@ export function createUnionCheck(
 
   for (let i = 0; i < len; i++) {
     const v = values[i];
-    if (typeof v === 'string') nodes.push(f.createStringLiteral(v));
-    else if (typeof v === 'number')
-      nodes.push(f.createNumericLiteral(String(v)));
+    if (isString(v)) nodes.push(f.createStringLiteral(v));
+    else if (isNumber(v)) nodes.push(f.createNumericLiteral(String(v)));
     else if (v === true) nodes.push(f.createTrue());
     else if (v === false) nodes.push(f.createFalse());
   }
@@ -93,7 +92,6 @@ export function createUnionCheck(
  * logical evaluation engines at runtime, allowing the browser loop to execute
  * blistering, single-pass linear option matching with zero heap mutations.
  */
-// TODO: CLEAN UP OTPMIZE
 registerReifier((type, _checker, next, ctx) => {
   if (!type.isUnion()) return undefined;
 
@@ -107,15 +105,15 @@ registerReifier((type, _checker, next, ctx) => {
     const variant = type.types[i];
     if (!variant) continue;
 
-    const childCtx: TReifyCTX = {
+    const CHILD_CTX: TReifyCTX = {
       depth: ctx.depth + 1,
       maxDepth: ctx.maxDepth,
       fragments: ctx.fragments,
       parentKey: `${ctx.parentKey}_union_${i}`,
       seen: ctx.seen,
-    };
+    } satisfies TReifyCTX;
 
-    variantsArray.push(next(variant, childCtx));
+    variantsArray.push(next(variant, CHILD_CTX));
   }
 
   return {

@@ -79,3 +79,20 @@ export const REPORT_SERVICE_MODE_ROUTER: TModeRouter = {
   watch: 'watch',
   studio: 'watch',
 } satisfies TModeRouter;
+
+/**
+ * OPAQUE STRUCTURAL PRIMITIVE SHIELD (The Platform Scalar Anchor)
+ *
+ * ROLE:
+ * Establishes an immutable, pre-allocated boundary array of native global JavaScript
+ * class prototypes that must be intercepted and treated as flat scalar primitive values.
+ *
+ */
+export const PRIMITIVE_PLATFORM_SCALARS = [
+  'Date',
+  'RegExp',
+  'Map',
+  'Set',
+  'Promise',
+  'URL',
+] as const;

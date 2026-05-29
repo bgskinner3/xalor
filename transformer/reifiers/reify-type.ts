@@ -2,17 +2,9 @@
 import type { Type, TypeChecker } from 'typescript';
 import { REIFIERS } from './registry/index';
 import type { TSolidShape } from '../../shared';
-import { IS_SOLID_CONFIG_ITEMS } from '../../shared';
 import type { TReifyDispatcherBuild, TReifyCTX } from '../types';
 import { internShape } from './interning';
-// TODO: MOVE TO CONST ?
-const DEFAULT_REIFY_CTX: TReifyCTX = {
-  depth: 0,
-  maxDepth: IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth,
-  fragments: new Map(),
-  parentKey: 'root',
-  seen: new Set(),
-} satisfies TReifyCTX;
+import { DEFAULT_REIFY_CTX } from '../constants';
 
 export function reifyType({
   type,

@@ -79,3 +79,17 @@ export function isTypeReference(type: Type): type is TypeReference {
 export function isTupleType(target: ts.ObjectType): target is ts.TupleType {
   return (target.objectFlags & ts.ObjectFlags.Tuple) !== 0;
 }
+
+/**
+ * IS ARRAY TYPE
+ * Narrows a Type to a TypeReference representing an Array without a type checker.
+ */
+export function isArrayType(type: Type): type is TypeReference {
+  if ((type.flags & ts.TypeFlags.Object) === 0) return false;
+
+  if (!isObjectTypeGuard(type)) return false;
+
+  if ((type.objectFlags & ts.ObjectFlags.Reference) === 0) return false;
+
+  return type.getSymbol()?.getName() === 'Array';
+}
