@@ -1,3 +1,4 @@
+// /transformer/miner/mining-target.ts
 import ts from 'typescript';
 import { XALOR_MINING_ROUTER_MAPPER } from '../mappers';
 import { getAPIName } from '../utils';

@@ -1,3 +1,4 @@
+// transformer/lifecycle/pipeline.ts
 import ts from 'typescript';
 import { theMiner } from '../miner';
 import type { TVaultSyncPayload } from '../../shared';

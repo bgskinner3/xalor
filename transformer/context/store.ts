@@ -1,4 +1,4 @@
-// transformer/transformer-compiler/context-generator.ts
+// transformer/context/store.ts
 import type { TVaultSyncPayload } from '../../shared/types';
 import type { TSessionRegistry } from '../types';
 

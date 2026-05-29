@@ -1,4 +1,4 @@
-// transformer/miner/ghost-structures.ts
+// transformer/miner/spatial-identity.ts
 import ts from 'typescript';
 import {
   isTypeReference,

@@ -1,3 +1,4 @@
+// transformer/transformer-compiler/mine-file-pass.ts
 import ts from 'typescript';
 import { runMiningPass, persistenceGate } from '../lifecycle';
 import { shouldProcessFile, handleEmptyFileWipeout } from './resolvers';

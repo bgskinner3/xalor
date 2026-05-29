@@ -1,3 +1,4 @@
+// transformer/lifecycle/persistence-gate.ts
 import type { SourceFile } from 'typescript';
 import * as fs from 'fs';
 import * as path from 'path';

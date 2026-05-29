@@ -1,4 +1,4 @@
-// transformer/context/bootloader.ts
+// transformer/cache-hydration/index.ts
 import * as fs from 'fs';
 import { isString, isVaultSyncPayload } from '../../shared/utils/guards';
 import { processGenesisHydration } from '../../shared';

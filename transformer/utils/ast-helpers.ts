@@ -59,9 +59,9 @@ export function getAPIName(node: CallExpression): TSentryTriggerName {
  * ```ts
  *
  *  const nodeStartPosition = node.getStart(sourceFile);
- *. getFormattedPosition(sourceFile, nodeStartPosition)
-
- 
+ * getFormattedPosition(sourceFile, nodeStartPosition)
+ *
+ *
  * ```
  *
  *
