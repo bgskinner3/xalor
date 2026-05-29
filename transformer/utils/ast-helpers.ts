@@ -30,8 +30,8 @@ export function getAPIName(node: CallExpression): TSentryTriggerName {
   const expression = node.expression;
 
   if (isIdentifier(expression)) {
-    const name = expression.text;
-    if (isKeyOfArray(SENTRY_TRIGGER_NAMES)(name)) return name;
+    const apiName = expression.text;
+    if (isKeyOfArray(SENTRY_TRIGGER_NAMES)(apiName)) return apiName;
   }
 
   if (isPropertyAccessExpression(expression)) {
@@ -39,7 +39,7 @@ export function getAPIName(node: CallExpression): TSentryTriggerName {
     if (isKeyOfArray(SENTRY_TRIGGER_NAMES)(propertyName)) return propertyName;
   }
 
-  throw new Error(`[xalor] Unknown API trigger: ${name}`);
+  throw new Error(`[xalor] Unknown API trigger: ${expression}`);
 }
 /**
  * getFormattedPosition
@@ -60,6 +60,8 @@ export function getAPIName(node: CallExpression): TSentryTriggerName {
  *
  *  const nodeStartPosition = node.getStart(sourceFile);
  *. getFormattedPosition(sourceFile, nodeStartPosition)
+
+ 
  * ```
  *
  *

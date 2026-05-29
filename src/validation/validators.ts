@@ -16,7 +16,6 @@ import {
   isObject,
   isNull,
   isRecord,
-  // isPrimitive,
   isInstanceOf,
   isUndefined,
   isString,
