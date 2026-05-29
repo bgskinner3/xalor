@@ -34,7 +34,7 @@ export function deployBaseline(paths: TXalorResolvedPaths) {
         '[xalor:boot]: Cold-Start Shield deployment exception:, ',
         error,
       );
-      return; // Fail silently to satisfy Genesis Shield rules for read-only cloud runners
+      return;
     }
   }
   // COLD-START SEED PASS: Fall back to templates if the cache file is absent

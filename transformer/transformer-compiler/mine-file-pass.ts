@@ -36,9 +36,9 @@ export function executeFileMiningPass({
     });
   } catch (error) {
     // ====================================================================================
-    // 🪐 SAFE EMERGENCY ESCAPE HANDSHAKE
+    // SAFE EMERGENCY ESCAPE HANDSHAKE
     // ====================================================================================
-    // If the miner chokes on broken, un-parsable user types, capture it gracefully.
+
     const rawMessage =
       error instanceof Error
         ? error.message

@@ -69,7 +69,6 @@ export function persistenceGate({
   const isWatchLoopActive =
     XalorRoutesService.resolveXalorLifecycle().isWatchMode;
 
-  // Watch mode loops must flush on individual saves to bridge instant updates to the IDE
   if (shouldTriggerFlush || isWatchLoopActive) {
     if (!isTestEnvironment) {
       const cacheKeySnapshot = Array.from(globalKeyRegistry.keys());
@@ -93,7 +92,6 @@ export function persistenceGate({
       });
 
       // Commit changes to disk and update intellisense configurations
-      // serializeAndFlushVault(rootDir, globalKeyRegistry);
       serializeAndFlushVault(rootDir).catch((err) => {
         console.error('❌ Asynchronous vault sync failure:', err);
       });

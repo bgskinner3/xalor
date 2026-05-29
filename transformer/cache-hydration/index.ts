@@ -48,9 +48,7 @@ export function hydrateCacheToRegistries(
   try {
     const rawFileBytes = fs.readFileSync(paths.vaultFile, 'utf-8');
 
-    // Execute your custom functional hydration pipeline pass
     processGenesisHydration(rawFileBytes, (metadata) => {
-      // Safely narrow parameter boundaries using your custom user-defined predicates
       if (isVaultSyncPayload(metadata)) {
         globalKeyRegistry.set(metadata.key, metadata);
 

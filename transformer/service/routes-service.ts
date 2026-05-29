@@ -45,7 +45,6 @@ export class XalorRoutesService {
     const isProductionVacuumMode =
       vacuumFlag || (nodeEnv === 'production' && !watchFlag && !compileFlag);
 
-    // Development passes require rich telemetry and IDE store emissions
     const isDevelopmentPass = isWatchMode || isOneShotCompileMode;
 
     return {
