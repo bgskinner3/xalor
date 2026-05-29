@@ -2,7 +2,7 @@ import type { TSolidShape } from '../../shared/types';
 import { EXTRACT_SHAPE_NORMALIZERS, BUILD_SHAPE_INFLATORS } from '../mappers';
 
 /**
- * 🌀 RECURSIVE RE-SHREDDER
+ * RECURSIVE RE-SHREDDER
  *
  * ROLE:
  * Deeply flattens complex nested objects into a content-addressable storage map.
@@ -36,7 +36,7 @@ export function extractAndNormalizeShape(
 }
 
 /**
- * 🚀 RECURSIVE RE-ASSEMBLER
+ * RECURSIVE RE-ASSEMBLER
  *
  * ROLE:
  * Re-inflates serialized reference hash records back into complete nested objects.

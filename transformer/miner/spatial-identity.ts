@@ -17,19 +17,18 @@ import { xalorCentralContext } from '../service';
 
 /**
  * printGhostStructure
- * 🛰️ TOOLING GEAR: GHOST TYPE STRINGIFIE
+ * TOOLING GEAR: GHOST TYPE STRINGIFIE
  *
  * @see {@link TransformerDocs.printGhostStructure}
  */
 export function printGhostStructure(params: TPrintGhostStructure): string {
-  // 🟢 OPTIMIZED: Deconstruct context variables exactly once at the entry boundary gateway
   const { type, checker, node } = params;
   return executeUnrollPass(type, checker, node);
 }
 
 /**
  * executeUnrollPass
- * 🪐 THE STATIC UNROLLING MACHINE
+ * THE STATIC UNROLLING MACHINE
  *
  * ROLE:
  * Pure, stateless execution loop that unwinds shapes recursively on the stack
@@ -43,7 +42,6 @@ function executeUnrollPass(
   if (checker.isArrayType(type) && isTypeReference(type)) {
     const typeArgs = checker.getTypeArguments(type);
 
-    // 🟢 OPTIMIZED: Synchronized logical check to evaluate array existence before probing length
     const itemString =
       typeArgs && typeArgs.length > 0
         ? executeUnrollPass(typeArgs[0], checker, node)
@@ -103,7 +101,6 @@ function executeUnrollPass(
     return `{ ${structuralTokenBuffer.join(' ')} }`;
   }
 
-  // Fallback cleanly to built-in scalar token naming if it's a pure baseline primitive keyword
   return checker.typeToString(type, node, ts.TypeFormatFlags.NoTruncation);
 }
 /**
@@ -116,7 +113,6 @@ export function resolveSpatialAndExportMeta({
   shapeType,
   checker,
 }: TInterfaceOrType) {
-  // Safe position resolution passing sourceFile explicitly to avoid Watch program pointer crashes
   const nodeStartPosition = node.getStart(sourceFile);
 
   const area = getFormattedPosition(sourceFile, nodeStartPosition);
@@ -128,7 +124,6 @@ export function resolveSpatialAndExportMeta({
     const name = symbol.getName();
     const sourceFileSymbol = checker.getSymbolAtLocation(sourceFile);
 
-    // Safely check if the symbol's escaped name is an explicit member of the file's export map drawer
     const isExported = !!sourceFileSymbol?.exports?.has(symbol.escapedName);
     symbolName = isExported ? name : 'unknown';
   }
@@ -140,7 +135,7 @@ export function resolveSpatialAndExportMeta({
 }
 /**
  * anchorSequencerImplementation
- * 🛰️ TOOLING GEAR: SEPARATE SEQUENCE ID GENERATOR
+ * TOOLING GEAR: SEPARATE SEQUENCE ID GENERATOR
  *
  * ROLE:
  * Generates a formatting-proof, index-based string that numbers function calls

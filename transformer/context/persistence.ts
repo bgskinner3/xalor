@@ -2,7 +2,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared/constants';
-import { isReferenceShape, logDev, computeStringHash } from '../../shared';
+import { isReferenceShape, computeStringHash } from '../../shared';
 import type {
   TVaultSyncPayload,
   TTripleKV,
@@ -104,11 +104,11 @@ function shouldWritePayload(
   newJsonString: string,
 ): boolean {
   if (!fs.existsSync(targetVaultFile)) {
-    return true; // File does not exist, mutation is mandatory
+    return true;
   }
 
   const existingDiskBytes = fs.readFileSync(targetVaultFile, 'utf8');
-  return existingDiskBytes !== newJsonString; // Only authorize write if strings differ
+  return existingDiskBytes !== newJsonString;
 }
 /**
  * PURE VAULT SNAPSHOT SERIALIZER
@@ -131,13 +131,6 @@ export async function serializeAndFlushVault(rootDir: string): Promise<void> {
     if (!shouldWritePayload(paths.vaultFile, newJsonPayload)) return;
 
     await fs.promises.writeFile(paths.vaultFile, newJsonPayload, 'utf-8');
-
-    logDev(
-      `[xalor:cache-shield] 🏁 Storage sealed asynchronously at: ${paths.cacheDir}`,
-      {
-        service: 'vault-archive.ts-persist',
-      },
-    );
   } catch (error: unknown) {
     const mode = XalorRoutesService.xalorCLIMode();
     TransformerReportService.logAnomaly({

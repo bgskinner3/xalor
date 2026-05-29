@@ -1,7 +1,7 @@
 import type { TCompilerDiagnosticMapper } from '../types';
 /**
  * COMPILER_DIAGNOSTIC_FALLBACKS
- * 🪐 THE CANONICAL FALLBACK TEMPLATE REGISTRY
+ * THE CANONICAL FALLBACK TEMPLATE REGISTRY
  *
  * ROLE:
  * A pre-allocated, immutable dictionary dictionary map storing default rule tokens

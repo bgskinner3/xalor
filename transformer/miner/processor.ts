@@ -29,19 +29,23 @@ export function solidVisitorProcessor({
 
     const areaString = getFormattedPosition(sourceFile, nodeStartPosition);
 
-    /* prettier-ignore */ finalArgs = PROCESSOR_REWRITE_MAPPER.registerXalor( target, node, factory, areaString, shape,);
+    /* prettier-ignore */
+    finalArgs = PROCESSOR_REWRITE_MAPPER.registerXalor( target, node, factory, areaString, shape,);
   }
 
   if (isGenerateTarget(target)) {
-    /* prettier-ignore */ finalArgs = PROCESSOR_REWRITE_MAPPER.generateXalor(target, node, factory);
+    /* prettier-ignore */
+    finalArgs = PROCESSOR_REWRITE_MAPPER.generateXalor(target, node, factory);
   }
 
   if (isValidateTarget(target)) {
-    /* prettier-ignore */ finalArgs = PROCESSOR_REWRITE_MAPPER.validateXalor(target, node, factory);
+    /* prettier-ignore */
+    finalArgs = PROCESSOR_REWRITE_MAPPER.validateXalor(target, node, factory);
   }
 
   if (isTransformerTarget(target)) {
-    /* prettier-ignore */ finalArgs = PROCESSOR_REWRITE_MAPPER.transformXalor(target, node, factory);
+    /* prettier-ignore */
+    finalArgs = PROCESSOR_REWRITE_MAPPER.transformXalor(target, node, factory);
   }
 
   return factory.updateCallExpression(

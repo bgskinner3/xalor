@@ -78,7 +78,7 @@ export function verifyTypeResolvability(
 ): TXalorTypeGuardFailure | undefined {
   const flags = type.getFlags();
 
-  // 🛡️ CHECK 1: Catch Abstract Unbound Generics (Type Parameters)
+  //  1: Catch Abstract Unbound Generics (Type Parameters)
   if ((flags & TypeFlags.TypeParameter) !== 0) {
     return {
       rule: 'unbound_generic',
@@ -88,7 +88,7 @@ export function verifyTypeResolvability(
     };
   }
 
-  // 🛡️ CHECK 2: Catch Unresolved Deferred Conditional Equations
+  //  2: Catch Unresolved Deferred Conditional Equations
   if ((flags & TypeFlags.Conditional) !== 0) {
     return {
       rule: 'unbound_generic',
@@ -98,7 +98,7 @@ export function verifyTypeResolvability(
     };
   }
 
-  // 🛡️ CHECK 3: Catch Computational Collapse or Catastrophic Compiler Errors
+  //  3: Catch Computational Collapse or Catastrophic Compiler Errors
   if ((flags & TypeFlags.Any) !== 0) {
     const symbol = type.getSymbol();
     if (!symbol) {
@@ -119,7 +119,7 @@ export function verifyTypeResolvability(
     }
   }
 
-  // 🛡️ CHECK 4: Catch Root Primitive Contradictions (e.g., string & number)
+  //  4: Catch Root Primitive Contradictions (e.g., string & number)
   if ((flags & TypeFlags.Never) !== 0) {
     return {
       rule: 'terminal_contradiction',
@@ -129,7 +129,7 @@ export function verifyTypeResolvability(
     };
   }
 
-  // 🛡️ CHECK 5: Catch Raw Functions, Classes, and Unique Executable Blocks
+  //  5: Catch Raw Functions, Classes, and Unique Executable Blocks
   const callSignatures = type.getCallSignatures();
   const constructSignatures = type.getConstructSignatures();
   if (
@@ -145,11 +145,8 @@ export function verifyTypeResolvability(
     };
   }
 
-  // 🛡️ CHECK 6: Catch Open-Ended Dictionary Signatures Safely
+  // 6: Catch Open-Ended Dictionary Signatures Safely
   if ((flags & TypeFlags.Object) !== 0) {
-    // 🟢 FIXED: Proactively probe for recursive generic Type Aliases using symbol metadata point-free.
-    // If it carries an aliasSymbol and its template type matches our unresolvable target loops,
-    // we intercept it and throw the message BEFORE letting ts.js enter getPropertiesOfType!
     if (type.aliasSymbol) {
       const aliasName = type.aliasSymbol.getName();
       // If the alias name matches your custom infinite loop tester or a known runaway equation
@@ -163,7 +160,6 @@ export function verifyTypeResolvability(
       }
     }
 
-    // Safe to probe properties now that infinite recursion loops have been filtered out!
     const coreProperties = checker.getPropertiesOfType(type);
     const indexInfos = checker.getIndexInfosOfType(type);
 

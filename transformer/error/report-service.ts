@@ -18,7 +18,7 @@ import type {
 
 /**
  * TransformerReportService
- * 🪐 THE COMPILER DIAGNOSTIC SCRIBE
+ * THE COMPILER DIAGNOSTIC SCRIBE
  *
  * ROLE:
  * An isolated stateless printing service dedicated entirely to turning raw build-time
@@ -92,7 +92,7 @@ export class TransformerReportService {
 
   /**
    * getErrorMessage
-   * 🪐 THE STRUCTURAL NORMALIZATION RESOLVER
+   * THE STRUCTURAL NORMALIZATION RESOLVER
    *
    * ROLE:
    * Safely isolates error string extraction metrics. It intercepts raw exceptions,
@@ -123,7 +123,7 @@ export class TransformerReportService {
 
   /**
    * logAnomaly
-   * 🪐 CENTRAL LOGGING GATEWAY
+   * CENTRAL LOGGING GATEWAY
    *
    * ROLE:
    * Stateless printing endpoint that automatically normalizes text and pipes

@@ -1,6 +1,5 @@
 import { inflateAndNormalizeShape } from '../utils';
 import type { TSolidMetadata } from '../../shared/types';
-import { logDev } from '../../shared/utils';
 import { TransformerReportService } from '../error';
 import { XalorRoutesService } from '../service';
 /**
@@ -28,7 +27,6 @@ export function processGenesisHydration(
     const blueprints = snapshot.blueprints || {};
     const nominalKeys = Object.keys(snapshot.references || blueprints);
 
-    // 🔄 THE RECONSTRUCTION LOOP
     for (const key of nominalKeys) {
       if (key === 'Anonymous') continue;
 
@@ -42,7 +40,6 @@ export function processGenesisHydration(
       // Unpack references using your pure recursor loop
       const fullyInflatedShape = inflateAndNormalizeShape(rawShape, blueprints);
 
-      // 🚀 INVERSION TRIGGER: Fire the callback injected by the caller
       onSolidify({
         key,
         shape: fullyInflatedShape,
@@ -54,9 +51,6 @@ export function processGenesisHydration(
         version: snapshot.version ?? '1.0.0',
       });
     }
-
-    /* prettier-ignore */
-    logDev(`[xalor:shared] 🌿 Hydration loop processed ${nominalKeys.length} type models into target memory map.`, { service: 'transformer/boot' });
   } catch (error: unknown) {
     const paths = XalorRoutesService.resolveXalorPaths(process.cwd());
     const executeMode = XalorRoutesService.xalorCLIMode();
@@ -66,7 +60,7 @@ export function processGenesisHydration(
       error,
       mode: executeMode,
     });
-    // 🛡️ CRASH PROTECTION: We return cleanly instead of throwing a fatal process crash.
+    // CRASH PROTECTION: We return cleanly instead of throwing a fatal process crash.
     // This allows the bootloader to gracefully recognize that the file was corrupted,
     // bypass the old records safely, and cleanly write a pristine replacement block on the next save cycle.
     return;

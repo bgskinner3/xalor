@@ -1,5 +1,4 @@
 // transformer/utils/collision-guard.ts
-//
 import { XalorRoutesService, xalorCentralContext } from '../../service';
 import { XalorInvalidTypeError, TransformerReportService } from '../../error';
 import type { TCollisionGuardParams } from '../../types';
@@ -7,12 +6,8 @@ import type { TCollisionGuardParams } from '../../types';
 export function validateCollisionBorders(
   params: TCollisionGuardParams,
 ): boolean {
-  const {
-    keyName,
-    activeAreaString,
-    activeAnchorString,
-    currentActiveAbsoluteFile,
-  } = params;
+  /* prettier-ignore */
+  const { keyName, activeAreaString, activeAnchorString, currentActiveAbsoluteFile } = params;
 
   const executeMode = XalorRoutesService.xalorCLIMode();
   const isWatch = executeMode === 'watch' || executeMode === 'studio';

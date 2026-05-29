@@ -49,6 +49,7 @@ export function resolveTransformerBootAnchor(
  * 2. Vacuum overrides dev reporting layers for clean production baking.
  * 3. Watch takes dev precedence over single local compile runs.
  */
+// TODO: add Studio
 export function determineTransformerExecuteMode(
   lifecycle: TXalorLifecycleContext,
 ): TTransformerExecuteMode {
@@ -81,7 +82,6 @@ export function determineTransformerExecuteMode(
  * don't interact with the library.
  */
 export function shouldProcessFile(file: ts.SourceFile): boolean {
-  // Direct loop evaluation over frozen string primitives for maximum microsecond speed
   return SENTRY_TRIGGER_NAMES.some((apiTokenName) => {
     return file.text.includes(apiTokenName);
   });
@@ -101,12 +101,10 @@ export function handleEmptyFileWipeout(
   sourceFile: ts.SourceFile,
   currentFileAbsolute: string,
 ): boolean {
-  // 1. Core Condition: Is the text content completely empty?
   if (!sourceFile.text || sourceFile.text.trim().length === 0) {
     const historicalSession =
       xalorCentralContext.getCurrentSessionPath(currentFileAbsolute);
 
-    // 2. Clear Loop: If this file has old entries in the database, wipe them instantly!
     if (historicalSession) {
       console.log(
         `🧹 [Xalor Clear Loop] Empty file wipeout triggered for: ${sourceFile.fileName}`,

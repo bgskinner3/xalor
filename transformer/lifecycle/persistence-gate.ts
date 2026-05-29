@@ -21,8 +21,7 @@ export function persistenceGate({
   program,
   rootDir,
 }: TPersistenceGateParams): SourceFile {
-  // 🛰️ THE SYNTAX SHIELD:
-  // If the developer is mid-typing and the file has syntax errors, DO NOT run deletion sweeps!
+  //  mid-typing and the file has syntax errors, DO NOT run deletion sweeps!
   const diagnostics = program.getSyntacticDiagnostics(file);
   if (diagnostics.length > 0) {
     // Code is structurally broken/incomplete right now. Exit early to protect our memory caches.
@@ -41,8 +40,6 @@ export function persistenceGate({
     xalorCentralContext.getCurrentSessionPath(currentFileAbsolute);
 
   if (currentSessionPath) {
-    // 🎯 🟢 TWIN-MAP REFINE ENTRANCE MARKER:
-    // We explicitly call Object.keys() on the sub-matrix `.keys` object drawer to read history!
     Object.keys(currentSessionPath.keys).forEach((key) => {
       const payload = globalKeyRegistry.get(key);
       if (!payload || key.includes('$')) return;

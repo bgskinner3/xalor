@@ -60,39 +60,27 @@ export class XalorRoutesService {
       isStudioMode,
     };
   }
-  /**
-   * xalorCLIMode
-   * 🪐 THE TRANSFORMER RUNTIME RESOLVER
-   *
-   * ROLE:
-   * Isolates and returns the specific execution mode the AST engine requires.
-   * Switchlessly resolves boolean cascades directly into strict string tokens.
-   */
+
   public static xalorCLIMode(): TTransformerExecuteMode {
     const lifecycle = XalorRoutesService.resolveXalorLifecycle();
 
-    // 🟢 OPTIMIZED: Cascade downwards point-free to map ONLY the core transformer targets.
-    // This removes initialization/reporting bloat from the core compilation pipeline context.
     if (lifecycle.isProductionVacuumMode) return 'vacuum';
     if (lifecycle.isOneShotCompileMode) return 'compile';
     if (lifecycle.isStudioMode) return 'studio';
 
-    return 'watch'; // Default core operational state for interactive developer runs
+    return 'watch';
   }
 
   public static getProjectRelativeKey(absoluteFilePath: string): string {
     const rootDir = xalorCentralContext.rootDir;
 
-    // Compute the relative difference route natively
     const relativePath = path.relative(rootDir, absoluteFilePath);
 
-    // 🚀 THE OMNI-OS FIX: Chain .toLowerCase() directly onto your existing slash replacement line!
     const standardizedPath = relativePath
       .split(path.sep)
       .join('/')
       .toLowerCase();
 
-    // Prepend a leading forward slash if it doesn't already have one to seal the format contract
     return standardizedPath.startsWith('/')
       ? standardizedPath
       : `/${standardizedPath}`;

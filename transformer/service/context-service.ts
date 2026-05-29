@@ -183,31 +183,18 @@ class XalorContextService {
     this.sequenceCounters.set(filePath, nextCount);
     return `#call:${nextCount}`;
   }
-
-  /**
-   * hardResetAllMemoryStores
-   * 🪐 THE ATOMIC LIFECYCLE ROLLBACK SWITCH
-   *
-   * ROLE:
-   * Completely purges and reconstructs every long-lived compiler registry bound
-   * to globalThis. It acts as an elite build-fail safety valve to prevent
-   * state memory contamination inside long-running bundler runners like Vite.
-   *
-   * WHY:
-   * Satisfies Commandment IV (Operation Isolation). Centralizes cleanup mechanics
-   * point-free, ensuring that a compilation crash completely clears the memory slate
-   * before handing control back to a persistent dev watch environment thread.
-   */
+  // ============================================================================================
+  // RESET HARD
+  // ============================================================================================
   public hardResetAllMemoryStores(): void {
-    // 1. Clear out your ambient Map registry allocations cleanly point-free
+    // 1. Clear ambient Map registry allocations cleanly point-free
     this.globalKeyRegistry.clear();
     this.sequenceCounters.clear();
 
-    // 2. Clear out your transient tracking sets
+    // 2. Clear  transient tracking sets
     this.activePassKeys.clear();
-    this.blacklistedKeys.clear(); // Clear local private instance scratchpad
+    this.blacklistedKeys.clear();
 
-    // 3. 🟢 FIXED: Overwrite and reset object dictionary layout states to match your exact names!
     globalThis.__XALOR_TRACE_CACHE__ = {};
     globalThis.__XALOR_BOOT_HYDRATED__ = false;
 

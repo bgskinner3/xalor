@@ -11,7 +11,7 @@ import { isGetProgram } from './utils';
 import { xalorCentralContext, XalorRoutesService } from './service';
 
 /**
- * 🪐 THE ARCHITECTURAL COMPILER TRACKS SINGLE SOURCE OF TRUTH
+ * THE ARCHITECTURAL COMPILER TRACKS SINGLE SOURCE OF TRUTH
  *
  * 1. WATCH DEV MODE (Stage 1B: Continuous Dev Reflection)
  * - Triggered By: `process.env.XALOR_CLI_WATCH === 'true'`
@@ -62,7 +62,6 @@ export default function xalorTransformerPlugin(
         ? context.getProgram()
         : compilerFactoryProgram;
 
-      // Invoke context generator factory to pack everything into unified root payload container
       const activePassRoutine = PASS_STRATEGY_MAPPER[executeMode];
 
       return activePassRoutine({

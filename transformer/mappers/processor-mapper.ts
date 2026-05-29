@@ -3,7 +3,7 @@ import { generateShapeAST } from '../reifiers';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared';
 import type { TProcessorRewriteMap } from '../types';
 /**
- * 🗺️ PARAMETER REWRITE ROUTER
+ * PARAMETER REWRITE ROUTER
  *
  * ROLE:
  * Isolated routines formatting exact argument slots per function contract.

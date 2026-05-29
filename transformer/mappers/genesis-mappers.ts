@@ -48,15 +48,12 @@ export const EXTRACT_SHAPE_NORMALIZERS: TShapeNormalizerMapper = {
     return { kind: 'reference', name: objectHash };
   },
 
-  // 🧠 SUB-CLASSIFICATION LAW: The array block now cleanly normalizes
-  // both traditional items arrays AND multi-positional elementShapes
   array: (shape, flatPool, recurse) => {
     const baseNormalized = {
       ...shape,
       items: recurse(shape.items, flatPool),
     };
 
-    // If this specific array node is a sub-classified tuple, normalize its elements
     if (shape.elementShapes) {
       baseNormalized.elementShapes = shape.elementShapes.map((element) =>
         recurse(element, flatPool),
@@ -140,8 +137,6 @@ export const BUILD_SHAPE_INFLATORS: TShapeInflatorMapper = {
     return proxyStub;
   },
 
-  // 🧠 SUB-CLASSIFICATION LAW: The array inflator de-serializes
-  // nested positional tuples directly back into execution RAM on boot
   array: (shape, blueprintsPool, recurse, _seen) => {
     const baseInflated = {
       ...shape,

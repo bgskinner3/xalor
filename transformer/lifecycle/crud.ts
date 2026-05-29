@@ -12,9 +12,6 @@ import {
   isBlueprintModified,
 } from '../utils';
 
-/**
- * 📢 THE STYLIZED TERMINAL PRINTER
- */
 function printCudLog(mode: TCudExecutionMode, keyName: string): void {
   const DIAGNOSTIC_STRATEGY_MAPPER: Record<TCudExecutionMode, () => void> = {
     create: () => console.log(`✨ [Xalor CLI] Added Type Key: '${keyName}'`),
@@ -102,7 +99,7 @@ export function determineCUDMode({
 }
 
 /**
- * 🪐 THE UMBRELLA CUD MUTATOR HUB
+ * THE UMBRELLA CUD MUTATOR HUB
  * executeVaultMutation
  *
  * ROLE:

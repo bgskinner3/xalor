@@ -6,7 +6,7 @@ import type {
 import { TransformerReportService } from './report-service';
 /**
  * XalorInvalidTypeError
- * 🛡️ SYSTEM EXTRACTION EXCEPTION CONTAINER
+ * SYSTEM EXTRACTION EXCEPTION CONTAINER
  *
  * ROLE:
  * A specialized build-time data exception container. It dynamically leverages the

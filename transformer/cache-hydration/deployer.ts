@@ -6,7 +6,7 @@ import { IS_SOLID_CONFIG_ITEMS } from '../../shared';
 import type { TXalorResolvedPaths } from '../../shared';
 import { TransformerReportService } from '../error';
 import { XalorRoutesService } from '../service';
-// 🪐 Safe ESM file coordinate parsing calculated ONCE at module level
+// Safe ESM file coordinate parsing calculated ONCE at module level
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 /**
@@ -44,7 +44,6 @@ export function deployBaseline(paths: TXalorResolvedPaths) {
   if (!fs.existsSync(paths.vaultFile)) {
     try {
       if (fs.existsSync(templateSnapshotPath)) {
-        // Copy the pristine snapshot file into place natively
         fs.copyFileSync(templateSnapshotPath, paths.vaultFile);
 
         const srcDts = path.join(templateSourceDir, fileNames.bridgeTemplate);
