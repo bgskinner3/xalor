@@ -1,4 +1,7 @@
-import type { TCompilerDiagnosticMapper } from '../types';
+import type {
+  TCompilerDiagnosticMapper,
+  TCollisionBorderFailureMapper,
+} from '../types';
 /**
  * COMPILER_DIAGNOSTIC_FALLBACKS
  * THE CANONICAL FALLBACK TEMPLATE REGISTRY
@@ -61,3 +64,35 @@ export const COMPILER_DIAGNOSTIC_FALLBACKS: TCompilerDiagnosticMapper = {
       `Safe evacuation triggered on broken snapshot data string stream loop.\n🚨 Message: ${msg ?? 'Stream read interruption.'}`,
   },
 } satisfies TCompilerDiagnosticMapper;
+
+// ================================================================================
+// ================================================================================
+// ================================================================================
+// ================================================================================
+
+/**
+ * COLLISION_BORDER_FAILURE_MAPPER
+ * 🪐 THE COLLISION RADAR TEXT TEMPLATE BLUEPRINTS
+ *
+ * ROLE:
+ * A pre-allocated, immutable dictionary map storing rule identifiers and dynamic
+ * message factory closure functions for all validation boundary key collision exceptions.
+ */
+export const COLLISION_BORDER_FAILURE_MAPPER: TCollisionBorderFailureMapper = {
+  SAME_FILE: {
+    rule: 'terminal_contradiction',
+    message: (ctx) =>
+      `SAME-FILE DUPLICATION: Key "${ctx.keyName}" is duplicated inside the same file boundary context!\n` +
+      `First Declared: [${ctx.historicalArea} ↳ ${ctx.historicalAnchor}]\n` +
+      `Duplicated At:  [${ctx.activeArea} ↳ ${ctx.activeAnchor}]\n` +
+      `Action: Unique tracking boundaries require distinct string identifiers to avoid cache drifting.`,
+  },
+  CROSS_FILE: {
+    rule: 'terminal_contradiction',
+    message: (ctx) =>
+      `CROSS-FILE COLLISION: Unique identifier key "${ctx.keyName}" has been claimed by multiple files!\n` +
+      `First Claimed By: [${ctx.initialFilePath} ↳ ${ctx.initialArea}]\n` +
+      `Attempted Hijack:  [${ctx.hijackFilePath} ↳ ${ctx.hijackArea}]\n` +
+      `Action: Xalor requires unique global keys. Change the target literal string key name.`,
+  },
+} satisfies TCollisionBorderFailureMapper;

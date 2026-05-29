@@ -6,8 +6,12 @@ import type {
   Program,
   TransformationContext,
 } from 'typescript';
-import type { TSolidShape, TVaultSyncPayload } from '../../shared';
-
+import type {
+  TSolidShape,
+  TVaultSyncPayload,
+  TTransformerExecuteMode,
+} from '../../shared';
+import type { TXalorComplianceRuleKeys } from './error';
 /**
  * Encapsulates the context needed for the recursive structural expansion
  * of TypeScript types. By bundling the Type, Checker, and the current
@@ -110,4 +114,71 @@ export type TMineFilePass = {
   readonly context: TransformationContext;
   readonly sourceFile: SourceFile;
   readonly bridgeDir: string;
+};
+
+// ================================================================================
+// ================================================================================
+// COLLISION BORDER
+// ================================================================================
+// ================================================================================
+
+export type TFilePathParams = {
+  relativeProjectKey: string;
+  keyName: string;
+  isWatch: boolean;
+  currentActiveAbsoluteFile: string;
+  executeMode: TTransformerExecuteMode;
+  activeAreaString: string;
+  activeAnchorString: string;
+};
+
+/**
+ * TSameFileCollisionCtx
+ * SAME-FILE ERROR DATA BLUEPRINT
+ */
+export type TSameFileCollisionCtx = {
+  readonly keyName: string;
+  readonly historicalArea: string;
+  readonly historicalAnchor: string;
+  readonly activeArea: string;
+  readonly activeAnchor: string;
+};
+
+/**
+ * TCrossFileCollisionCtx
+ * CROSS-FILE ERROR DATA BLUEPRINT
+ */
+export type TCrossFileCollisionCtx = {
+  readonly keyName: string;
+  readonly initialFilePath: string;
+  readonly initialArea: string;
+  readonly hijackFilePath: string;
+  readonly hijackArea: string;
+};
+
+/**
+ * TCollisionBorderFailureConfig
+ * CENTRAL MAPPER PROPERTY SPECIFICATION
+ */
+export type TCollisionBorderFailureConfig<T> = {
+  readonly rule: TXalorComplianceRuleKeys;
+  readonly message: (ctx: T) => string;
+};
+
+/**
+ * TCollisionBorderFailureMapper
+ * THE EXPLICIT MAPPER TYPE SYSTEM INTERFACE
+ */
+export type TCollisionBorderFailureMapper = {
+  readonly SAME_FILE: TCollisionBorderFailureConfig<TSameFileCollisionCtx>;
+  readonly CROSS_FILE: TCollisionBorderFailureConfig<TCrossFileCollisionCtx>;
+};
+/**
+ * TCollisionGuardParams
+ */
+export type TCollisionGuardParams = {
+  readonly keyName: string;
+  readonly activeAreaString: string;
+  readonly activeAnchorString: string;
+  readonly currentActiveAbsoluteFile: string;
 };

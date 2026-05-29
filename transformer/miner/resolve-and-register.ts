@@ -10,7 +10,8 @@ import type {
 import * as path from 'path';
 import { getSpatialIdentity } from './spatial-identity';
 import { reifyType } from '../reifiers';
-import { createMiningCtx, validateCollisionBorders } from '../utils';
+import { createMiningCtx } from '../utils';
+import { validateCollisionBorders } from './collision-border';
 import { executeVaultMutation, determineCUDMode } from '../lifecycle';
 import { xalorCentralContext, XalorRoutesService } from '../service';
 import { verifyTypeResolvability } from './type-resolver';

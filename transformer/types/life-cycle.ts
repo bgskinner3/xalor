@@ -69,15 +69,6 @@ export type TExecuteCUDMutationParams = {
   readonly identityAnchor?: string | null;
   readonly keyName?: string;
 };
-/**
- * TCollisionGuardParams
- */
-export type TCollisionGuardParams = {
-  readonly keyName: string;
-  readonly activeAreaString: string;
-  readonly activeAnchorString: string;
-  readonly currentActiveAbsoluteFile: string;
-};
 
 export type TModePriorityRule = {
   readonly guard: boolean;
