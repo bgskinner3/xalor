@@ -39,7 +39,33 @@ export function getAPIName(node: CallExpression): TSentryTriggerName {
     const propertyName = expression.name.text;
     if (isKeyOfArray(SENTRY_TRIGGER_NAMES)(propertyName)) return propertyName;
   }
+  // TODO: ERROR HANDLER
+  // /**
+  //  * 🪐 ENVIRONMENT-AWARE ANSI SENTRY BREACH PANEL
+  //  *
+  //  * ROLE:
+  //  * Conceptually bundles, aggregates, and transforms an invalid library caller signature
+  //  * (such as a misspelled or legacy API method invocation) into a highly descriptive,
+  //  * color-mapped ANSI panel visualization report.
+  //  *
+  //  * WHY:
+  //  * Satisfies Commandment I (Single Source of Truth) and Commandment VI (Traceability).
+  //  * It logs the anomaly cleanly directly to the console stream using your universal
+  //  * report service framework, preserving complete thread performance safety. This ensures
+  //  * the user receives explicit, stylized guidance to fix the call site while guaranteeing
+  //  * the background dev watch-mode compiler server remains 100% active, alive, and un-thrown.
+  //  */
+  // const invalidTriggerReport = TransformerReportService.generateTerminalPanel({
+  //   keyName: 'UNKNOWN_API_TRIGGER',
+  //   fileLocation: `transformer/miner/mining-target.ts ↳ getAPIName`,
+  //   message: `AST Sentry encountered an un-permitted property invocation under the Xalor namespace.\n` +
+  //            `Encountered Invalid Method: "Xalor.${propertyName}"\n` +
+  //            `Action: Aborting metadata extraction for this node. Ensure the target method matches permissible triggers.`,
+  //   rule: 'invalid_trigger_signature',
+  //   mode: 'watch', // Defaults safely to watch warning layouts to keep the terminal process active
+  // });
 
+  // console.warn(invalidTriggerReport);
   throw new Error(`[xalor] Unknown API trigger: ${expression}`);
 }
 /**

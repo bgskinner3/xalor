@@ -1,5 +1,5 @@
 import type { TTransformerExecuteMode } from '../../shared';
-import { XALOR_COMPLIANCE_RULE_KEYS } from '../constants';
+import { XALOR_INVALID_TYPE_COMPLIANCE_RULE_KEYS } from '../constants';
 /**
  * TReportServiceContext
  * 🪐 OMNI-REPORTER DATA MATRIX
@@ -25,7 +25,7 @@ export type TModeRouter = Record<TTransformerExecuteMode, THeaderModes>;
  * The refined literal string union type matching your active build-time error categories.
  */
 export type TXalorComplianceRuleKeys =
-  (typeof XALOR_COMPLIANCE_RULE_KEYS)[number];
+  (typeof XALOR_INVALID_TYPE_COMPLIANCE_RULE_KEYS)[number];
 
 /**
  * TXALOR TYPE GUARD FAILURE DIAGNOSTIC

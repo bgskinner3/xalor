@@ -1,7 +1,7 @@
 // transformer/cache-hydration/index.ts
 import * as fs from 'fs';
 import { isString, isVaultSyncPayload } from '../../shared/utils/guards';
-import { processGenesisHydration } from '../../shared';
+import { processGenesisHydration } from './hydrate-from-genesis';
 import { XalorRoutesService } from '../service';
 import { deployBaseline } from './deployer';
 import type { TGlobalKeyRegistry, TSessionRegistry } from '../types';

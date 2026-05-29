@@ -1,4 +1,8 @@
-import { ANSI_COLOR_CODES, getCallerLocation } from '../../shared';
+import {
+  ANSI_COLOR_CODES,
+  getCallerLocation,
+  isInstanceOf,
+} from '../../shared';
 import { REPORT_SERVICE_MODE_ROUTER } from '../constants';
 import type { THeaderModes, TReportServiceContext } from '../types';
 
@@ -11,6 +15,14 @@ import type { THeaderModes, TReportServiceContext } from '../types';
  * rule violations into highly descriptive, formatted terminal console blocks.
  */
 export class TransformerReportService {
+  // ===============================================================================================================
+  // ===============================================================================================================
+  // ===============================================================================================================
+  // PRIVATE METHODS
+  // ===============================================================================================================
+  // ===============================================================================================================
+  // ===============================================================================================================
+
   private static ansiColorCodes = ANSI_COLOR_CODES;
   private static readonly MODE_ROUTER = REPORT_SERVICE_MODE_ROUTER;
   // 🟢 OPTIMIZED: Pre-calculated header lines mapped point-free to avoid execution variables allocations
@@ -26,6 +38,13 @@ export class TransformerReportService {
     watch: `  ${ANSI_COLOR_CODES.green}🔒 Action:${ANSI_COLOR_CODES.reset} ${ANSI_COLOR_CODES.gray}Aborted cache commit for this node. Watcher remaining active.${ANSI_COLOR_CODES.reset}`,
     soft: `  ${ANSI_COLOR_CODES.blue}ℹ️  Action:${ANSI_COLOR_CODES.reset} ${ANSI_COLOR_CODES.gray}System notification logged successfully. Core parameters untouched.${ANSI_COLOR_CODES.reset}`,
   };
+  // ===============================================================================================================
+  // ===============================================================================================================
+  // ===============================================================================================================
+  // PUBLIC METHODS
+  // ===============================================================================================================
+  // ===============================================================================================================
+  // ===============================================================================================================
 
   public static generateTerminalPanel(ctx: TReportServiceContext): string {
     const { keyName, fileLocation, message, rule, mode } = ctx;
@@ -59,5 +78,11 @@ export class TransformerReportService {
     ];
 
     return reportBuffer.join('\n');
+  }
+
+  public static getErrorMessage(error: unknown) {
+    if (isInstanceOf(error, Error)) return error.message;
+    // TODO: complie error messages
+    return 'Filesystem access restriction occurred.';
   }
 }

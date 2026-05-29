@@ -29,7 +29,6 @@ export function resolveTransformerBootAnchor(
         !file.isDeclarationFile && !file.fileName.includes('node_modules'),
     );
 
-  // 🚀 FIXED: Safe fallback boundary calculation targeting local user code spaces correctly
   const sampleFile = validAppFile ? validAppFile.fileName : process.cwd();
   const runtimePaths = XalorRoutesService.resolveXalorPaths(sampleFile);
 

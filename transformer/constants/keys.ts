@@ -45,7 +45,7 @@ import type { TModeRouter } from '../types';
  *      structure. This filter blocks open index sheets, ensuring the developer converts their layout
  *      to an explicit, bounded schema record before registration.
  */
-export const XALOR_COMPLIANCE_RULE_KEYS = Object.freeze([
+export const XALOR_INVALID_TYPE_COMPLIANCE_RULE_KEYS = Object.freeze([
   'unbound_generic',
   'computational_collapse',
   'open_index_signature',
