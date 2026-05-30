@@ -1,37 +1,37 @@
 // transformer/service/routes-service.ts
-import * as fs from 'fs';
 import * as path from 'path';
 import type {
   TXalorResolvedPaths,
   TTransformerExecuteMode,
 } from '../../shared';
-import { IS_SOLID_CONFIG_ITEMS, XALOR_ENV_KEYS } from '../../shared';
+import { XALOR_ENV_KEYS } from '../../shared';
+import { resolveXalorPaths } from '../../shared/utils';
 import type { TXalorLifecycleContext } from '../types';
 import { xalorCentralContext } from './context-service';
 
 export class XalorRoutesService {
-  public static findProjectRoot(startingPath: string): string {
-    const resolvedPath = path.isAbsolute(startingPath)
-      ? path.resolve(startingPath)
-      : path.resolve(process.cwd(), startingPath);
+  // public static findProjectRoot(startingPath: string): string {
+  //   const resolvedPath = path.isAbsolute(startingPath)
+  //     ? path.resolve(startingPath)
+  //     : path.resolve(process.cwd(), startingPath);
 
-    const startingDir = fs.statSync(resolvedPath).isDirectory()
-      ? resolvedPath
-      : path.dirname(resolvedPath);
+  //   const startingDir = fs.statSync(resolvedPath).isDirectory()
+  //     ? resolvedPath
+  //     : path.dirname(resolvedPath);
 
-    const pathSegments = startingDir.split(path.sep);
-    const parsedRoot = path.parse(startingDir).root;
+  //   const pathSegments = startingDir.split(path.sep);
+  //   const parsedRoot = path.parse(startingDir).root;
 
-    const ancestralPaths = pathSegments.map((_, index) => {
-      const activeSegments = pathSegments.slice(0, pathSegments.length - index);
-      return path.join(parsedRoot, ...activeSegments);
-    });
+  //   const ancestralPaths = pathSegments.map((_, index) => {
+  //     const activeSegments = pathSegments.slice(0, pathSegments.length - index);
+  //     return path.join(parsedRoot, ...activeSegments);
+  //   });
 
-    const discoveredRoot = ancestralPaths.find((dir) =>
-      fs.existsSync(path.join(dir, 'package.json')),
-    );
-    return discoveredRoot || process.cwd();
-  }
+  //   const discoveredRoot = ancestralPaths.find((dir) =>
+  //     fs.existsSync(path.join(dir, 'package.json')),
+  //   );
+  //   return discoveredRoot || process.cwd();
+  // }
 
   public static resolveXalorLifecycle(): TXalorLifecycleContext {
     const watchFlag = process.env[XALOR_ENV_KEYS.watch] === 'true';
@@ -92,22 +92,7 @@ export class XalorRoutesService {
   public static resolveXalorPaths(
     executionContextPath?: string,
   ): TXalorResolvedPaths {
-    const { fileNames } = IS_SOLID_CONFIG_ITEMS;
-    const rootDir = executionContextPath
-      ? this.findProjectRoot(executionContextPath)
-      : process.cwd();
-
-    /* prettier-ignore */ const absoluteCacheDir = path.join( rootDir, 'node_modules', '.cache', fileNames.cacheFolderName);
-    /* prettier-ignore */ const absoluteBridgeDir = path.join(rootDir, fileNames.intelFolderName);
-
-    return {
-      rootDir,
-      cacheDir: absoluteCacheDir,
-      vaultFile: path.join(absoluteCacheDir, fileNames.vaultFileName),
-      bridgeDir: absoluteBridgeDir,
-      bridgeFile: path.join(absoluteBridgeDir, fileNames.bridgeFileName),
-      bakedFile: path.join(absoluteBridgeDir, fileNames.bakedFileName),
-    };
+    return resolveXalorPaths(executionContextPath);
   }
 
   public static getPackageRootDir(activeDirName: string): string {

@@ -113,10 +113,10 @@ export type TXalorAuditReport = {
  * @see {@link GlobalRootTypeDocs.TXalorResolvedPaths }
  */
 export type TXalorResolvedPaths = {
-  rootDir: string;
-  cacheDir: string;
-  vaultFile: string;
-  bridgeDir: string;
-  bridgeFile: string;
-  bakedFile: string;
+  readonly rootDir: string;
+  readonly cacheDir: string;
+  readonly vaultFile: string;
+  readonly bridgeDir: string;
+  readonly bridgeFile: string;
+  readonly bakedFile: string;
 };

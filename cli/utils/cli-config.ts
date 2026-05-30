@@ -1,4 +1,4 @@
-import type { TXalorCLIModes, TCLIFlags } from '../../shared';
+import type { TCLIFlags } from '../../shared';
 import {
   isWatchMode,
   isVacuumMode,

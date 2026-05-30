@@ -2,7 +2,7 @@
 import http from 'http';
 import fs from 'fs';
 import { exec } from 'child_process';
-import { resolveXalorPaths } from '../utils/index.js';
+import { resolveXalorPaths } from '../../shared/utils';
 import { STUDIO_PROXY_BRIDGE_TEMPLATE, STUDIO_COMMAND_CONFIG } from '../models';
 
 /**
