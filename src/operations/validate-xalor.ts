@@ -16,7 +16,7 @@ import type {
  *
  * Generates automated validation closures to narrow incoming network data streams at runtime boundaries.
  * Verifies payload layouts against your content-addressable JSON vault with near-zero allocation footprints.
- *
+ * // guard, assert, parse, parseAsync, audit
  *
  * @example
  * ```ts

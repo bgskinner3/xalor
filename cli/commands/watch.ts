@@ -1,5 +1,4 @@
 // src/cli/commands/watch.ts
-// src/cli/commands/watch.ts
 import ts from 'typescript';
 import xalorTransformerPlugin from '../../transformer';
 import { XALOR_CLI_STATUS_MESSAGES, isKeyInObject } from '../../shared';
@@ -38,7 +37,7 @@ export function runWatchCommand(projectRootPath: string): void {
     configFileParsingDiagnostics,
     projectReferences,
   ) => {
-    // 🚀 THE DUAL-EMIT BLOCKADE REMOVAL:
+    // THE DUAL-EMIT BLOCKADE REMOVAL:
     // We explicitly strip out the "plugins" array allocation from the compiler choices!
     // This stops TypeScript from auto-loading your transformer plugin via tsconfig.json,
     // ensuring our custom transformers array pass below is the ONLY execution path running.

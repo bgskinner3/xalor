@@ -31,7 +31,7 @@ export function produceDefault(shape: TSolidShape, depth = 0): unknown {
 }
 
 /**
- * 🎲 PRODUCE MOCK
+ * PRODUCE MOCK
  *
  * ROLE:
  * Converts a static TSolidShape blueprint into a randomized, high-entropy

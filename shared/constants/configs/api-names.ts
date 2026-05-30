@@ -17,6 +17,24 @@ export const SENTRY_TRIGGER_NAMES = [
   'generateXalor',
   'transformXalor',
 ] as const;
+/**
+ * SENTRY_TRIGGER_MODES
+ *
+ * ROLE:
+ * Concrete sub-command taxonomy configurations partitioning strategy tokens into
+ * distinct runtime operational disciplines.
+ *
+ * STRATEGY:
+ * - Deterministic Validation Boundary: Forces strict compilation-time isolation of
+ *   sub-commands across core synthesis, boundary routing, and shape transformation loops.
+ * - Strategy Taxonomy Enforcement: Serves as the authoritative list used by the static
+ *   crawler to filter parameter structures and flag illegal runtime API tokens.
+ */
+export const SENTRY_TRIGGER_MODES = {
+  GENERATE: ['default', 'mock', 'clone', 'cast'] as const,
+  VALIDATE: ['guard', 'assert', 'parse', 'parseAsync', 'audit'] as const,
+  TRANSFORM: ['pick', 'omit', 'rename', 'merge', 'flatten'] as const,
+};
 
 /**
  * MASTER GENERATOR MODES CONFIGURATION

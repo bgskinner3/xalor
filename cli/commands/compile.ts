@@ -1,3 +1,4 @@
+// cli/commands/complie.ts
 import ts from 'typescript';
 import xalorTransformerPlugin from '../../transformer';
 import { bootstrapEnvContext } from '../utils';

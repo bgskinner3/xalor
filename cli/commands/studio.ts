@@ -1,3 +1,4 @@
+// cli/commands/studio.ts
 import http from 'http';
 import fs from 'fs';
 import { exec } from 'child_process';

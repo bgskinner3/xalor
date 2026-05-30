@@ -49,7 +49,6 @@ export const makeAssert = <T>(
   guard: TTypeGuard<T>,
   _key: string,
 ): TAssert<T> => {
-  // 🚀 Adding 'asserts value is T' here satisfies the TAssert interface contract
   return (value: unknown, message?: string): asserts value is T => {
     assertValue(value, guard, message);
   };
