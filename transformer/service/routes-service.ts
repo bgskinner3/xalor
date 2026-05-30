@@ -38,12 +38,14 @@ export class XalorRoutesService {
     const compileFlag = process.env[XALOR_ENV_KEYS.compile] === 'true';
     const vacuumFlag = process.env[XALOR_ENV_KEYS.vacuum] === 'true';
     const studioFlag = process.env[XALOR_ENV_KEYS.studio] === 'true';
+    const clearFlag = process.env[XALOR_ENV_KEYS.clear] === 'true';
     const nodeEnv = process.env.NODE_ENV;
     const isTestEnvironment = nodeEnv === 'test';
 
     const isWatchMode = watchFlag && !isTestEnvironment;
     const isOneShotCompileMode = compileFlag && !isTestEnvironment;
-    const isStudioMode = studioFlag && !isTestEnvironment; // 🚀 Isolated clear mode tracking frame
+    const isStudioMode = studioFlag && !isTestEnvironment;
+    const isClearMode = clearFlag && !isTestEnvironment;
 
     // Enforce production vacuum if flag is present OR if executing a native production build pass
     const isProductionVacuumMode =
@@ -58,6 +60,7 @@ export class XalorRoutesService {
       isTestEnvironment,
       isDevelopmentPass,
       isStudioMode,
+      isClearMode,
     };
   }
 
@@ -67,7 +70,7 @@ export class XalorRoutesService {
     if (lifecycle.isProductionVacuumMode) return 'vacuum';
     if (lifecycle.isOneShotCompileMode) return 'compile';
     if (lifecycle.isStudioMode) return 'studio';
-
+    if (lifecycle.isClearMode) return 'clear';
     return 'watch';
   }
 

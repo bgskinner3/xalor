@@ -72,8 +72,14 @@ export type TPassStrategyPayloadMap = {
  * Automatically infers and enforces the precise property block structure required
  * for the given key mode string, providing sub-nanosecond autocomplete refinement in your IDE.
  */
+export type TPassStrategyModes = Exclude<TTransformerExecuteMode, 'clear'>;
+
+/**
+ * TPASS STRATEGY MAPPER
+ * Iterates through each allowed mode to map its specific payload parameters.
+ */
 export type TPassStrategyMapper = {
-  readonly [Mode in TTransformerExecuteMode]: (
+  readonly [Mode in TPassStrategyModes]: (
     params: TPassStrategyPayloadMap[Mode],
   ) => SourceFile;
 };

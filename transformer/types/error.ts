@@ -17,8 +17,8 @@ export type TReportServiceContext = {
 };
 
 export type THeaderModes = 'hard' | 'watch' | 'soft';
-
-export type TModeRouter = Record<TTransformerExecuteMode, THeaderModes>;
+export type TModeRouterModes = Exclude<TTransformerExecuteMode, 'clear'>;
+export type TModeRouter = Record<TModeRouterModes, THeaderModes>;
 
 /**
  * TXALORCOMPLIANCERULEKEYS

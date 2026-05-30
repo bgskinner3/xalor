@@ -1,11 +1,13 @@
-import type { ICLIConfig, TXalorCLIModes } from '../../shared';
+import type { TXalorCLIModes } from '../../shared';
 import {
   isWatchMode,
   isVacuumMode,
-  isReportMode,
+  isAuditMode,
   isCompileMode,
   isStudioMode,
+  isClearMode,
 } from '../../shared';
+import type { ICLIConfig } from '../models';
 
 export function determineCLIConfig(argv: readonly string[]): ICLIConfig {
   const projectRoot = process.cwd();
@@ -15,18 +17,20 @@ export function determineCLIConfig(argv: readonly string[]): ICLIConfig {
       isCompileMode(token) ||
       isWatchMode(token) ||
       isVacuumMode(token) ||
-      isReportMode(token) ||
-      isStudioMode(token)
+      isAuditMode(token) ||
+      isStudioMode(token) ||
+      isClearMode(token)
     );
   });
 
   function resolveMode(token?: string): TXalorCLIModes {
-    if (!token) return 'report';
+    if (!token) return 'audit';
     if (isCompileMode(token)) return 'compile';
     if (isWatchMode(token)) return 'watch';
     if (isVacuumMode(token)) return 'vacuum';
     if (isStudioMode(token)) return 'studio';
-    return 'report';
+    if (isClearMode(token)) return 'clear';
+    return 'audit';
   }
 
   return {

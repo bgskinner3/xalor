@@ -1,5 +1,6 @@
 import ts from 'typescript';
-import xalorTransformerPlugin from '../../transformer/index.js';
+import xalorTransformerPlugin from '../../transformer';
+import { bootstrapEnvContext } from '../utils';
 
 /**
  * RUN COMPILE COMMAND
@@ -8,27 +9,8 @@ import xalorTransformerPlugin from '../../transformer/index.js';
  * Tracks matching behaviors to watch command, but exits cleanly after a single pass.
  */
 export function runCompileCommand(projectRootPath: string): void {
-  console.log('\n====================================================');
-  console.log('📦 [Xalor CLI] STARTING SINGLE-PASS SYNC BUILDER...');
-  console.log(`📂 Project Root Anchor: ${projectRootPath}`);
-  console.log('====================================================\n');
-
-  // Activate the single compile environmental flags
-  process.env.XALOR_CLI_COMPILE = 'true';
-  process.env.XALOR_CLI_WATCH = 'false';
-
-  const configPath = ts.findConfigFile(
-    projectRootPath,
-    ts.sys.fileExists,
-    'tsconfig.json',
-  );
-
-  if (!configPath) {
-    console.error(
-      '❌ [Xalor CLI Error]: Unable to locate a valid tsconfig.json in project root.',
-    );
-    process.exit(1);
-  }
+  /* prettier-ignore */
+  const configPath = bootstrapEnvContext({ projectRootPath, cliMode: 'compile'});
 
   // 1. Parse tsconfig options cleanly from disk
   const readResult = ts.readConfigFile(configPath, ts.sys.readFile);
@@ -93,7 +75,7 @@ export function runCompileCommand(projectRootPath: string): void {
   console.log('💾 Freezing workspace metadata and flushing cache registers...');
 
   // ====================================================================================
-  // 🏛️ NATIVE ASYNC TICK BUFFER
+  // NATIVE ASYNC TICK BUFFER
   // ====================================================================================
   // Because the final file's persistenceGate triggers an async write operation, we pass
   // execution to a single event loop tick. This allows the background I/O thread pool

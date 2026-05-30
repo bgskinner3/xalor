@@ -3,7 +3,7 @@
 import ts from 'typescript';
 import xalorTransformerPlugin from '../../transformer';
 import { XALOR_CLI_STATUS_MESSAGES, isKeyInObject } from '../../shared';
-import { CliDebouncer } from '../utils';
+import { CliDebouncer, bootstrapEnvContext } from '../utils';
 
 /**
  * RUN WATCH COMMAND
@@ -12,25 +12,8 @@ import { CliDebouncer } from '../utils';
  * Programmatically overrides option sets and strips duplicate plugin parameters to block double-execution loops.
  */
 export function runWatchCommand(projectRootPath: string): void {
-  console.log('\n====================================================');
-  console.log('🛰️ [Xalor CLI] STARTING REAL-TIME REFLECTION RUNNER...');
-  console.log(`📂 Working Path Anchor: ${projectRootPath}`);
-  console.log('====================================================\n');
-
-  process.env.XALOR_CLI_WATCH = 'true';
-
-  const configPath = ts.findConfigFile(
-    projectRootPath,
-    ts.sys.fileExists,
-    'tsconfig.json',
-  );
-
-  if (!configPath) {
-    console.error(
-      '❌ [Xalor CLI Error]: Unable to locate a valid tsconfig.json in project root.',
-    );
-    process.exit(1);
-  }
+  /* prettier-ignore */
+  const configPath = bootstrapEnvContext({ projectRootPath, cliMode: 'watch'});
 
   // ====================================================================================
   // 🛡️ SELF-DESTRUCT TRACKING PRIMITIVES (GIT CHECKOUT BASELINE RULES)
@@ -174,118 +157,3 @@ export function runWatchCommand(projectRootPath: string): void {
 
   ts.createWatchProgram(watchCompilerHost);
 }
-
-// export function runWatchCommand(projectRootPath: string): void {
-//   console.log('\n====================================================');
-//   console.log('🛰️ [Xalor CLI] STARTING REAL-TIME REFLECTION RUNNER...');
-//   console.log(`📂 Working Path Anchor: ${projectRootPath}`);
-//   console.log('====================================================\n');
-
-//   process.env.XALOR_CLI_WATCH = 'true';
-
-//   const configPath = ts.findConfigFile(
-//     projectRootPath,
-//     ts.sys.fileExists,
-//     'tsconfig.json',
-//   );
-
-//   if (!configPath) {
-//     console.error(
-//       '❌ [Xalor CLI Error]: Unable to locate a valid tsconfig.json in project root.',
-//     );
-//     process.exit(1);
-//   }
-
-//   const customCreateProgram: ts.CreateProgram<
-//     ts.EmitAndSemanticDiagnosticsBuilderProgram
-//   > = (
-//     rootNames,
-//     options,
-//     host,
-//     oldProgram,
-//     configFileParsingDiagnostics,
-//     projectReferences,
-//   ) => {
-//     // 🚀 THE DUAL-EMIT BLOCKADE REMOVAL:
-//     // We explicitly strip out the "plugins" array allocation from the compiler choices!
-//     // This stops TypeScript from auto-loading your transformer plugin via tsconfig.json,
-//     // ensuring our custom transformers array pass below is the ONLY execution path running.
-//     const cleanOptions = { ...options };
-//     if ('plugins' in cleanOptions) {
-//       delete cleanOptions.plugins;
-//     }
-
-//     const modifiedOptions = {
-//       ...cleanOptions,
-//       noEmit: false,
-//       emitDeclarationOnly: false,
-//       ignoreDeprecations: '6.0',
-//     };
-
-//     const builderProgram = ts.createEmitAndSemanticDiagnosticsBuilderProgram(
-//       rootNames,
-//       modifiedOptions,
-//       host,
-//       oldProgram,
-//       configFileParsingDiagnostics,
-//       projectReferences,
-//     );
-
-//     const underlyingProgram = builderProgram.getProgram();
-//     const originalEmit = underlyingProgram.emit;
-
-//     underlyingProgram.emit = (
-//       targetSourceFile,
-//       _writeFile,
-//       cancellationToken,
-//       emitOnlyDtsFiles,
-//       _customTransformers,
-//     ) => {
-//       const silentWriteFile: ts.WriteFileCallback = () => {
-//         // Black-hole swallow callback function to prevent physical .js disk pollution
-//       };
-
-//       return originalEmit(
-//         targetSourceFile,
-//         silentWriteFile,
-//         cancellationToken,
-//         emitOnlyDtsFiles,
-//         {
-//           before: [xalorTransformerPlugin(underlyingProgram)],
-//         },
-//       );
-//     };
-
-//     return builderProgram;
-//   };
-
-//   const watchCompilerHost = ts.createWatchCompilerHost(
-//     configPath,
-//     undefined,
-//     ts.sys,
-//     customCreateProgram,
-//     (diagnostic) => {
-//       console.log(
-//         `⚠️ [TS Compiler Diagnostic]: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`,
-//       );
-//     },
-//     (statusDiagnostic) => {
-//       const mappedLog = XALOR_CLI_STATUS_MESSAGES[statusDiagnostic.code];
-//       if (mappedLog) {
-//         console.log(mappedLog);
-//       }
-//     },
-//   );
-
-//   const originalAfterProgramCreate = watchCompilerHost.afterProgramCreate;
-
-//   watchCompilerHost.afterProgramCreate = (builderProgram) => {
-//     builderProgram.emit();
-
-//     if (originalAfterProgramCreate) {
-//       originalAfterProgramCreate(builderProgram);
-//     }
-//   };
-
-//   ts.createWatchProgram(watchCompilerHost);
-// }

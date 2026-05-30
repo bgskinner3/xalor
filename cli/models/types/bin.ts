@@ -1,4 +1,4 @@
-import type { TXalorCLIModes } from '../const-types';
+import type { TXalorCLIModes } from '../../../shared/types/const-types';
 
 /**
  * ICLIConfig

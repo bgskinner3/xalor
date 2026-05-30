@@ -47,6 +47,12 @@ export default function xalorTransformerPlugin(
   if (activeBootRoutine) {
     activeBootRoutine({ sampleFile, runtimePaths });
   }
+
+  if (lifecycle.isClearMode) {
+    return (_context: ts.TransformationContext) => {
+      return (sourceFile: ts.SourceFile): ts.SourceFile => sourceFile;
+    };
+  }
   return (context: ts.TransformationContext) => {
     return (sourceFile: ts.SourceFile): ts.SourceFile => {
       const { bridgeDir } = XalorRoutesService.resolveXalorPaths(

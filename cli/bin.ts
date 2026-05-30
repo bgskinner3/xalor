@@ -1,21 +1,15 @@
 #!/usr/bin/env node
 // src/cli/bin.ts
-// import * as path from 'path';
 import {
   runWatchCommand,
   runCompileCommand,
   runStudioCommand,
+  runClearCommand,
 } from './commands';
 import { determineCLIConfig } from './utils';
-import type { TCommandRouterMapper } from '../shared';
+import type { TCommandRouterMapper } from './models';
 
 const COMMAND_ROUTER: TCommandRouterMapper = {
-  init: (projectRoot) => {
-    console.log(
-      `🚀 [Xalor CLI] Bootstrapping pristine Stage 1A local workspace layout context...`,
-    );
-    console.log(`📂 Target Workspace Anchor: ${projectRoot}`);
-  },
   watch: (projectRoot) => {
     runWatchCommand(projectRoot);
   },
@@ -28,7 +22,7 @@ const COMMAND_ROUTER: TCommandRouterMapper = {
   compile: (projectRoot) => {
     runCompileCommand(projectRoot);
   },
-  report: (projectRoot) => {
+  audit: (projectRoot) => {
     console.log(`📊 [Xalor CLI]  report Audit Ledger Map...`);
     console.log(`📂 Target Workspace Anchor: ${projectRoot}`);
   },
@@ -36,6 +30,9 @@ const COMMAND_ROUTER: TCommandRouterMapper = {
     console.log(`📊 [Xalor CLI]  STUDIO Audit Ledger Map...`);
     runStudioCommand(projectRoot);
     console.log(`📂 Target Workspace Anchor: ${projectRoot}`);
+  },
+  clear: (projectRoot) => {
+    runClearCommand(projectRoot);
   },
 } satisfies TCommandRouterMapper;
 

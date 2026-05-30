@@ -33,17 +33,6 @@ import {
  * @category Guards Primitive
  * @description Validates that a string value maps exactly to init execution states.
  */
-export const isInitMode: TTypeGuard<TXalorCLIModesMap['init']> = (
-  value: unknown,
-): value is TXalorCLIModesMap['init'] => {
-  return value === 'init' || value === '--init';
-};
-/**
- * @utilType Guard
- * @name isInitMode
- * @category Guards Primitive
- * @description Validates that a string value maps exactly to init execution states.
- */
 export const isCompileMode: TTypeGuard<TXalorCLIModesMap['compile']> = (
   value: unknown,
 ): value is TXalorCLIModesMap['compile'] => {
@@ -89,10 +78,21 @@ export const isVacuumMode: TTypeGuard<TXalorCLIModesMap['vacuum']> = (
  * @category Guards Primitive
  * @description Validates that a string value maps exactly to report execution states.
  */
-export const isReportMode: TTypeGuard<TXalorCLIModesMap['report']> = (
+export const isAuditMode: TTypeGuard<TXalorCLIModesMap['audit']> = (
   value: unknown,
-): value is TXalorCLIModesMap['report'] => {
+): value is TXalorCLIModesMap['audit'] => {
   return value === 'report' || value === '--report';
+};
+/**
+ * @utilType Guard
+ * @name isClearMode
+ * @category Guards Primitive
+ * @description Validates that a string value maps exactly to report execution states.
+ */
+export const isClearMode: TTypeGuard<TXalorCLIModesMap['clear']> = (
+  value: unknown,
+): value is TXalorCLIModesMap['clear'] => {
+  return value === 'clear' || value === '--clear';
 };
 /**
  * 🛰️ IS METADATA

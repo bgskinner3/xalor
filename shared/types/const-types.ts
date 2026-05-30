@@ -112,6 +112,6 @@ export type TCudExecutionMode = keyof typeof CUD_EXECUTION_MODES;
 /**
  * TTransformerExecuteMode
  *
- * Strict union type matching only: 'watch' | 'compile' | 'vacuum' | 'sudto
+ * Strict union type matching only: 'watch' | 'compile' | 'vacuum' | 'sudto | 'clear
  */
 export type TTransformerExecuteMode = keyof typeof TRANSFORMER_EXECUTE_MODES;

@@ -1,6 +1,6 @@
 <p align="center">
   <img
-    src="./assets/xalor.png"
+    src="./assets/XALOR_README.png"
     alt="Xalor hero"
     width="100%"
   />
@@ -29,9 +29,8 @@
   ⚙️ <a href="https://github.com/bgskinner3/axiom-kit/blob/main/packages/xalor/docs/api.md">API Reference</a>
 </p>
 
----
-
-&nbsp;
+<br/>
+<br/>
 
 <div align="center">
   <p style="font-size:20px; max-width:700px;">
@@ -39,226 +38,155 @@
   </p>
 </div>
 
-&nbsp;
+<br/>
+<br/>
 
-## 💥 The Runtime Gap
+## 🧩 What is Xalor?
 
-TypeScript ends at compile time. Your application does not. At runtime, type safety is historically rebuilt manually across the development stack:
+Xalor is a build-time type compiler and runtime orchestration framework. Write native TypeScript types once, and your app handles runtime validation, mocking, and data operations with zero schema duplication.
 
-- APIs trust external payload data inputs by default.
-- Validation parameters are re-implemented loosely inside custom schemas, guards, and DTO structures.
-- Heavy validation libraries like Zod or io-ts duplicate your TypeScript models entirely at runtime.
-- Structural type drift inevitably emerges between compile-time definitions and execution realities.
-- Every system boundary re-expresses the same data rules in a completely different form.
+### 🗂️ The 50/50 Split Architecture
 
-**The Result:** Type safety becomes a tax of duplicated intent, rather than an enforced structural law. At runtime, TypeScript ceases to be a constraint — it becomes mere documentation.
+Xalor permanently divides the workload into two equal, highly optimized operational phases:
 
-&nbsp;
+```text
+       [ COMPILER ENGINE (50% Build-Time) ]         │       [ STRATEGY MATRIX (50% Runtime) ]
+  • Background compiler memory scanning             │   • O(1) Memory Pointer Hydration on Boot
+  • Deep Graph Interning (CAS Compaction)           │   • Multi-Strategy Payload Validation (guard, assert)
+  • Ingestion Purity Gatehouse Filtering            │   • Reverse-Blueprint Synthesis (default, mock)
+  • Depth-Bomb Cyclic Loop Protection               │   • Linear Object Shape-Shifting (pick, omit, merge)
+```
 
-<p align="center">
-  <img
-    src="./assets/alice-test.png"
-    alt="Xalor hero"
-    width="700"
-  />
-</p>
+### 🛰️ The Code Lifecycle Blueprint
 
-&nbsp;
+You change zero coding habits. You write pure, native TypeScript types, and Xalor handles the compilation, indexing, and runtime mapping under the hood.
 
-## ⚡ The Inversion
+#### 1. The Build-Time Extraction Pass (Your IDE)
 
-Xalor permanently removes the boundary between compile-time and runtime by compiling your native TypeScript types into persistent, content-addressed metadata graphs. Your types are no longer erased after build — they become a live structural registry that powers complex runtime behaviors.
+The background compiler watcher silently parses your types, sweeps them through purity filters, and bakes them into ultra-compact, content-addressed data layout maps on disk—keeping your source folders 100% clean.
 
-Instead of declaring heavy schemas alongside your types, Xalor treats standard TypeScript code as the **Single Source of Truth** and compiles it directly into an active runtime type system.
+```ts
+// src/contracts.ts
+import { registerXalor } from '@xalor/core';
 
-- ❌ **No schema duplication** (Write types once, derive everything else).
-- ❌ **No type drift** between compile-time layout and production execution.
-- ❌ **No external validation libraries** shipped in your production client bundle.
-- ❌ **No re-declared models** across different layer boundaries.
+export type TTransaction = {
+  id: string;
+  amount: number;
+  currency: 'USD' | 'EUR' | 'GBP';
+};
 
-Just native TypeScript types → compiled into a live runtime system.
+// Register your native contract exactly once
+registerXalor<'TX_INDEX', TTransaction>();
+```
 
-Write types once.  
-Everything else is derived.
+#### 2. The Runtime Orchestration Pass (Your Live Application)
 
----
+Because 100% of the property parsing layout math was pre-compiled at build-time, your production application bundle inherits a clean, pre-hydrated snapshot ledger. It runs flat, linear memory lookups using direct property matches at hardware-level speed:
 
-&nbsp;
+```ts
+// src/api/gateway.ts
+import { validateXalor, generateXalor } from '@xalor/core';
 
-<p align="center">
-  <img
-    src="./assets/xalor-data-model.png"
-    alt="Xalor hero"
-    width="100%"
-  />
-</p>
+export async function handleIncomingPayment(payload: unknown) {
+  // ⚡ Strategy A: Execute an airtight runtime assertion throw instantly
+  validateXalor<'TX_INDEX', 'assert'>(payload);
 
-&nbsp;
+  // ⚡ Strategy B: Manufacture a typed zero-state default skeleton object
+  const cleanTemplate = generateXalor<'TX_INDEX', 'default'>();
 
-## ⚖️ Xalor vs Schema-Based Runtime Systems
+  console.log(payload.id); // Payload is fully narrowed and type-safe!
+}
+```
 
-| Capability                              |          Xalor          |     Zod / Ajv      |
-| --------------------------------------- | :---------------------: | :----------------: |
-| Persistent type graph                   |           ✔️            |         ❌         |
-| IDE ↔ runtime shared registry           |           ✔️            |         ❌         |
-| Source-code traceability (GPS errors)   |           ✔️            |         ❌         |
-| Multi-layer type storage (Vault system) |           ✔️            |         ❌         |
-| Build-time type compilation             |           ✔️            |         ❌         |
-| Single source of truth (TS-only)        |           ✔️            |         ❌         |
-| Runtime model                           | Precompiled type system | Runtime validation |
-| Schema duplication required             |           ❌            |         ✔️         |
+<br/>
 
-&nbsp;
+## ✨ Features
 
-&nbsp;
+- **Zero-Schema Type Bridge** — Native TypeScript types become your single source of truth.
+- **Ghost Bridge IntelliSense** — Automatic IDE autocomplete with zero manual wiring.
+- **Zero-Footprint Runtime** — Heavy type processing stays at build-time, not runtime.
+- **Interactive Local Playground** — Explore types and APIs instantly through a live local daemon.
+- **Multi-Utility Strategy API** — Validate, generate, and transform data from a unified API.
+- **Boot-Time Parsing Elimination** — Microsecond-fast startup for serverless and edge workloads.
+- **Deep Graph Interning (CAS)** — Deduplicates shared structures to minimize memory and storage usage.
+
+### 📚 Dive deeper [All Features →](https://github.com/bgskinner3/xalor/tree/main)
+
+<br/>
 
 ## 📦 Install
 
 ```bash
 
 npm install @bgskinner2/xalor
-npm install --save-dev ts-patch typescript
 
 ```
 
----
+### ⚙️ Explore Configuration Options [Configure →](https://github.com/bgskinner3/xalor/tree/main)
 
-## ⚡ Quick Start
+<br/>
 
-Xalor works by compiling your native TypeScript types into a persistent runtime type system during your normal build process.
+## 🛠️ Quick Start
 
-No runtime setup required — just install, configure once, and use native TypeScript.
+```typescript
+import { xalor } from '@bgskinner2/xalor';
+import type { UserProfile } from './types';
 
-👉 Full setup & configuration guide: [Installation & Config Docs](https://github.com/bgskinner3/axiom-kit/blob/main/packages/xalor/docs/Installation.md)
+// 1. Validate incoming data payloads instantly
+const isValid = xalor.check<UserProfile>(payload);
 
----
+// 2. Generate compliant mock data structures out-of-the-box
+const mockData = xalor.mock<UserProfile>();
+```
 
-&nbsp;
+<br/>
 
-&nbsp;
+## ⚡ Runtime API Operations Suite
 
-## 🧪 API Peek
+Xalor leverages your pre-compiled, content-addressed type blueprints (`sh_xxxxxx`) to drive a high-performance runtime application deck. Instead of executing heavy parsing strings on the heap, you call unified core methods configured with lightweight, point-free execution strategy tokens to validate, synthesize, or mutate data structures at hardware-level speeds.
 
-### `registerXalor<"KEY", Type>()` (The Registor)
+| Core Runtime API       | Strategy Tokens (Sub-Commands)                                 | Core Operational Objective (Why use it)                                                           |
+| :--------------------- | :------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
+| `registerXalor<K, T>`  | _N/A (Ingestion Macro)_                                        | Signals the background compiler watcher to mine, flatten, and index a type contract.              |
+| `validateXalor<K, S>`  | `'guard'` \| `'assert'` \| `'parse'` \| `'audit'`              | Executes airtight data boundary verification, sanitization, or diagnostic flight audits.          |
+| `generateXalor<K, S>`  | `'default'` \| `'mock'` \| `'clone'` \| `'cast'`               | Manufactures fresh zero-state skeletons, randomized testing data, or deep clones from blueprints. |
+| `transformXalor<K, S>` | `'pick'` \| `'omit'` \| `'rename'` \| `'flatten'` \| `'merge'` | Handles in-memory payload shape-shifting, structural key remapping, and schema merging.           |
+| `matchXalor<K, T>`     | _N/A (Routing Gate)_                                           | Implements structural pattern routing to stream business logic based on incoming data shapes.     |
 
-A single gateway for registering types into the global Xalor registry.  
-Supports multiple overload patterns through a unified API surface.
-
-### 🧬 Type Injection
+### 🛰️ Quick-Start Syntax Blueprint
 
 ```ts
-type TUser = {
-  id: number;
-  name: string;
-  address: {
-    street: string;
-    city: string;
-  };
-};
+// 1. Register your native TypeScript contract once (Build-time)
+registerXalor<'USER_PROFILE', TUserProfile>();
 
-/**
- * Associates a compile-time TypeScript type with a global registry key.
- *
- * In development mode, saving the file (or triggering a build) will
- * automatically register this type into the runtime registry.
- *
- * With IDE integration enabled, registration happens immediately on save.
- */
-
-registerXalor<'USER_KEY', TUser>();
+// 2. Execute any runtime API strategy dynamically across the stack (Runtime)
+const isUserValid = validateXalor<'USER_PROFILE', 'guard'>(payload); // Returns boolean
+const freshSkeleton = generateXalor<'USER_PROFILE', 'default'>(); // Returns typed empty object
+const flatKeyMap = transformXalor<'USER_PROFILE', 'flatten'>(user); // Returns dot-notation map
 ```
 
-### 📦 Object Inference (flexible API)
+👉 For full parameter specifications, custom error-handling models, and interactive code recipes for each execution strategy, see the [Full Runtime API Strategy Manual](https://xalor.dev).
 
-Or Just pass Your Whole Data Object
+<br/>
 
-```ts
-const userData = {
-  id: 1,
-  name: 'Alex Carter',
-  address: {
-    street: '42 West Market St',
-    city: 'New York',
-  },
-};
+## 🛠️ CLI Layer & Workspace Commands
 
-/**
- * The API is not limited to declared TypeScript types.
- *
- * You can also register runtime data objects directly, using the
- * provided key as the registry identifier.
- *
- * This allows rapid prototyping without explicit type declarations.
- */
-registerXalor<'USER_TEST_4'>(userData);
-```
+Xalor shifts the mathematical heavy lifting of your type structures entirely into your build phase via an optimized, low-overhead background compiler engine. The CLI layer acts as your local infrastructure control deck—governing workspace database persistence, incremental delta-pruning, CI/CD safety boundaries, and live telemetry streaming.
 
-Either way you register to the vault your type its pormised to be gloablly acessible and aviablbe to any other of our runtime APis
+| Command         | Category     | Operational Blueprint (What it does)                                                       |
+| :-------------- | :----------- | :----------------------------------------------------------------------------------------- |
+| `xalor watch`   | Local DX     | Monitors active file-system saves, running real-time HMR state synchronization.            |
+| `xalor compile` | CI/CD Gate   | Executes a single-pass full-graph AST sweep, freezing pipelines on rule breaches.          |
+| `xalor studio`  | Simulation   | Launches a secure, cross-origin loopback server to power your web workspace UI.            |
+| `xalor vacuum`  | Sanitation   | Cleans the ledger by evicting stale, un-referenced CAS cache pointer fragments.            |
+| `xalor diff`    | Verification | Cross-examines local type changes against production logs to intercept breaking API drift. |
+| `xalor audit`   | Profiling    | Generates deep codebase structural density profiles and local Markdown reports.            |
+| `xalor clear`   | Recovery     | Hard flash-purges the local `node_modules` cache directory back to absolute zero.          |
 
----
+👉 For the complete CLI technical specification manual, advanced flag parameters, and CI/CD integration recipes, read the [Full CLI Commands Documentation Manual](https://xalor.dev).
 
-&nbsp;
-
-### `validateXalor` (The Validator)
-
-A multi-mode runtime type gateway for checking, asserting, and parsing data from your compiled TypeScript registry.
-
-### 🛡️ Guard (type-safe predicate)
-
-```ts
-/**
- * Creates a runtime type guard derived from the registered "USER" type.
- *
- * Once a type is registered, it becomes globally available across all APIs
- * via the shared runtime type registry.
- *
- * This removes the need for manually writing and maintaining separate
- * validation or guard functions.
- */
-const isUser = validateXalor<'USER', 'guard'>();
-
-if (isUser(data)) {
-  // fully typed as User
-}
-```
-
-### ⚡ Parse (safe transformation)
-
-```ts
-/**
- * Parses unknown input into a strongly typed "USER" object.
- *
- * If validation fails, the runtime safely handles the failure path
- * using the internal registry rules.
- */
-const parseUser = validateXalor<'USER', 'parse'>();
-
-const user = parseUser(data);
-
-// Example of internal failure handling (conceptual):
-// return fallbackValue;
-```
-
-All APIs are powered by a single compiled TypeScript registry, enabling shared access across validation, parsing, and generation layers without duplicated schemas or external validation systems.
-
-👉 Full API reference: [Full API](https://github.com/bgskinner3/axiom-kit/blob/main/packages/xalor/docs/api.md)
-
----
-
-&nbsp;
-
-## ✨ Core Features
-
-- ✔ **Native TypeScript → Runtime System:** Your types become executable code variables at build-time.
-- ✔ **Persistent Structural Type Graph (Vault System):** Types are safely cached, reused, and never re-declared.
-- ✔ **Shared IDE + Runtime Registry:** One uniform data vocabulary powering both editor completion and execution.
-- ✔ **Zero Schema Duplication:** Wipes out the need for duplicate, mirrored Zod-style data schemas.
-- ✔ **Tree-Shakeable by Design:** Multi-line pure annotations allow minifiers to strip unused metadata completely.
-- ✔ **Zero-Footprint Runtime Overhead:** Complex operations are handled entirely during builds, not inside the execution thread.
-
-👉 **Explore the full feature manifest:** [Framework Features Guide](https://github.com/bgskinner3/axiom-kit/blob/main/packages/xalor/docs/features.md)
-
----
+<br/>
+<br/>
 
 ## 📄 License
 

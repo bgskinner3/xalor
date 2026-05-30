@@ -104,6 +104,12 @@ export const COLLISION_BORDER_FAILURE_MAPPER: TCollisionBorderFailureMapper = {
       `Action: Xalor requires unique global keys. Change the target literal string key name.`,
   },
 } satisfies TCollisionBorderFailureMapper;
+
+// ================================================================================
+// ================================================================================
+// ================================================================================
+// ================================================================================
+
 /**
  * TYPE_RESOLVER_RULE_MAPPER
  * 🪐 THE TYPE RESOLVER BOUNDARY EXCEPTION BLUEPRINTS

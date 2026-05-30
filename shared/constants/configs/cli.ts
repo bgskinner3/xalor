@@ -10,13 +10,12 @@
  * engine uses it to lock down auto-complete in the IDE.
  */
 export const CLI_COMMAND_MODES = Object.freeze({
-  init: 'init',
   watch: 'watch',
-  compile: 'compile', // 🚀 Added: One-shot development sync pass
+  compile: 'compile',
   vacuum: 'vacuum',
-  report: 'report',
-
+  audit: 'audit',
   studio: 'studio',
+  clear: 'clear',
 } as const);
 /**
  * XALOR_ENV_KEYS
@@ -33,6 +32,8 @@ export const XALOR_ENV_KEYS = Object.freeze({
   vacuum: 'XALOR_CLI_VACUUM',
 
   studio: 'XALOR_CLI_STUDIO',
+
+  clear: 'XALOR_CLI_CLEAR',
 });
 
 export const TRANSFORMER_EXECUTE_MODES = Object.freeze({
@@ -40,6 +41,7 @@ export const TRANSFORMER_EXECUTE_MODES = Object.freeze({
   compile: 'compile',
   vacuum: 'vacuum',
   studio: 'studio',
+  clear: 'clear',
 } as const);
 
 /**
