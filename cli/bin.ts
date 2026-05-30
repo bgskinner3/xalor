@@ -8,6 +8,7 @@ import {
 } from './commands';
 import { determineCLIConfig } from './utils';
 import type { TCommandRouterMapper } from './models';
+import { CLI_LOGGER_MAPPER } from './models';
 
 const COMMAND_ROUTER: TCommandRouterMapper = {
   watch: (projectRoot) => {
@@ -33,6 +34,11 @@ const COMMAND_ROUTER: TCommandRouterMapper = {
   },
   clear: (projectRoot) => {
     runClearCommand(projectRoot);
+  },
+  help: () => {
+    const helpLog = CLI_LOGGER_MAPPER.help('');
+    console.log(helpLog.trim());
+    process.exit(0);
   },
 } satisfies TCommandRouterMapper;
 

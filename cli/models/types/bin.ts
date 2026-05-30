@@ -1,4 +1,14 @@
-import type { TXalorCLIModes } from '../../../shared/types/const-types';
+import type {
+  TXalorCLIModes,
+  TCLIFlags,
+} from '../../../shared/types/const-types';
+
+/**
+ * TCLICommandsControl
+ *
+ * CLI layer commands including help to avoid unncessary commands
+ */
+export type TCLICommandsControl = TXalorCLIModes | 'help';
 
 /**
  * ICLIConfig
@@ -11,8 +21,9 @@ import type { TXalorCLIModes } from '../../../shared/types/const-types';
  * 2. LIFECYCLE DIRECTION: Restricts operational states to verified runtime modes.
  */
 export interface ICLIConfig {
-  readonly mode: TXalorCLIModes;
+  readonly mode: TCLICommandsControl;
   readonly projectRoot: string;
+  readonly flags: Readonly<Record<TCLIFlags, boolean>>;
 }
 
 /**
@@ -26,6 +37,6 @@ export interface ICLIConfig {
  * 2. COMPLIANCE INDUCTION: Enforces full compilation-time coverage of all known CLI modes.
  */
 export type TCommandRouterMapper = Record<
-  TXalorCLIModes,
-  (projectRoot: string) => void
+  TCLICommandsControl,
+  (projectRoot: string, flags?: ICLIConfig['flags']) => void
 >;

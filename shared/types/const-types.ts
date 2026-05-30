@@ -10,6 +10,8 @@ import {
   CLI_COMMAND_MODES,
   CUD_EXECUTION_MODES,
   TRANSFORMER_EXECUTE_MODES,
+  CLI_MODE_FLAGS_MAPPER,
+  ALL_CLI_FLAGS,
 } from '../constants';
 
 /**
@@ -102,6 +104,13 @@ export type TXalorCLIModes = keyof typeof CLI_COMMAND_MODES;
 export type TXalorCLIModesMap = {
   readonly [K in TXalorCLIModes]: K;
 };
+
+/**
+ * TCLIFlags
+ * ROLE: Strict union type derived from the master allowed flag array index.
+ * STRATEGY: Enforces strict type-safety, blocking unknown terminal parameter strings at compile time.
+ */
+export type TCLIFlags = (typeof ALL_CLI_FLAGS)[number];
 /**
  * TCudExecutionMode
  *

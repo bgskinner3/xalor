@@ -77,3 +77,53 @@ export function* mapIterableLazy<T, R>(
     yield transform(items[i]);
   }
 }
+/**
+ * @utilType util
+ * @name yieldItems
+ * @category Iteration
+ * @description Lazily yields items from a readonly collection one element at a time.
+ * Provides a zero-allocation traversal mechanism for array-backed datasets while
+ * preserving deterministic iteration order.
+ *
+ * @remarks
+ * This utility is intended for scenarios where eager iteration utilities such as
+ * `map`, `filter`, or `flatMap` would create unnecessary intermediate arrays.
+ * Consumers receive values on demand through generator consumption.
+ *
+ * @example
+ * ```ts
+ * const values = ['alpha', 'beta', 'gamma'] as const;
+ *
+ * for (const value of yieldItems(values)) {
+ *   console.log(value);
+ * }
+ *
+ * // Output:
+ * // alpha
+ * // beta
+ * // gamma
+ * ```
+ *
+ * @example
+ * ```ts
+ * const tokens = ['--watch', '--verbose'];
+ *
+ * const iterator = yieldItems(tokens);
+ *
+ * console.log(iterator.next().value); // '--watch'
+ * console.log(iterator.next().value); // '--verbose'
+ * ```
+ *
+ * @performance
+ * - O(N) traversal complexity
+ * - O(1) memory overhead
+ * - No intermediate array allocations
+ * - Preserves original collection ordering
+ */
+export function* yieldItems<T>(items: readonly T[]): Generator<T> {
+  const len = items.length;
+
+  for (let i = 0; i < len; i++) {
+    yield items[i];
+  }
+}

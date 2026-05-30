@@ -1,6 +1,6 @@
 import ts from 'typescript';
 import { isUndefined } from '../../shared';
-import { MODE_ENV_MUTATION_MAPPER, CLI_BOOTSTRAP_LOG_MAPPER } from '../models';
+import { MODE_ENV_MUTATION_MAPPER, CLI_LOGGER_MAPPER } from '../models';
 import type { TBootStrapEnvContext } from '../models';
 
 /**
@@ -15,7 +15,7 @@ export function bootstrapEnvContext(context: TBootStrapEnvContext): string {
   const { cliMode, projectRootPath } = context;
 
   // 1. Single-allocation template stream execution avoiding memory thrashing
-  const initialLog = CLI_BOOTSTRAP_LOG_MAPPER[cliMode](projectRootPath);
+  const initialLog = CLI_LOGGER_MAPPER[cliMode](projectRootPath);
   console.log(initialLog.trim());
 
   // 2. Coordinated process variable state synchronization block pass

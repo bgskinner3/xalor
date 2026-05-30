@@ -1,3 +1,11 @@
+import { ObjectUtils } from '../../utils';
+
+// ======================================================================================================
+// ======================================================================================================
+// BASE CLI COMMANDS AND FLAGS
+// ======================================================================================================
+// ======================================================================================================
+
 /**
  * CLI_COMMAND_MODES CONFIGURATION
  *
@@ -17,6 +25,32 @@ export const CLI_COMMAND_MODES = Object.freeze({
   studio: 'studio',
   clear: 'clear',
 } as const);
+
+/**
+ * CLI_MODE_FLAGS_MAPPER
+ * ROLE: Primary matrix mapping valid feature flags to their allowed CLI mode scopes.
+ * STRATEGY: Enforces strict encapsulation, ensuring flags only parse inside verified command contexts.
+ */
+export const CLI_MODE_FLAGS_MAPPER = Object.freeze({
+  clear: [],
+  compile: [],
+  watch: [],
+  vacuum: [],
+  audit: ['fix', 'json', 'verbose'] as const,
+  studio: [],
+} as const);
+
+/**
+ * ALL_CLI_FLAGS
+ * ROLE: A flat, immutable array registry containing all valid application flags.
+ * STRATEGY: Flattens allowed parameters point-free on boot to build a single fast reference index.
+ */
+export const ALL_CLI_FLAGS = Object.freeze(
+  ObjectUtils.keys(CLI_MODE_FLAGS_MAPPER).flatMap(
+    (key) => CLI_MODE_FLAGS_MAPPER[key],
+  ),
+);
+
 /**
  * XALOR_ENV_KEYS
  *
@@ -35,6 +69,12 @@ export const XALOR_ENV_KEYS = Object.freeze({
 
   clear: 'XALOR_CLI_CLEAR',
 });
+
+// ======================================================================================================
+// ======================================================================================================
+// TRANSFORMER VERSION
+// ======================================================================================================
+// ======================================================================================================
 
 export const TRANSFORMER_EXECUTE_MODES = Object.freeze({
   watch: 'watch',

@@ -1,4 +1,5 @@
 import type { TCLIBootStrapModes, TEnvStateMatrix } from '../types';
+
 /**
  * ============================================================================
  * 🚦 CLI MODE INITIALIZATION AND MUTATION MAPPER COMPACT
@@ -13,7 +14,7 @@ import type { TCLIBootStrapModes, TEnvStateMatrix } from '../types';
  * 2. MODE_ENV_MUTATION_MAPPER     - Process-level environment flag toggle footprints.
  */
 /* prettier-ignore */
-export const CLI_BOOTSTRAP_LOG_MAPPER: Record<TCLIBootStrapModes, (projectRootPath: string) => string> = {
+export const CLI_LOGGER_MAPPER: Record<TCLIBootStrapModes | 'help', (projectRootPath: string) => string> = {
   clear: (projectRootPath) => `
 ====================================================
 🪐 [Xalor CLI] INITIALIZING ABSOLUTE ZERO CACHE PURGE...
@@ -29,7 +30,28 @@ export const CLI_BOOTSTRAP_LOG_MAPPER: Record<TCLIBootStrapModes, (projectRootPa
 🔭 [Xalor CLI] STARTING REAL-TIME REFLECTION RUNNER...
 📂 Project Root Anchor: ${projectRootPath}
 ====================================================`,
-} satisfies Record<TCLIBootStrapModes, (projectRootPath: string) => string>;
+
+  help: () => `
+======================================================================
+🪐 XALOR CLI ENVIRONMENT GATEWAY MANUAL
+======================================================================
+Usage: xalor <command> [options]
+
+Commands:
+  watch    🔭 Start real-time reflection watcher daemon (HMR)
+  compile  ⚡ Execute single-pass sync graph AST builder
+  audit    📊 Profile macro operational health and validation density
+  studio   🛰️ Launch secure Cross-Origin localhost workspace UI
+  vacuum   🧹 Purge stale un-referenced CAS cache cache leaf pointers
+  clear    🔥 Hard flash-purge node_modules cache back to zero
+
+Options (audit only):
+  -f, --fix      🚿 Evict orphaned type keys and optimize snapshot databases
+  -j, --json     📄 Emit raw JSON metrics structure to standard output stream
+  -v, --verbose  🔍 Expose deep compiler token mapping details
+======================================================================
+    `
+} satisfies Record<TCLIBootStrapModes | 'help', (projectRootPath: string) => string>;
 
 /* prettier-ignore */
 export const MODE_ENV_MUTATION_MAPPER: Record<TCLIBootStrapModes, TEnvStateMatrix> = {
