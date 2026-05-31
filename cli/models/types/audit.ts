@@ -3,6 +3,7 @@ import {
   DRIFT_VARIANCE_CATEGORIES,
   COMPLEXITY_TAXONOMY_TOKEN_KEYS,
 } from '../constants';
+import type { TSolidShape, TSolidObjectRawShape } from '../../../shared/types';
 
 /**
  * Core primitive lookup types mapped directly from the constant manifests.
@@ -29,6 +30,13 @@ export type TXalorAuditSummary = {
   readonly highestGraphDepthRecorded: number;
 };
 
+export type TParsedLocation = {
+  readonly filePath: string;
+  readonly line: number;
+  readonly column: number;
+  readonly anchor: number;
+};
+
 /**
  * TXalorAuditNode
  * ROLE: Compact, performance-optimized macro metadata record for a single type registration.
@@ -43,12 +51,7 @@ export type TXalorAuditNode = {
     readonly symbolName: string;
     readonly casFingerprint: string;
   };
-  readonly location: {
-    readonly filePath: string;
-    readonly line: number;
-    readonly column: number;
-    readonly anchorIndex: number;
-  };
+  readonly location: TParsedLocation;
   readonly metrics: {
     readonly depth: number;
     readonly complexityScore: TTaxonomyTokenKeys;
@@ -56,6 +59,14 @@ export type TXalorAuditNode = {
   };
 };
 
+export type TDepthWarning = {
+  readonly typeKey: string;
+  readonly currentDepth: number;
+};
+export type TDuplicateShape = {
+  readonly canonicalHash: string;
+  readonly conflictingKeys: readonly string[];
+};
 /**
  * TXalorAuditHygiene
  * ROLE: High-risk structural alerts mapping depth violations and structural collisions.
@@ -68,14 +79,8 @@ export type TXalorAuditNode = {
 export type TXalorAuditHygiene = {
   readonly totalOrphanedKeys: number;
   readonly totalCriticalDepthWarnings: number;
-  readonly depthWarnings: readonly {
-    readonly typeKey: string;
-    readonly currentDepth: number;
-  }[];
-  readonly duplicateShapes: readonly {
-    readonly canonicalHash: string;
-    readonly conflictingKeys: readonly string[];
-  }[];
+  readonly depthWarnings: readonly TDepthWarning[];
+  readonly duplicateShapes: readonly TDuplicateShape[];
 };
 
 /**
@@ -129,7 +134,10 @@ export type TXalorAuditDrift = {
   readonly hasBreakingChanges: boolean;
   readonly mutations: readonly TDriftMutationShape[];
 };
-
+export type TTopologyEdge = {
+  readonly sourceKey: string;
+  readonly targetKey: string;
+};
 /**
  * TXalorAuditTopology
  * ROLE: Directional reference edge map and cyclic micro-loop dependency analyzer.
@@ -149,10 +157,7 @@ export type TXalorAuditDrift = {
  *   recursive algorithms.
  */
 export type TXalorAuditTopology = {
-  readonly edges: readonly {
-    readonly sourceKey: string;
-    readonly targetKey: string;
-  }[];
+  readonly edges: readonly TTopologyEdge[];
   readonly cyclicPaths: readonly (readonly string[])[];
 };
 
@@ -185,3 +190,101 @@ export interface IXalorAuditPayload {
   readonly drift: TXalorAuditDrift;
   readonly topology: TXalorAuditTopology;
 }
+
+// ======================================================================================================
+// ======================================================================================================
+// SERVICE TYPES
+// ======================================================================================================
+// ======================================================================================================
+
+/**
+ * TSelfRecursion
+ * ROLE: Decoupled functional type representing the engine's recursive self-referential jump loop.
+ * STRATEGY: Implements an isolated parameter signature matching TCalculateDepthParams to allow point-free forward mapping.
+ */
+export type TSelfRecursion = (params: TCalculateDepthParams) => number;
+
+/**
+ * TDepthHandler
+ * ROLE: Pure functional signature contract for structural shape depth processors.
+ *
+ * SCOPE BOUNDARY MANUAL:
+ * - INTERNAL COMPILER EXCLUSIVITY: This signature and its matching strategy matrix are
+ *   engineered strictly for the build-time analytical data engine layer.
+ * - RUNTIME INSULATION: This type is never exported, imported, or invoked within your live
+ *   production application code bundle (/src). It has zero footprint on runtime validation gates.
+ * - CONTEXT SHARED PATHWAY: While isolated from production runtime logic, it is consumed switchlessly
+ *   by both the terminal 'xalor audit' command profiler and the local 'xalor studio' GraphQL backend
+ *   brokers to calculate structural metric models from a single source of truth.
+ */
+export type TDepthHandler<S extends TSolidShape['kind']> = (
+  shape: Extract<TSolidShape, { kind: S }>,
+  blueprints: Record<string, TSolidShape>,
+  traversalStack: readonly string[],
+  self: TSelfRecursion,
+) => number;
+
+export type TAuditDepthMapper = {
+  [K in TSolidShape['kind']]: TDepthHandler<K>;
+};
+
+// ======================================================================================================
+// ======================================================================================================
+// METHOD TYPES
+// ======================================================================================================
+// ======================================================================================================
+
+/**
+ * TCalculateDepthParams
+ * ROLE: Unified data parameter context wrapping active recursive traversal boundaries.
+ *
+ * @param shape Targeted structural schema description block currently being evaluated
+ * @param blueprints Authoritative content-addressed storage repository registry map
+ * @param traversalStack Path sequence array tracking active parents to prevent infinite cyclic traps
+ */
+export type TCalculateDepthParams = {
+  readonly shape: TSolidShape;
+  readonly blueprints: Record<string, TSolidShape>;
+  readonly traversalStack: readonly string[];
+};
+
+export type TDepthComplexityMapper = {
+  key: TTaxonomyTokenKeys;
+  test: (d: number) => boolean;
+}[];
+/**
+ * TReferenceCollectorHandler
+ * ROLE: Pure functional signature contract for structural shape reference tracers.
+ */
+export type TReferenceCollectorHandler<K extends TSolidShape['kind']> = (
+  shape: Extract<TSolidShape, { kind: K }>,
+  activeSet: Set<string>,
+  self: (shape: TSolidShape) => void,
+) => void;
+
+export type TReferenceCollectorMapper = {
+  [K in TSolidShape['kind']]: TReferenceCollectorHandler<K>;
+};
+
+/**
+ * TPropertyDeltaContext
+ * ROLE: Local payload container holding property descriptors for comparison boundaries.
+ */
+export type TPropertyDeltaContext = {
+  readonly typeKey: string;
+  readonly propKey: string;
+  readonly activeProp: TSolidObjectRawShape;
+  readonly baselineProp: TSolidObjectRawShape | undefined;
+};
+
+/**
+ * TPropertyDriftRule
+ * ROLE: Pure functional signature contract governing contract drift evaluation criteria rows.
+ * STRATEGY: Enforces strict type matching across category labels to remove casting shortcuts entirely.
+ */
+export type TPropertyDriftRule = {
+  readonly test: (ctx: TPropertyDeltaContext) => boolean;
+  readonly category: TVarianceCategories;
+  readonly isBreaking: boolean;
+  readonly describe: () => string;
+};

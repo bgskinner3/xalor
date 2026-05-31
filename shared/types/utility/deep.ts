@@ -18,3 +18,12 @@ export type TDeepKeyOf<T> = T extends object
           : `${K}`;
     }[keyof T & (string | number)]
   : never;
+
+/**
+ * TDeepWriteable
+ * ROLE: Recursively strips the 'readonly' modifier from all nested properties of an object graph.
+ * STRATEGY: Iterates through keys deep-pass to unlock structures specifically during building/mutation phases.
+ */
+export type TDeepWriteable<T> = {
+  -readonly [P in keyof T]: T[P] extends object ? TDeepWriteable<T[P]> : T[P];
+};

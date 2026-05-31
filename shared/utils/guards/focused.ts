@@ -81,7 +81,7 @@ export const isVacuumMode: TTypeGuard<TXalorCLIModesMap['vacuum']> = (
 export const isAuditMode: TTypeGuard<TXalorCLIModesMap['audit']> = (
   value: unknown,
 ): value is TXalorCLIModesMap['audit'] => {
-  return value === 'report' || value === '--report';
+  return value === 'audit' || value === '--audit';
 };
 /**
  * @utilType Guard

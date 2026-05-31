@@ -37,10 +37,6 @@ export function runWatchCommand(projectRootPath: string): void {
     configFileParsingDiagnostics,
     projectReferences,
   ) => {
-    // THE DUAL-EMIT BLOCKADE REMOVAL:
-    // We explicitly strip out the "plugins" array allocation from the compiler choices!
-    // This stops TypeScript from auto-loading your transformer plugin via tsconfig.json,
-    // ensuring our custom transformers array pass below is the ONLY execution path running.
     const cleanOptions = { ...options };
     if (isKeyInObject('plugins')(cleanOptions)) {
       delete cleanOptions.plugins;

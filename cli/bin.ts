@@ -5,6 +5,7 @@ import {
   runCompileCommand,
   runStudioCommand,
   runClearCommand,
+  runAuditCommand,
 } from './commands';
 import { determineCLIConfig } from './utils';
 import type { TCommandRouterMapper } from './models';
@@ -23,9 +24,8 @@ const COMMAND_ROUTER: TCommandRouterMapper = {
   compile: (projectRoot) => {
     runCompileCommand(projectRoot);
   },
-  audit: (projectRoot) => {
-    console.log(`📊 [Xalor CLI]  report Audit Ledger Map...`);
-    console.log(`📂 Target Workspace Anchor: ${projectRoot}`);
+  audit: async (projectRoot, flags) => {
+    await runAuditCommand(projectRoot, flags);
   },
   studio: (projectRoot) => {
     console.log(`📊 [Xalor CLI]  STUDIO Audit Ledger Map...`);

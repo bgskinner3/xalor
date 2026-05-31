@@ -9,9 +9,10 @@ import {
   CLI_MODE_FLAGS_MAPPER,
   ALL_CLI_FLAGS,
 } from '../../shared';
-import { yieldItems } from '../../shared/utils';
+import { yieldItems, isKeyOfArray, ObjectUtils } from '../../shared/utils';
 import type { ICLIConfig, TCLICommandsControl } from '../models';
 import { MODE_SYSTEM_EVALUATORS } from '../models';
+import type { TTypeGuard } from '../../shared/types';
 
 /**
  * buildInitialFlagsLedger
@@ -39,6 +40,36 @@ function buildInitialFlagsLedger(): Record<TCLIFlags, boolean> {
 
   return Object.freeze(flagsLedger);
 }
+
+/**
+ * SANITIZE FLAGS
+ * ROLE: Standalone parameter shielding utility that sanitizes dynamic CLI argument configurations.
+ * STRATEGY: Filters unverified input keys using your native isValidCLIFlagGuard to guarantee
+ * complete protection against unexpected mutations or undefined reference crashes down the line.
+ *
+ * @param flags Loose raw incoming feature configuration flag block passed down from the command router
+ * @returns Fully verified, immutable record conforming to the strict ICLIConfig['flags'] layout contract
+ */
+export function sanitizeFlags(
+  flags?: Partial<Record<string, boolean>>,
+): ICLIConfig['flags'] {
+  const activeFlags: Record<TCLIFlags, boolean> = {
+    ...buildInitialFlagsLedger(),
+  };
+
+  if (!flags) {
+    return Object.freeze(activeFlags);
+  }
+  const inputKeys = ObjectUtils.keys(flags);
+  for (const targetKey of yieldItems(inputKeys)) {
+    if (isValidCLIFlagGuard(targetKey)) {
+      activeFlags[targetKey] = !!flags[targetKey];
+    }
+  }
+
+  return Object.freeze(activeFlags);
+}
+
 function resolveAliasedFlagToken(token: string): TCLIFlags | null {
   if (token === '--fix' || token === '-f') return 'fix';
   if (token === '--json' || token === '-j') return 'json';
@@ -125,3 +156,13 @@ export function determineCLIConfig(argv: readonly string[]): ICLIConfig {
     flags: Object.freeze(secureFlagsLedger),
   };
 }
+
+/**
+ * IS_VALID_CLI_FLAG_GUARD
+ * ROLE: High-velocity primitive type guard validating terminal switch string parameters on boot.
+ * STRATEGY: Statically derived from your curry factory configuration matrix to enforce
+ * 100% type-narrowing safety across your TCLIFlags union contract boundaries.
+ */
+export const isValidCLIFlagGuard: TTypeGuard<TCLIFlags> = (
+  value: unknown,
+): value is TCLIFlags => isKeyOfArray(ALL_CLI_FLAGS)(value);

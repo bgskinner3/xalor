@@ -172,4 +172,8 @@ export const REGEX_PATTERNS = Object.freeze({
   extensions: /\.(ts|tsx|js|jsx)$/,
   backslashes: /\\/g,
   fragments: /\$/,
+  // vault regexes
+  line: /line:\s*(\d+)/,
+  column: /column:\s*(\d+)/,
+  anchor: /:(\d+)/,
 } as const);

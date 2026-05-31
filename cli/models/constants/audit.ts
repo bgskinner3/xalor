@@ -1,6 +1,14 @@
 import { SENTRY_TRIGGER_MODES } from '../../../shared';
-import { ObjectUtils } from '../../../shared';
-
+import { ObjectUtils, yieldItems, isKeyOfArray } from '../../../shared/utils';
+import type {
+  TAuditDepthMapper,
+  TDepthComplexityMapper,
+  IXalorAuditPayload,
+  TTelemetryTokenNames,
+  TReferenceCollectorMapper,
+  TPropertyDeltaContext,
+  TPropertyDriftRule,
+} from '../types';
 /**
  * DRIFT_VARIANCE_CATEGORIES
  * ROLE: Evaluation taxonomy categorizing contract mutations over time.
@@ -49,3 +57,196 @@ export const TELEMETRY_API_TOKEN_NAMES = Object.freeze(
     (key) => SENTRY_TRIGGER_MODES[key],
   ),
 );
+
+/**
+ * DEPTH_STRATEGY_MAPPER
+ * ROLE: Immutable dictionary routing shape variants to pure mathematical execution sub-lanes.
+ * STRATEGY: Eradicates imperative switch branching to enforce purely declarative processing boundaries.
+ */
+export const DEPTH_STRATEGY_MAPPER: TAuditDepthMapper = {
+  primitive: () => 0,
+  literal: () => 0,
+
+  reference: (shape, blueprints, traversalStack, self) => {
+    const targetHash = shape.name;
+    if (isKeyOfArray(traversalStack)(targetHash)) return 0;
+
+    const referencedShape = blueprints[targetHash];
+
+    if (!referencedShape) return 0;
+    return self({
+      shape: referencedShape,
+      blueprints,
+      traversalStack: [...traversalStack, targetHash],
+    });
+  },
+
+  object: (shape, blueprints, traversalStack, self) => {
+    const propertyKeys = ObjectUtils.keys(shape.properties);
+
+    if (propertyKeys.length === 0) return 1;
+
+    let maximumSubTreeDepth = 0;
+
+    for (const key of yieldItems(propertyKeys)) {
+      const propertyDescriptor = shape.properties[key];
+
+      const childDepth = self({
+        shape: propertyDescriptor.shape,
+        blueprints,
+        traversalStack,
+      });
+
+      if (childDepth > maximumSubTreeDepth) {
+        maximumSubTreeDepth = childDepth;
+      }
+    }
+
+    return 1 + maximumSubTreeDepth;
+  },
+
+  array: (shape, blueprints, traversalStack, self) => {
+    return self({ shape: shape.items, blueprints, traversalStack });
+  },
+
+  union: (shape, blueprints, traversalStack, self) => {
+    const valuesArray = shape.values;
+
+    let maximalUnionBranchDepth = 0;
+
+    for (const value of yieldItems(valuesArray)) {
+      const variantDepth = self({ shape: value, blueprints, traversalStack });
+
+      if (variantDepth > maximalUnionBranchDepth) {
+        maximalUnionBranchDepth = variantDepth;
+      }
+    }
+
+    return maximalUnionBranchDepth;
+  },
+
+  branded: (shape, blueprints, traversalStack, self) => {
+    return self({ shape: shape.base, blueprints, traversalStack });
+  },
+} satisfies TAuditDepthMapper;
+
+export const DEPTH_COMPLEXITY_MAPPER: TDepthComplexityMapper = [
+  { key: 'FLAT_O1', test: (d) => d <= 1 },
+  { key: 'LINEAR_ON', test: (d) => d <= 4 },
+  { key: 'COMPLEX_ON2', test: () => true },
+] satisfies TDepthComplexityMapper;
+
+export const DEFAULT_AUDIT_PAYLOAD: IXalorAuditPayload = {
+  summary: {
+    totalRegisteredKeys: 0,
+    totalUniqueFingerprints: 0,
+    casCompressionRatio: 0,
+    totalDatabaseDiskBytes: 0,
+    highestGraphDepthRecorded: 0,
+  },
+  nodes: [],
+  hygiene: {
+    totalOrphanedKeys: 0,
+    totalCriticalDepthWarnings: 0,
+    depthWarnings: [],
+    duplicateShapes: [],
+  },
+  telemetry: { orphanedKeys: [], strategyDistribution: [] },
+  lifecycleFootprint: {
+    developmentCacheBytes: 0,
+    productionEstimatedBytes: 0,
+    netBytesEvaporated: 0,
+    evaporationEfficiencyRatio: 0,
+  },
+  drift: { hasBreakingChanges: false, mutations: [] },
+  topology: { edges: [], cyclicPaths: [] },
+} satisfies IXalorAuditPayload;
+
+/**
+ * TELEMENTRY_TOKEN_NAME_MAPPER
+ * ROLE: Immutable dictionary mapping strategy tokens to isolated word boundary regex layouts.
+ * STRATEGY: Pre-compiled point-free on engine boot to eradicate runtime heap allocation thrashing.
+ */
+export const TELEMETRY_TOKEN_NAME_MAPPER = Object.freeze(
+  ObjectUtils.fromEntries(
+    TELEMETRY_API_TOKEN_NAMES.map((token): [TTelemetryTokenNames, RegExp] => [
+      token,
+      new RegExp(`\\b${token}\\b`, 'g'),
+    ]),
+  ),
+);
+
+/**
+ * REFERENCE_COLLECTOR_STRATEGY
+ * ROLE: Immutable mapping dictionary routing shapes to deep reference tracing branches.
+ * STRATEGY: Eliminates if-chains and switch blocks to maintain declarative data pipelines.
+ */
+export const REFERENCE_COLLECTOR_MAPPER: TReferenceCollectorMapper = {
+  primitive: () => {},
+  literal: () => {},
+
+  reference: (_shape, _activeSet, _self) => {
+    // Note: The parent loop inside executeSelfHealingPruneSweep handles resolving
+    // the hash pointer and passes the actual child shape object down the callback.
+  },
+
+  object: (shape, _activeSet, self) => {
+    for (const propKey in shape.properties) {
+      if (Object.prototype.hasOwnProperty.call(shape.properties, propKey)) {
+        const childShape = shape.properties[propKey].shape;
+        self(childShape);
+      }
+    }
+  },
+
+  array: (shape, _activeSet, self) => {
+    self(shape.items);
+  },
+
+  union: (shape, _activeSet, self) => {
+    const values = shape.values;
+    const len = values.length;
+    for (let i = 0; i < len; i++) {
+      self(values[i]);
+    }
+  },
+
+  branded: (shape, _activeSet, self) => {
+    self(shape.base);
+  },
+} satisfies TReferenceCollectorMapper;
+/**
+ * PROPERTY_DRIFT_EVALUATION_RULES
+ * ROLE: Immutable array registry mapping property conditions directly to their semantic variance outcomes.
+ * STRATEGY: Statically typechecked against TPropertyDriftRule to ensure compile-clean data mappings.
+ */
+/* prettier-ignore */
+export const PROPERTY_DRIFT_EVALUATION_RULES: readonly TPropertyDriftRule[] = [
+  {
+    test: (ctx) => !ctx.baselineProp && !ctx.activeProp.optional,
+    category: 'BREAKING_MUTATION', // Zero casting required! Checked directly against the union type.
+    isBreaking: true,
+    /* prettier-ignore */
+    describe: () => 'New required property field path appended to object layout.',
+  },
+  {
+    test: (ctx: TPropertyDeltaContext) => !ctx.baselineProp && ctx.activeProp.optional,
+    category: 'COMPATIBLE_ADDITION',
+    isBreaking: false,
+    describe: () =>
+      'New optional property field path appended to object layout.',
+  },
+  {
+    test: (ctx: TPropertyDeltaContext) => !!ctx.baselineProp && !ctx.activeProp.optional && ctx.baselineProp.optional,
+    category: 'STRICTNESS_STRETCH',
+    isBreaking: true,
+    describe: () => 'Backwards compatibility link broken: Property modified from optional over to required.',
+  },
+  {
+
+    test: (ctx: TPropertyDeltaContext) => !!ctx.baselineProp && ctx.activeProp.optional && !ctx.baselineProp.optional,
+    category: 'STRICTNESS_RELAXATION',
+    isBreaking: false,
+    describe: () => 'Property criteria widened from required down to optional structure.',
+  },
+] satisfies TPropertyDriftRule[];

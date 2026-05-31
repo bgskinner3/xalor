@@ -72,6 +72,19 @@ const REIFY_DEPTH_LENGTH_SIZE_LIMITS = {
 } as const;
 
 /**
+ * COMPILED_DISTRIBUTION_MANIFEST
+ * ROLE: Authoritative compilation directory registries tracking output build targets workspace-wide.
+ *
+ * SPECIFICATIONS:
+ * @property allowedOutputDirectories Standard collection paths searched by the telemetry scanner to detect production artifacts.
+ * @property defaultOutputTarget Fallback compilation anchor destination used when executing baseline builds.
+ */
+export const COMPILED_DISTRIBUTION_MANIFEST = Object.freeze({
+  allowedOutputDirectories: ['dist', 'build', 'out', 'lib'] as const,
+  defaultOutputTarget: 'dist',
+} as const);
+
+/**
  * 🌍 MASTER GLOBAL CONFIGURATION
  *
  * The unified source of truth for the entire Xalor ecosystem.
@@ -84,4 +97,5 @@ export const IS_SOLID_CONFIG_ITEMS = {
   emitter: SOLID_EMITTER_KEYS,
   reifyLimit: REIFY_DEPTH_LENGTH_SIZE_LIMITS,
   fileNames: PACKAGE_FILE_PATHS,
+  buildLayer: COMPILED_DISTRIBUTION_MANIFEST,
 } as const;
