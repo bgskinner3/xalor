@@ -95,6 +95,7 @@ export type TTransformerRawPayload = {
   readonly mode: TTransformXalorModes | undefined;
   readonly apiName: 'transformXalor';
 };
+
 // ========================================================================
 // ========================================================================
 // MAPPER TYPES

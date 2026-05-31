@@ -36,6 +36,11 @@ export const BOOT_MODE_STRATEGY_MAPPER: TBootLoaderMapper = {
     if (!isUndefined(globalThis.__XALOR_SESSION_REGISTRY__)) {
       globalThis.__XALOR_SESSION_REGISTRY__.clear();
     }
+
+    xalorCentralContext.resetTargetedRuntimeFiles();
+    xalorCentralContext.setCompilationPhase('INGEST_REGISTRY');
+    /* prettier-ignore */
+    console.log('🪐 [Xalor Bootloader] One-shot compile pass initialized. Ingest phase engaged.');
   },
   vacuum: ({ runtimePaths: _ }: TBootStrategyParams) => {
     // Production vacuuming completely cleans registries to optimize system cycles

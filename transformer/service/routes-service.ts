@@ -10,29 +10,6 @@ import type { TXalorLifecycleContext } from '../types';
 import { xalorCentralContext } from './context-service';
 
 export class XalorRoutesService {
-  // public static findProjectRoot(startingPath: string): string {
-  //   const resolvedPath = path.isAbsolute(startingPath)
-  //     ? path.resolve(startingPath)
-  //     : path.resolve(process.cwd(), startingPath);
-
-  //   const startingDir = fs.statSync(resolvedPath).isDirectory()
-  //     ? resolvedPath
-  //     : path.dirname(resolvedPath);
-
-  //   const pathSegments = startingDir.split(path.sep);
-  //   const parsedRoot = path.parse(startingDir).root;
-
-  //   const ancestralPaths = pathSegments.map((_, index) => {
-  //     const activeSegments = pathSegments.slice(0, pathSegments.length - index);
-  //     return path.join(parsedRoot, ...activeSegments);
-  //   });
-
-  //   const discoveredRoot = ancestralPaths.find((dir) =>
-  //     fs.existsSync(path.join(dir, 'package.json')),
-  //   );
-  //   return discoveredRoot || process.cwd();
-  // }
-
   public static resolveXalorLifecycle(): TXalorLifecycleContext {
     const watchFlag = process.env[XALOR_ENV_KEYS.watch] === 'true';
     const compileFlag = process.env[XALOR_ENV_KEYS.compile] === 'true';
@@ -53,6 +30,16 @@ export class XalorRoutesService {
 
     const isDevelopmentPass = isWatchMode || isOneShotCompileMode;
 
+    // ===============================================================
+    // COMPILE PHASE MODES
+    // ===============================================================
+    const compilationPhase = xalorCentralContext.compilationPhase;
+    /* prettier-ignore */
+    const isIngestRegistryMode = isOneShotCompileMode && compilationPhase === 'INGEST_REGISTRY';
+    /* prettier-ignore */
+    const isReifyRuntimeMode = isOneShotCompileMode && compilationPhase === 'REIFY_RUNTIME';
+    /* prettier-ignore */
+    const isStandardInlineMode = !isOneShotCompileMode && compilationPhase === 'STANDARD_INLINE';
     return {
       isWatchMode,
       isOneShotCompileMode,
@@ -61,6 +48,9 @@ export class XalorRoutesService {
       isDevelopmentPass,
       isStudioMode,
       isClearMode,
+      isIngestRegistryMode,
+      isReifyRuntimeMode,
+      isStandardInlineMode,
     };
   }
 

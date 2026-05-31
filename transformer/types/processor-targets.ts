@@ -4,7 +4,7 @@ import type {
   TRegisterRawPayload,
   TValidateRawPayload,
   TTransformerRawPayload,
-} from './miner-targets';
+} from './guards';
 import type { TSolidShape } from '../../shared';
 
 /**

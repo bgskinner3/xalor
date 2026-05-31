@@ -25,10 +25,26 @@ const COMMAND_ROUTER: TCommandRouterMapper = {
     runCompileCommand(projectRoot);
   },
   audit: async (projectRoot, flags) => {
+    console.log(
+      '🪐 [Xalor CLI] Auto-compiling workspace to synchronize telemetry registry maps...',
+    );
+
+    // Synchronously run compilation first on the thread loop
+    runCompileCommand(projectRoot);
+
+    // Await your async audit data generation routines cleanly!
     await runAuditCommand(projectRoot, flags);
   },
   studio: (projectRoot) => {
-    console.log(`📊 [Xalor CLI]  STUDIO Audit Ledger Map...`);
+    console.log(
+      '🪐 [Xalor CLI] Auto-compiling workspace to populate Studio analytics cache...',
+    );
+
+    // A. Enforce automated auto-compilation natively on the exact same thread frame loop!
+    runCompileCommand(projectRoot);
+
+    // B. Launch the loopback telemetry daemon server views
+    console.log(`📊 [Xalor CLI] Launching Studio Telemetry Server Core...`);
     runStudioCommand(projectRoot);
     console.log(`📂 Target Workspace Anchor: ${projectRoot}`);
   },

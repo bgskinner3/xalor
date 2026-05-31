@@ -56,6 +56,15 @@ export function isTransformerTarget(
 ): target is TTransformerRawPayload {
   return target !== null && target.apiName === 'transformXalor';
 }
+
+export function isRuntimeAPICall(target: TResolvedMiningRouterReturn) {
+  return (
+    isTransformerTarget(target) ||
+    isValidateTarget(target) ||
+    isGenerateTarget(target)
+  );
+}
+
 /**
  * isGetProgram
  *

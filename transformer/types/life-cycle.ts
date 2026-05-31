@@ -1,5 +1,5 @@
 import type { TVaultSyncPayload, TTransformerExecuteMode } from '../../shared';
-import type { SourceFile, Program } from 'typescript';
+import type { SourceFile, Program, TransformationContext } from 'typescript';
 import { CUD_EXECUTION_MODES } from '../constants';
 
 export type TXalorLifecycleContext = {
@@ -11,6 +11,10 @@ export type TXalorLifecycleContext = {
   readonly isTestEnvironment: boolean;
   /** High-level operational flag uniting watch and compile as dev-active cycles */
   readonly isDevelopmentPass: boolean;
+
+  readonly isIngestRegistryMode: boolean;
+  readonly isReifyRuntimeMode: boolean;
+  readonly isStandardInlineMode: boolean;
 };
 
 /**
@@ -85,3 +89,39 @@ export type TPersistenceGateParams = {
  * Strict string union type derived from the frozen CUD_EXECUTION_MODES keys.
  */
 export type TCudExecutionMode = keyof typeof CUD_EXECUTION_MODES;
+
+/**
+ * TPassRoutineParams
+ * 🪐 THE UNIFIED ROUTINE PASS EXECUTION PARAMETERS
+ *
+ * ROLE:
+ * An authoritative data contract governing the strict structural type parameters
+ * passed down-wire into your PASS_STRATEGY_MAPPER functional executors.
+ *
+ * @param program Authoritative single source of truth TypeScript compiler program context
+ * @param context Native transformation context controlling node factories and lifetimes
+ * @param sourceFile The target syntax tree file node currently being parsed or reified
+ * @param bridgeDir Absolute directory target route matching your virtual bridge file paths
+ */
+export type TPassRoutineParams = {
+  readonly program: Program;
+  readonly context: TransformationContext;
+  readonly sourceFile: SourceFile;
+  readonly bridgeDir: string;
+};
+
+/**
+ * TTraversalSentryConfig
+ * 🪐 THE CONTEXT-AWARE SENTRY GATEWAY CONTRACT
+ *
+ * ROLE:
+ * Explicitly structures incoming parameters for the End-Of-Traversal discovery guard,
+ * completely eliminating the 'any' keyword to safeguard toolchain type compliance.
+ */
+export type TTraversalSentryConfig = {
+  readonly program: Program;
+  readonly context: TransformationContext;
+  readonly currentSourceFile: SourceFile;
+  readonly activePassRoutine: (props: TPassRoutineParams) => SourceFile;
+  readonly bridgeDir: string;
+};

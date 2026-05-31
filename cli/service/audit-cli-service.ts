@@ -19,7 +19,6 @@ import type {
 import {
   DEPTH_STRATEGY_MAPPER,
   TELEMETRY_API_TOKEN_NAMES,
-  // TELEMETRY_TOKEN_NAME_MAPPER,
   PROPERTY_DRIFT_EVALUATION_RULES,
   DEPTH_COMPLEXITY_MAPPER,
   DEFAULT_OBJECT_MAPPER,
@@ -35,9 +34,9 @@ import {
   isTripleKVShape,
   cloneDeep,
 } from '../../shared/utils';
-import { IS_SOLID_CONFIG_ITEMS, REGEX_PATTERNS } from '../../shared/constants';
 import {
-  // SENTRY_TRIGGER_MODES,
+  IS_SOLID_CONFIG_ITEMS,
+  REGEX_PATTERNS,
   RUNTIME_TRIGGER_NAMES,
 } from '../../shared/constants';
 import type {
@@ -54,6 +53,35 @@ import {
   mapTopologyGraphCycles,
   buildAdjacencyMap,
 } from '../utils';
+
+/**
+ * CLIAuditEngineService
+ *
+ * CLI auditing engine responsible for generating, analyzing,
+ * and optimizing Xalor vault audit payloads.
+ *
+ * ## Responsibilities
+ * - Generates default audit payloads
+ * - Computes CAS storage optimization ledger
+ * - Handles vault snapshot ingestion
+ *
+ * ## Navigation
+ * - RAW VAULT DATA EXTRACT {@link rawVaultData}
+ * - SHAPE DEPTH CALCULATION {@link shapeDepthCalculation}
+ * - ORPHANS AND SELF HEALING {@link selfHealingPrune}
+ * - PRODUCTION FILE CREATION {@link fileCreation}
+ *
+ *
+ * - GLOBAL SUMMARY BUILD  {@link globalSummary}
+ * - HYGIENE SUMMARY {@link hygieneSummary}
+ * - REGISTRY NODE BUILD {@link registryNodeBuild}
+ * - TELEMETRY SUMMARY {@link runtimeAPICallCalc}
+ * - LIFE CYCLE FOOTPRINT {@link memoryDetails}
+ * - DRIFTING CHANGES {@link historicalChanges}
+ * - TOPOLOGY SUMMARY {@link topologyGraphData}
+ *
+ * @class
+ */
 
 export class CLIAuditEngineService {
   public readonly paths: TXalorResolvedPaths;
@@ -82,10 +110,12 @@ export class CLIAuditEngineService {
   // ================================================================================
   // ================================================================================
   // ================================================================================
-  // INGEST VAULT SNAPSHOT FROM DISK
+  // INGEST VAULT SNAPSHOT FROM DISK: GLOBAL SUMMARY
   // ================================================================================
   // ================================================================================
   // ================================================================================
+  protected globalSummary(): void {}
+
   /** @see {@link AuditServiceDocs.calculateCasStorageOptimizationLedger} */
   private calculateCasStorageOptimizationLedger(
     vault: TTripleKV,
@@ -228,7 +258,7 @@ export class CLIAuditEngineService {
   // ================================================================================
   // ================================================================================
   // ================================================================================
-
+  protected rawVaultData(): void {}
   /**  @see {@link AuditServiceDocs.ingestVaultSnapshotFromDisk} */
   private async ingestVaultSnapshotFromDisk(): Promise<TTripleKV | null> {
     try {
@@ -265,7 +295,7 @@ export class CLIAuditEngineService {
   // ================================================================================
   // ================================================================================
   // ================================================================================
-
+  protected shapeDepthCalculation(): void {}
   /**  @see {@link AuditServiceDocs.calculateBlueprintDepth} */
   private calculateBlueprintDepth({
     traversalStack,
@@ -305,7 +335,7 @@ export class CLIAuditEngineService {
   // ================================================================================
   // ================================================================================
   // ================================================================================
-
+  protected hygieneSummary(): void {}
   private mapDepthToComplexity(depth: number): TTaxonomyTokenKeys {
     for (const rule of DEPTH_COMPLEXITY_MAPPER) {
       if (rule.test(depth)) return rule.key;
@@ -381,6 +411,7 @@ export class CLIAuditEngineService {
   // ================================================================================
   // ================================================================================
   // ================================================================================
+  protected registryNodeBuild(): void {}
   private parseManifestCoordinates(
     manifestRow?: TVaultManifestEntry,
   ): TParsedLocation {
@@ -452,7 +483,7 @@ export class CLIAuditEngineService {
   // ================================================================================
   // ================================================================================
   // ================================================================================
-
+  protected runtimeAPICallCalc(): void {}
   private createTelemetryScanContext(
     strategyTokensArray: readonly TTelemetryTokenNames[],
     projectRoot: string,
@@ -630,142 +661,7 @@ export class CLIAuditEngineService {
       }
     }
   }
-  // private async scanTelemetryFiles(
-  //   strategyTokensArray: readonly TTelemetryTokenNames[],
-  //   strategyCounters: Record<string, number>,
-  //   activeEncounteredKeysSet: Set<string>,
-  //   registeredKeys: string[],
-  //   activeTargetDir: string,
-  //   excludePatterns: readonly string[],
-  // ): Promise<void> {
-  //   const fileNames = await fs.promises.readdir(activeTargetDir);
-  //   const filesLen = fileNames.length;
-  //   const runtimeTriggersLen = RUNTIME_TRIGGER_NAMES.length;
-  //   const tokensLen = strategyTokensArray.length;
-  //   const keysLen = registeredKeys.length;
 
-  //   for (let i = 0; i < filesLen; i++) {
-  //     const fileName = fileNames[i];
-  //     if (fileName === undefined) continue;
-
-  //     // 🪐 1. ENFORCE COHESIVE FILE EXTENSION BOUNDARIES
-  //     if (
-  //       !fileName.endsWith('.js') &&
-  //       !fileName.endsWith('.mjs') &&
-  //       !fileName.endsWith('.ts') &&
-  //       !fileName.endsWith('.tsx')
-  //     ) {
-  //       continue;
-  //     }
-
-  //     // 🪐 2. EXCLUDE INTERNAL PLATFORM SYSTEM SCHEMAS OR CONFIG CORE FILES
-  //     // Prevents the engine from accidentally scanning your own registry source lists!
-  //     if (
-  //       fileName.includes('telemetry') ||
-  //       fileName.includes('shared') ||
-  //       fileName.includes('constant')
-  //     ) {
-  //       continue;
-  //     }
-
-  //     const absoluteFilePath = path.join(activeTargetDir, fileName);
-  //     const rawFileContentString = await fs.promises.readFile(
-  //       absoluteFilePath,
-  //       'utf-8',
-  //     );
-
-  //     // 🪐 3. INITIAL COMPLIANCE GATEWAY SWEEP
-  //     let isFileActiveTelemetryTarget = false;
-  //     for (let p = 0; p < runtimeTriggersLen; p++) {
-  //       const triggerFnToken = RUNTIME_TRIGGER_NAMES[p];
-  //       if (
-  //         triggerFnToken !== undefined &&
-  //         rawFileContentString.includes(triggerFnToken)
-  //       ) {
-  //         isFileActiveTelemetryTarget = true;
-  //         break;
-  //       }
-  //     }
-
-  //     if (!isFileActiveTelemetryTarget) {
-  //       continue;
-  //     }
-
-  //     // ========================================================================
-  //     // 🪐 4. HIGH-SPEED LINEAR COMMENT CLEANUP MASK
-  //     // Splits text by lines, identifies comment markers, and blanks them out
-  //     // before token counters process the file canvas!
-  //     // ========================================================================
-  //     const rawLinesList = rawFileContentString.split(/\r?\n/);
-  //     const linesCount = rawLinesList.length;
-  //     const sanitizedLinesBuffer: string[] = [];
-
-  //     for (let L = 0; L < linesCount; L++) {
-  //       const activeLineText = rawLinesList[L];
-  //       if (activeLineText === undefined) continue;
-
-  //       const trimmedLine = activeLineText.trim();
-
-  //       // If the line is an active comment block or template document string, drop its contents
-  //       if (
-  //         trimmedLine.startsWith('//') ||
-  //         trimmedLine.startsWith('*') ||
-  //         trimmedLine.startsWith('/*') ||
-  //         trimmedLine.includes('⚡') // Drops console ledger print blocks safely!
-  //       ) {
-  //         sanitizedLinesBuffer.push('');
-  //       } else {
-  //         sanitizedLinesBuffer.push(activeLineText);
-  //       }
-  //     }
-
-  //     // Reconstruct the immaculate text block canvas
-  //     const fileContentString = sanitizedLinesBuffer.join('\n');
-
-  //     console.log(
-  //       `   📄 [Xalor Scout] Processing Active API Script: ${fileName}`,
-  //     );
-
-  //     // 🪐 5. EXTRACT ACTIVE CONTRACT REFERENCE KEYS NATIVELY
-  //     for (let j = 0; j < keysLen; j++) {
-  //       const currentKey = registeredKeys[j];
-  //       if (
-  //         currentKey !== undefined &&
-  //         fileContentString.includes(currentKey)
-  //       ) {
-  //         activeEncounteredKeysSet.add(currentKey);
-  //         console.log(`      ✅ CONTRACT ENCOUNTERED: "${currentKey}"`);
-  //       }
-  //     }
-
-  //     // ========================================================================
-  //     // 🪐 6. INLINE CONTEXTUAL TRIGGER SPECIFICATION SPLITS
-  //     // Runs a localized regex split over the clean text with no cross-file mapper overhead!
-  //     // ========================================================================
-  //     const runtimeTriggersChoiceGroup = RUNTIME_TRIGGER_NAMES.join('|');
-
-  //     for (let s = 0; s < tokensLen; s++) {
-  //       const strategyToken = strategyTokensArray[s];
-  //       if (strategyToken === undefined) continue;
-
-  //       // Clean, unanchored contextual match expression built natively on the stack frame
-  //       const contextualRegex = new RegExp(
-  //         `(?:${runtimeTriggersChoiceGroup})(?:<|\\()\\s*['"][^'"]+['"]\\s*,\\s*['"]${strategyToken}['"]`,
-  //         'g',
-  //       );
-
-  //       const segments = fileContentString.split(contextualRegex);
-  //       const matchesCount = segments.length - 1;
-
-  //       if (matchesCount > 0) {
-  //         strategyCounters[strategyToken] += matchesCount;
-  //         console.log(
-  //           `      ⚡ STRATEGY INSTANCE LINKED: '${strategyToken}' (${matchesCount} matches)`,
-  //         );
-  //       }
-  //     }
-  //   }
-  // }
   /** @see {@link AuditServiceDocs.profileRuntimeFootprintAndOrphans}*/
   private async profileRuntimeFootprintAndOrphans(
     vault: TTripleKV,
@@ -822,191 +718,6 @@ export class CLIAuditEngineService {
 
     return telemetryObject;
   }
-  // private createTelemetryScanContext(
-  //   strategyTokensArray: readonly TTelemetryTokenNames[],
-  //   projectRoot: string,
-  // ) {
-  //   const { buildLayer } = IS_SOLID_CONFIG_ITEMS;
-  //   const strategyCounters: Record<string, number> = {};
-
-  //   for (const token of yieldItems(strategyTokensArray)) {
-  //     strategyCounters[token] = 0;
-  //   }
-  //   const activeEncounteredKeysSet = new Set<string>();
-  //   const possibleBuildDirs = buildLayer.allowedOutputDirectories;
-  //   let activeTargetDir = '';
-
-  //   for (const dir of possibleBuildDirs) {
-  //     const candidatePath = path.join(projectRoot, dir);
-  //     if (
-  //       fs.existsSync(candidatePath) &&
-  //       fs.statSync(candidatePath).isDirectory()
-  //     ) {
-  //       activeTargetDir = candidatePath;
-  //       break;
-  //     }
-  //   }
-
-  //   return {
-  //     strategyCounters,
-  //     activeEncounteredKeysSet,
-  //     activeTargetDir,
-  //   };
-  // }
-  // private async scanTelemetryFiles(
-  //   strategyTokensArray: readonly TTelemetryTokenNames[],
-  //   strategyCounters: Record<string, number>,
-  //   activeEncounteredKeysSet: Set<string>,
-  //   registeredKeys: string[],
-  //   activeTargetDir: string,
-  // ) {
-  //   const fileNames = await fs.promises.readdir(activeTargetDir);
-  //   const filesLen = fileNames.length;
-  //   const tokensLen = strategyTokensArray.length;
-  //   const keysLen = registeredKeys.length;
-
-  //   for (let i = 0; i < filesLen; i++) {
-  //     const fileName = fileNames[i];
-  //     if (fileName === undefined) continue;
-
-  //     if (
-  //       !fileName.endsWith('.js') &&
-  //       !fileName.endsWith('.mjs') &&
-  //       !fileName.endsWith('.ts') &&
-  //       !fileName.endsWith('.tsx')
-  //     ) {
-  //       continue;
-  //     }
-
-  //     const absoluteFilePath = path.join(activeTargetDir, fileName);
-  //     const fileContentString = await fs.promises.readFile(
-  //       absoluteFilePath,
-  //       'utf-8',
-  //     );
-
-  //     // 1. Scan for active contract key occurrences using standard index checks
-  //     for (let j = 0; j < keysLen; j++) {
-  //       const currentKey = registeredKeys[j];
-  //       if (
-  //         currentKey !== undefined &&
-  //         fileContentString.includes(currentKey)
-  //       ) {
-  //         activeEncounteredKeysSet.add(currentKey);
-  //       }
-  //     }
-
-  //     // ========================================================================
-  //     // 🪐 ZERO-LOOP SPLIT-BASED ACCUMULATION MATRIX
-  //     // 🟢 FIXED: Removed the while loop completely! Uses .split() arithmetic.
-  //     // ========================================================================
-  //     for (let k = 0; k < tokensLen; k++) {
-  //       const activeToken = strategyTokensArray[k];
-  //       if (activeToken === undefined) continue;
-
-  //       const targetRegex = TELEMETRY_TOKEN_NAME_MAPPER[activeToken];
-  //       if (targetRegex !== undefined) {
-  //         // Splitting the text by the regex creates an array where length is (matches + 1)
-  //         const segments = fileContentString.split(targetRegex);
-  //         const matchesCount = segments.length - 1;
-
-  //         if (matchesCount > 0) {
-  //           strategyCounters[activeToken] += matchesCount;
-  //         }
-  //       }
-  //     }
-  //   }
-  //   // const fileNames = await fs.promises.readdir(activeTargetDir);
-  //   // /* prettier-ignore */
-  //   // const targetJsFiles = fileNames.filter((name) => name.endsWith('.js') || name.endsWith('.mjs'));
-
-  //   // for (const fileName of targetJsFiles) {
-  //   //   /* prettier-ignore */
-  //   //   const absoluteFilePath = path.join(activeTargetDir, fileName);
-  //   //   /* prettier-ignore */
-  //   //   const fileContentString = await fs.promises.readFile(absoluteFilePath,'utf-8');
-
-  //   //   for (const currentKey of yieldItems(registeredKeys)) {
-  //   //     if (fileContentString.includes(currentKey)) {
-  //   //       activeEncounteredKeysSet.add(currentKey);
-  //   //     }
-  //   //   }
-
-  //   //   for (const activeToken of strategyTokensArray) {
-  //   //     const targetRegex = TELEMETRY_TOKEN_NAME_MAPPER[activeToken];
-  //   //     if (targetRegex) {
-  //   //       targetRegex.lastIndex = 0;
-
-  //   //       const matches = fileContentString.match(targetRegex);
-  //   //       if (matches) {
-  //   //         strategyCounters[activeToken] += matches.length;
-  //   //       }
-  //   //     }
-  //   //   }
-  //   // }
-  // }
-  // /**  @see {@link AuditServiceDocs.profileRuntimeFootprintAndOrphans}*/
-  // private async profileRuntimeFootprintAndOrphans(
-  //   vault: TTripleKV,
-  // ): Promise<IXalorAuditPayload['telemetry']> {
-  //   const telemetryObject = this.generateDefaultPayload('telemetry');
-  //   const strategyTokensArray = TELEMETRY_API_TOKEN_NAMES;
-  //   const registeredKeys = ObjectUtils.keys(vault.references);
-
-  //   const { strategyCounters, activeEncounteredKeysSet, activeTargetDir } =
-  //     this.createTelemetryScanContext(strategyTokensArray, this.projectRoot);
-
-  //   if (!activeTargetDir) {
-  //     telemetryObject.orphanedKeys = registeredKeys;
-  //     return telemetryObject;
-  //   }
-  //   try {
-  //     await this.scanTelemetryFiles(
-  //       strategyTokensArray,
-  //       strategyCounters,
-  //       activeEncounteredKeysSet,
-  //       registeredKeys,
-  //       activeTargetDir,
-  //     );
-  //   } catch {
-  //     // TODO: add our Error handler logger
-  //     // graceful fallback
-  //   }
-
-  //   // for (const key of yieldItems(registeredKeys)) {
-  //   //   if (!activeEncounteredKeysSet.has(key)) {
-  //   //     telemetryObject.orphanedKeys.push(key);
-  //   //   }
-  //   // }
-
-  //   // for (const token of yieldItems(strategyTokensArray)) {
-  //   //   telemetryObject.strategyDistribution.push({
-  //   //     strategyToken: token,
-  //   //     invocationCount: strategyCounters[token],
-  //   //   });
-  //   // }
-  //   // 🪐 2. POPULATE THE NEWLY CLEANED ISOLATED ARRAYS WITHOUT ACCUMULATOR DRIFT
-  //   const totalKeysCount = registeredKeys.length;
-  //   for (let i = 0; i < totalKeysCount; i++) {
-  //     const key = registeredKeys[i];
-  //     if (key !== undefined && !activeEncounteredKeysSet.has(key)) {
-  //       telemetryObject.orphanedKeys.push(key);
-  //     }
-  //   }
-
-  //   // 🟢 OPTIMIZATION: Update properties directly inside the pre-allocated array positions
-  //   // instead of calling .push() to add duplicate entries onto the list layout tracks!
-  //   const distributionList = telemetryObject.strategyDistribution;
-  //   const distLen = distributionList.length;
-  //   for (let i = 0; i < distLen; i++) {
-  //     const entry = distributionList[i];
-  //     if (entry !== undefined) {
-  //       // Map the direct integer counted from your local file system scanner pass
-  //       entry.invocationCount = strategyCounters[entry.strategyToken] ?? 0;
-  //     }
-  //   }
-
-  //   return telemetryObject;
-  // }
 
   // ================================================================================
   // ================================================================================
@@ -1015,7 +726,7 @@ export class CLIAuditEngineService {
   // ================================================================================
   // ================================================================================
   // ================================================================================
-
+  protected memoryDetails(): void {}
   /** @see {@link AuditServiceDocs.computeLifecycleFootprintDeltas} */
   private computeLifecycleFootprintDeltas(
     vault: TTripleKV,
@@ -1059,7 +770,7 @@ export class CLIAuditEngineService {
   // ================================================================================
   // ================================================================================
   // ================================================================================
-
+  protected selfHealingPrune(): void {}
   private removeOrphanedReferences(
     vault: TTripleKV,
     orphanedKeys: readonly string[],
@@ -1156,7 +867,7 @@ export class CLIAuditEngineService {
   // ================================================================================
   // ================================================================================
   // ================================================================================
-
+  protected historicalChanges(): void {}
   private identifyEvictedContractDeletions(
     baselineKeys: readonly string[],
     activeKeysSet: Set<string>,
@@ -1310,6 +1021,7 @@ export class CLIAuditEngineService {
   // ================================================================================
   // ================================================================================
   // ================================================================================
+  protected topologyGraphData(): void {}
   /** @see {@link AuditServiceDocs.analyzeDependencyGraphTopology} */
   private analyzeDependencyGraphTopology(
     vault: TTripleKV,
@@ -1340,6 +1052,7 @@ export class CLIAuditEngineService {
   // ================================================================================
   // ================================================================================
   // ================================================================================
+  protected fileCreation(): void {}
   /** @see {@link AuditServiceDocs.syncAuditBaselineFile} */
   private async syncAuditBaselineFile(vault: TTripleKV): Promise<void> {
     try {

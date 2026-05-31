@@ -27,6 +27,13 @@ export type TSessionPathKeys = {
   // Position Anchor -> Structural Metadata (Key Name Location)
   readonly anchors: Record<string, TSessionAnchorMeta>;
 };
+/**
+ * Compile Command Phases in order to prioritize registration first
+ */
+export type TCompilationPhase =
+  | 'INGEST_REGISTRY'
+  | 'REIFY_RUNTIME'
+  | 'STANDARD_INLINE';
 
 /**
  * TSessionRegistry
@@ -60,4 +67,6 @@ export type TXalorEngineContext = {
   readonly rootDir: string;
   readonly isHydrated: boolean;
   readonly blacklistedKeys: Set<string>;
+  readonly targetedFilesSet: Set<string>;
+  readonly compilationPhase: TCompilationPhase;
 };

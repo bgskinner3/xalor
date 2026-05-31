@@ -9,6 +9,8 @@ declare global {
   var __XALOR_GLOBAL_KEY_REGISTRY__: Map<string, TVaultSyncPayload> | undefined;
   var __XALOR_TRACE_CACHE__: TSessionRegistry | undefined;
   var __XALOR_ACTIVE_PASS_KEYS__: Set<string> | undefined;
+
+  var __XALOR_TARGETED_RUNTIME_FILES_SET__: Set<string> | undefined;
   // ======================================================================
   // BOOTLOADER
   // ======================================================================

@@ -38,5 +38,5 @@ export interface ICLIConfig {
  */
 export type TCommandRouterMapper = Record<
   TCLICommandsControl,
-  (projectRoot: string, flags?: ICLIConfig['flags']) => void
+  (projectRoot: string, flags?: ICLIConfig['flags']) => void | Promise<void>
 >;

@@ -8,21 +8,25 @@ import {
   isGenerateTarget,
   isValidateTarget,
   isTransformerTarget,
+  isRuntimeAPICall,
 } from '../utils';
 import type { Visitor, Node } from 'typescript';
 import { resolveAndRegisterType } from './resolve-and-register';
 import { markAsPure } from '../utils';
 import type { TSolidShape } from '../../shared';
 import type { TMinerCorParams } from '../types';
+import { XalorRoutesService, xalorCentralContext } from '../service';
 
 export function theMiner({
   program,
   context,
   sourceFile,
-  ...rest
 }: TMinerCorParams): Visitor {
+  const { isIngestRegistryMode, isReifyRuntimeMode } =
+    XalorRoutesService.resolveXalorLifecycle();
   const checker = program.getTypeChecker();
   const { factory } = context;
+
   const visitor: Visitor = (node: Node): Node => {
     if (!isSolidCall(node, checker)) {
       return visitEachChild(node, visitor, context);
@@ -31,12 +35,13 @@ export function theMiner({
     if (!target) {
       return visitEachChild(node, visitor, context);
     }
+
     // 🪐 PATH A: THE REGISTRATION TARGET EXTRACTION LIFECYCLE
-    if (isRegisterTarget(target)) {
+    if (isRegisterTarget(target) && !isReifyRuntimeMode) {
       const { keyName, shapeType } = target;
 
       /* prettier-ignore */
-      const shape: TSolidShape = resolveAndRegisterType({ keyName, shapeType, node, sourceFile, checker,  ...rest });
+      const shape: TSolidShape = resolveAndRegisterType({ keyName, shapeType, node, sourceFile, checker });
 
       // Rewrite the AST call structure to physically inject the metadata arguments into your bundle
       /* prettier-ignore */
@@ -44,6 +49,13 @@ export function theMiner({
 
       return markAsPure(updatedCall);
     }
+    if (isIngestRegistryMode && isRuntimeAPICall(target)) {
+      xalorCentralContext.addTargetedRuntimeFile(sourceFile.fileName);
+    }
+    if (isIngestRegistryMode && !isRegisterTarget(target)) {
+      return visitEachChild(node, visitor, context);
+    }
+
     // PATH Generate: generateXalor
     if (isGenerateTarget(target)) {
       /* prettier-ignore */
@@ -69,3 +81,58 @@ export function theMiner({
   };
   return visitor;
 }
+
+// export function theMiner({
+//   program,
+//   context,
+//   sourceFile,
+//   ...rest
+// }: TMinerCorParams): Visitor {
+//   const checker = program.getTypeChecker();
+//   const { factory } = context;
+//   const visitor: Visitor = (node: Node): Node => {
+//     if (!isSolidCall(node, checker)) {
+//       return visitEachChild(node, visitor, context);
+//     }
+//     const target = resolveMiningTarget(node, checker);
+//     if (!target) {
+//       return visitEachChild(node, visitor, context);
+//     }
+//     // 🪐 PATH A: THE REGISTRATION TARGET EXTRACTION LIFECYCLE
+//     if (isRegisterTarget(target)) {
+//       const { keyName, shapeType } = target;
+
+//       /* prettier-ignore */
+//       const shape: TSolidShape = resolveAndRegisterType({ keyName, shapeType, node, sourceFile, checker,  ...rest });
+
+//       // Rewrite the AST call structure to physically inject the metadata arguments into your bundle
+//       /* prettier-ignore */
+//       const updatedCall = solidVisitorProcessor({ node, sourceFile, factory, target, shape });
+
+//       return markAsPure(updatedCall);
+//     }
+//     // PATH Generate: generateXalor
+//     if (isGenerateTarget(target)) {
+//       /* prettier-ignore */
+//       const updatedCall = solidVisitorProcessor({ node, sourceFile, factory, target });
+
+//       return markAsPure(updatedCall);
+//     }
+//     // PATH Validate: validateXalor
+//     if (isValidateTarget(target)) {
+//       /* prettier-ignore */
+//       const updatedCall = solidVisitorProcessor({ node, sourceFile, factory, target });
+
+//       return markAsPure(updatedCall);
+//     }
+//     // PATH Transform: transformXalor
+//     if (isTransformerTarget(target)) {
+//       /* prettier-ignore */
+//       const updatedCall = solidVisitorProcessor({ node, sourceFile, factory, target });
+
+//       return markAsPure(updatedCall);
+//     }
+//     return visitEachChild(node, visitor, context);
+//   };
+//   return visitor;
+// }
