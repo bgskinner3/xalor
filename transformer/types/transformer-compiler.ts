@@ -86,31 +86,30 @@ export type TPassStrategyMapper = {
 
 // ==============================================================================
 // ==============================================================================
-// TGateStrategyPayloadMap
+// TRANSFORMER ROOT
 // ==============================================================================
 // ==============================================================================
 
-// type TGateStrategyPayload = {
-//   readonly file: SourceFile;
-//   readonly rootDir: string;
-//   readonly globalKeyRegistry: Map<string, TVaultSyncPayload>;
-//   readonly sessionRegistry: Map<string, string>;
-//   readonly freshKeysHarvestedInThisPass: Set<string>;
-// };
-// export type TGateStrategyPayloadMap = {
-//   watch: TGateStrategyPayload;
-//   compile: TGateStrategyPayload;
-//   vacuum: TGateStrategyPayload;
-// };
-
-// /**
-//  * TGateStrategyMapper
-//  *
-//  * ROLE:
-//  * Master Type-Safe Gate Strategy Interface Contract.
-//  */
-// export type TGateStrategyMapper = {
-//   readonly [Mode in TTransformerExecuteMode]: (
-//     params: TGateStrategyPayloadMap[Mode],
-//   ) => void;
-// };
+/**
+ * TXalorTransformerOptions
+ * 🪐 THE STATELESS COMPILER CONFIGURATION CONDUIT
+ *
+ * PURPOSE:
+ * An authoritative data contract governing the options payload injected directly
+ * into the master transformer plugin factory from the parent CLI command layers.
+ *
+ * DESIGN INVARIANT:
+ * Enforces strict compile-time type-safety for out-of-band multi-pass configurations,
+ * completely eliminating long-lived global process variables to safeguard
+ * cross-repository thread isolation under Commandment IV.
+ *
+ * @param compilationPhase The current active compilation pass state directing traffic routing decisions inside the AST miner
+ * @param targetedFilesCollector A local memory reference envelope tracking the exact file paths requiring code materialization
+ */
+export type TXalorTransformerOptions = {
+  readonly compilationPhase?:
+    | 'INGEST_REGISTRY'
+    | 'REIFY_RUNTIME'
+    | 'STANDARD_INLINE';
+  readonly targetedFilesCollector?: Set<string>;
+};

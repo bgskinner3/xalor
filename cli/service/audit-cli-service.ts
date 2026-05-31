@@ -527,35 +527,28 @@ export class CLIAuditEngineService {
     activeEncounteredKeysSet: Set<string>,
     registeredKeys: string[],
     activeTargetDir: string,
-    excludePatterns: readonly string[], // 🟢 FIXED: Registered as an authoritative parameter cell
+    excludePatterns: readonly string[],
   ): Promise<void> {
-    const fileNames = await fs.promises.readdir(activeTargetDir);
-    const filesLen = fileNames.length;
+    // 1. 🟢 FIXED: Added withFileTypes: true to extract native fs.Dirent directory entry objects!
+    const directoryEntries = await fs.promises.readdir(activeTargetDir, {
+      withFileTypes: true,
+    });
+    const entriesLen = directoryEntries.length;
+
     const runtimeTriggersLen = RUNTIME_TRIGGER_NAMES.length;
     const tokensLen = strategyTokensArray.length;
     const keysLen = registeredKeys.length;
     const exclusionsLen = excludePatterns.length;
 
-    for (let i = 0; i < filesLen; i++) {
-      const fileName = fileNames[i];
-      if (fileName === undefined) continue;
+    for (let i = 0; i < entriesLen; i++) {
+      const entry = directoryEntries[i];
+      if (entry === undefined) continue;
 
-      // Enforce file extension boundaries cleanly
-      if (
-        !fileName.endsWith('.js') &&
-        !fileName.endsWith('.mjs') &&
-        !fileName.endsWith('.ts') &&
-        !fileName.endsWith('.tsx')
-      ) {
-        continue;
-      }
-
+      const fileName = entry.name;
       const absoluteFilePath = path.join(activeTargetDir, fileName);
 
       // ========================================================================
       // 🪐 THE MANDATORY EXCLUSION SENTRY SHIELD
-      // 🟢 FIXED: If the file path contains any of your blacklisted distribution
-      // folders or cache patterns from their tsconfig, skip it instantly point-free!
       // ========================================================================
       let isPathBlacklisted = false;
       for (let e = 0; e < exclusionsLen; e++) {
@@ -570,6 +563,36 @@ export class CLIAuditEngineService {
       }
 
       if (isPathBlacklisted) {
+        continue;
+      }
+
+      // ========================================================================
+      // 🔀 THE RECURSIVE SUB-DIRECTORY FORK SENTRY
+      // 🟢 FIXED: If the entry is an active directory, re-invoke scanTelemetryFiles
+      // recursively down the nested absolute path to map deeper tracks immediately!
+      // ========================================================================
+      if (entry.isDirectory()) {
+        await this.scanTelemetryFiles(
+          strategyTokensArray,
+          strategyCounters,
+          activeEncounteredKeysSet,
+          registeredKeys,
+          absoluteFilePath, // Downstream target path step
+          excludePatterns,
+        );
+        continue; // Move smoothly to the next entry in the current folder tier
+      }
+
+      // ========================================================================
+      // 🪐 FILE TYPE BOUNDARY VERIFICATION
+      // 🟢 FIXED: Evaluated ONLY for files now that directories are safely forked above!
+      // ========================================================================
+      if (
+        !fileName.endsWith('.js') &&
+        !fileName.endsWith('.mjs') &&
+        !fileName.endsWith('.ts') &&
+        !fileName.endsWith('.tsx')
+      ) {
         continue;
       }
 
@@ -605,7 +628,6 @@ export class CLIAuditEngineService {
         if (activeLineText === undefined) continue;
 
         const trimmedLine = activeLineText.trim();
-
         if (
           trimmedLine.startsWith('//') ||
           trimmedLine.startsWith('*') ||

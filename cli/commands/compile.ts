@@ -21,12 +21,8 @@ export function runCompileCommand(projectRootPath: string): void {
     );
     process.exit(1);
   }
-
-  const parsedConfig = ts.parseJsonConfigFileContent(
-    readResult.config,
-    ts.sys,
-    projectRootPath,
-  );
+  /* prettier-ignore */
+  const parsedConfig = ts.parseJsonConfigFileContent(readResult.config, ts.sys, projectRootPath);
 
   // 2. Override properties to match the exact option behaviors of your watch runner
   const modifiedOptions: ts.CompilerOptions = {
@@ -40,17 +36,15 @@ export function runCompileCommand(projectRootPath: string): void {
     delete modifiedOptions.plugins;
   }
 
-  console.log('🔍 Analyzing files and initializing abstract syntax trees...');
-
   // 3. Instantiate a standard single-pass TypeScript compiler program
   const program = ts.createProgram({
     rootNames: parsedConfig.fileNames,
     options: modifiedOptions,
     projectReferences: parsedConfig.projectReferences,
   });
-
+  const localTargetedFilesSet = new Set<string>();
   // 4. Inject our custom transformer architecture into a standard emit pipeline window
-  const emitResult = program.emit(
+  const ingestEmitResult = program.emit(
     undefined, // Target source file (undefined runs across the entire workspace list)
     () => {
       // Black-hole swallow callback function to prevent physical .js disk pollution
@@ -58,22 +52,60 @@ export function runCompileCommand(projectRootPath: string): void {
     undefined,
     false,
     {
-      before: [xalorTransformerPlugin(program)],
+      before: [
+        xalorTransformerPlugin(program, {
+          compilationPhase: 'INGEST_REGISTRY',
+          targetedFilesCollector: localTargetedFilesSet,
+        }),
+      ],
     },
   );
 
-  // 5. Output warnings or notices if found during the crawl pass
-  const diagnostics = ts
-    .getPreEmitDiagnostics(program)
-    .concat(emitResult.diagnostics);
+  const diagnosticsList: ts.Diagnostic[] = [...ingestEmitResult.diagnostics];
 
-  diagnostics.forEach((diagnostic) => {
+  const targetedFilesCount = localTargetedFilesSet.size;
+  console.log(
+    `✨ Ingestion pass complete. Isolated ${localTargetedFilesSet.size} targeted file tracks from local envelope:\n` +
+      `   ↳ [ ${[...localTargetedFilesSet].join(', ')} ]`,
+  );
+  // ========================================================================
+  if (targetedFilesCount > 0) {
     console.log(
-      `⚠️ [TS Build Note]: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`,
+      '🪐 [Xalor CLI] Phase 2: Materializing code injections inline...',
     );
+
+    const reifyEmitResult = program.emit(
+      undefined,
+      () => {},
+      undefined,
+      false,
+      {
+        before: [
+          xalorTransformerPlugin(program, {
+            compilationPhase: 'REIFY_RUNTIME',
+          }),
+        ],
+      },
+    );
+    diagnosticsList.push(...reifyEmitResult.diagnostics);
+  }
+  // ========================================================================
+  // 🛰️ DEDUPLICATED DIAGNOSTICS PERFORMANCE LEDGER
+  // 🟢 FIXED: Aggregates pre-emit structural errors, pass 1 metadata warnings,
+  // and pass 2 code-generation diagnostics into a single unified array channel!
+  // ========================================================================
+  diagnosticsList.push(...ts.getPreEmitDiagnostics(program));
+
+  // Print out every intercepted TypeScript warning cleanly to the terminal
+  diagnosticsList.forEach((diagnostic) => {
+    if (diagnostic !== undefined) {
+      console.log(
+        `⚠️ [TS Build Note]: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`,
+      );
+    }
   });
 
-  console.log('💾 Freezing workspace metadata and flushing cache registers...');
+  // console.log('💾 Freezing workspace metadata and flushing cache registers...');
 
   // ====================================================================================
   // NATIVE ASYNC TICK BUFFER

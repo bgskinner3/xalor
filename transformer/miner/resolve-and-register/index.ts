@@ -33,6 +33,7 @@ export function resolveAndRegisterType({
   sourceFile,
   checker,
 }: TTypeResolutionParams): TSolidShape {
+  // const { isReifyRuntimeMode } = XalorRoutesService.resolveXalorLifecycle();
   const activeExecuteMode = XalorRoutesService.xalorCLIMode();
 
   // ========================================================================
@@ -134,7 +135,10 @@ export function resolveAndRegisterType({
     shape,
     identity,
   });
-
+  // if (!isReifyRuntimeMode) {
+  //   xalorCentralContext.updateGlobalAndSession(payload);
+  //   return shape;
+  // }
   // 5. THE BI-DIRECTIONAL COLLISION OVERRIDE GATE
   const isCollision = validateCollisionBorders({
     keyName,
@@ -172,55 +176,3 @@ export function resolveAndRegisterType({
   // Always return the unrolled authentic type layout tree to prevent breaking bundle generation flows
   return shape;
 }
-
-// export function resolveAndRegisterType({
-//   keyName,
-//   shapeType,
-//   node,
-//   sourceFile,
-//   checker,
-// }: TTypeResolutionParams): TSolidShape {
-//   verifyAndValidateType({ shapeType, checker, keyName, sourceFile });
-
-//   const identity = getSpatialIdentity({ node, sourceFile, shapeType, checker });
-
-//   const fragments = new Map<string, TSolidShape>();
-//   const ctx = createMiningCtx(keyName, fragments);
-
-//   /* prettier-ignore */
-//   const shape: TSolidShape = reifyType({ type: shapeType, checker, ctx });
-//   /* prettier-ignore */
-//   const payload: TVaultSyncPayload = createPayLoad({ keyName, sourceFile, shape, identity });
-//   const isCollision = validateCollisionBorders({
-//     keyName,
-//     activeAreaString: identity.area,
-//     activeAnchorString: identity.anchor,
-//     currentActiveAbsoluteFile: sourceFile.fileName,
-//   });
-//   if (!isCollision) {
-//     const assignedCudMode = determineCUDMode({
-//       keyName,
-//       newTypeName: identity.typeName,
-//       newArea: identity.area,
-//       newSymbolName: identity.symbolName,
-//       newFilePath: identity.filePath,
-//       newShape: payload.shape,
-//       newAnchor: identity.anchor,
-//     });
-
-//     // Execute terminal logs and initial delta checks
-//     executeVaultMutation({
-//       mode: assignedCudMode,
-//       payload,
-//       identityArea: identity.area,
-//     });
-
-//     flushToRegistry({
-//       key: keyName,
-//       fragments,
-//       payload,
-//     });
-//   }
-
-//   return shape;
-// }

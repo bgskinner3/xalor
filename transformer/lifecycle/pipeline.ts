@@ -82,3 +82,27 @@ export function injectTestReifiedBlueprints(
 
   vault._isHydrated = true;
 }
+
+// /**
+//  * isLastFileInProgramQueue
+//  * 🛰️ FILE BOUNDARY CHECK GUARD
+//  *
+//  * ROLE:
+//  * Returns true if the currently scanned source file matches the absolute
+//  * last index element slot in the compiler program's file array queue.
+//  */
+// export function isLastFileInProgramQueue(
+//   program: ts.Program,
+//   currentFile: ts.SourceFile,
+// ): boolean {
+//   const allFiles = program.getSourceFiles();
+//   const totalFilesCount = allFiles.length;
+
+//   if (totalFilesCount === 0) return false;
+
+//   const finalFileNode = allFiles[totalFilesCount - 1];
+//   if (finalFileNode === undefined) return false;
+//   const isLastFile = finalFileNode.fileName === currentFile.fileName;
+
+//   return isLastFile;
+// }

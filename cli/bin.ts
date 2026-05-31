@@ -30,7 +30,7 @@ const COMMAND_ROUTER: TCommandRouterMapper = {
     );
 
     // Synchronously run compilation first on the thread loop
-    runCompileCommand(projectRoot);
+    // runCompileCommand(projectRoot);
 
     // Await your async audit data generation routines cleanly!
     await runAuditCommand(projectRoot, flags);

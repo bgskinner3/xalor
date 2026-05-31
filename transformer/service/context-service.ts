@@ -13,6 +13,7 @@ class XalorContextService {
   private static instance: XalorContextService;
   private blacklistedKeys = new Set<string>();
   private activeCompilationPhase: TCompilationPhase = 'STANDARD_INLINE';
+  private targetedRuntimeFilesSet = new Set<string>();
   constructor() {
     this.ensureGlobalMemoryRegistries();
   }
@@ -51,9 +52,6 @@ class XalorContextService {
   get sequenceCounters() {
     return globalThis.__XALOR_SEQUENCE_COUNTERS__!;
   }
-  get targetedRuntimeFilesSet() {
-    return globalThis.__XALOR_TARGETED_RUNTIME_FILES_SET__!;
-  }
 
   public static getInstance(): XalorContextService {
     if (!XalorContextService.instance) {
@@ -82,6 +80,12 @@ class XalorContextService {
 
   public resetTargetedRuntimeFiles(): void {
     this.targetedRuntimeFilesSet.clear();
+  }
+  public get targetedFilesCollector(): Set<string> {
+    return this.targetedRuntimeFilesSet;
+  }
+  public setTargetedFilesCollector(collector: Set<string>): void {
+    this.targetedRuntimeFilesSet = collector;
   }
   // ============================================================================================
   // BLACK LISTED KEYS
@@ -118,49 +122,29 @@ class XalorContextService {
 
     session.anchors[anchor] = { keyName, area, filePath };
   }
-  // TODO: OPTMIZE (BREAK ??)
-  // public deleteFromSessionRegistry(props: TDeleteSessionRegistry) {
-  //   const { filePath, keyName } = props;
-  //   const projectKey = XalorRoutesService.getProjectRelativeKey(filePath);
-  //   const session = this.sessionRegistry[projectKey];
 
-  //   if (!session) return;
-
-  //   const meta = session.keys[keyName];
-  //   if (meta) {
-  //     delete session.anchors[meta.anchor];
-  //   }
-  //   delete session.keys[keyName];
-
-  //   let hasActiveKeys = false;
-  //   for (const remainingKey in session.keys) {
-  //     if (Reflect.has(session.keys, remainingKey)) {
-  //       hasActiveKeys = true;
-  //       break;
-  //     }
-  //   }
-
-  //   if (!hasActiveKeys) {
-  //     delete this.sessionRegistry[projectKey];
-  //   }
-  // }
   public deleteFromSessionRegistry(props: TDeleteSessionRegistry): void {
     const { filePath, keyName } = props;
     const projectKey = XalorRoutesService.getProjectRelativeKey(filePath);
     const session = this.sessionRegistry[projectKey];
 
-    if (session === undefined) return;
+    if (!session) return;
 
     const meta = session.keys[keyName];
-    if (meta !== undefined) {
+    if (meta) {
       delete session.anchors[meta.anchor];
     }
-
     delete session.keys[keyName];
 
-    // 🟢 OPTIMIZATION: Replacing slow for-in loop arrays with native Object.keys() lengths checking!
-    const remainingKeysCount = Object.keys(session.keys).length;
-    if (remainingKeysCount === 0) {
+    let hasActiveKeys = false;
+    for (const remainingKey in session.keys) {
+      if (Reflect.has(session.keys, remainingKey)) {
+        hasActiveKeys = true;
+        break;
+      }
+    }
+
+    if (!hasActiveKeys) {
       delete this.sessionRegistry[projectKey];
     }
   }
@@ -256,29 +240,3 @@ class XalorContextService {
 }
 
 export const xalorCentralContext = XalorContextService.getInstance();
-/**
- // INSIDE YOUR PASS_STRATEGY_MAPPER FOR 'PRE_CRAWL_INGEST'
-export const preCrawlIngestStrategy = (props: TPassStrategyProps): ts.SourceFile => {
-  const { sourceFile, context } = props;
-
-  const visitNodePass1 = (node: ts.Node): ts.Node => {
-    if (ts.isCallExpression(node) && ts.isIdentifier(node.expression)) {
-      const apiName = node.expression.text;
-
-      // 1. Process and commit macro schemas instantly
-      if (apiName === 'registerXalor') {
-        // e.g. processAndRegisterMacro(node);
-      }
-
-      // 2. 🟢 TARGETING LOCKOUT GATE:
-      // If a runtime API is found, flag its filename string coordinate straight into the context service!
-      if (apiName === 'generateXalor' || apiName === 'validateXalor' || apiName === 'transformXalor') {
-        xalorCentralContext.addTargetedRuntimeFile(sourceFile.fileName);
-      }
-    }
-    return ts.visitEachChild(node, visitNodePass1, context);
-  };
-
-  return ts.visitNode(sourceFile, visitNodePass1) as ts.SourceFile;
-};
- */
