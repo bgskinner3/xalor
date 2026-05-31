@@ -9,7 +9,6 @@ import type {
   TDuplicateShape,
   TTopologyEdge,
   TTelemetryTokenNames,
-  TDriftMutationShape,
   TPropertyDeltaContext,
   TDefaultReturnKeyMap,
   TParsedLocation,
@@ -51,7 +50,7 @@ import {
 } from '../utils';
 
 export class CLIAuditEngineService {
-  private readonly paths: TXalorResolvedPaths;
+  public readonly paths: TXalorResolvedPaths;
   private readonly projectRoot: string;
 
   constructor(projectRoot: string) {
@@ -884,6 +883,8 @@ export class CLIAuditEngineService {
     const telemetry =
       await this.profileRuntimeFootprintAndOrphans(rawVaultData);
     const topology = this.analyzeDependencyGraphTopology(rawVaultData);
+    const drift = await this.interceptContractDriftRadar(rawVaultData);
+
     globalSummary.highestGraphDepthRecorded = nodes.reduce(
       (max, node) => Math.max(max, node.metrics.depth),
       0,
@@ -898,6 +899,7 @@ export class CLIAuditEngineService {
       },
       telemetry,
       topology,
+      drift,
     };
   }
 }

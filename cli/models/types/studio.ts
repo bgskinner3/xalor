@@ -138,7 +138,7 @@ type TNodeItemMetrics = {
  * @param dataShape Direct mapping to your recursive build-time type graph database layout
  * @param metrics Extracted structural density scores and performance weight taxonomies
  */
-type TStudioNodeItem = {
+export type TStudioNodeItem = {
   readonly identity: TNodeItemIdentity;
   readonly location: TNodeItemLocation;
   readonly dataShape: TSolidShape;
@@ -166,7 +166,7 @@ export interface IStudioOverviewPayload {
   readonly globalSummary: TStudioGlobalSummary;
   readonly systemHygiene: TSystemHygiene;
   readonly lifecycleFootprint: TLifeCycleFootPrint;
-  readonly registryItems: readonly TStudioNodeItem[];
+  readonly registryItems: TStudioNodeItem[];
   readonly topology: TTopology;
   readonly environment: TEnvironment;
 }

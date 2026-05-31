@@ -1,0 +1,148 @@
+import * as fs from 'fs';
+import * as os from 'os';
+import type { TDeepWriteable, TTripleKV } from '../../shared/types';
+import type { IStudioOverviewPayload, TXalorAuditNode } from '../models/types';
+import { yieldItems } from '../../shared/utils';
+import { CLIAuditEngineService } from './audit-cli-service';
+import {
+  DEFAULT_STUDIO_PAYLOAD,
+  STUDIO_COMMAND_CONFIG,
+} from '../models/constants';
+
+export class StudioCLIEngineService {
+  private readonly auditEngine: CLIAuditEngineService;
+
+  constructor(projectRoot: string) {
+    this.auditEngine = new CLIAuditEngineService(projectRoot);
+  }
+  private generateDefaultPayload(
+    fallbackPort?: number,
+  ): TDeepWriteable<IStudioOverviewPayload> {
+    DEFAULT_STUDIO_PAYLOAD.environment.activePort =
+      fallbackPort ?? STUDIO_COMMAND_CONFIG.port;
+    DEFAULT_STUDIO_PAYLOAD.environment.executionPlatform = os.platform();
+    DEFAULT_STUDIO_PAYLOAD.environment.nodeRuntimeVersion = process.version;
+    DEFAULT_STUDIO_PAYLOAD.environment.lastTelemetrySyncTimestamp = Date.now();
+
+    return DEFAULT_STUDIO_PAYLOAD;
+  }
+
+  /**  @see {@link AuditServiceDocs.ingestRawVaultFromDisk}*/
+  private async ingestRawVaultFromDisk(): Promise<TTripleKV | null> {
+    try {
+      // Safely leverage the pre-computed vault path exposed by your internal engine
+      const vaultPath = this.auditEngine.paths.vaultFile;
+      if (!fs.existsSync(vaultPath)) {
+        return null;
+      }
+
+      const rawJson = await fs.promises.readFile(vaultPath, 'utf-8');
+      return JSON.parse(rawJson);
+    } catch {
+      // TODO: ERROR HANDLER
+      return null;
+    }
+  }
+
+  private formatRegistryItems(
+    studioPayload: IStudioOverviewPayload,
+    nodes: readonly TXalorAuditNode[],
+    rawVaultData: TTripleKV,
+  ) {
+    for (const node of yieldItems(nodes)) {
+      const blueprintShape =
+        rawVaultData.blueprints[node.identity.casFingerprint];
+
+      if (blueprintShape) {
+        studioPayload.registryItems.push({
+          identity: {
+            typeKey: node.identity.typeKey,
+            symbolName: node.identity.symbolName,
+            casFingerprint: node.identity.casFingerprint,
+          },
+          location: {
+            filePath: node.location.filePath,
+            line: node.location.line,
+            column: node.location.column,
+            anchorIndex: node.location.anchor,
+          },
+          dataShape: blueprintShape,
+          metrics: {
+            depth: node.metrics.depth,
+            complexityScore: node.metrics.complexityScore,
+            nodesCollapsed: node.metrics.nodesCollapsed,
+          },
+        });
+      }
+    }
+  }
+
+  // !!! ================================================================================
+  // !!! ================================================================================
+  // !!! EXECUTION METHODS
+  // !!! ================================================================================
+  // !!! ================================================================================
+  /**
+   * COMPILE DASHBOARD OVERVIEW DATASET
+   * ROLE: Master transformation engine mapping raw payload calculations to web contracts point-free.
+   * STRATEGY: Combines flat node layers with raw blueprint shapes and host environment variables.
+   *
+   * @param activePort Loopback network HTTP port currently binding the Studio process
+   * @returns Fully hydrated payload satisfying the exact IStudioOverviewPayload specifications
+   */
+  public async compileDashboardOverviewDataset(
+    activePort: number,
+  ): Promise<IStudioOverviewPayload> {
+    const studioPayload = this.generateDefaultPayload(activePort);
+    const rawVaultData = await this.ingestRawVaultFromDisk();
+
+    // Fire your optimized, headless audit calculator loop pass to fetch raw data calculation sheets
+    const sharedData = await this.auditEngine.executeStudioOverviewRun();
+
+    if (!rawVaultData || sharedData.globalSummary.totalRegisteredKeys === 0) {
+      return studioPayload;
+    }
+
+    // =========================================================================
+    // GLOBAL SUMMARY FOOTPRINT HYDRATION
+    // =========================================================================
+    /* prettier-ignore */ studioPayload.globalSummary.totalRegisteredKeys = sharedData.globalSummary.totalRegisteredKeys;
+    /* prettier-ignore */ studioPayload.globalSummary.totalUniqueFingerprints = sharedData.globalSummary.totalUniqueFingerprints;
+    /* prettier-ignore */ studioPayload.globalSummary.globalCompactionRatio = sharedData.globalSummary.casCompressionRatio;
+    /* prettier-ignore */ studioPayload.globalSummary.totalDatabaseDiskBytes = sharedData.globalSummary.totalDatabaseDiskBytes;
+    /* prettier-ignore */ studioPayload.globalSummary.highestGraphDepthRecorded = sharedData.globalSummary.highestGraphDepthRecorded;
+
+    // =========================================================================
+    // SYSTEM HYGIENE FOOTPRINT HYDRATION
+    // =========================================================================
+    /* prettier-ignore */ studioPayload.systemHygiene.totalOrphanedKeys = sharedData.telemetry.orphanedKeys.length;
+    /* prettier-ignore */ studioPayload.systemHygiene.totalCriticalDepthWarnings = sharedData.systemHygiene.totalCriticalDepthWarnings;
+    /* prettier-ignore */ studioPayload.systemHygiene.hasBreakingContractDrift = sharedData.drift.hasBreakingChanges;
+
+    // =========================================================================
+    // LIFECYCLE MEMORY FOOTPRINT HYDRATION
+    // =========================================================================
+    /* prettier-ignore */ studioPayload.lifecycleFootprint.developmentCacheBytes = sharedData.globalSummary.totalDatabaseDiskBytes;
+    /* prettier-ignore */ studioPayload.lifecycleFootprint.productionEstimatedBytes = sharedData.globalSummary.totalDatabaseDiskBytes;
+
+    // =========================================================================
+    // TOPOLOGY LAYOUT NETWORK HYDRATION
+    // =========================================================================
+    // SECURE FIX: Map array properties point-free straight to their correct target channels
+    studioPayload.topology.edges = [...sharedData.topology.edges];
+    studioPayload.topology.cyclicPaths = sharedData.topology.cyclicPaths.map(
+      (pathRow) => [...pathRow],
+    );
+
+    // =========================================================================
+    // PHYSICAL INFRASTRUCTURE ENVIRONMENT HYDRATION
+    // =========================================================================
+    studioPayload.environment.activePort = activePort;
+
+    // 3. EXECUTE REGISTRY HYDRATION INTERACTION PASS
+    this.formatRegistryItems(studioPayload, sharedData.nodes, rawVaultData);
+
+    // 4. RETURN THE COMPRESSED OBJECT ENVELOPE SECURELY FROZEN (0 compile errors!)
+    return Object.freeze(studioPayload);
+  }
+}

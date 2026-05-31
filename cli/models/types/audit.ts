@@ -192,6 +192,7 @@ export type TAuditToStudioSharedData = {
   readonly systemHygiene: TXalorAuditHygiene;
   readonly telemetry: TXalorAuditTelemetry;
   readonly topology: TXalorAuditTopology;
+  readonly drift: TXalorAuditDrift;
 };
 /**
  * IXalorAuditPayload

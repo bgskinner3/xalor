@@ -5,6 +5,7 @@ import type {
   TTelemetryStrategyShape,
   TXalorAuditNode,
   TXalorAuditDrift,
+  IStudioOverviewPayload,
 } from '../types';
 import { TDeepWriteable } from '../../../shared';
 import { TELEMETRY_API_TOKEN_NAMES } from './audit';
@@ -70,6 +71,7 @@ export const DEFAULT_AUDIT_SHARED_PAYLOAD: TDeepWriteable<TAuditToStudioSharedDa
       edges: [],
       cyclicPaths: [],
     },
+    drift: { hasBreakingChanges: false, mutations: [] },
   } satisfies TDeepWriteable<TAuditToStudioSharedData>;
 
 /**
@@ -133,3 +135,38 @@ export const DEFAULT_OBJECT_MAPPER = {
   node: BASE_AUDIT_NODE_RECORD,
   drift: INITIAL_MUTABLE_DRIFT_TEMPLATE,
 } as const;
+
+/**
+ * DEFAULT_STUDIO_PAYLOAD
+ * ROLE: Static emergency recovery zero-state container used if snapshot disk reads fail.
+ * STRATEGY: Recursively un-locks all 'readonly' constraints to create an open baseline template
+ * while maintaining 100% static, pure primitive string states to prevent early boot execution leakages.
+ */
+export const DEFAULT_STUDIO_PAYLOAD: TDeepWriteable<IStudioOverviewPayload> = {
+  globalSummary: {
+    totalRegisteredKeys: 0,
+    totalUniqueFingerprints: 0,
+    globalCompactionRatio: 0,
+    totalDatabaseDiskBytes: 0,
+    highestGraphDepthRecorded: 0,
+  },
+  systemHygiene: {
+    totalOrphanedKeys: 0,
+    totalCriticalDepthWarnings: 0,
+    hasBreakingContractDrift: false,
+  },
+  lifecycleFootprint: {
+    developmentCacheBytes: 0,
+    productionEstimatedBytes: 0,
+    netBytesEvaporated: 0,
+    evaporationEfficiencyRatio: 0,
+  },
+  registryItems: [],
+  topology: { edges: [], cyclicPaths: [] },
+  environment: {
+    activePort: 8001,
+    executionPlatform: 'unknown',
+    nodeRuntimeVersion: 'unknown',
+    lastTelemetrySyncTimestamp: Date.now(),
+  },
+} satisfies TDeepWriteable<IStudioOverviewPayload>;
