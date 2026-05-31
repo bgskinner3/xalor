@@ -36,7 +36,6 @@ export function runClearCommand(projectRootPath: string): void {
 
   // ========================================================================
   // TRIGGER THE EMIT PASS TO FIRE IN-MEMORY REGISTRY PURGING
-  // The exact millisecond this executes, it passes control to xalorTransformerPlugin.
   // ========================================================================
   program.emit(
     undefined,
@@ -58,6 +57,7 @@ export function runClearCommand(projectRootPath: string): void {
 
   const currentModuleDir = path.dirname(fileURLToPath(import.meta.url));
 
+  // TODO: replace with our resolved paths ?
   const FILE_PATHS_CONFIG = {
     target: {
       /* prettier-ignore */

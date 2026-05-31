@@ -1,3 +1,5 @@
+import { ObjectUtils } from '../../utils';
+
 /**
  * SENTRY_TRIGGER_NAMES
  *
@@ -31,10 +33,13 @@ export const SENTRY_TRIGGER_NAMES = [
  *   crawler to filter parameter structures and flag illegal runtime API tokens.
  */
 export const SENTRY_TRIGGER_MODES = {
-  GENERATE: ['default', 'mock', 'clone', 'cast'] as const,
-  VALIDATE: ['guard', 'assert', 'parse', 'parseAsync', 'audit'] as const,
-  TRANSFORM: ['pick', 'omit', 'rename', 'merge', 'flatten'] as const,
+  generateXalor: ['default', 'mock', 'clone', 'cast'] as const,
+  validateXalor: ['guard', 'assert', 'parse', 'parseAsync', 'audit'] as const,
+  transformXalor: ['pick', 'omit', 'rename', 'merge', 'flatten'] as const,
 };
+
+// Unrolls your parent function keys natively into a strict compile-time list matrix
+export const RUNTIME_TRIGGER_NAMES = ObjectUtils.keys(SENTRY_TRIGGER_MODES);
 
 /**
  * MASTER GENERATOR MODES CONFIGURATION

@@ -73,23 +73,55 @@ export const DEFAULT_AUDIT_SHARED_PAYLOAD: TDeepWriteable<TAuditToStudioSharedDa
     },
     drift: { hasBreakingChanges: false, mutations: [] },
   } satisfies TDeepWriteable<TAuditToStudioSharedData>;
+/**
+ * createInitialTelemetryPayload
+ * 🪐 STATIC ISOLATION TELEMETRY PROVISIONAL FACTORY
+ *
+ * ROLE:
+ * Synchronously manufactures an immaculate, deeply mutable zero-state payload
+ * footprint on every execution invocation, completely wiping out cross-run
+ * array duplication pollution.
+ */
+export function createInitialTelemetryPayload(): TDeepWriteable<TXalorAuditTelemetry> {
+  const tokensArray = TELEMETRY_API_TOKEN_NAMES;
+  const len = tokensArray.length;
 
+  // Pre-allocate array capacity bounds point-free to protect the V8 heap frame
+  const distributionBuffer: TDeepWriteable<TTelemetryStrategyShape>[] = [];
+
+  for (let i = 0; i < len; i++) {
+    const token = tokensArray[i];
+    if (token !== undefined) {
+      distributionBuffer.push({
+        strategyToken: token,
+        invocationCount: 0,
+      });
+    }
+  }
+
+  return {
+    orphanedKeys: [],
+    strategyDistribution: distributionBuffer,
+  };
+}
+export const INITIAL_MUTABLE_TELEMETRY_TEMPLATE =
+  createInitialTelemetryPayload();
 /**
  * INITIAL_MUTABLE_TELEMETRY_TEMPLATE
  * ROLE: Deeply mutable static zero-state template structure tracking API distributions.
  * STRATEGY: Compiles metrics point-free exactly once on engine boot from TELEMETRY_API_TOKEN_NAMES.
  * Recursively un-locks all 'readonly' modifiers to allow direct runtime accumulator additions.
  */
-export const INITIAL_MUTABLE_TELEMETRY_TEMPLATE: TDeepWriteable<TXalorAuditTelemetry> =
-  {
-    orphanedKeys: [],
-    strategyDistribution: TELEMETRY_API_TOKEN_NAMES.map(
-      (token): TDeepWriteable<TTelemetryStrategyShape> => ({
-        strategyToken: token,
-        invocationCount: 0,
-      }),
-    ),
-  } satisfies TDeepWriteable<TXalorAuditTelemetry>;
+// export const INITIAL_MUTABLE_TELEMETRY_TEMPLATE: TDeepWriteable<TXalorAuditTelemetry> =
+//   {
+//     orphanedKeys: [],
+//     strategyDistribution: TELEMETRY_API_TOKEN_NAMES.map(
+//       (token): TDeepWriteable<TTelemetryStrategyShape> => ({
+//         strategyToken: token,
+//         invocationCount: 0,
+//       }),
+//     ),
+//   } satisfies TDeepWriteable<TXalorAuditTelemetry>;
 /**
  * CREATE BASE AUDIT NODE RECORD
  * ROLE: Factory utility generating an unallocated, unique object template to insulate properties.

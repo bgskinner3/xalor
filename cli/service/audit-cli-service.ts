@@ -19,7 +19,7 @@ import type {
 import {
   DEPTH_STRATEGY_MAPPER,
   TELEMETRY_API_TOKEN_NAMES,
-  TELEMETRY_TOKEN_NAME_MAPPER,
+  // TELEMETRY_TOKEN_NAME_MAPPER,
   PROPERTY_DRIFT_EVALUATION_RULES,
   DEPTH_COMPLEXITY_MAPPER,
   DEFAULT_OBJECT_MAPPER,
@@ -35,6 +35,10 @@ import {
   cloneDeep,
 } from '../../shared/utils';
 import { IS_SOLID_CONFIG_ITEMS, REGEX_PATTERNS } from '../../shared/constants';
+import {
+  // SENTRY_TRIGGER_MODES,
+  RUNTIME_TRIGGER_NAMES,
+} from '../../shared/constants';
 import type {
   TXalorResolvedPaths,
   TTripleKV,
@@ -69,7 +73,10 @@ export class CLIAuditEngineService {
   private generateDefaultPayload<T extends TDefaultObjectKeys>(
     defaultType: T,
   ): TDefaultReturnKeyMap<T> {
-    return DEFAULT_OBJECT_MAPPER[defaultType];
+    // return DEFAULT_OBJECT_MAPPER[defaultType];
+    const baseStaticTemplate = DEFAULT_OBJECT_MAPPER[defaultType];
+
+    return cloneDeep(baseStaticTemplate);
   }
   // ================================================================================
   // ================================================================================
@@ -88,23 +95,120 @@ export class CLIAuditEngineService {
     const totalRegisteredKeys = userKeysArray.length;
     const totalUniqueFingerprints = uniqueHashesArray.length;
 
-    let casCompressionRatio = 0;
-    if (totalRegisteredKeys > 0) {
-      casCompressionRatio = 1 - totalUniqueFingerprints / totalRegisteredKeys;
+    // ========================================================================
+    // 🪐 STEP 1: INITIALIZE FULL-GRAPH REUSE FREQUENCY MATRIX
+    // Counts how many times EVERY blueprint hash (parent or child) is used across the codebase.
+    // ========================================================================
+    const blueprintUsageFrequencyMap: Record<string, number> = {};
+
+    // A. Seed the frequency tracker using top-level user registration keys
+    for (let i = 0; i < totalRegisteredKeys; i++) {
+      const keyToken = userKeysArray[i];
+      if (keyToken === undefined) continue;
+
+      const rootHashPointer = vault.references[keyToken];
+      if (rootHashPointer === undefined) continue;
+
+      blueprintUsageFrequencyMap[rootHashPointer] =
+        (blueprintUsageFrequencyMap[rootHashPointer] ?? 0) + 1;
     }
+
+    // B. 🟢 DEEP GRAPH CRAWL: Sweep all blueprints to uncover internal child references (like sh_1vwzxq9)!
+    for (let i = 0; i < totalUniqueFingerprints; i++) {
+      const hashKey = uniqueHashesArray[i];
+      if (hashKey === undefined) continue;
+
+      const blueprintNode = vault.blueprints[hashKey];
+      if (
+        blueprintNode !== undefined &&
+        blueprintNode.kind === 'object' &&
+        blueprintNode.properties
+      ) {
+        const propertyKeys = Object.keys(blueprintNode.properties);
+        const propLen = propertyKeys.length;
+
+        for (let j = 0; j < propLen; j++) {
+          const propKey = propertyKeys[j];
+          if (propKey === undefined) continue;
+
+          const propertyContainer = blueprintNode.properties[propKey];
+          if (propertyContainer === undefined) continue;
+
+          // Extract the underlying structural configuration node path
+          const shapeNode = propertyContainer.shape;
+
+          // 🪐 THE CRAWLER DISCOVERY GATEWAY: Catch deep content-addressed reference links!
+          if (
+            shapeNode !== undefined &&
+            shapeNode.kind === 'reference' &&
+            shapeNode.name
+          ) {
+            const innerReferenceHash = shapeNode.name;
+
+            // Increment the reuse counter for the nested child blueprint node
+            blueprintUsageFrequencyMap[innerReferenceHash] =
+              (blueprintUsageFrequencyMap[innerReferenceHash] ?? 0) + 1;
+          }
+        }
+      }
+    }
+
+    let totalUnrolledPropertiesVolume = 0;
+    let totalCompactedPropertiesVolume = 0;
+
+    // ========================================================================
+    // 🪐 STEP 2: MEASURE DE-COUPLED PROPERTY VOLUMES CHRONOLOGICALLY
+    // ========================================================================
+    for (let i = 0; i < totalUniqueFingerprints; i++) {
+      const hashKey = uniqueHashesArray[i];
+      if (hashKey === undefined) continue;
+
+      const blueprintNode = vault.blueprints[hashKey];
+      if (
+        blueprintNode !== undefined &&
+        blueprintNode.kind === 'object' &&
+        blueprintNode.properties
+      ) {
+        const basePropertyCount = Object.keys(blueprintNode.properties).length;
+
+        // Look up how many times this specific fingerprint node was shared across the full graph tree
+        const activeReferenceMultiplier =
+          blueprintUsageFrequencyMap[hashKey] ?? 1;
+
+        // 🟢 HYGIENE FIX: Unrolled volume scales the properties count by its deep graph reuse factor!
+        totalUnrolledPropertiesVolume +=
+          basePropertyCount * activeReferenceMultiplier;
+
+        // Compacted size remains lean—stored exactly once on disk
+        totalCompactedPropertiesVolume += basePropertyCount;
+      }
+    }
+
+    // ========================================================================
+    // 🪐 STEP 3: CONVERT UNROLLED DELTAS TO CONST COMPACTION RATIO
+    // ========================================================================
+    const casCompressionRatio =
+      totalUnrolledPropertiesVolume > totalCompactedPropertiesVolume &&
+      totalUnrolledPropertiesVolume > 0
+        ? Math.max(
+            0,
+            Math.min(
+              1,
+              1 -
+                totalCompactedPropertiesVolume / totalUnrolledPropertiesVolume,
+            ),
+          )
+        : 0;
 
     let totalDatabaseDiskBytes = 0;
     try {
       if (fs.existsSync(this.paths.vaultFile)) {
-        const fileStats = fs.statSync(this.paths.vaultFile);
-        totalDatabaseDiskBytes = fileStats.size;
+        totalDatabaseDiskBytes = fs.statSync(this.paths.vaultFile).size;
       }
     } catch {
-      // TODO: ERROR HANDLER
-      // Suppress disk permission faults transparently, leaving the counter at safe zero state
+      // Suppress disk faults safely
     }
 
-    // 4. Temporary placeholder tracker for the system-wide depth apex (Computed recursively in Phase 2)
     const highestGraphDepthRecorded = 0;
 
     return {
@@ -115,6 +219,7 @@ export class CLIAuditEngineService {
       highestGraphDepthRecorded,
     };
   }
+
   // ================================================================================
   // ================================================================================
   // ================================================================================
@@ -166,7 +271,8 @@ export class CLIAuditEngineService {
     shape,
     blueprints,
   }: TCalculateDepthParams): number {
-    if (traversalStack.length >= 25) return 25;
+    const { reifyLimit } = IS_SOLID_CONFIG_ITEMS;
+    if (traversalStack.length >= reifyLimit.maxDepth) return 25;
 
     const runDistributedStrategy = <K extends TSolidShape['kind']>(
       targetKind: K,
@@ -211,22 +317,24 @@ export class CLIAuditEngineService {
     vault: TTripleKV,
     compiledNodes: TDeepWriteable<TXalorAuditNode>[],
   ): IXalorAuditPayload['hygiene'] {
-    const maxAllowedDepth = IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth;
+    const { reifyLimit } = IS_SOLID_CONFIG_ITEMS;
+    const warningAlarmThreshold = reifyLimit.depthAlarmThreshold;
 
     const depthWarnings: TDepthWarning[] = [];
     const duplicateShapes: TDuplicateShape[] = [];
-
     const inverseHashCluster: Record<string, string[]> = {};
+
     let totalCriticalDepthWarnings = 0;
 
-    for (const node of compiledNodes) {
+    compiledNodes.forEach((node) => {
+      if (node === undefined || node === null) return;
+
       const { identity, metrics } = node;
       const { typeKey, casFingerprint } = identity;
-
       const rootShape = vault.blueprints[casFingerprint];
-      let calculatedDepth = 0;
 
-      if (rootShape) {
+      let calculatedDepth = 0;
+      if (rootShape !== undefined) {
         calculatedDepth = this.calculateBlueprintDepth({
           shape: rootShape,
           blueprints: vault.blueprints,
@@ -237,7 +345,8 @@ export class CLIAuditEngineService {
       metrics.depth = calculatedDepth;
       metrics.complexityScore = this.mapDepthToComplexity(calculatedDepth);
 
-      if (calculatedDepth > maxAllowedDepth) {
+      // 🪐 THE DUAL-TIERED SAFETY RADAR TRIGGER
+      if (calculatedDepth >= warningAlarmThreshold) {
         totalCriticalDepthWarnings++;
         depthWarnings.push({
           typeKey,
@@ -254,7 +363,7 @@ export class CLIAuditEngineService {
           conflictingKeys: bucket,
         });
       }
-    }
+    });
 
     return {
       totalOrphanedKeys: 0,
@@ -262,6 +371,82 @@ export class CLIAuditEngineService {
       depthWarnings: Object.freeze(depthWarnings),
       duplicateShapes: Object.freeze(duplicateShapes),
     };
+    // for (let i = 0; i = warningAlarmThreshold) {
+    //     totalCriticalDepthWarnings++;
+    //     depthWarnings.push({
+    //       typeKey,
+    //       currentDepth: calculatedDepth,
+    //     });
+    //   }
+
+    //   const bucket = (inverseHashCluster[casFingerprint] ??= []);
+    //   bucket.push(typeKey);
+
+    //   if (bucket.length === 2) {
+    //     duplicateShapes.push({
+    //       canonicalHash: casFingerprint,
+    //       conflictingKeys: bucket,
+    //     });
+    //   }
+    // }
+
+    // return {
+    //   totalOrphanedKeys: 0,
+    //   totalCriticalDepthWarnings,
+    //   depthWarnings: Object.freeze(depthWarnings),
+    //   duplicateShapes: Object.freeze(duplicateShapes),
+    // };
+    // const maxAllowedDepth = IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth;
+
+    // const depthWarnings: TDepthWarning[] = [];
+    // const duplicateShapes: TDuplicateShape[] = [];
+
+    // const inverseHashCluster: Record<string, string[]> = {};
+    // let totalCriticalDepthWarnings = 0;
+
+    // for (const node of compiledNodes) {
+    //   const { identity, metrics } = node;
+    //   const { typeKey, casFingerprint } = identity;
+
+    //   const rootShape = vault.blueprints[casFingerprint];
+    //   let calculatedDepth = 0;
+
+    //   if (rootShape) {
+    //     calculatedDepth = this.calculateBlueprintDepth({
+    //       shape: rootShape,
+    //       blueprints: vault.blueprints,
+    //       traversalStack: [],
+    //     });
+    //   }
+
+    //   metrics.depth = calculatedDepth;
+    //   metrics.complexityScore = this.mapDepthToComplexity(calculatedDepth);
+
+    //   if (calculatedDepth > maxAllowedDepth) {
+    //     totalCriticalDepthWarnings++;
+    //     depthWarnings.push({
+    //       typeKey,
+    //       currentDepth: calculatedDepth,
+    //     });
+    //   }
+
+    //   const bucket = (inverseHashCluster[casFingerprint] ??= []);
+    //   bucket.push(typeKey);
+
+    //   if (bucket.length === 2) {
+    //     duplicateShapes.push({
+    //       canonicalHash: casFingerprint,
+    //       conflictingKeys: bucket,
+    //     });
+    //   }
+    // }
+
+    // return {
+    //   totalOrphanedKeys: 0,
+    //   totalCriticalDepthWarnings,
+    //   depthWarnings: Object.freeze(depthWarnings),
+    //   duplicateShapes: Object.freeze(duplicateShapes),
+    // };
   }
 
   // ================================================================================
@@ -311,10 +496,10 @@ export class CLIAuditEngineService {
     const compiledNodes: TXalorAuditNode[] = [];
 
     for (const typeKey of yieldItems(userKeys)) {
-      const rawNodePayload = this.generateDefaultPayload('node');
+      const nodeRecord = this.generateDefaultPayload('node');
 
       // 💚 PERFORMANCE OPTIMIZATION: Deep clone your structures cleanly using your Axiom utility!
-      const nodeRecord = cloneDeep(rawNodePayload);
+      // const nodeRecord = cloneDeep(rawNodePayload);
       const casFingerprint = vault.references[typeKey];
 
       /* prettier-ignore */ const manifestRow: TVaultManifestEntry | undefined = vault.manifest[typeKey];
@@ -351,20 +536,39 @@ export class CLIAuditEngineService {
     for (const token of yieldItems(strategyTokensArray)) {
       strategyCounters[token] = 0;
     }
+
     const activeEncounteredKeysSet = new Set<string>();
     const possibleBuildDirs = buildLayer.allowedOutputDirectories;
     let activeTargetDir = '';
 
+    // 🪐 DEBUG TRACE CHECKPOINT 1A: Look at the candidate directories list
+    console.log(
+      `\n🔍 [Xalor Debug] Scanning project root context: ${projectRoot}`,
+    );
+    console.log(
+      `🔍 [Xalor Debug] Allowed directories metadata loop:`,
+      possibleBuildDirs,
+    );
+
     for (const dir of possibleBuildDirs) {
       const candidatePath = path.join(projectRoot, dir);
-      if (
-        fs.existsSync(candidatePath) &&
-        fs.statSync(candidatePath).isDirectory()
-      ) {
+      const exists = fs.existsSync(candidatePath);
+      const isDir = exists && fs.statSync(candidatePath).isDirectory();
+
+      console.log(
+        `   📂 Testing Path: ${candidatePath} -> Exists: ${exists}, IsDirectory: ${isDir}`,
+      );
+
+      if (exists && isDir) {
         activeTargetDir = candidatePath;
         break;
       }
     }
+
+    // 🪐 DEBUG TRACE CHECKPOINT 1B: Confirm final directory decision
+    console.log(
+      `✨ [Xalor Debug] SELECTED ANCHOR TARGET PATH: "${activeTargetDir || 'NONE_FOUND'}"\n`,
+    );
 
     return {
       strategyCounters,
@@ -372,47 +576,259 @@ export class CLIAuditEngineService {
       activeTargetDir,
     };
   }
+  // private async scanTelemetryFiles(
+  //   _strategyTokensArray: readonly TTelemetryTokenNames[],
+  //   strategyCounters: Record<string, number>,
+  //   activeEncounteredKeysSet: Set<string>,
+  //   registeredKeys: string[],
+  //   activeTargetDir: string,
+  // ): Promise<void> {
+  //   const fileNames = await fs.promises.readdir(activeTargetDir);
+  //   const filesLen = fileNames.length;
+  //   const runtimeTriggersLen = RUNTIME_TRIGGER_NAMES.length;
+  //   const keysLen = registeredKeys.length;
+
+  //   for (let i = 0; i < filesLen; i++) {
+  //     const fileName = fileNames[i];
+  //     if (fileName === undefined) continue;
+
+  //     // Enforce rigorous file extension boundaries cleanly
+  //     if (
+  //       !fileName.endsWith('.js') &&
+  //       !fileName.endsWith('.mjs') &&
+  //       !fileName.endsWith('.ts') &&
+  //       !fileName.endsWith('.tsx')
+  //     ) {
+  //       continue;
+  //     }
+
+  //     const absoluteFilePath = path.join(activeTargetDir, fileName);
+  //     const fileContentString = await fs.promises.readFile(
+  //       absoluteFilePath,
+  //       'utf-8',
+  //     );
+
+  //     // 🪐 STEP 1: INITIAL COMPLIANCE GATEWAY SWEEP
+  //     // Confirms that the file actively invokes any of your active runtime engines!
+  //     let isFileActiveTelemetryTarget = false;
+  //     for (let p = 0; p < runtimeTriggersLen; p++) {
+  //       const triggerFnToken = RUNTIME_TRIGGER_NAMES[p];
+  //       if (
+  //         triggerFnToken !== undefined &&
+  //         fileContentString.includes(triggerFnToken)
+  //       ) {
+  //         isFileActiveTelemetryTarget = true;
+  //         break;
+  //       }
+  //     }
+
+  //     // Early escape bailout protects the execution thread from wasting cycles on static text files
+  //     if (!isFileActiveTelemetryTarget) {
+  //       continue;
+  //     }
+
+  //     console.log(
+  //       `   📄 [Xalor Scout] Processing Active Runtime API Script: ${fileName}`,
+  //     );
+
+  //     // 🪐 STEP 2: EXTRACT CONTRACT REFERENCE KEYS NATIVELY
+  //     for (let j = 0; j < keysLen; j++) {
+  //       const currentKey = registeredKeys[j];
+  //       if (
+  //         currentKey !== undefined &&
+  //         fileContentString.includes(currentKey)
+  //       ) {
+  //         activeEncounteredKeysSet.add(currentKey);
+  //         console.log(`      ✅ CONTRACT ENCOUNTERED: "${currentKey}"`);
+  //       }
+  //     }
+
+  //     // ========================================================================
+  //     // 🪐 STEP 3: TAXONOMY RUNTIME STRATEGY PARSING MATRIX
+  //     // Loops over runtime functions, maps strategies, and extracts numbers loop-free!
+  //     // ========================================================================
+  //     for (let p = 0; p < runtimeTriggersLen; p++) {
+  //       const activeRuntimeTrigger = RUNTIME_TRIGGER_NAMES[p];
+  //       if (activeRuntimeTrigger === undefined) continue;
+
+  //       if (!fileContentString.includes(activeRuntimeTrigger)) {
+  //         continue;
+  //       }
+
+  //       const allowedStrategies = SENTRY_TRIGGER_MODES[activeRuntimeTrigger];
+  //       const strategiesLen = allowedStrategies.length;
+
+  //       for (let s = 0; s < strategiesLen; s++) {
+  //         const strategyToken = allowedStrategies[s];
+  //         if (strategyToken === undefined) continue;
+
+  //         // Pull the pre-compiled, comment-shielded regex from the centralized mapper
+  //         // const targetRegex = TELEMETRY_TOKEN_NAME_MAPPER[strategyToken];
+  //         const contextualRegex = new RegExp(
+  //           `^(?:(?!\\/\\/|\\*).)*${activeRuntimeTrigger}(?:<|\\()\\s*['"][^'"]+['"]\\s*,\\s*['"]${strategyToken}['"]`,
+  //           'gm', // 🟢 CRITICAL: Added 'm' (multiline) flag so ^ matches the start of individual lines!
+  //         );
+
+  //         if (contextualRegex !== undefined) {
+  //           const segments = fileContentString.split(contextualRegex);
+  //           const matchesCount = segments.length - 1;
+
+  //           if (matchesCount > 0) {
+  //             strategyCounters[strategyToken] += matchesCount;
+  //             console.log(
+  //               `      ⚡ STRATEGY INSTANCE LINKED: ${activeRuntimeTrigger} ➔ '${strategyToken}' (${matchesCount} matches)`,
+  //             );
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
   private async scanTelemetryFiles(
     strategyTokensArray: readonly TTelemetryTokenNames[],
     strategyCounters: Record<string, number>,
     activeEncounteredKeysSet: Set<string>,
     registeredKeys: string[],
     activeTargetDir: string,
-  ) {
+  ): Promise<void> {
     const fileNames = await fs.promises.readdir(activeTargetDir);
-    /* prettier-ignore */
-    const targetJsFiles = fileNames.filter((name) => name.endsWith('.js') || name.endsWith('.mjs'));
+    const filesLen = fileNames.length;
+    const runtimeTriggersLen = RUNTIME_TRIGGER_NAMES.length;
+    const tokensLen = strategyTokensArray.length;
+    const keysLen = registeredKeys.length;
 
-    for (const fileName of targetJsFiles) {
-      /* prettier-ignore */
+    for (let i = 0; i < filesLen; i++) {
+      const fileName = fileNames[i];
+      if (fileName === undefined) continue;
+
+      // 🪐 1. ENFORCE COHESIVE FILE EXTENSION BOUNDARIES
+      if (
+        !fileName.endsWith('.js') &&
+        !fileName.endsWith('.mjs') &&
+        !fileName.endsWith('.ts') &&
+        !fileName.endsWith('.tsx')
+      ) {
+        continue;
+      }
+
+      // 🪐 2. EXCLUDE INTERNAL PLATFORM SYSTEM SCHEMAS OR CONFIG CORE FILES
+      // Prevents the engine from accidentally scanning your own registry source lists!
+      if (
+        fileName.includes('telemetry') ||
+        fileName.includes('shared') ||
+        fileName.includes('constant')
+      ) {
+        continue;
+      }
+
       const absoluteFilePath = path.join(activeTargetDir, fileName);
-      /* prettier-ignore */
-      const fileContentString = await fs.promises.readFile(absoluteFilePath,'utf-8');
+      const rawFileContentString = await fs.promises.readFile(
+        absoluteFilePath,
+        'utf-8',
+      );
 
-      for (const currentKey of yieldItems(registeredKeys)) {
-        if (fileContentString.includes(currentKey)) {
-          activeEncounteredKeysSet.add(currentKey);
+      // 🪐 3. INITIAL COMPLIANCE GATEWAY SWEEP
+      let isFileActiveTelemetryTarget = false;
+      for (let p = 0; p < runtimeTriggersLen; p++) {
+        const triggerFnToken = RUNTIME_TRIGGER_NAMES[p];
+        if (
+          triggerFnToken !== undefined &&
+          rawFileContentString.includes(triggerFnToken)
+        ) {
+          isFileActiveTelemetryTarget = true;
+          break;
         }
       }
 
-      for (const activeToken of strategyTokensArray) {
-        const targetRegex = TELEMETRY_TOKEN_NAME_MAPPER[activeToken];
-        if (targetRegex) {
-          targetRegex.lastIndex = 0;
+      if (!isFileActiveTelemetryTarget) {
+        continue;
+      }
 
-          const matches = fileContentString.match(targetRegex);
-          if (matches) {
-            strategyCounters[activeToken] += matches.length;
-          }
+      // ========================================================================
+      // 🪐 4. HIGH-SPEED LINEAR COMMENT CLEANUP MASK
+      // Splits text by lines, identifies comment markers, and blanks them out
+      // before token counters process the file canvas!
+      // ========================================================================
+      const rawLinesList = rawFileContentString.split(/\r?\n/);
+      const linesCount = rawLinesList.length;
+      const sanitizedLinesBuffer: string[] = [];
+
+      for (let L = 0; L < linesCount; L++) {
+        const activeLineText = rawLinesList[L];
+        if (activeLineText === undefined) continue;
+
+        const trimmedLine = activeLineText.trim();
+
+        // If the line is an active comment block or template document string, drop its contents
+        if (
+          trimmedLine.startsWith('//') ||
+          trimmedLine.startsWith('*') ||
+          trimmedLine.startsWith('/*') ||
+          trimmedLine.includes('⚡') // Drops console ledger print blocks safely!
+        ) {
+          sanitizedLinesBuffer.push('');
+        } else {
+          sanitizedLinesBuffer.push(activeLineText);
+        }
+      }
+
+      // Reconstruct the immaculate text block canvas
+      const fileContentString = sanitizedLinesBuffer.join('\n');
+
+      console.log(
+        `   📄 [Xalor Scout] Processing Active API Script: ${fileName}`,
+      );
+
+      // 🪐 5. EXTRACT ACTIVE CONTRACT REFERENCE KEYS NATIVELY
+      for (let j = 0; j < keysLen; j++) {
+        const currentKey = registeredKeys[j];
+        if (
+          currentKey !== undefined &&
+          fileContentString.includes(currentKey)
+        ) {
+          activeEncounteredKeysSet.add(currentKey);
+          console.log(`      ✅ CONTRACT ENCOUNTERED: "${currentKey}"`);
+        }
+      }
+
+      // ========================================================================
+      // 🪐 6. INLINE CONTEXTUAL TRIGGER SPECIFICATION SPLITS
+      // Runs a localized regex split over the clean text with no cross-file mapper overhead!
+      // ========================================================================
+      const runtimeTriggersChoiceGroup = RUNTIME_TRIGGER_NAMES.join('|');
+
+      for (let s = 0; s < tokensLen; s++) {
+        const strategyToken = strategyTokensArray[s];
+        if (strategyToken === undefined) continue;
+
+        // Clean, unanchored contextual match expression built natively on the stack frame
+        const contextualRegex = new RegExp(
+          `(?:${runtimeTriggersChoiceGroup})(?:<|\\()\\s*['"][^'"]+['"]\\s*,\\s*['"]${strategyToken}['"]`,
+          'g',
+        );
+
+        const segments = fileContentString.split(contextualRegex);
+        const matchesCount = segments.length - 1;
+
+        if (matchesCount > 0) {
+          strategyCounters[strategyToken] += matchesCount;
+          console.log(
+            `      ⚡ STRATEGY INSTANCE LINKED: '${strategyToken}' (${matchesCount} matches)`,
+          );
         }
       }
     }
   }
-  /**  @see {@link AuditServiceDocs.profileRuntimeFootprintAndOrphans}*/
+  /** @see {@link AuditServiceDocs.profileRuntimeFootprintAndOrphans}*/
   private async profileRuntimeFootprintAndOrphans(
     vault: TTripleKV,
   ): Promise<IXalorAuditPayload['telemetry']> {
+    // 🪐 STEP 1: FORCE ABSOLUTE ISOLATION ON THE MUTABLE TEMPLATE SOURCE
+    // If your generateDefaultPayload utility returns a reference structure,
+    // we hard-wipe the tracking arrays to absolute zero geometry on this active frame pass run!
     const telemetryObject = this.generateDefaultPayload('telemetry');
+    telemetryObject.orphanedKeys = []; // 🟢 FIXED: Clears out past duplicate historical artifacts completely!
+
     const strategyTokensArray = TELEMETRY_API_TOKEN_NAMES;
     const registeredKeys = ObjectUtils.keys(vault.references);
 
@@ -420,37 +836,262 @@ export class CLIAuditEngineService {
       this.createTelemetryScanContext(strategyTokensArray, this.projectRoot);
 
     if (!activeTargetDir) {
-      telemetryObject.orphanedKeys = registeredKeys;
+      console.warn(
+        `⚠️ [Xalor Debug Warning]: No build output target directory matches. All keys marked as orphans.`,
+      );
+      telemetryObject.orphanedKeys = [...registeredKeys];
       return telemetryObject;
     }
+
     try {
-      this.scanTelemetryFiles(
+      await this.scanTelemetryFiles(
         strategyTokensArray,
         strategyCounters,
         activeEncounteredKeysSet,
         registeredKeys,
         activeTargetDir,
       );
-    } catch {
-      // TODO: add our Error handler logger
-      // graceful fallback
+    } catch (error) {
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : 'Unknown file-system exception';
+      console.error(
+        `❌ [Xalor Debug Error] File scanner channel failure: ${errorMsg}`,
+      );
     }
 
-    for (const key of yieldItems(registeredKeys)) {
-      if (!activeEncounteredKeysSet.has(key)) {
-        telemetryObject.orphanedKeys.push(key);
+    // ========================================================================
+    // 🪐 STEP 2: DETERMINISTIC COMPLIANCE ARRAY INJECTION
+    // ========================================================================
+    const totalKeysCount = registeredKeys.length;
+    for (let i = 0; i < totalKeysCount; i++) {
+      const key = registeredKeys[i];
+
+      if (key !== undefined && !activeEncounteredKeysSet.has(key)) {
+        // Double-check alignment protection to verify that the key isn't already inside the orphan array
+        if (!telemetryObject.orphanedKeys.includes(key)) {
+          telemetryObject.orphanedKeys.push(key);
+        }
       }
     }
 
-    for (const token of yieldItems(strategyTokensArray)) {
-      telemetryObject.strategyDistribution.push({
-        strategyToken: token,
-        invocationCount: strategyCounters[token],
-      });
+    // 🪐 DEBUG TRACE CHECKPOINT 3A: Inspect aggregated totals right before writing to template output arrays
+    console.log(`\n📊 [Xalor Debug] Final Aggregation Pass Status:`);
+    console.log(
+      `   • Encountered Non-Orphaned Keys Count: ${activeEncounteredKeysSet.size}`,
+    );
+    console.log(
+      `   • Identified Orphaned Keys Count: ${telemetryObject.orphanedKeys.length}`,
+    );
+
+    const distributionList = telemetryObject.strategyDistribution;
+    const distLen = distributionList.length;
+
+    // 🪐 DEBUG TRACE CHECKPOINT 3B: Confirm output list array allocation length bounds
+    console.log(`   • Template Strategy Distribution Rows Count: ${distLen}`);
+
+    for (let i = 0; i < distLen; i++) {
+      const entry = distributionList[i];
+      if (entry !== undefined) {
+        entry.invocationCount = strategyCounters[entry.strategyToken] ?? 0;
+
+        // Print row mapping checks directly to terminal stream
+        if (entry.invocationCount > 0) {
+          console.log(
+            `      ↳ Writing to payload: ${entry.strategyToken} -> ${entry.invocationCount}`,
+          );
+        }
+      }
     }
 
     return telemetryObject;
   }
+  // private createTelemetryScanContext(
+  //   strategyTokensArray: readonly TTelemetryTokenNames[],
+  //   projectRoot: string,
+  // ) {
+  //   const { buildLayer } = IS_SOLID_CONFIG_ITEMS;
+  //   const strategyCounters: Record<string, number> = {};
+
+  //   for (const token of yieldItems(strategyTokensArray)) {
+  //     strategyCounters[token] = 0;
+  //   }
+  //   const activeEncounteredKeysSet = new Set<string>();
+  //   const possibleBuildDirs = buildLayer.allowedOutputDirectories;
+  //   let activeTargetDir = '';
+
+  //   for (const dir of possibleBuildDirs) {
+  //     const candidatePath = path.join(projectRoot, dir);
+  //     if (
+  //       fs.existsSync(candidatePath) &&
+  //       fs.statSync(candidatePath).isDirectory()
+  //     ) {
+  //       activeTargetDir = candidatePath;
+  //       break;
+  //     }
+  //   }
+
+  //   return {
+  //     strategyCounters,
+  //     activeEncounteredKeysSet,
+  //     activeTargetDir,
+  //   };
+  // }
+  // private async scanTelemetryFiles(
+  //   strategyTokensArray: readonly TTelemetryTokenNames[],
+  //   strategyCounters: Record<string, number>,
+  //   activeEncounteredKeysSet: Set<string>,
+  //   registeredKeys: string[],
+  //   activeTargetDir: string,
+  // ) {
+  //   const fileNames = await fs.promises.readdir(activeTargetDir);
+  //   const filesLen = fileNames.length;
+  //   const tokensLen = strategyTokensArray.length;
+  //   const keysLen = registeredKeys.length;
+
+  //   for (let i = 0; i < filesLen; i++) {
+  //     const fileName = fileNames[i];
+  //     if (fileName === undefined) continue;
+
+  //     if (
+  //       !fileName.endsWith('.js') &&
+  //       !fileName.endsWith('.mjs') &&
+  //       !fileName.endsWith('.ts') &&
+  //       !fileName.endsWith('.tsx')
+  //     ) {
+  //       continue;
+  //     }
+
+  //     const absoluteFilePath = path.join(activeTargetDir, fileName);
+  //     const fileContentString = await fs.promises.readFile(
+  //       absoluteFilePath,
+  //       'utf-8',
+  //     );
+
+  //     // 1. Scan for active contract key occurrences using standard index checks
+  //     for (let j = 0; j < keysLen; j++) {
+  //       const currentKey = registeredKeys[j];
+  //       if (
+  //         currentKey !== undefined &&
+  //         fileContentString.includes(currentKey)
+  //       ) {
+  //         activeEncounteredKeysSet.add(currentKey);
+  //       }
+  //     }
+
+  //     // ========================================================================
+  //     // 🪐 ZERO-LOOP SPLIT-BASED ACCUMULATION MATRIX
+  //     // 🟢 FIXED: Removed the while loop completely! Uses .split() arithmetic.
+  //     // ========================================================================
+  //     for (let k = 0; k < tokensLen; k++) {
+  //       const activeToken = strategyTokensArray[k];
+  //       if (activeToken === undefined) continue;
+
+  //       const targetRegex = TELEMETRY_TOKEN_NAME_MAPPER[activeToken];
+  //       if (targetRegex !== undefined) {
+  //         // Splitting the text by the regex creates an array where length is (matches + 1)
+  //         const segments = fileContentString.split(targetRegex);
+  //         const matchesCount = segments.length - 1;
+
+  //         if (matchesCount > 0) {
+  //           strategyCounters[activeToken] += matchesCount;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   // const fileNames = await fs.promises.readdir(activeTargetDir);
+  //   // /* prettier-ignore */
+  //   // const targetJsFiles = fileNames.filter((name) => name.endsWith('.js') || name.endsWith('.mjs'));
+
+  //   // for (const fileName of targetJsFiles) {
+  //   //   /* prettier-ignore */
+  //   //   const absoluteFilePath = path.join(activeTargetDir, fileName);
+  //   //   /* prettier-ignore */
+  //   //   const fileContentString = await fs.promises.readFile(absoluteFilePath,'utf-8');
+
+  //   //   for (const currentKey of yieldItems(registeredKeys)) {
+  //   //     if (fileContentString.includes(currentKey)) {
+  //   //       activeEncounteredKeysSet.add(currentKey);
+  //   //     }
+  //   //   }
+
+  //   //   for (const activeToken of strategyTokensArray) {
+  //   //     const targetRegex = TELEMETRY_TOKEN_NAME_MAPPER[activeToken];
+  //   //     if (targetRegex) {
+  //   //       targetRegex.lastIndex = 0;
+
+  //   //       const matches = fileContentString.match(targetRegex);
+  //   //       if (matches) {
+  //   //         strategyCounters[activeToken] += matches.length;
+  //   //       }
+  //   //     }
+  //   //   }
+  //   // }
+  // }
+  // /**  @see {@link AuditServiceDocs.profileRuntimeFootprintAndOrphans}*/
+  // private async profileRuntimeFootprintAndOrphans(
+  //   vault: TTripleKV,
+  // ): Promise<IXalorAuditPayload['telemetry']> {
+  //   const telemetryObject = this.generateDefaultPayload('telemetry');
+  //   const strategyTokensArray = TELEMETRY_API_TOKEN_NAMES;
+  //   const registeredKeys = ObjectUtils.keys(vault.references);
+
+  //   const { strategyCounters, activeEncounteredKeysSet, activeTargetDir } =
+  //     this.createTelemetryScanContext(strategyTokensArray, this.projectRoot);
+
+  //   if (!activeTargetDir) {
+  //     telemetryObject.orphanedKeys = registeredKeys;
+  //     return telemetryObject;
+  //   }
+  //   try {
+  //     await this.scanTelemetryFiles(
+  //       strategyTokensArray,
+  //       strategyCounters,
+  //       activeEncounteredKeysSet,
+  //       registeredKeys,
+  //       activeTargetDir,
+  //     );
+  //   } catch {
+  //     // TODO: add our Error handler logger
+  //     // graceful fallback
+  //   }
+
+  //   // for (const key of yieldItems(registeredKeys)) {
+  //   //   if (!activeEncounteredKeysSet.has(key)) {
+  //   //     telemetryObject.orphanedKeys.push(key);
+  //   //   }
+  //   // }
+
+  //   // for (const token of yieldItems(strategyTokensArray)) {
+  //   //   telemetryObject.strategyDistribution.push({
+  //   //     strategyToken: token,
+  //   //     invocationCount: strategyCounters[token],
+  //   //   });
+  //   // }
+  //   // 🪐 2. POPULATE THE NEWLY CLEANED ISOLATED ARRAYS WITHOUT ACCUMULATOR DRIFT
+  //   const totalKeysCount = registeredKeys.length;
+  //   for (let i = 0; i < totalKeysCount; i++) {
+  //     const key = registeredKeys[i];
+  //     if (key !== undefined && !activeEncounteredKeysSet.has(key)) {
+  //       telemetryObject.orphanedKeys.push(key);
+  //     }
+  //   }
+
+  //   // 🟢 OPTIMIZATION: Update properties directly inside the pre-allocated array positions
+  //   // instead of calling .push() to add duplicate entries onto the list layout tracks!
+  //   const distributionList = telemetryObject.strategyDistribution;
+  //   const distLen = distributionList.length;
+  //   for (let i = 0; i < distLen; i++) {
+  //     const entry = distributionList[i];
+  //     if (entry !== undefined) {
+  //       // Map the direct integer counted from your local file system scanner pass
+  //       entry.invocationCount = strategyCounters[entry.strategyToken] ?? 0;
+  //     }
+  //   }
+
+  //   return telemetryObject;
+  // }
 
   // ================================================================================
   // ================================================================================

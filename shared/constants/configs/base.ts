@@ -50,22 +50,31 @@ const PACKAGE_FILE_PATHS = {
 } as const;
 
 /**
- * ⚖️ REIFY DEPTH & SIZE LIMITS
+ * REIFY_DEPTH_LENGTH_SIZE_LIMITS
+ * 🪐 THE LAWS OF FINITE GEOMETRY (Multi-Tiered Security Edition)
  *
  * PURPOSE:
- * Implements the "Atomic Cut" strategy to prevent the "Pyramid of Doom."
- * These constants act as the physical laws for the Build-Time Miner.
+ * Implements a strict, multi-tiered structural protection framework to prevent
+ * deep tree-traversal heap corruption and infinite recursion stack overflows.
+ * These metrics establish the immutable data constraints for the Build-Time Miner.
  *
  * ROLE:
- * 1. PERSISTENCE: Ensures JSON blueprints remain small enough for rapid I/O.
- * 2. PERFORMANCE: Caps recursion depth to protect the Runtime Engine's stack.
- * 3. SECURITY: Mitigates "Billion Laughs" style memory exhaustion attacks.
+ * 1. PERSISTENCE: Guarantees that content-addressed database snapshots remain compact
+ *    enough to enable sub-millisecond, zero-allocation synchronous disk I/O operations.
+ * 2. HYGIENE VISIBILITY: Establishes a distinct warning buffer zone where the compiler
+ *    flags deep architectural anti-patterns before executing hard-chop layout cuts.
+ * 3. SECURITY: Eliminates algorithmic memory-exhaustion vectors (e.g., recursive expansion
+ *    traps) to maintain absolute stability across parallel compilation threads.
  *
- * @law maxDepth - Forces a 'reference' chop once nesting exceeds this level.
- * @law maxStringLength - Guards against "URL Shutdown" scenarios.
+ * @law depthAlarmThreshold - The precise layer depth where the audit engine triggers critical warnings.
+ * @law maxDepth - The definitive structural limit forcing a 'reference' split to isolate type graphs.
+ * @law maxStringLength - Enforces strict character allocation caps on primitive token identifiers.
+ * @law maxObjectProperties - Clips overly dense data shapes to guarantee fast lookup matrix parsing.
+ * @law maxUnionVariants - Clamps structural branching layers to shield the type loop from exploding.
  */
 const REIFY_DEPTH_LENGTH_SIZE_LIMITS = {
-  maxDepth: 10,
+  depthAlarmThreshold: 10,
+  maxDepth: 25,
   maxStringLength: 4096,
   maxObjectProperties: 200,
   maxUnionVariants: 50,
@@ -80,9 +89,22 @@ const REIFY_DEPTH_LENGTH_SIZE_LIMITS = {
  * @property allowedOutputDirectories Standard collection paths searched by the telemetry scanner to detect production artifacts.
  * @property defaultOutputTarget Fallback compilation anchor destination used when executing baseline builds.
  */
+/* prettier-ignore */
 export const COMPILED_DISTRIBUTION_MANIFEST = Object.freeze({
-  allowedOutputDirectories: ['dist', 'build', 'out', 'lib'] as const,
+  fallbackSourcePaths: ['src', 'app', 'test'] as const,
+    mandatoryExcludePatterns: ['dist', 'build', 'out', 'lib', 'node_modules', '.cache', '.next', '.xalor'] as const,
+  
   defaultOutputTarget: 'dist',
+  allowedOutputDirectories: [
+    'src',
+    'app',
+    'test',
+    'dist',
+    'build',
+    'out',
+    'lib',
+  ] as const,
+
 } as const);
 
 /**

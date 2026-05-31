@@ -3,7 +3,6 @@ import { ObjectUtils, yieldItems, isKeyOfArray } from '../../../shared/utils';
 import type {
   TAuditDepthMapper,
   TDepthComplexityMapper,
-  TTelemetryTokenNames,
   TReferenceCollectorMapper,
   TPropertyDeltaContext,
   TPropertyDriftRule,
@@ -134,20 +133,6 @@ export const DEPTH_COMPLEXITY_MAPPER: TDepthComplexityMapper = [
   { key: 'LINEAR_ON', test: (d) => d <= 4 },
   { key: 'COMPLEX_ON2', test: () => true },
 ] satisfies TDepthComplexityMapper;
-
-/**
- * TELEMENTRY_TOKEN_NAME_MAPPER
- * ROLE: Immutable dictionary mapping strategy tokens to isolated word boundary regex layouts.
- * STRATEGY: Pre-compiled point-free on engine boot to eradicate runtime heap allocation thrashing.
- */
-export const TELEMETRY_TOKEN_NAME_MAPPER = Object.freeze(
-  ObjectUtils.fromEntries(
-    TELEMETRY_API_TOKEN_NAMES.map((token): [TTelemetryTokenNames, RegExp] => [
-      token,
-      new RegExp(`\\b${token}\\b`, 'g'),
-    ]),
-  ),
-);
 
 /**
  * REFERENCE_COLLECTOR_STRATEGY

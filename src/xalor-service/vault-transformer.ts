@@ -21,6 +21,7 @@ import {
 } from '../utils';
 import { isObject, isNull } from '../../shared';
 import type { TSolidShape } from '../../shared';
+import { IS_SOLID_CONFIG_ITEMS } from '../../shared/constants';
 
 export class XalethorVaultTransformer {
   // ====================================================================
@@ -157,7 +158,8 @@ export class XalethorVaultTransformer {
     seenObjectsMap,
     predicate,
   }: TTransformSanitize): unknown {
-    if (depth > 25) return null;
+    const { reifyLimit } = IS_SOLID_CONFIG_ITEMS;
+    if (depth > reifyLimit.maxDepth) return null;
     // !!! NOTE: conditional below caution.
     if (val === null || typeof val !== 'object') return val;
     if (seenObjectsMap.has(val)) return seenObjectsMap.get(val);
@@ -290,8 +292,9 @@ export class XalethorVaultTransformer {
     depth: number,
     seenObjectsMap: Set<unknown>,
   ): void {
+    const { reifyLimit } = IS_SOLID_CONFIG_ITEMS;
     // THE DEPTH LAW (Security control check)
-    if (depth > 25) return;
+    if (depth > reifyLimit.maxDepth) return;
 
     // Circular loop memory stack boundary intercept validation
     if (isObject(val) && !isNull(val)) {

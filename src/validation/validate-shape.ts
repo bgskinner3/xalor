@@ -1,7 +1,12 @@
 // src/validation/solidify-shape.ts
 import type { TValidationContext, TSolidShape } from '../../shared';
 import { createInitialContext } from './context';
-import { isObject, isNull, isFunction } from '../../shared';
+import {
+  isObject,
+  isNull,
+  isFunction,
+  IS_SOLID_CONFIG_ITEMS,
+} from '../../shared';
 import { SHAPE_VALIDATION_MAPPER } from '../mappers';
 /**
  * 💎 solidify
@@ -16,7 +21,8 @@ export function validateShape(
   shape: TSolidShape,
   ctx: TValidationContext = createInitialContext(),
 ): boolean {
-  if (ctx.depth > 25) return false;
+  const { reifyLimit } = IS_SOLID_CONFIG_ITEMS;
+  if (ctx.depth > reifyLimit.maxDepth) return false;
 
   if (isObject(data) && !isNull(data)) {
     let seenShapes = ctx.seen.get(data);
