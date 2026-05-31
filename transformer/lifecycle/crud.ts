@@ -1,9 +1,9 @@
 // transformer/lifecycle/crud.ts
-import type { TCudExecutionMode } from '../../shared/types';
-import { CUD_EXECUTION_MODES } from '../../shared';
+import { CUD_EXECUTION_MODES } from '../constants';
 import type {
   TEvaluateCUDMutationParams,
   TExecuteCUDMutationParams,
+  TCudExecutionMode,
 } from '../types';
 import { xalorCentralContext, XalorRoutesService } from '../service';
 import {

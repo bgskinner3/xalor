@@ -28,3 +28,25 @@ export const DEFAULT_REIFY_CTX: TReifyCTX = {
   parentKey: 'root',
   seen: new Set(),
 } satisfies TReifyCTX;
+/**
+ * CUD_EXECUTION_MODES
+ *
+ * ROLE:
+ * The single source of truth for all permitted type mutation lifecycle states.
+ *
+ * STRATEGY:
+ * Freezing this dictionary object provides an immutable lookup vocabulary
+ * across the codebase (NO switch statements), while preserving tight compile-time
+ * type inference across your logging and mutation engines.
+ *
+ * @key create State token indicating a pristine type registration creation pass
+ * @key State token indicating a structural layout mutation or property update pass
+ * @key State token indicating a semantic file-removal deletion sweep pass
+ *
+ */
+export const CUD_EXECUTION_MODES = Object.freeze({
+  create: 'create',
+  update: 'update',
+  delete: 'delete',
+  noop: 'noop',
+} as const);

@@ -1,9 +1,6 @@
-import type {
-  TVaultSyncPayload,
-  TCudExecutionMode,
-  TTransformerExecuteMode,
-} from '../../shared';
+import type { TVaultSyncPayload, TTransformerExecuteMode } from '../../shared';
 import type { SourceFile, Program } from 'typescript';
+import { CUD_EXECUTION_MODES } from '../constants';
 
 export type TXalorLifecycleContext = {
   readonly isWatchMode: boolean;
@@ -81,3 +78,10 @@ export type TPersistenceGateParams = {
   readonly program: Program;
   readonly rootDir: string;
 };
+/**
+ * TCudExecutionMode
+ *
+ * ROLE:
+ * Strict string union type derived from the frozen CUD_EXECUTION_MODES keys.
+ */
+export type TCudExecutionMode = keyof typeof CUD_EXECUTION_MODES;

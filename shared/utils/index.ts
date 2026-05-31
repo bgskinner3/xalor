@@ -6,3 +6,4 @@ export * from './debug';
 export * from './object-utils';
 export * from './resolved-routes';
 export * from './deep-operations';
+export * from './shared-service';

@@ -58,4 +58,5 @@ to-do-today.md
 
 # internal docs
 cli-build-docs.d.ts
+shared-items-docs.d.ts
 docs-reference

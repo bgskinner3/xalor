@@ -8,9 +8,9 @@ import {
   VALIDATION_MODE_TRIGGERS,
   TRANSFORM_MODE_TRIGGERS,
   CLI_COMMAND_MODES,
-  CUD_EXECUTION_MODES,
   TRANSFORMER_EXECUTE_MODES,
   ALL_CLI_FLAGS,
+  IS_SOLID_CONFIG_ITEMS,
 } from '../constants';
 
 /**
@@ -111,15 +111,15 @@ export type TXalorCLIModesMap = {
  */
 export type TCLIFlags = (typeof ALL_CLI_FLAGS)[number];
 /**
- * TCudExecutionMode
- *
- * ROLE:
- * Strict string union type derived from the frozen CUD_EXECUTION_MODES keys.
- */
-export type TCudExecutionMode = keyof typeof CUD_EXECUTION_MODES;
-/**
  * TTransformerExecuteMode
  *
  * Strict union type matching only: 'watch' | 'compile' | 'vacuum' | 'sudto | 'clear
  */
 export type TTransformerExecuteMode = keyof typeof TRANSFORMER_EXECUTE_MODES;
+/**
+ * TSearchFileNames
+ * ROLE: Type-safe contract for the workspace configuration file-name map.
+ * STRATEGY: Inferred directly from the source constant object to guarantee
+ * consumers remain aligned with the canonical file-name definitions.
+ */
+export type TSearchFileNames = typeof IS_SOLID_CONFIG_ITEMS.searchFileNames;

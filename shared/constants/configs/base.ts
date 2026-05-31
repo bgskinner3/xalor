@@ -34,10 +34,22 @@ const SOLID_EMITTER_KEYS = {
     // "import type { ISolidRegistry, ISolidIdentity } from '@bgskinner2/xalor';",
   ],
 } as const;
-
+/**
+ * PACKAGE_FILE_PATHS
+ * 🪐 THE VIRTUAL FILESYSTEM PERSISTENCE LEDGER
+ *
+ * PURPOSE:
+ * Establishes the definitive, immutable target file names and structural folder
+ * coordinates managing the physical generation, caching, and distribution layers
+ * of the Xalor compiler plugin platform.
+ *
+ * DESIGN INVARIANT:
+ * Satisfies Commandment I (Single Source of Truth) by grouping all active
+ * build-time output assets under a unified structural dictionary, preventing
+ * path layout desynchronization across the core transformation engines.
+ */
 const PACKAGE_FILE_PATHS = {
   bridgeFileName: 'solid-env.ts',
-
   bridgeTemplate: 'solid-env.ts.template',
   vaultTemplate: 'vault-snapshot.json',
 
@@ -47,6 +59,30 @@ const PACKAGE_FILE_PATHS = {
   bakedFileName: 'baked-vault.js',
   intelFolderName: '.xalor',
   cacheFolderName: 'xalor',
+} as const;
+/**
+ * SEARCH_FILE_NAMES
+ * 🪐 THE SYSTEM EXPLORATION & DISCOVERY DIRECTORY
+ *
+ * PURPOSE:
+ * An authoritative, frozen lookup dictionary tracking structural configuration
+ * manifests, monorepo boundaries, dependency lists, and environment parameters
+ * scanned by the engine to verify project layout boundaries.
+ *
+ * DESIGN INVARIANT:
+ * Satisfies Commandment VIII (Internal Efficiency) by maintaining flat, primitive
+ * string literal definitions natively, enabling lightning-fast O(1) constant-time
+ * lookups across background filesystem watchers and AST mining processes.
+ */
+const SEARCH_FILE_NAMES = {
+  /* prettier-ignore */ tsconfig: 'tsconfig.json',
+  /* prettier-ignore */ tsconfigBuild: 'tsconfig.build.json',
+  /* prettier-ignore */ tsconfigBase: 'tsconfig.base.json',
+  /* prettier-ignore */ packageJson: 'package.json',
+  /* prettier-ignore */ nodeModules: 'node_modules',
+  /* prettier-ignore */ envFile: '.env',
+  /* prettier-ignore */ envDevelopment: '.env.development',
+  /* prettier-ignore */ gitIgnore: '.gitignore',
 } as const;
 
 /**
@@ -91,20 +127,11 @@ const REIFY_DEPTH_LENGTH_SIZE_LIMITS = {
  */
 /* prettier-ignore */
 export const COMPILED_DISTRIBUTION_MANIFEST = Object.freeze({
-  fallbackSourcePaths: ['src', 'app', 'test'] as const,
-    mandatoryExcludePatterns: ['dist', 'build', 'out', 'lib', 'node_modules', '.cache', '.next', '.xalor'] as const,
+  fallbackIncludePatterns: ['src/**/*', 'app/**/*', 'test/**/*'] as const,
   
+  mandatoryExcludePatterns: ['dist', 'build', 'out', 'lib', 'node_modules', '.cache', '.next', '.xalor'] as const,
+   
   defaultOutputTarget: 'dist',
-  allowedOutputDirectories: [
-    'src',
-    'app',
-    'test',
-    'dist',
-    'build',
-    'out',
-    'lib',
-  ] as const,
-
 } as const);
 
 /**
@@ -120,5 +147,6 @@ export const IS_SOLID_CONFIG_ITEMS = {
   emitter: SOLID_EMITTER_KEYS,
   reifyLimit: REIFY_DEPTH_LENGTH_SIZE_LIMITS,
   fileNames: PACKAGE_FILE_PATHS,
+  searchFileNames: SEARCH_FILE_NAMES,
   buildLayer: COMPILED_DISTRIBUTION_MANIFEST,
 } as const;
