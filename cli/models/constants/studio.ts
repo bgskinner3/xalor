@@ -1,3 +1,4 @@
+import type { TServerCommands } from '../types';
 /**
  * STUDIO PROXY BRIDGE TEMPLATE
  *
@@ -10,44 +11,112 @@ export const STUDIO_PROXY_BRIDGE_TEMPLATE = (studioProductionUrl: string) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Xalor Secure Bridge Proxy</title>
-  <style>body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#0f172a; }</style>
+    <meta charset="UTF-8">
+    <title>Xalor Secure Bridge Proxy</title>
+    <style>body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#0f172a; }</style>
 </head>
 <body>
-  <!-- Mounts your Next.js website page passing your secure token signature key! -->
-  <iframe id="studio-frame" src="${studioProductionUrl}" style="border:none; width:100%; height:100%;"></iframe>
-  
-  <script>
-    function transmitFreshPayload(payload) {
-      const targetIframe = document.getElementById('studio-frame');
-      
-      if (targetIframe && targetIframe.contentWindow) {
-        // Pushes data cross-origin natively using the wildcard target
-        targetIframe.contentWindow.postMessage({
-          type: 'XALOR_VAULT_PAYLOAD',
-          payload: payload
-        }, '*');
+    <!-- Mounts your Next.js website page passing your secure token signature key! -->
+    <iframe id="studio-frame" src="${studioProductionUrl}" style="border:none; width:100%; height:100%;"></iframe>
+
+    <script>
+      let isReady = false;
+      const frame = document.getElementById('studio-frame');
+
+      function transmitFreshPayload(payload) {
+        if (frame && frame.contentWindow) {
+          frame.contentWindow.postMessage({ type: 'XALOR_VAULT_PAYLOAD', payload: payload }, '*');
+        }
       }
-    }
 
-    function syncDataLoop() {
-      fetch('/api/vault-direct')
-        .then(res => res.json())
-        .then(data => transmitFreshPayload(data))
-        .catch(() => {});
-    }
+      // Fetch the initial baseline data layout immediately upon page load
+      function fetchInitialBaseline() {
+        fetch('/api/vault-direct')
+          .then(res => res.json())
+          .then(data => transmitFreshPayload(data))
+          .catch(() => {});
+      }
 
-    setInterval(syncDataLoop, 1200);
-  </script>
+      // Signal handler to fetch initial payload when iframe mounts
+      frame.onload = () => {
+        isReady = true;
+        fetchInitialBaseline();
+      };
+
+      // Listen for browser navigation changes to re-seed the payload cleanly
+      window.addEventListener('message', (e) => {
+        if (e.data && e.data.type === 'XALOR_STUDIO_READY') {
+          fetchInitialBaseline();
+        }
+      });
+    </script>
 </body>
 </html>
 `;
+// export const STUDIO_PROXY_BRIDGE_TEMPLATE = (studioProductionUrl: string) => `
+// <!DOCTYPE html>
+// <html lang="en">
+// <head>
+//   <meta charset="UTF-8">
+//   <title>Xalor Secure Bridge Proxy</title>
+//   <style>body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#0f172a; }</style>
+// </head>
+// <body>
+//   <!-- Mounts your Next.js website page passing your secure token signature key! -->
+//   <iframe id="studio-frame" src="${studioProductionUrl}" style="border:none; width:100%; height:100%;"></iframe>
 
+//   <script>
+//     function transmitFreshPayload(payload) {
+//       const targetIframe = document.getElementById('studio-frame');
+
+//       if (targetIframe && targetIframe.contentWindow) {
+//         // Pushes data cross-origin natively using the wildcard target
+//         targetIframe.contentWindow.postMessage({
+//           type: 'XALOR_VAULT_PAYLOAD',
+//           payload: payload
+//         }, '*');
+//       }
+//     }
+
+//     function syncDataLoop() {
+//       fetch('/api/vault-direct')
+//         .then(res => res.json())
+//         .then(data => transmitFreshPayload(data))
+//         .catch(() => {});
+//     }
+
+//     setInterval(syncDataLoop, 1200);
+//   </script>
+// </body>
+// </html>
+// `;
+
+// export const STUDIO_COMMAND_CONFIG = {
+//   port: 8001,
+//   baseURL: 'https://www.masterofsum.dev/studio',
+//   xalorSecuritySecret: '0d4f8d5490d5607582d2aeb180a6dec9',
+//   /* prettier-ignore */ connectionURL: (port: number) => `http://127.0.0.1:${port}`,
+//   /* prettier-ignore */ studioProductionUrl: (studioBaseUrl: string, secret: string) => `${studioBaseUrl}?token=${secret}`,
+// } as const;
 export const STUDIO_COMMAND_CONFIG = {
   port: 8001,
-  baseURL: 'https://www.masterofsum.dev/studio',
+  baseURL: 'https://masterofsum.dev/studio',
   xalorSecuritySecret: '0d4f8d5490d5607582d2aeb180a6dec9',
-  /* prettier-ignore */ connectionURL: (port: number) => `http://127.0.0.1:${port}`,
+  // 🟢 SECURE FIX 3: Swap out 127.0.0.1 for localhost to unblock browser HTTPS mixed-content blocks
+  connectionURL: (port: number) => `http://localhost:${port}`,
   /* prettier-ignore */ studioProductionUrl: (studioBaseUrl: string, secret: string) => `${studioBaseUrl}?token=${secret}`,
 } as const;
+
+/**
+ * STUDIO_SERVER_CONNECTION_COMMANDS
+ * ROLE: OS-to-Shell binary process lookup mapper.
+ * STRATEGY: Maps the three core dominant graphical developer desktop platforms cleanly.
+ * Keeps keys strictly locked to ensure total type-safety parameters.
+ */
+export const STUDIO_SERVER_CONNECTION_COMMANDS: TServerCommands = Object.freeze(
+  {
+    win32: 'start',
+    darwin: 'open',
+    linux: 'xdg-open',
+  } as const,
+);

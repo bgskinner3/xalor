@@ -1,5 +1,9 @@
 import type { ICLIConfig } from '../models';
-import { CLIAuditEngineService, AuditPresenterService } from '../service';
+import {
+  CLIAuditEngineService,
+  AuditPresenterService,
+  StudioCLIEngineService,
+} from '../service';
 import { sanitizeFlags } from '../utils';
 /**
  * RUN AUDIT COMMAND
@@ -19,7 +23,11 @@ export async function runAuditCommand(
       `🔧 Self-Healing Mode (--fix): ${sanitizedFlags.fix ? 'ACTIVE' : 'DISABLED'}\n`,
     );
   }
+  const studioEngine = new StudioCLIEngineService(projectRoot);
+  const freshPayload = await studioEngine.compileDashboardOverviewDataset(8001);
 
+  console.log(freshPayload);
+  console.log('\n\n\n\n\n');
   try {
     const auditEngine = new CLIAuditEngineService(projectRoot);
     const auditPayload = await auditEngine.executeFullAuditRun(sanitizedFlags);

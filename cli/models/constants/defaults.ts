@@ -161,7 +161,7 @@ export const DEFAULT_STUDIO_PAYLOAD: TDeepWriteable<IStudioOverviewPayload> = {
     netBytesEvaporated: 0,
     evaporationEfficiencyRatio: 0,
   },
-  registryItems: [],
+  registryItems: {},
   topology: { edges: [], cyclicPaths: [] },
   environment: {
     activePort: 8001,

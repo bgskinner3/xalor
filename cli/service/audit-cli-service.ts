@@ -32,6 +32,7 @@ import {
   isNull,
   isObjectShape,
   isTripleKVShape,
+  cloneDeep,
 } from '../../shared/utils';
 import { IS_SOLID_CONFIG_ITEMS, REGEX_PATTERNS } from '../../shared/constants';
 import type {
@@ -310,8 +311,10 @@ export class CLIAuditEngineService {
     const compiledNodes: TXalorAuditNode[] = [];
 
     for (const typeKey of yieldItems(userKeys)) {
-      const nodeRecord = this.generateDefaultPayload('node');
+      const rawNodePayload = this.generateDefaultPayload('node');
 
+      // 💚 PERFORMANCE OPTIMIZATION: Deep clone your structures cleanly using your Axiom utility!
+      const nodeRecord = cloneDeep(rawNodePayload);
       const casFingerprint = vault.references[typeKey];
 
       /* prettier-ignore */ const manifestRow: TVaultManifestEntry | undefined = vault.manifest[typeKey];
@@ -866,9 +869,11 @@ export class CLIAuditEngineService {
   /** @see {@link AuditServiceDocs.executeStudioOverviewRun} */
   public async executeStudioOverviewRun(): Promise<TAuditToStudioSharedData> {
     const rawVaultData = await this.ingestVaultSnapshotFromDisk();
+
     if (!rawVaultData) {
       return this.generateDefaultPayload('studio');
     }
+
     const globalSummary =
       this.calculateCasStorageOptimizationLedger(rawVaultData);
 

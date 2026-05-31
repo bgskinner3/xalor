@@ -8,6 +8,7 @@ import {
   DEFAULT_STUDIO_PAYLOAD,
   STUDIO_COMMAND_CONFIG,
 } from '../models/constants';
+import { generateSolidTypeScriptString } from '../utils';
 
 export class StudioCLIEngineService {
   private readonly auditEngine: CLIAuditEngineService;
@@ -15,16 +16,35 @@ export class StudioCLIEngineService {
   constructor(projectRoot: string) {
     this.auditEngine = new CLIAuditEngineService(projectRoot);
   }
+  // private generateDefaultPayload(
+  //   fallbackPort?: number,
+  // ): TDeepWriteable<IStudioOverviewPayload> {
+  //   DEFAULT_STUDIO_PAYLOAD.environment.activePort =
+  //     fallbackPort ?? STUDIO_COMMAND_CONFIG.port;
+  //   DEFAULT_STUDIO_PAYLOAD.environment.executionPlatform = os.platform();
+  //   DEFAULT_STUDIO_PAYLOAD.environment.nodeRuntimeVersion = process.version;
+  //   DEFAULT_STUDIO_PAYLOAD.environment.lastTelemetrySyncTimestamp = Date.now();
+
+  //   return DEFAULT_STUDIO_PAYLOAD;
+  // }
   private generateDefaultPayload(
     fallbackPort?: number,
   ): TDeepWriteable<IStudioOverviewPayload> {
-    DEFAULT_STUDIO_PAYLOAD.environment.activePort =
-      fallbackPort ?? STUDIO_COMMAND_CONFIG.port;
-    DEFAULT_STUDIO_PAYLOAD.environment.executionPlatform = os.platform();
-    DEFAULT_STUDIO_PAYLOAD.environment.nodeRuntimeVersion = process.version;
-    DEFAULT_STUDIO_PAYLOAD.environment.lastTelemetrySyncTimestamp = Date.now();
+    // 💚 CRITICAL FIX: Deep clone the blueprint so previous compilation loops don't bleed data
+    const freshPayload = JSON.parse(
+      JSON.stringify(DEFAULT_STUDIO_PAYLOAD),
+    ) as TDeepWriteable<IStudioOverviewPayload>;
 
-    return DEFAULT_STUDIO_PAYLOAD;
+    freshPayload.environment.activePort =
+      fallbackPort ?? STUDIO_COMMAND_CONFIG.port;
+    freshPayload.environment.executionPlatform = os.platform();
+    freshPayload.environment.nodeRuntimeVersion = process.version;
+    freshPayload.environment.lastTelemetrySyncTimestamp = Date.now();
+
+    // Explicitly guarantee registryItems starts completely empty for the new loop pass
+    freshPayload.registryItems = {};
+
+    return freshPayload;
   }
 
   /**  @see {@link AuditServiceDocs.ingestRawVaultFromDisk}*/
@@ -54,7 +74,8 @@ export class StudioCLIEngineService {
         rawVaultData.blueprints[node.identity.casFingerprint];
 
       if (blueprintShape) {
-        studioPayload.registryItems.push({
+        // 🪐 THE KV ASSIGNMENT: Make the unique typeKey the primary index accessor
+        studioPayload.registryItems[node.identity.typeKey] = {
           identity: {
             typeKey: node.identity.typeKey,
             symbolName: node.identity.symbolName,
@@ -66,13 +87,16 @@ export class StudioCLIEngineService {
             column: node.location.column,
             anchorIndex: node.location.anchor,
           },
-          dataShape: blueprintShape,
+          dataShape: generateSolidTypeScriptString(
+            blueprintShape,
+            rawVaultData.blueprints,
+          ),
           metrics: {
             depth: node.metrics.depth,
             complexityScore: node.metrics.complexityScore,
             nodesCollapsed: node.metrics.nodesCollapsed,
           },
-        });
+        };
       }
     }
   }

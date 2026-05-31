@@ -131,20 +131,30 @@ type TNodeItemMetrics = {
 
 /**
  * TStudioNodeItem
- * ROLE: Comprehensive macro node container mapping detailed item structures for web panels.
+ *
+ * ROLE:
+ * Comprehensive macro node container mapping detailed item structures for web panels.
+ *
+ * 🪐 V1 ARCHITECTURE NOTE:
+ * The `dataShape` parameter has been explicitly transformed from a raw recursive type
+ * graph object (`TSolidShape`) into an pre-flattened, pre-compiled, highly readable
+ * TypeScript representation string. This optimization completely eradicates structural
+ * data shipping bloat over network pipeline boundaries, drastically slashing JSON payload
+ * footprints, minimizing browser-side hydration memory churn, and delivering instant
+ * layout render metrics straight out of your loopback server ledger frames.
  *
  * @param identity Unique reference tokens mapping to nominal paths and file signatures
  * @param location Structural file system coordinates enabling direct click-to-open mapping
- * @param dataShape Direct mapping to your recursive build-time type graph database layout
+ * @param dataShape Pre-rendered, human-readable TypeScript representation string format
  * @param metrics Extracted structural density scores and performance weight taxonomies
  */
 export type TStudioNodeItem = {
   readonly identity: TNodeItemIdentity;
   readonly location: TNodeItemLocation;
-  readonly dataShape: TSolidShape;
+  readonly dataShape: string; // Changed to string for V1 to minimize transmission overhead
   readonly metrics: TNodeItemMetrics;
 };
-
+// generateSolidTypeScriptString
 // ======================================================================================================
 // ======================================================================================================
 // FINAL STUDIO PAYLOAD
@@ -166,7 +176,26 @@ export interface IStudioOverviewPayload {
   readonly globalSummary: TStudioGlobalSummary;
   readonly systemHygiene: TSystemHygiene;
   readonly lifecycleFootprint: TLifeCycleFootPrint;
-  readonly registryItems: TStudioNodeItem[];
+  readonly registryItems: Record<string, TStudioNodeItem>;
   readonly topology: TTopology;
   readonly environment: TEnvironment;
 }
+
+export type TServerCommands = Partial<Record<NodeJS.Platform, string>>;
+
+// ======================================================================================================
+// ======================================================================================================
+// BLUEPRINT REBUILDER
+// ======================================================================================================
+// ======================================================================================================
+
+export type TRebuildParams = {
+  readonly shape: TSolidShape;
+  readonly pool: Record<string, TSolidShape> | Map<string, TSolidShape>;
+  readonly depth: number;
+  readonly spacing: string;
+};
+
+export type TRebuildStrategy = (params: TRebuildParams) => string;
+
+export type TRebuildShapeMapper = Record<TSolidShape['kind'], TRebuildStrategy>;
