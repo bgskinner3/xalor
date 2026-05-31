@@ -54,3 +54,7 @@ cb-docs/
 test.JSON
 tsup-test.ts
 to-do-today.md
+
+
+# internal docs
+cli-build-docs.d.ts

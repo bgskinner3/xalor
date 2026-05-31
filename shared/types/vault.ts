@@ -119,4 +119,5 @@ export type TXalorResolvedPaths = {
   readonly bridgeDir: string;
   readonly bridgeFile: string;
   readonly bakedFile: string;
+  readonly baselineFile: string;
 };

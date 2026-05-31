@@ -2,8 +2,13 @@ import {
   TELEMETRY_API_TOKEN_NAMES,
   DRIFT_VARIANCE_CATEGORIES,
   COMPLEXITY_TAXONOMY_TOKEN_KEYS,
+  DEFAULT_OBJECT_MAPPER,
 } from '../constants';
-import type { TSolidShape, TSolidObjectRawShape } from '../../../shared/types';
+import type {
+  TSolidShape,
+  TSolidObjectRawShape,
+  TDeepWriteable,
+} from '../../../shared/types';
 
 /**
  * Core primitive lookup types mapped directly from the constant manifests.
@@ -176,7 +181,18 @@ export type TXalorAuditLifecycleFootprint = {
   readonly netBytesEvaporated: number;
   readonly evaporationEfficiencyRatio: number;
 };
-
+/**
+ * TAuditToStudioSharedData
+ * ROLE: Local untransformed pipeline bridge type tracking raw computations shared with the Studio layer.
+ * STRATEGY: Enforces strict structural boundaries to expose calculation sheets zero-cast.
+ */
+export type TAuditToStudioSharedData = {
+  readonly globalSummary: TXalorAuditSummary;
+  readonly nodes: readonly TXalorAuditNode[];
+  readonly systemHygiene: TXalorAuditHygiene;
+  readonly telemetry: TXalorAuditTelemetry;
+  readonly topology: TXalorAuditTopology;
+};
 /**
  * IXalorAuditPayload
  * ROLE: Master execution payload orchestrating the full macro operational profile overview.
@@ -196,6 +212,17 @@ export interface IXalorAuditPayload {
 // SERVICE TYPES
 // ======================================================================================================
 // ======================================================================================================
+type TDefaultReturnMap = {
+  original: IXalorAuditPayload;
+  studio: TAuditToStudioSharedData;
+  telemetry: TDeepWriteable<TXalorAuditTelemetry>;
+  node: TDeepWriteable<TXalorAuditNode>;
+  drift: TDeepWriteable<TXalorAuditDrift>;
+};
+export type TDefaultObjectKeys = keyof typeof DEFAULT_OBJECT_MAPPER;
+
+export type TDefaultReturnKeyMap<K extends keyof TDefaultReturnMap> =
+  TDefaultReturnMap[K];
 
 /**
  * TSelfRecursion

@@ -2,21 +2,28 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type {
   IXalorAuditPayload,
+  TAuditToStudioSharedData,
   TXalorAuditNode,
   TCalculateDepthParams,
   TDepthWarning,
   TDuplicateShape,
   TTopologyEdge,
-  TTelemetryStrategyShape,
+  TTelemetryTokenNames,
   TDriftMutationShape,
   TPropertyDeltaContext,
+  TDefaultReturnKeyMap,
+  TParsedLocation,
+  TDefaultObjectKeys,
+  TTaxonomyTokenKeys,
+  TXalorAuditDrift,
 } from '../models/types';
 import {
   DEPTH_STRATEGY_MAPPER,
-  DEFAULT_AUDIT_PAYLOAD,
   TELEMETRY_API_TOKEN_NAMES,
   TELEMETRY_TOKEN_NAME_MAPPER,
   PROPERTY_DRIFT_EVALUATION_RULES,
+  DEPTH_COMPLEXITY_MAPPER,
+  DEFAULT_OBJECT_MAPPER,
 } from '../models/constants';
 import {
   yieldItems,
@@ -25,8 +32,9 @@ import {
   isValidSolidShape,
   isNull,
   isObjectShape,
+  isTripleKVShape,
 } from '../../shared/utils';
-import { IS_SOLID_CONFIG_ITEMS } from '../../shared/constants';
+import { IS_SOLID_CONFIG_ITEMS, REGEX_PATTERNS } from '../../shared/constants';
 import type {
   TXalorResolvedPaths,
   TTripleKV,
@@ -36,9 +44,6 @@ import type {
   TDeepWriteable,
 } from '../../shared/types';
 import {
-  parseManifestCoordinates,
-  createBaseAuditNodeRecord,
-  mapDepthToComplexity,
   recursiveReferenceTracerPipeline,
   buildTopologyEdge,
   mapTopologyGraphCycles,
@@ -49,43 +54,45 @@ export class CLIAuditEngineService {
   private readonly paths: TXalorResolvedPaths;
   private readonly projectRoot: string;
 
-  /**
-   * @param projectRoot Target workspace directory anchor path
-   */
   constructor(projectRoot: string) {
     this.projectRoot = projectRoot;
-    // Switchlessly computes physical drive targets (vaultFile, cacheDir, etc.) exactly once
     this.paths = resolveXalorPaths(projectRoot);
   }
 
-  private generateDefaultPayload(): IXalorAuditPayload {
-    return DEFAULT_AUDIT_PAYLOAD;
-  }
-
   /**
-   * CALCULATE CAS STORAGE OPTIMIZATION LEDGER
-   * ROLE: Compiles high-level macro statistics detailing compiler compaction efficiency.
+   * generateDefaultPayload
    *
-   * @param vault Statically-typed raw object representing the compiled type registry database
+   * ROLE: Generates the default audit payload based on the provided type.
+   *
+   * @see {@link AuditServiceDocs.generateDefaultPayload}
    */
+  private generateDefaultPayload<T extends TDefaultObjectKeys>(
+    defaultType: T,
+  ): TDefaultReturnKeyMap<T> {
+    return DEFAULT_OBJECT_MAPPER[defaultType];
+  }
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  // INGEST VAULT SNAPSHOT FROM DISK
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  /** @see {@link AuditServiceDocs.calculateCasStorageOptimizationLedger} */
   private calculateCasStorageOptimizationLedger(
     vault: TTripleKV,
   ): TDeepWriteable<IXalorAuditPayload['summary']> {
-    // 1. Extract total registered hooks and unique compacted leaves directly from key vectors
     const userKeysArray = Object.keys(vault.references);
     const uniqueHashesArray = Object.keys(vault.blueprints);
 
     const totalRegisteredKeys = userKeysArray.length;
     const totalUniqueFingerprints = uniqueHashesArray.length;
 
-    // 2. Prevent division-by-zero exceptions if the user boots a completely pristine blank vault
     let casCompressionRatio = 0;
     if (totalRegisteredKeys > 0) {
-      // Compression ratio represents the percentage volume of duplicate structures crushed away
       casCompressionRatio = 1 - totalUniqueFingerprints / totalRegisteredKeys;
     }
 
-    // 3. Extract the physical hard disk footprint allocation down to the exact byte safely
     let totalDatabaseDiskBytes = 0;
     try {
       if (fs.existsSync(this.paths.vaultFile)) {
@@ -93,6 +100,7 @@ export class CLIAuditEngineService {
         totalDatabaseDiskBytes = fileStats.size;
       }
     } catch {
+      // TODO: ERROR HANDLER
       // Suppress disk permission faults transparently, leaving the counter at safe zero state
     }
 
@@ -107,18 +115,18 @@ export class CLIAuditEngineService {
       highestGraphDepthRecorded,
     };
   }
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  // INGEST VAULT SNAPSHOT FROM DISK
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
 
-  /**
-   * INGEST VAULT SNAPSHOT FROM DISK
-   * ROLE: Safe asynchronous database bootloader extracting raw content from node_modules.
-   * STRATEGY: Intercepts files using your high-speed discriminator guard to screen data purity.
-   */
-  // TODO: OPTIMIZE
+  /**  @see {@link AuditServiceDocs.ingestVaultSnapshotFromDisk} */
   private async ingestVaultSnapshotFromDisk(): Promise<TTripleKV | null> {
     try {
-      if (!fs.existsSync(this.paths.vaultFile)) {
-        return null;
-      }
+      if (!fs.existsSync(this.paths.vaultFile)) return null;
 
       const rawJsonString = await fs.promises.readFile(
         this.paths.vaultFile,
@@ -126,45 +134,38 @@ export class CLIAuditEngineService {
       );
       const parsedVault: unknown = JSON.parse(rawJsonString);
 
-      // Verify the parsed vault structurally exists and possesses the expected sub-drawers
-      if (!parsedVault || typeof parsedVault !== 'object') {
-        return null;
-      }
+      if (!parsedVault || !isTripleKVShape(parsedVault)) return null;
 
-      const candidate = parsedVault as TTripleKV;
-      const blueprintKeys = Object.keys(candidate.blueprints || {});
-      const len = blueprintKeys.length;
+      const candidate = parsedVault;
 
-      // PURE STATIC HIGH-SPEED DISCRIMINATION SCREENING
-      // Run your fast boundary discriminator across the blueprints map to verify file hygiene
-      for (let i = 0; i < len; i++) {
-        const shapeNode = candidate.blueprints[blueprintKeys[i]];
-        if (!isValidSolidShape(shapeNode)) {
-          // Corrupted or unsupported schema leaf node found. Fail early and safe.
-          return null;
-        }
+      const blueprintKeys = ObjectUtils.keys(candidate.blueprints);
+      const blueprints = candidate.blueprints;
+
+      for (const key of blueprintKeys) {
+        const shapeNode = blueprints[key];
+        if (!isValidSolidShape(shapeNode)) return null;
       }
 
       return candidate;
     } catch {
-      // Catastrophic Disk Snapshot Recovery Valve (Section X Compliance)
+      // TODO: ERROR HANDLER
       return null;
     }
   }
-  /**
-   * CALCULATE BLUEPRINT DEPTH
-   * ROLE: Entry-point orchestrator computing structural type nesting depths switchlessly.
-   *
-   * @param shape Targeted structural schema description block currently being evaluated
-   * @param blueprints Authoritative content-addressed storage repository registry map
-   * @param traversalStack Path sequence array tracking active parents to prevent infinite cyclic traps
-   */
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  // CALCULATE BLUEPRINT DEPTH MODULARIZED
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+
+  /**  @see {@link AuditServiceDocs.calculateBlueprintDepth} */
   private calculateBlueprintDepth({
     traversalStack,
     shape,
     blueprints,
   }: TCalculateDepthParams): number {
-    // 1. HARD DEPTH CEILING PROTECTION GATE (Commandment XIII Compliance)
     if (traversalStack.length >= 25) return 25;
 
     const runDistributedStrategy = <K extends TSolidShape['kind']>(
@@ -175,9 +176,8 @@ export class CLIAuditEngineService {
       const handler = DEPTH_STRATEGY_MAPPER[targetKind];
 
       // Safe execution checkpoint guard
-      if (!handler) {
-        return 0;
-      }
+      if (!handler) return 0;
+
       /* prettier-ignore */
       const self = ({shape, blueprints,traversalStack}: TCalculateDepthParams) =>
         this.calculateBlueprintDepth({
@@ -190,15 +190,23 @@ export class CLIAuditEngineService {
     };
     return runDistributedStrategy(shape.kind, shape);
   }
-  /**
-   * EVALUATE SYSTEM HYGIENE AND DEPTH ALARMS
-   * ROLE: Comprehensive operational scanner calculating active depth limits, alarms, and performance scores.
-   * STRATEGY: Maps metrics switchlessly while validating structures against your master IS_SOLID_CONFIG_ITEMS.
-   *
-   * @param vault The authoritative raw TTripleKV project vault database structure read from disk
-   * @param compiledNodes Flat collection array profiling every registered type contract discovered across the codebase
-   * @returns Fully compiled hygiene sub-ledger matching your TXalorAuditHygiene specifications
-   */
+
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  // EVALUATE SYSTEM HYGIENE AND DEPTH ALARMS MODULARIZED
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+
+  private mapDepthToComplexity(depth: number): TTaxonomyTokenKeys {
+    for (const rule of DEPTH_COMPLEXITY_MAPPER) {
+      if (rule.test(depth)) return rule.key;
+    }
+    return 'FLAT_O1';
+  }
+
+  /**  @see {@link AuditServiceDocs.evaluateSystemHygieneAndDepthAlarms} */
   private evaluateSystemHygieneAndDepthAlarms(
     vault: TTripleKV,
     compiledNodes: TDeepWriteable<TXalorAuditNode>[],
@@ -227,7 +235,7 @@ export class CLIAuditEngineService {
       }
 
       metrics.depth = calculatedDepth;
-      metrics.complexityScore = mapDepthToComplexity(calculatedDepth);
+      metrics.complexityScore = this.mapDepthToComplexity(calculatedDepth);
 
       if (calculatedDepth > maxAllowedDepth) {
         totalCriticalDepthWarnings++;
@@ -249,20 +257,49 @@ export class CLIAuditEngineService {
     }
 
     return {
-      totalOrphanedKeys: 0, // Computed downstream inside Phase 3's bundle scanner step
+      totalOrphanedKeys: 0,
       totalCriticalDepthWarnings,
       depthWarnings: Object.freeze(depthWarnings),
       duplicateShapes: Object.freeze(duplicateShapes),
     };
   }
+
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  // EXTRACT NODE CORE DATA LAYOUT MODULARIZED
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  private parseManifestCoordinates(
+    manifestRow?: TVaultManifestEntry,
+  ): TParsedLocation {
+    const filePath = manifestRow ? manifestRow.filePath : 'unknown_source';
+    let line = 0;
+    let column = 0;
+    let anchor = 0;
+
+    if (!manifestRow) {
+      return { line, column, anchor, filePath };
+    }
+
+    const lineMatch = manifestRow.area?.match(REGEX_PATTERNS.line);
+    const colMatch = manifestRow.area?.match(REGEX_PATTERNS.column);
+    const anchorMatch = manifestRow.anchor?.match(REGEX_PATTERNS.anchor);
+
+    if (lineMatch?.[1]) line = Number.parseInt(lineMatch[1], 10);
+    if (colMatch?.[1]) column = Number.parseInt(colMatch[1], 10);
+    if (anchorMatch?.[1]) anchor = Number.parseInt(anchorMatch[1], 10);
+
+    return { line, column, anchor, filePath };
+  }
+
+  /**  @see {@link AuditServiceDocs.extractNodeCoreDataLayout}*/
   private extractNodeCoreDataLayout(
     vault: TTripleKV,
   ): readonly TXalorAuditNode[] {
     const userKeys = ObjectUtils.keys(vault.references);
 
-    // 1. DEDUPLICATION INDEX LOOKUP MATRIX:
-    // Build a quick, O(1) in-memory frequency counter tracking exactly how many times
-    // separate user registrations were collapsed into a single content-addressed storage fingerprint.
     const casCollapseCounter: Record<string, number> = {};
 
     for (const key of userKeys) {
@@ -271,29 +308,23 @@ export class CLIAuditEngineService {
         (casCollapseCounter[fingerprint] || 0) + 1;
     }
 
-    // 2. INITIALIZE OUTPUT TARGET
     const compiledNodes: TXalorAuditNode[] = [];
 
-    // 3. GENERATOR-BASED SINGLE-PASS COMPILER STREAM (Commandment VIII Alignment)
     for (const typeKey of yieldItems(userKeys)) {
-      const nodeRecord = createBaseAuditNodeRecord();
+      const nodeRecord = this.generateDefaultPayload('node');
 
       const casFingerprint = vault.references[typeKey];
 
-      /* prettier-ignore */
-      const manifestRow: TVaultManifestEntry | undefined = vault.manifest[typeKey];
-      /* prettier-ignore */
-      const registryRow: TVaultRegistryEntry | undefined = vault.registry[typeKey];
-      /* prettier-ignore */
-      const symbolName = registryRow ? registryRow.symbolName : 'anonymous_type';
-      const location = parseManifestCoordinates(manifestRow);
+      /* prettier-ignore */ const manifestRow: TVaultManifestEntry | undefined = vault.manifest[typeKey];
+      /* prettier-ignore */ const registryRow: TVaultRegistryEntry | undefined = vault.registry[typeKey];
+      /* prettier-ignore */ const symbolName = registryRow ? registryRow.symbolName : 'anonymous_type';
+      /* prettier-ignore */ const location = this.parseManifestCoordinates(manifestRow);
 
       // Update identity parameters cleanly
       nodeRecord.identity.typeKey = typeKey;
       nodeRecord.identity.symbolName = symbolName;
       nodeRecord.identity.casFingerprint = casFingerprint;
 
-      // Update precise physical filesystem coordinates
       nodeRecord.location = location;
 
       compiledNodes.push(nodeRecord);
@@ -301,24 +332,18 @@ export class CLIAuditEngineService {
 
     return Object.freeze(compiledNodes);
   }
-
-  /**
-   * PROFILE RUNTIME FOOTPRINT AND ORPHANS
-   * ROLE: Asynchronous workspace bundle inspector tracking dead weight keys and strategy distributions.
-   * STRATEGY: Scans compiled asset production scripts linearly via fs.promises to extract static telemetry.
-   *
-   * @param vault The authoritative raw TTripleKV project vault database structure read from disk
-   * @returns Fully compiled telemetry dataset matching your TXalorAuditTelemetry specifications
-   */
-  // TODO: MODULARIZE
-  private async profileRuntimeFootprintAndOrphans(
-    vault: TTripleKV,
-  ): Promise<IXalorAuditPayload['telemetry']> {
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  // PROFILE RUNTIME FOOTPRINT AND ORPHANS SWEEP MODULARIZED
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  private createTelemetryScanContext(
+    strategyTokensArray: readonly TTelemetryTokenNames[],
+    projectRoot: string,
+  ) {
     const { buildLayer } = IS_SOLID_CONFIG_ITEMS;
-    const registeredKeys = ObjectUtils.keys(vault.references);
-
-    const strategyTokensArray = TELEMETRY_API_TOKEN_NAMES;
-
     const strategyCounters: Record<string, number> = {};
 
     for (const token of yieldItems(strategyTokensArray)) {
@@ -329,7 +354,7 @@ export class CLIAuditEngineService {
     let activeTargetDir = '';
 
     for (const dir of possibleBuildDirs) {
-      const candidatePath = path.join(this.projectRoot, dir);
+      const candidatePath = path.join(projectRoot, dir);
       if (
         fs.existsSync(candidatePath) &&
         fs.statSync(candidatePath).isDirectory()
@@ -339,82 +364,101 @@ export class CLIAuditEngineService {
       }
     }
 
-    if (!activeTargetDir) {
-      return {
-        orphanedKeys: Object.freeze([...registeredKeys]),
-        strategyDistribution: Object.freeze(
-          strategyTokensArray.map((token) => ({
-            strategyToken: token,
-            invocationCount: 0,
-          })),
-        ),
-      };
-    }
-    try {
-      const fileNames = await fs.promises.readdir(activeTargetDir);
-      const targetJsFiles = fileNames.filter(
-        (name) => name.endsWith('.js') || name.endsWith('.mjs'),
-      );
-      for (const fileName of targetJsFiles) {
-        const absoluteFilePath = path.join(activeTargetDir, fileName);
-        const fileContentString = await fs.promises.readFile(
-          absoluteFilePath,
-          'utf-8',
-        );
+    return {
+      strategyCounters,
+      activeEncounteredKeysSet,
+      activeTargetDir,
+    };
+  }
+  private async scanTelemetryFiles(
+    strategyTokensArray: readonly TTelemetryTokenNames[],
+    strategyCounters: Record<string, number>,
+    activeEncounteredKeysSet: Set<string>,
+    registeredKeys: string[],
+    activeTargetDir: string,
+  ) {
+    const fileNames = await fs.promises.readdir(activeTargetDir);
+    /* prettier-ignore */
+    const targetJsFiles = fileNames.filter((name) => name.endsWith('.js') || name.endsWith('.mjs'));
 
-        for (const currentKey of yieldItems(registeredKeys)) {
-          if (fileContentString.includes(currentKey)) {
-            activeEncounteredKeysSet.add(currentKey);
-          }
+    for (const fileName of targetJsFiles) {
+      /* prettier-ignore */
+      const absoluteFilePath = path.join(activeTargetDir, fileName);
+      /* prettier-ignore */
+      const fileContentString = await fs.promises.readFile(absoluteFilePath,'utf-8');
+
+      for (const currentKey of yieldItems(registeredKeys)) {
+        if (fileContentString.includes(currentKey)) {
+          activeEncounteredKeysSet.add(currentKey);
         }
+      }
 
-        for (const activeToken of strategyTokensArray) {
-          const targetRegex = TELEMETRY_TOKEN_NAME_MAPPER[activeToken];
-          if (targetRegex) {
-            targetRegex.lastIndex = 0;
+      for (const activeToken of strategyTokensArray) {
+        const targetRegex = TELEMETRY_TOKEN_NAME_MAPPER[activeToken];
+        if (targetRegex) {
+          targetRegex.lastIndex = 0;
 
-            const matches = fileContentString.match(targetRegex);
-            if (matches) {
-              strategyCounters[activeToken] += matches.length;
-            }
+          const matches = fileContentString.match(targetRegex);
+          if (matches) {
+            strategyCounters[activeToken] += matches.length;
           }
         }
       }
+    }
+  }
+  /**  @see {@link AuditServiceDocs.profileRuntimeFootprintAndOrphans}*/
+  private async profileRuntimeFootprintAndOrphans(
+    vault: TTripleKV,
+  ): Promise<IXalorAuditPayload['telemetry']> {
+    const telemetryObject = this.generateDefaultPayload('telemetry');
+    const strategyTokensArray = TELEMETRY_API_TOKEN_NAMES;
+    const registeredKeys = ObjectUtils.keys(vault.references);
+
+    const { strategyCounters, activeEncounteredKeysSet, activeTargetDir } =
+      this.createTelemetryScanContext(strategyTokensArray, this.projectRoot);
+
+    if (!activeTargetDir) {
+      telemetryObject.orphanedKeys = registeredKeys;
+      return telemetryObject;
+    }
+    try {
+      this.scanTelemetryFiles(
+        strategyTokensArray,
+        strategyCounters,
+        activeEncounteredKeysSet,
+        registeredKeys,
+        activeTargetDir,
+      );
     } catch {
       // TODO: add our Error handler logger
       // graceful fallback
     }
 
-    const orphanedKeys: string[] = [];
-
     for (const key of yieldItems(registeredKeys)) {
       if (!activeEncounteredKeysSet.has(key)) {
-        orphanedKeys.push(key);
+        telemetryObject.orphanedKeys.push(key);
       }
     }
 
-    const strategyDistribution: TTelemetryStrategyShape[] = [];
-
     for (const token of yieldItems(strategyTokensArray)) {
-      strategyDistribution.push({
+      telemetryObject.strategyDistribution.push({
         strategyToken: token,
         invocationCount: strategyCounters[token],
       });
     }
 
-    return {
-      orphanedKeys: Object.freeze(orphanedKeys),
-      strategyDistribution: Object.freeze(strategyDistribution),
-    };
+    return telemetryObject;
   }
-  /**
-   * COMPUTE LIFECYCLE FOOTPRINT DELTAS
-   * ROLE: Equation engine predicting physical size evaporation from heavy dev cache to bare-metal prod.
-   * STRATEGY: Simulates data stripping by measuring a subset object payload string size via Buffer.byteLength.
-   *
-   * @param vault The authoritative raw TTripleKV project vault database structure read from disk
-   * @returns Fully compiled footprint tracking ledger matching your TXalorAuditLifecycleFootprint specifications
-   */
+
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  // COMPUTE LIFECYCLE FOOTPRINT DELTAS
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+
+  /** @see {@link AuditServiceDocs.computeLifecycleFootprintDeltas} */
   private computeLifecycleFootprintDeltas(
     vault: TTripleKV,
   ): IXalorAuditPayload['lifecycleFootprint'] {
@@ -426,6 +470,7 @@ export class CLIAuditEngineService {
       try {
         developmentCacheBytes = fs.statSync(this.paths.vaultFile).size;
       } catch {
+        // TODO: add our Error handler logger
         developmentCacheBytes = null;
       }
     }
@@ -449,83 +494,90 @@ export class CLIAuditEngineService {
     };
   }
 
-  /**
-   * EXECUTE SELF-HEALING PRUNE SWEEP
-   * ROLE: Destructive in-memory database pruner and filesystem flusher (--fix).
-   * STRATEGY:
-   * 1. Computes active orphans by running the Phase 3 static tracker inline.
-   * 2. Purges dead nominal keys and orphaned CAS blueprint structures permanently.
-   * 3. Triggers a clean, non-blocking fs.promises.writeFile snapshot save pass.
-   *
-   * @param vault Reference to the active in-memory TTripleKV vault object being sanitized
-   */
-  // TODO: MODULARIZE
-  private async executeSelfHealingPruneSweep(vault: TTripleKV): Promise<void> {
-    // 1. COMPUTE CURRENT WORKSPACE DEAD WEIGHT (Invoke your Phase 3 tracker)
-    const telemetryData = await this.profileRuntimeFootprintAndOrphans(vault);
-    const orphanedKeysList = telemetryData.orphanedKeys;
-    const orphansLength = orphanedKeysList.length;
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  // EXECUTE SELF-HEALING PRUNE SWEEP MODULARIZED
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
 
-    // Short-circuit instantly if the codebase is already perfectly pruned and optimized
-    if (orphansLength === 0) {
-      return;
+  private removeOrphanedReferences(
+    vault: TTripleKV,
+    orphanedKeys: readonly string[],
+  ) {
+    for (const key of yieldItems(orphanedKeys)) {
+      delete vault.references[key];
+      delete vault.manifest[key];
+      delete vault.registry[key];
     }
+  }
 
-    // 2. TIER 1 SANITIZATION: NOMINAL REGISTER DELETIONS
-    // Evict the stale registration keys completely across your metadata drawers
-    for (const deadKey of yieldItems(orphanedKeysList)) {
-      delete vault.references[deadKey];
-      delete vault.manifest[deadKey];
-      delete vault.registry[deadKey];
-    }
+  private resolveActiveHashes(vault: TTripleKV): Set<string> {
+    const activeHashes = new Set<string>();
     const remainingKeys = ObjectUtils.keys(vault.references);
-    const activeHashesInUse = new Set<string>();
 
-    // Initialize the tracking seeds using remaining root level keys
-    for (let i = 0; i < remainingKeys.length; i++) {
-      const rootHash = vault.references[remainingKeys[i]];
-      if (rootHash) {
-        activeHashesInUse.add(rootHash);
-      }
+    for (const key of yieldItems(remainingKeys)) {
+      const hash = vault.references[key];
+      if (hash) activeHashes.add(hash);
     }
 
-    // 3. TIER 2 SANITIZATION: CASCADE RECURSIVE CAS BLUEPRINT PURGING
-    // Run your switchless standalone tracer utility across all blueprints currently anchored by root keys
+    return activeHashes;
+  }
+
+  private traceBlueprintGraph(vault: TTripleKV, activeHashes: Set<string>) {
     const blueprintKeys = ObjectUtils.keys(vault.blueprints);
-    for (const hashKey of yieldItems(blueprintKeys)) {
-      if (activeHashesInUse.has(hashKey)) {
-        const rootShape = vault.blueprints[hashKey];
-        if (rootShape) {
+
+    for (const key of yieldItems(blueprintKeys)) {
+      if (activeHashes.has(key)) {
+        const shape = vault.blueprints[key];
+        if (shape) {
           recursiveReferenceTracerPipeline(
-            rootShape,
+            shape,
             vault.blueprints,
-            activeHashesInUse,
+            activeHashes,
           );
         }
       }
     }
+  }
 
-    // 4. EVICT UNREFERENCED BLUEPRINT HOLES PERMANENTLY
+  private purgeUnreferencedBlueprints(
+    vault: TTripleKV,
+    activeHashes: Set<string>,
+  ): void {
+    const blueprintKeys = ObjectUtils.keys(vault.blueprints);
     for (const key of yieldItems(blueprintKeys)) {
-      if (!activeHashesInUse.has(key)) {
+      if (!activeHashes.has(key)) {
         delete vault.blueprints[key];
       }
     }
+  }
 
-    // 5. ASYNC CACHE DELTA RADAR PASS: ATOMIC DISK PERSISTENCE FLUSH
+  /** @see {@link AuditServiceDocs.executeSelfHealingPruneSweep} */
+  private async executeSelfHealingPruneSweep(vault: TTripleKV): Promise<void> {
+    const telemetryData = await this.profileRuntimeFootprintAndOrphans(vault);
+
+    if (telemetryData.orphanedKeys.length === 0) return;
+
+    // Pipeline Sub-Routines Step-by-Step execution pass
+    this.removeOrphanedReferences(vault, telemetryData.orphanedKeys);
+
+    const activeHashes = this.resolveActiveHashes(vault);
+    this.traceBlueprintGraph(vault, activeHashes);
+
+    // SECURE FIX: Safely evict the orphaned shapes from the blueprints map before writing to disk
+    this.purgeUnreferencedBlueprints(vault, activeHashes);
+
     try {
+      /* prettier-ignore */
       const optimizedJsonString = JSON.stringify(vault, null, 2);
-
-      // Asynchronously overwrite the file snapshot securely, locking the data state
-      await fs.promises.writeFile(
-        this.paths.vaultFile,
-        optimizedJsonString,
-        'utf-8',
-      );
+      /* prettier-ignore */
+      await fs.promises.writeFile(this.paths.vaultFile, optimizedJsonString, 'utf-8');
 
       // TODO: add our Error handler logger
       console.log(
-        `\n🧼 [Xalor Self-Healing]: Successfully evicted ${orphansLength} orphaned keys.`,
+        `\n🧼 [Xalor Self-Healing]: Successfully evicted ${telemetryData.orphanedKeys.length} orphaned keys.`,
       );
       console.log(`💾 Cache files synchronized and optimized cleanly.\n`);
     } catch (error) {
@@ -539,156 +591,168 @@ export class CLIAuditEngineService {
       );
     }
   }
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  // INTERCEPT CONTRACT DRIFT RADAR MODULARIZED
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
 
-  /**
-   * INTERCEPT CONTRACT DRIFT RADAR
-   * ROLE: Historical baseline snapshot comparative analyzer protecting production schemas over time.
-   * STRATEGY: Switchlessly cross-examines the active vault data against a frozen disk ledger file
-   * to catch backward-compatibility contract breaks before deployment blocks execute.
-   *
-   * @param activeVault Reference to the current live in-memory TTripleKV database layout being validated
-   * @returns Fully compiled contract drift sub-ledger tracking structural modification traces
-   */
+  private identifyEvictedContractDeletions(
+    baselineKeys: readonly string[],
+    activeKeysSet: Set<string>,
+    driftObject: TDeepWriteable<TXalorAuditDrift>,
+  ): void {
+    for (const baselineKey of yieldItems(baselineKeys)) {
+      if (!activeKeysSet.has(baselineKey)) {
+        driftObject.mutations.push({
+          typeKey: baselineKey,
+          changeType: 'COMPATIBLE_DELETION',
+          propertyPath: '$',
+          description:
+            'Stale or orphaned contract key permanently evicted from active database registry frames.',
+        });
+      }
+    }
+  }
+
+  private evaluateObjectPropertiesDrift(
+    typeKey: string,
+    activeShape: TSolidShape & { kind: 'object' },
+    baselineShape: TSolidShape & { kind: 'object' },
+    driftContext: TDeepWriteable<TXalorAuditDrift>,
+  ): void {
+    for (const propKey in activeShape.properties) {
+      if (
+        Object.prototype.hasOwnProperty.call(activeShape.properties, propKey)
+      ) {
+        const contextPayload: TPropertyDeltaContext = {
+          typeKey,
+          propKey,
+          activeProp: activeShape.properties[propKey],
+          baselineProp: baselineShape.properties[propKey],
+        };
+        for (const rule of PROPERTY_DRIFT_EVALUATION_RULES) {
+          if (rule.test(contextPayload)) {
+            if (rule.isBreaking) {
+              driftContext.hasBreakingChanges = true;
+            }
+
+            driftContext.mutations.push({
+              typeKey,
+              changeType: rule.category,
+              propertyPath: `$.${propKey}`,
+              description: rule.describe(),
+            });
+
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  /* prettier-ignore */
+  private async ingestBaselineVault(baselineFilePath: string): Promise<TTripleKV | null> {
+  try {
+    const rawBaselineString = await fs.promises.readFile(baselineFilePath, 'utf-8');
+    return JSON.parse(rawBaselineString);
+  } catch {
+    // TODO: ADD ERROR LOGGER
+    return null;
+  }
+}
+  private profileStructuralShapeDrift(
+    typeKey: string,
+    activeVault: TTripleKV,
+    baselineVault: TTripleKV,
+    driftContext: TDeepWriteable<TXalorAuditDrift>,
+  ): void {
+    const activeHash = activeVault.references[typeKey];
+    const baselineHash = baselineVault.references[typeKey];
+
+    const activeShape = activeVault.blueprints[activeHash];
+    const baselineShape = baselineVault.blueprints[baselineHash];
+
+    if (!activeShape || !baselineShape) return;
+
+    // Catch primitive kind constraint alterations switchlessly
+    if (activeShape.kind !== baselineShape.kind) {
+      driftContext.hasBreakingChanges = true;
+      driftContext.mutations.push({
+        typeKey,
+        changeType: 'BREAKING_MUTATION',
+        propertyPath: '$',
+        description: `Type contract primitive kind altered from '${baselineShape.kind}' down to '${activeShape.kind}'.`,
+      });
+      return;
+    }
+
+    // Delegate nested property profiles down to the specialized properties handler block
+    if (isObjectShape(activeShape) && isObjectShape(baselineShape)) {
+      this.evaluateObjectPropertiesDrift(
+        typeKey,
+        activeShape,
+        baselineShape,
+        driftContext,
+      );
+    }
+  }
+  /** @see {@link AuditServiceDocs.interceptContractDriftRadar} */
   private async interceptContractDriftRadar(
     activeVault: TTripleKV,
   ): Promise<IXalorAuditPayload['drift']> {
-    /* prettier-ignore */
-    /* prettier-ignore */
-    const baselineFilePath = path.join(path.dirname(this.paths.vaultFile), 'production-baseline.json');
-    const mutations: TDriftMutationShape[] = [];
-    let hasBreakingChanges = false;
+    const driftContext = this.generateDefaultPayload('drift');
 
-    // If no production baseline ledger exists on disk yet, flag as a safe initial seed pass
-    if (!fs.existsSync(baselineFilePath)) {
-      return {
-        hasBreakingChanges: false,
-        mutations: Object.freeze([]),
-      };
-    }
+    const baselineFilePath = this.paths.baselineFile;
+    if (!fs.existsSync(baselineFilePath)) return driftContext;
 
-    try {
-      const rawBaselineString = await fs.promises.readFile(
-        baselineFilePath,
-        'utf-8',
+    const baselineVault = await this.ingestBaselineVault(baselineFilePath);
+    if (!baselineVault) return driftContext;
+
+    const activeKeys = ObjectUtils.keys(activeVault.references);
+    const baselineKeys = ObjectUtils.keys(baselineVault.references);
+
+    const activeKeysSet = new Set(activeKeys);
+    const baselineKeysSet = new Set(baselineKeys);
+
+    for (const typeKey of yieldItems(activeKeys)) {
+      // Case A: Fresh Addition Trace Check
+      if (!baselineKeysSet.has(typeKey)) {
+        driftContext.mutations.push({
+          typeKey,
+          changeType: 'COMPATIBLE_ADDITION',
+          propertyPath: '$',
+          description: `Contract key '${typeKey}' newly declared inside active workspace registry graph.`,
+        });
+        continue;
+      }
+
+      // Case B: Deep Structural Evaluation Dispatch
+      this.profileStructuralShapeDrift(
+        typeKey,
+        activeVault,
+        baselineVault,
+        driftContext,
       );
-      const baselineVault: TTripleKV = JSON.parse(rawBaselineString);
-
-      const activeKeys = ObjectUtils.keys(activeVault.references);
-      const baselineKeys = ObjectUtils.keys(baselineVault.references);
-
-      // FAST SET-BASED REFERENCE TABLES INDEX (O(1) lookups instead of continuous array scanning)
-      const activeKeysSet = new Set(activeKeys);
-      const baselineKeysSet = new Set(baselineKeys);
-      const rulesLength = PROPERTY_DRIFT_EVALUATION_RULES.length;
-
-      // A. LOOP PASS 1: SCAN FOR NEW ADDITIONS AND SHAPE MUTATIONS
-      for (const typeKey of yieldItems(activeKeys)) {
-        const activeHash = activeVault.references[typeKey];
-        const baselineHash = baselineVault.references[typeKey];
-
-        // Rule 1: Clean addition trace check
-        if (!baselineKeysSet.has(typeKey)) {
-          mutations.push({
-            typeKey,
-            changeType: 'COMPATIBLE_ADDITION',
-            propertyPath: '$',
-            description: `Contract key '${typeKey}' newly declared inside active workspace registry graph.`,
-          });
-          continue;
-        }
-
-        // Extract the physical layout schemas to run deep sub-tree comparison alignments
-        const activeShape = activeVault.blueprints[activeHash];
-        const baselineShape = baselineVault.blueprints[baselineHash];
-
-        if (activeShape && baselineShape) {
-          // Rule 3: Primitive kind constraint check
-          if (activeShape.kind !== baselineShape.kind) {
-            hasBreakingChanges = true;
-            mutations.push({
-              typeKey,
-              changeType: 'BREAKING_MUTATION',
-              propertyPath: '$',
-              description: `Type contract primitive kind altered from '${baselineShape.kind}' down to '${activeShape.kind}'.`,
-            });
-            continue;
-          }
-
-          // Deep Property Sub-Tree Comparison for Object Types Switchlessly
-          if (isObjectShape(activeShape) && isObjectShape(baselineShape)) {
-            for (const propKey in activeShape.properties) {
-              if (
-                Object.prototype.hasOwnProperty.call(
-                  activeShape.properties,
-                  propKey,
-                )
-              ) {
-                // 1. Pack the evaluation elements cleanly into your strict context type structure
-                const contextPayload: TPropertyDeltaContext = {
-                  typeKey,
-                  propKey,
-                  activeProp: activeShape.properties[propKey],
-                  baselineProp: baselineShape.properties[propKey],
-                };
-
-                // 2. Stream through your pre-compiled standalone rules array index point-free
-                for (let r = 0; r < rulesLength; r++) {
-                  const rule = PROPERTY_DRIFT_EVALUATION_RULES[r];
-
-                  if (rule.test(contextPayload)) {
-                    // If the matched rule is classified as destructive, trip the global failure alarm gate
-                    if (rule.isBreaking) {
-                      hasBreakingChanges = true;
-                    }
-
-                    // Inject the pristine trace block straight into your accumulator array vector
-                    mutations.push({
-                      typeKey,
-                      changeType: rule.category,
-                      propertyPath: `$.${propKey}`,
-                      description: rule.describe(),
-                    });
-
-                    break; // Short-circuit instantly: this property's delta has been fully resolved
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      // B. LOOP PASS 2: SCAN FOR COMPATIBLE DELETIONS
-      for (const baselineKey of yieldItems(baselineKeys)) {
-        if (!activeKeysSet.has(baselineKey)) {
-          mutations.push({
-            typeKey: baselineKey,
-            changeType: 'COMPATIBLE_DELETION',
-            propertyPath: '$',
-            description: `Stale or orphaned contract key permanently evicted from active database registry frames.`,
-          });
-        }
-      }
-    } catch {
-      // TODO: add our Error handler logger
-      // Graceful ingestion safety recovery fallback loop
     }
-
-    return {
-      hasBreakingChanges,
-      mutations: Object.freeze(mutations),
-    };
+    this.identifyEvictedContractDeletions(
+      baselineKeys,
+      activeKeysSet,
+      driftContext,
+    );
+    return driftContext;
   }
 
-  /**
-   * ANALYZE DEPENDENCY GRAPH TOPOLOGY
-   * ROLE: Directional linkage scanner and closed-circuit circular loop path discoverer.
-   * STRATEGY: Tracks data nodes via iterative linear stack vectors to protect process memory frames.
-   * Populates edge vectors and recursive circles switchlessly without casting hooks.
-   *
-   * @param vault The authoritative raw TTripleKV project vault database structure read from disk
-   * @returns Fully compiled topology mapping metrics satisfying your TXalorAuditTopology specifications
-   */
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  // ANALYZE DEPENDENCY GRAPH TOPOLOGY
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  /** @see {@link AuditServiceDocs.analyzeDependencyGraphTopology} */
   private analyzeDependencyGraphTopology(
     vault: TTripleKV,
   ): IXalorAuditPayload['topology'] {
@@ -711,22 +775,45 @@ export class CLIAuditEngineService {
     };
   }
 
-  /**
-   * EXECUTE FULL AUDIT RUN
-   * ROLE: Primary pipeline orchestrator generating the comprehensive macro operational dataset.
-   * STRATEGY: Coordinates extraction lanes sequentially to insulate files from memory thrashing.
-   *
-   * @param flags Readonly feature switches dictating optimization sweeps (--fix)
-   * @returns Pure, un-allocated master snapshot payload compliant with IXalorAuditPayload
-   */
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  // SYNC AUDIT BASELINE FILE
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  /** @see {@link AuditServiceDocs.syncAuditBaselineFile} */
+  private async syncAuditBaselineFile(vault: TTripleKV): Promise<void> {
+    try {
+      const optimizedJsonString = JSON.stringify(vault, null, 2);
+
+      // Asynchronously overwrite or create the file snapshot directly in the cache track destination
+      await fs.promises.writeFile(
+        this.paths.baselineFile,
+        optimizedJsonString,
+        'utf-8',
+      );
+    } catch {
+      // TODO: add our Error handler logger
+      // Suppress filesystem boundary blocks cleanly to prevent metric presentation interrupts
+    }
+  }
+
+  // !!! ================================================================================
+  // !!! ================================================================================
+  // !!! EXECUTION METHODS
+  // !!! ================================================================================
+  // !!! ================================================================================
+
   // TODO: omptimize
+  /** @see {@link AuditServiceDocs.executeFullAuditRun} */
   public async executeFullAuditRun(flags: {
     readonly fix: boolean;
   }): Promise<IXalorAuditPayload> {
     // 1. Safe Ingestion Boundary Pass
     const rawVaultData = await this.ingestVaultSnapshotFromDisk();
     if (!rawVaultData) {
-      return this.generateDefaultPayload();
+      return this.generateDefaultPayload('original');
     }
 
     // 2. Self-Healing Optimization Guard Pass (Phase 4)
@@ -759,18 +846,57 @@ export class CLIAuditEngineService {
       (max, node) => Math.max(max, node.metrics.depth),
       0,
     );
+    // Automatically creates or overwrites the production-baseline.json file
+    // inside your node_modules/.cache track to lock this execution pass state.
+    await this.syncAuditBaselineFile(rawVaultData);
 
     return {
       summary,
       nodes,
       hygiene: {
         ...hygiene,
-        // Integrate the orphaned keys count computed inside the runtime telemetry bundle scanner pass
         totalOrphanedKeys: telemetry.orphanedKeys.length,
       },
       telemetry,
       lifecycleFootprint,
       drift,
+      topology,
+    };
+  }
+
+  /** @see {@link AuditServiceDocs.executeStudioOverviewRun} */
+  public async executeStudioOverviewRun(): Promise<TAuditToStudioSharedData> {
+    const rawVaultData = await this.ingestVaultSnapshotFromDisk();
+    if (!rawVaultData) {
+      return this.generateDefaultPayload('studio');
+    }
+    const globalSummary =
+      this.calculateCasStorageOptimizationLedger(rawVaultData);
+
+    const nodes = this.extractNodeCoreDataLayout(rawVaultData);
+    const mutableNodesCopy = [...nodes];
+
+    const systemHygiene = this.evaluateSystemHygieneAndDepthAlarms(
+      rawVaultData,
+      mutableNodesCopy,
+    );
+
+    const telemetry =
+      await this.profileRuntimeFootprintAndOrphans(rawVaultData);
+    const topology = this.analyzeDependencyGraphTopology(rawVaultData);
+    globalSummary.highestGraphDepthRecorded = nodes.reduce(
+      (max, node) => Math.max(max, node.metrics.depth),
+      0,
+    );
+
+    return {
+      globalSummary,
+      nodes,
+      systemHygiene: {
+        ...systemHygiene,
+        totalOrphanedKeys: telemetry.orphanedKeys.length,
+      },
+      telemetry,
       topology,
     };
   }

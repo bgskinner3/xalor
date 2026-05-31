@@ -1,20 +1,6 @@
-import { REGEX_PATTERNS } from '../../shared/constants';
-import type {
-  TVaultManifestEntry,
-  TDeepWriteable,
-  TSolidShape,
-  TTripleKV,
-} from '../../shared/types';
-import type {
-  TParsedLocation,
-  TXalorAuditNode,
-  TTaxonomyTokenKeys,
-  TTopologyEdge,
-} from '../models/types';
-import {
-  DEPTH_COMPLEXITY_MAPPER,
-  REFERENCE_COLLECTOR_MAPPER,
-} from '../models/constants';
+import type { TSolidShape, TTripleKV } from '../../shared/types';
+import type { TTopologyEdge } from '../models/types';
+import { REFERENCE_COLLECTOR_MAPPER } from '../models/constants';
 import {
   isReferenceShape,
   isObjectShape,
@@ -24,71 +10,7 @@ import {
   yieldItems,
 } from '../../shared/utils';
 
-export function parseManifestCoordinates(
-  manifestRow?: TVaultManifestEntry,
-): TParsedLocation {
-  const filePath = manifestRow ? manifestRow.filePath : 'unknown_source';
-  let line = 0;
-  let column = 0;
-  let anchor = 0;
-
-  if (!manifestRow) {
-    return { line, column, anchor, filePath };
-  }
-
-  const lineMatch = manifestRow.area?.match(REGEX_PATTERNS.line);
-  const colMatch = manifestRow.area?.match(REGEX_PATTERNS.column);
-  const anchorMatch = manifestRow.anchor?.match(REGEX_PATTERNS.anchor);
-
-  if (lineMatch?.[1]) line = Number.parseInt(lineMatch[1], 10);
-  if (colMatch?.[1]) column = Number.parseInt(colMatch[1], 10);
-  if (anchorMatch?.[1]) anchor = Number.parseInt(anchorMatch[1], 10);
-
-  return { line, column, anchor, filePath };
-}
-
-/**
- * CREATE BASE AUDIT NODE RECORD
- * ROLE: Factory utility generating an unallocated, unique object template to insulate properties.
- */
-export const createBaseAuditNodeRecord =
-  (): TDeepWriteable<TXalorAuditNode> => ({
-    identity: {
-      typeKey: '',
-      symbolName: '',
-      casFingerprint: '',
-    },
-    location: {
-      filePath: '',
-      line: 0,
-      column: 0,
-      anchor: 0,
-    },
-    metrics: {
-      depth: 0,
-      complexityScore: 'FLAT_O1',
-      nodesCollapsed: 1,
-    },
-  });
-
-export function mapDepthToComplexity(depth: number): TTaxonomyTokenKeys {
-  for (const rule of DEPTH_COMPLEXITY_MAPPER) {
-    if (rule.test(depth)) return rule.key;
-  }
-
-  return 'FLAT_O1';
-}
-
-/**
- * RECURSIVE REFERENCE TRACER PIPELINE
- * ROLE: Standalone recursive graph unroller tracing CAS dependency networks switchlessly.
- * STRATEGY: Leverages user-defined type-guards inside explicit sequential branches to narrow
- * parameter signatures simultaneously, bypassing the generic 'never' intersection array collapse.
- *
- * @param shape Targeted structural schema description block currently being evaluated
- * @param blueprints Authoritative content-addressed storage repository registry map
- * @param activeHashesInUse Set-based mutation tracker accumulating living fingerprint hashes
- */
+/** @see {@link AuditServiceDocs.recursiveReferenceTracerPipeline} */
 export function recursiveReferenceTracerPipeline(
   shape: TSolidShape,
   blueprints: TTripleKV['blueprints'],
@@ -125,11 +47,7 @@ export function recursiveReferenceTracerPipeline(
   executeDistributedCollector(shape.kind, shape);
 }
 
-/**
- * BUILD TOPOLOGY EDGES
- * ROLE: Standalone relationship matrix extractor charting direct multi-node dependency lines.
- * STRATEGY: Processes shape categories as flat, un-chained blocks to maintain clear reading layout symmetry.
- */
+/** @see {@link AuditServiceDocs.buildTopologyEdge} */
 export function buildTopologyEdge(
   blueprintKeys: string[],
   vault: TTripleKV,
@@ -177,16 +95,8 @@ export function buildTopologyEdge(
   }
   return edges;
 }
-/**
- * MAP TOPOLOGY GRAPH CYCLES
- * ROLE: Tarjan-inspired linear path discoverer isolating closed-circuit circular dependency tracks.
- * STRATEGY: Tracks data nodes via copy-on-write stack arrays to avoid variable pollution.
- * Intercepts duplicate tokens early to block stack overflow loops and protect V8 engine stability.
- *
- * @param roots Readonly collection slice containing all base project fingerprint keys to initialize scanning
- * @param adjacencyMap Optimized reference map indexing directional source-to-target dependency edges
- * @returns Multi-dimensional array tracing every individual circular path network vector found
- */
+
+/** @see {@link AuditServiceDocs.mapTopologyGraphCycles} */
 export function mapTopologyGraphCycles(
   roots: readonly string[],
   adjacencyMap: Record<string, readonly string[]>,
@@ -222,6 +132,8 @@ export function mapTopologyGraphCycles(
 
   return cycles;
 }
+
+/** @see {@link AuditServiceDocs.buildAdjacencyMap} */
 export function buildAdjacencyMap(
   blueprintKeys: readonly string[],
   edges: readonly TTopologyEdge[],

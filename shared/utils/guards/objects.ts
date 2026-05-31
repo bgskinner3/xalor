@@ -1,5 +1,6 @@
 import type { TTypeGuard } from '../../types';
 import { isNull, isString, isNumber, isSymbol } from './primitives';
+import { ObjectUtils } from '../object-utils';
 /**
  * @utilType Guard
  * @name isArray
@@ -37,6 +38,23 @@ export const isRecord: TTypeGuard<Record<string, unknown>> = (
   !isArray(value) &&
   !(value instanceof Date) &&
   !(value instanceof RegExp);
+
+/**
+ * @utilType Guard Factory
+ * @name isRecordOf
+ * @category Guards Core
+ *
+ * @description Higher-order type guard that validates a Record<string, V> structure,
+ * where every value in the object must satisfy the provided value guard.
+ * ⚠️ Note:
+ * Uses `Object.values()` which only validates enumerable own properties.
+ * It does not traverse prototypes.
+ */
+export const isRecordOf =
+  <V>(valueGuard: TTypeGuard<V>) =>
+  (value: unknown): value is Record<string, V> =>
+    isRecord(value) && ObjectUtils.values(value).every(valueGuard);
+
 /**
  * @utilType Guard
  * @name isKeyOfObject

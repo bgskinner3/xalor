@@ -53,6 +53,7 @@ export function resolveXalorPaths(
     rootDir,
     cacheDir: absoluteCacheDir,
     vaultFile: path.join(absoluteCacheDir, fileNames.vaultFileName),
+    baselineFile: path.join(absoluteCacheDir, fileNames.productionBaseline),
     bridgeDir: absoluteBridgeDir,
     bridgeFile: path.join(absoluteBridgeDir, fileNames.bridgeFileName),
     bakedFile: path.join(absoluteBridgeDir, fileNames.bakedFileName),

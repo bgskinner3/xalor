@@ -42,6 +42,7 @@ const PACKAGE_FILE_PATHS = {
   vaultTemplate: 'vault-snapshot.json',
 
   // 🟢 The Core Serialized Vault Persistence Layers
+  productionBaseline: 'production-baseline.json',
   vaultFileName: 'vault-snapshot.json',
   bakedFileName: 'baked-vault.js',
   intelFolderName: '.xalor',

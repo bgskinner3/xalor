@@ -5,13 +5,15 @@ import type {
   TSolidShapePrimitiveKeys,
   TVaultSyncPayload,
   TXalorCLIModesMap,
+  TTripleKV,
 } from '../../types';
-import { isObject, isKeyInObject, isKeyOfArray } from './objects';
+import { isObject, isKeyInObject, isKeyOfArray, isRecord } from './objects';
 import { isNull, isString } from './primitives';
 import {
   SOLID_SHAPE_PRIMITIVE_KEYS,
   IS_SOLID_SHAPE_KINDS_CONFIG,
 } from '../../constants';
+
 /**
  * FOCUSED SHAPE GUARDS
  *
@@ -177,3 +179,20 @@ export const isValidSolidShape: TTypeGuard<TSolidShape> = (
   isKeyInObject('kind')(shape) &&
   isString(shape.kind) &&
   isKeyInObject(shape.kind)(IS_SOLID_SHAPE_KINDS_CONFIG);
+
+/**
+ * IS_TRIPLE_KV_GUARD
+ * ROLE: High-velocity boundary discriminator validating vault-snapshot.json schema integrity.
+ * STRATEGY: Switchlessly examines top-level storage records point-free. Ensures absolute
+ * structural presence of all database drawers before allowing downstream metrics processing.
+ */
+/* prettier-ignore */
+export const isTripleKVShape: TTypeGuard<TTripleKV> = (
+  value: unknown,
+): value is TTripleKV =>
+  (isObject(value) ) &&
+  (isKeyInObject('blueprints')(value) && isRecord(value.blueprints)) && 
+  (isKeyInObject('manifest')(value) && isRecord(value.manifest)) && 
+  (isKeyInObject('registry')(value) && isRecord(value.registry)) && 
+  ( isKeyInObject('references')(value) && isRecord(value.references)) && 
+  (isKeyInObject('version')(value) && isString(value.version))

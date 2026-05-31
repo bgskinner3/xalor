@@ -3,7 +3,6 @@ import { ObjectUtils, yieldItems, isKeyOfArray } from '../../../shared/utils';
 import type {
   TAuditDepthMapper,
   TDepthComplexityMapper,
-  IXalorAuditPayload,
   TTelemetryTokenNames,
   TReferenceCollectorMapper,
   TPropertyDeltaContext,
@@ -135,32 +134,6 @@ export const DEPTH_COMPLEXITY_MAPPER: TDepthComplexityMapper = [
   { key: 'LINEAR_ON', test: (d) => d <= 4 },
   { key: 'COMPLEX_ON2', test: () => true },
 ] satisfies TDepthComplexityMapper;
-
-export const DEFAULT_AUDIT_PAYLOAD: IXalorAuditPayload = {
-  summary: {
-    totalRegisteredKeys: 0,
-    totalUniqueFingerprints: 0,
-    casCompressionRatio: 0,
-    totalDatabaseDiskBytes: 0,
-    highestGraphDepthRecorded: 0,
-  },
-  nodes: [],
-  hygiene: {
-    totalOrphanedKeys: 0,
-    totalCriticalDepthWarnings: 0,
-    depthWarnings: [],
-    duplicateShapes: [],
-  },
-  telemetry: { orphanedKeys: [], strategyDistribution: [] },
-  lifecycleFootprint: {
-    developmentCacheBytes: 0,
-    productionEstimatedBytes: 0,
-    netBytesEvaporated: 0,
-    evaporationEfficiencyRatio: 0,
-  },
-  drift: { hasBreakingChanges: false, mutations: [] },
-  topology: { edges: [], cyclicPaths: [] },
-} satisfies IXalorAuditPayload;
 
 /**
  * TELEMENTRY_TOKEN_NAME_MAPPER
