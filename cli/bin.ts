@@ -36,13 +36,6 @@ const COMMAND_ROUTER: TCommandRouterMapper = {
     await runAuditCommand(projectRoot, flags);
   },
   studio: (projectRoot) => {
-    console.log(
-      '🪐 [Xalor CLI] Auto-compiling workspace to populate Studio analytics cache...',
-    );
-
-    // A. Enforce automated auto-compilation natively on the exact same thread frame loop!
-    runCompileCommand(projectRoot);
-
     // B. Launch the loopback telemetry daemon server views
     console.log(`📊 [Xalor CLI] Launching Studio Telemetry Server Core...`);
     runStudioCommand(projectRoot);
