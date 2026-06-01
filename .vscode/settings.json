@@ -60,6 +60,7 @@
     "Materializer",
     "Sharder",
     "switchless",
+    "TAPI",
     "TCLI",
     "TSCOMPILERDICTIONARY",
     "TXOR",

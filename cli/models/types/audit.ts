@@ -195,6 +195,30 @@ export type TAuditToStudioSharedData = {
   readonly drift: TXalorAuditDrift;
 };
 /**
+ * TPackageSizeMetrics
+ * 🪐 THE AUTHORITATIVE PACKAGE WEIGHT DATA CONTRACT
+ *
+ * ROLE:
+ * An explicit type specification model ensuring a structured, immutable delivery
+ * payload for package physical weights and installation footprint telemetry.
+ *
+ * DESIGN INVARIANT:
+ * Governs deep, compiler-safe metric tracking point-free, linking distribution weights
+ * back to workspace presentation panels with absolute type-safety under Commandment I.
+ *
+ * @param bundleSizeBytes The exact physical unzipped weight of what tsup emits and npm packs (dist, README.md, LICENSE)
+ * @param estimatedInstallFootprintBytes The projected absolute installation weight added to a user's node_modules workspace (Bundle + Dependencies)
+ * @param productionDependenciesCount Direct count of production dependencies listed in package.json to prevent architectural bloat
+ * @param isMissingManifest Safety boundary flag indicating if the parser executed inside a folder missing a package.json file
+ */
+export type TAuditSizeMetrics = {
+  readonly bundleSizeBytes: number;
+  readonly estimatedInstallFootprintBytes: number;
+  readonly productionDependenciesCount: number;
+  readonly isMissingManifest: boolean;
+};
+
+/**
  * IXalorAuditPayload
  * ROLE: Master execution payload orchestrating the full macro operational profile overview.
  */
@@ -219,6 +243,7 @@ type TDefaultReturnMap = {
   telemetry: TDeepWriteable<TXalorAuditTelemetry>;
   node: TDeepWriteable<TXalorAuditNode>;
   drift: TDeepWriteable<TXalorAuditDrift>;
+  packageMetrics: TDeepWriteable<TAuditSizeMetrics>;
 };
 export type TDefaultObjectKeys = keyof typeof DEFAULT_OBJECT_MAPPER;
 
@@ -315,4 +340,18 @@ export type TPropertyDriftRule = {
   readonly category: TVarianceCategories;
   readonly isBreaking: boolean;
   readonly describe: () => string;
+};
+
+export type TScanTelemetryParams = {
+  counters: Record<string, number>;
+  seenKeys: Set<string>;
+  registeredKeySet: Set<string>;
+  targetDir: string;
+  excludes: readonly string[];
+};
+
+export type TAPIModeCounter = {
+  sanitizedFileString: string;
+  registeredKeySet: Set<string>;
+  counters: Record<string, number>;
 };

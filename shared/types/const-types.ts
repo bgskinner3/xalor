@@ -11,6 +11,7 @@ import {
   TRANSFORMER_EXECUTE_MODES,
   ALL_CLI_FLAGS,
   IS_SOLID_CONFIG_ITEMS,
+  RUNTIME_TRIGGER_NAMES,
 } from '../constants';
 
 /**
@@ -48,6 +49,14 @@ export type TSolidShapePrimitiveKeys =
  * @see {@link FoundationalTypesDocs.TSentryTriggerName}
  */
 export type TSentryTriggerName = (typeof SENTRY_TRIGGER_NAMES)[number];
+/**
+ * TRuntimeTriggerName
+ *
+ * Core list of ALL API Names
+ *
+ * @see {@link FoundationalTypesDocs.TSentryTriggerName}
+ */
+export type TRuntimeTriggerName = (typeof RUNTIME_TRIGGER_NAMES)[number];
 /**
  * TGenerateXalorModes
  *
@@ -123,3 +132,17 @@ export type TTransformerExecuteMode = keyof typeof TRANSFORMER_EXECUTE_MODES;
  * consumers remain aligned with the canonical file-name definitions.
  */
 export type TSearchFileNames = typeof IS_SOLID_CONFIG_ITEMS.searchFileNames;
+// ================================================================================
+// ================================================================================
+// FILE SYSTEM TYPES
+// ================================================================================
+// ================================================================================
+
+/* prettier-ignore */
+export type TIgnoreDirKeys = (typeof IS_SOLID_CONFIG_ITEMS.fileSystemMap.ignoreDirectories)[number];
+/* prettier-ignore */
+export type TPackageIndicatorKeys = (typeof IS_SOLID_CONFIG_ITEMS.fileSystemMap.packageIndicators)[number];
+/* prettier-ignore */
+export type TRepoBoundaryNames = (typeof IS_SOLID_CONFIG_ITEMS.fileSystemMap.workspaceIndicators)[number];
+/* prettier-ignore */
+export type TAllowedFileExts = (typeof IS_SOLID_CONFIG_ITEMS.fileSystemMap.allowedExtensions)[number];

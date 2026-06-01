@@ -1,3 +1,6 @@
+import { BRAND_SYMBOL } from '../../types';
+import type { TBrandDomain, TBrandNS } from '../../types';
+
 /**
  * Generates a rapid, zero-dependency 32-bit structural fingerprint from a raw string.
  * @param input - The raw string to hash.
@@ -16,3 +19,47 @@ export const computeStringHash = (input: string): string => {
   // This prevents negative hash collision skewing
   return `sh_${(hash >>> 0).toString(36)}`;
 };
+/**
+ * Creates a valid nominal instance strictly verified by the compiler.
+ * Uses object property definitions to preserve primitive string behaviors.
+ *
+ * @example
+ * ```ts
+ * // 1. Constructing a branded nominal token safely via the factory gateway
+ * const rawPath = "/var/www/xalor-engine";
+ * const projectRoot = createBranding(rawPath, 'Path', 'ProjectRoot');
+ *
+ * // 2. Consuming the token seamlessly with native runtime APIs
+ * const configPath = path.join(projectRoot, 'solid.config.json');
+ * console.log(`Anchored at: ${projectRoot}`); // Native string casting works perfectly
+ *
+ * // 3. Compile-time enforcement protection (Commandment IX Rule)
+ * function initializeCoreEngine(root: TRootDirBranded) { ... }
+ *
+ * initializeCoreEngine(projectRoot); // ✅ Pass: Token carries verified brand signature
+ * initializeCoreEngine("/var/www/xalor-engine"); // ❌ Fail: 'string' is not assignable to 'TRootDirBranded'
+ * ```
+ */
+export function createBranding<
+  T extends string | object,
+  N extends TBrandDomain,
+  B extends string,
+>(value: T, namespace: N, brand: B): TBrandNS<T, N, B> {
+  // If it is a primitive string, return it exactly as-is.
+  // The type system intersects the nominal token mapping purely at compile-time.
+  if (typeof value === 'string') {
+    return value as unknown as TBrandNS<T, N, B>;
+  }
+
+  // For structured configuration records, copy properties onto a clean prototype clone
+  const objectInstance = Object.assign(Object.create(null), value);
+
+  Object.defineProperty(objectInstance, BRAND_SYMBOL, {
+    value: [namespace, brand] as const,
+    writable: false,
+    enumerable: false,
+    configurable: false,
+  });
+
+  return objectInstance;
+}

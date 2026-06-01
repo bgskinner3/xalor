@@ -10,9 +10,7 @@ import type {
   TTopologyEdge,
   TTelemetryTokenNames,
   TPropertyDeltaContext,
-  TDefaultReturnKeyMap,
   TParsedLocation,
-  TDefaultObjectKeys,
   TTaxonomyTokenKeys,
   TXalorAuditDrift,
 } from '../models/types';
@@ -21,7 +19,6 @@ import {
   TELEMETRY_API_TOKEN_NAMES,
   PROPERTY_DRIFT_EVALUATION_RULES,
   DEPTH_COMPLEXITY_MAPPER,
-  DEFAULT_OBJECT_MAPPER,
 } from '../models/constants';
 import { TSConfigService } from '../../shared/service';
 import {
@@ -32,7 +29,6 @@ import {
   isNull,
   isObjectShape,
   isTripleKVShape,
-  cloneDeep,
 } from '../../shared/utils';
 import {
   IS_SOLID_CONFIG_ITEMS,
@@ -52,7 +48,11 @@ import {
   buildTopologyEdge,
   mapTopologyGraphCycles,
   buildAdjacencyMap,
+  createDefaultAuditTemplate,
 } from '../utils';
+// TESTS
+import { telemetryService } from './cli-audit-engine/telemetry-service';
+import { packageAuditorService } from './cli-audit-engine/package-auditor-service';
 
 /**
  * CLIAuditEngineService
@@ -92,21 +92,6 @@ export class CLIAuditEngineService {
     this.paths = resolveXalorPaths(projectRoot);
   }
 
-  /**
-   * generateDefaultPayload
-   *
-   * ROLE: Generates the default audit payload based on the provided type.
-   *
-   * @see {@link AuditServiceDocs.generateDefaultPayload}
-   */
-  private generateDefaultPayload<T extends TDefaultObjectKeys>(
-    defaultType: T,
-  ): TDefaultReturnKeyMap<T> {
-    // return DEFAULT_OBJECT_MAPPER[defaultType];
-    const baseStaticTemplate = DEFAULT_OBJECT_MAPPER[defaultType];
-
-    return cloneDeep(baseStaticTemplate);
-  }
   // ================================================================================
   // ================================================================================
   // ================================================================================
@@ -251,43 +236,6 @@ export class CLIAuditEngineService {
     };
   }
 
-  // ================================================================================
-  // ================================================================================
-  // ================================================================================
-  // INGEST VAULT SNAPSHOT FROM DISK
-  // ================================================================================
-  // ================================================================================
-  // ================================================================================
-  protected rawVaultData(): void {}
-  /**  @see {@link AuditServiceDocs.ingestVaultSnapshotFromDisk} */
-  private async ingestVaultSnapshotFromDisk(): Promise<TTripleKV | null> {
-    try {
-      if (!fs.existsSync(this.paths.vaultFile)) return null;
-
-      const rawJsonString = await fs.promises.readFile(
-        this.paths.vaultFile,
-        'utf-8',
-      );
-      const parsedVault: unknown = JSON.parse(rawJsonString);
-
-      if (!parsedVault || !isTripleKVShape(parsedVault)) return null;
-
-      const candidate = parsedVault;
-
-      const blueprintKeys = ObjectUtils.keys(candidate.blueprints);
-      const blueprints = candidate.blueprints;
-
-      for (const key of blueprintKeys) {
-        const shapeNode = blueprints[key];
-        if (!isValidSolidShape(shapeNode)) return null;
-      }
-
-      return candidate;
-    } catch {
-      // TODO: ERROR HANDLER
-      return null;
-    }
-  }
   // ================================================================================
   // ================================================================================
   // ================================================================================
@@ -452,7 +400,7 @@ export class CLIAuditEngineService {
     const compiledNodes: TXalorAuditNode[] = [];
 
     for (const typeKey of yieldItems(userKeys)) {
-      const nodeRecord = this.generateDefaultPayload('node');
+      const nodeRecord = createDefaultAuditTemplate('node');
 
       // 💚 PERFORMANCE OPTIMIZATION: Deep clone your structures cleanly using your Axiom utility!
       // const nodeRecord = cloneDeep(rawNodePayload);
@@ -685,10 +633,10 @@ export class CLIAuditEngineService {
   }
 
   /** @see {@link AuditServiceDocs.profileRuntimeFootprintAndOrphans}*/
-  private async profileRuntimeFootprintAndOrphans(
+  public async profileRuntimeFootprintAndOrphans(
     vault: TTripleKV,
   ): Promise<IXalorAuditPayload['telemetry']> {
-    const telemetryObject = this.generateDefaultPayload('telemetry');
+    const telemetryObject = createDefaultAuditTemplate('telemetry');
     const strategyTokensArray = TELEMETRY_API_TOKEN_NAMES;
     const registeredKeys = ObjectUtils.keys(vault.references);
     /* prettier-ignore */
@@ -847,8 +795,15 @@ export class CLIAuditEngineService {
 
   /** @see {@link AuditServiceDocs.executeSelfHealingPruneSweep} */
   private async executeSelfHealingPruneSweep(vault: TTripleKV): Promise<void> {
-    const telemetryData = await this.profileRuntimeFootprintAndOrphans(vault);
+    // const telemetryDataOriginal =
+    //   await this.profileRuntimeFootprintAndOrphans(vault);
 
+    const telemetryData =
+      await telemetryService.profileRuntimeFootprintAndOrphans(
+        vault,
+        this.projectRoot,
+      );
+    // console.log(telemetryData);
     if (telemetryData.orphanedKeys.length === 0) return;
 
     // Pipeline Sub-Routines Step-by-Step execution pass
@@ -944,16 +899,6 @@ export class CLIAuditEngineService {
     }
   }
 
-  /* prettier-ignore */
-  private async ingestBaselineVault(baselineFilePath: string): Promise<TTripleKV | null> {
-  try {
-    const rawBaselineString = await fs.promises.readFile(baselineFilePath, 'utf-8');
-    return JSON.parse(rawBaselineString);
-  } catch {
-    // TODO: ADD ERROR LOGGER
-    return null;
-  }
-}
   private profileStructuralShapeDrift(
     typeKey: string,
     activeVault: TTripleKV,
@@ -994,7 +939,7 @@ export class CLIAuditEngineService {
   private async interceptContractDriftRadar(
     activeVault: TTripleKV,
   ): Promise<IXalorAuditPayload['drift']> {
-    const driftContext = this.generateDefaultPayload('drift');
+    const driftContext = createDefaultAuditTemplate('drift');
 
     const baselineFilePath = this.paths.baselineFile;
     if (!fs.existsSync(baselineFilePath)) return driftContext;
@@ -1066,7 +1011,43 @@ export class CLIAuditEngineService {
       cyclicPaths: Object.freeze(frozenCyclicPaths),
     };
   }
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  // INGEST VAULT SNAPSHOT FROM DISK
+  // ================================================================================
+  // ================================================================================
+  // ================================================================================
+  protected rawVaultData(): void {}
+  /**  @see {@link AuditServiceDocs.ingestVaultSnapshotFromDisk} */
+  private async ingestVaultSnapshotFromDisk(): Promise<TTripleKV | null> {
+    try {
+      if (!fs.existsSync(this.paths.vaultFile)) return null;
 
+      const rawJsonString = await fs.promises.readFile(
+        this.paths.vaultFile,
+        'utf-8',
+      );
+      const parsedVault: unknown = JSON.parse(rawJsonString);
+
+      if (!parsedVault || !isTripleKVShape(parsedVault)) return null;
+
+      const candidate = parsedVault;
+
+      const blueprintKeys = ObjectUtils.keys(candidate.blueprints);
+      const blueprints = candidate.blueprints;
+
+      for (const key of blueprintKeys) {
+        const shapeNode = blueprints[key];
+        if (!isValidSolidShape(shapeNode)) return null;
+      }
+
+      return candidate;
+    } catch {
+      // TODO: ERROR HANDLER
+      return null;
+    }
+  }
   // ================================================================================
   // ================================================================================
   // ================================================================================
@@ -1092,6 +1073,19 @@ export class CLIAuditEngineService {
     }
   }
 
+  /* prettier-ignore */
+  private async ingestBaselineVault(baselineFilePath: string): Promise<TTripleKV | null> {
+    try {
+      const rawBaselineString = await fs.promises.readFile(
+        baselineFilePath,
+        'utf-8',
+      );
+      return JSON.parse(rawBaselineString);
+    } catch {
+      // TODO: ADD ERROR LOGGER
+      return null;
+    }
+  }
   // !!! ================================================================================
   // !!! ================================================================================
   // !!! EXECUTION METHODS
@@ -1106,7 +1100,7 @@ export class CLIAuditEngineService {
     // 1. Safe Ingestion Boundary Pass
     const rawVaultData = await this.ingestVaultSnapshotFromDisk();
     if (!rawVaultData) {
-      return this.generateDefaultPayload('original');
+      return createDefaultAuditTemplate('original');
     }
 
     // 2. Self-Healing Optimization Guard Pass (Phase 4)
@@ -1125,8 +1119,12 @@ export class CLIAuditEngineService {
       rawVaultData,
       mutableNodesCopy,
     );
-    const telemetry =
-      await this.profileRuntimeFootprintAndOrphans(rawVaultData);
+    const telemetry = await telemetryService.profileRuntimeFootprintAndOrphans(
+      rawVaultData,
+      this.projectRoot,
+    );
+    // const telemetry =
+    //   await this.profileRuntimeFootprintAndOrphans(rawVaultData);
     const lifecycleFootprint =
       this.computeLifecycleFootprintDeltas(rawVaultData);
 
@@ -1142,7 +1140,9 @@ export class CLIAuditEngineService {
     // Automatically creates or overwrites the production-baseline.json file
     // inside your node_modules/.cache track to lock this execution pass state.
     await this.syncAuditBaselineFile(rawVaultData);
-
+    const packageWight = packageAuditorService.extractExpectedPackageWeights();
+    packageAuditorService.renderDashboard(packageWight);
+    console.log('\n\n\n\n');
     return {
       summary,
       nodes,
@@ -1162,7 +1162,7 @@ export class CLIAuditEngineService {
     const rawVaultData = await this.ingestVaultSnapshotFromDisk();
 
     if (!rawVaultData) {
-      return this.generateDefaultPayload('studio');
+      return createDefaultAuditTemplate('studio');
     }
 
     const globalSummary =

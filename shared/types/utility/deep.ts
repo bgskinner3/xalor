@@ -27,3 +27,72 @@ export type TDeepKeyOf<T> = T extends object
 export type TDeepWriteable<T> = {
   -readonly [P in keyof T]: T[P] extends object ? TDeepWriteable<T[P]> : T[P];
 };
+/**
+ * ## TRecursiveRequired — Deep Requirement Utility
+ * @utilType type
+ * @name TRecursiveRequired
+ * @category Advanced Type Utilities
+ * @description Recursively removes the optional '?' modifier from every property level, ensuring the structure is fully populated.
+ * @link #trecursiverequired
+ *
+ * @example
+ * ```ts
+ * type User = {
+ *   profile: {
+ *     name: string;
+ *   };
+ * };
+ *
+ * // {
+ * //   readonly profile: {
+ * //     readonly name: string;
+ * //   };
+ * // }
+ * type ImmutableUser = TRecursiveRequired<User>;
+ * ```
+ *
+ * The inverse of TRecursivePartial. It ensures the entire structure is fully
+ * populated while safely bypassing functions to avoid breaking method signatures.
+ */
+export type TRecursiveRequired<T> = T extends (...args: never[]) => unknown
+  ? T
+  : T extends Array<infer U>
+    ? Array<TRecursiveRequired<U>>
+    : T extends object
+      ? { [K in keyof T]-?: TRecursiveRequired<T[K]> }
+      : T;
+
+/**
+ * ## TRecursiveReadonly — Deep Immutability Utility
+ * @utilType type
+ * @name TRecursiveReadonly
+ * @category Advanced Type Utilities
+ * @description Recursively applies the 'readonly' modifier to every property of an object and its children.
+ * @link #trecursivereadonly
+ *
+ * @example
+ * ```ts
+ * type User = {
+ *   profile: {
+ *     name: string;
+ *   };
+ * };
+ *
+ * // {
+ * //   readonly profile: {
+ * //     readonly name: string;
+ * //   };
+ * // }
+ * type ImmutableUser = TRecursiveReadonly<User>;
+ * ```
+ *
+ * Recursively applies the 'readonly' modifier to every property of an object,
+ * including nested objects and arrays, ensuring the entire structure is immutable.
+ */
+export type TRecursiveReadonly<T> = T extends (...args: unknown[]) => unknown
+  ? T
+  : T extends Array<infer U>
+    ? ReadonlyArray<TRecursiveReadonly<U>>
+    : T extends object
+      ? { readonly [K in keyof T]: TRecursiveReadonly<T[K]> }
+      : T;

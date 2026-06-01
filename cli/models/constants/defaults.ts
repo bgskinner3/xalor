@@ -6,6 +6,7 @@ import type {
   TXalorAuditNode,
   TXalorAuditDrift,
   IStudioOverviewPayload,
+  TAuditSizeMetrics,
 } from '../types';
 import { TDeepWriteable } from '../../../shared';
 import { TELEMETRY_API_TOKEN_NAMES } from './audit';
@@ -156,7 +157,15 @@ export const INITIAL_MUTABLE_DRIFT_TEMPLATE: TDeepWriteable<TXalorAuditDrift> =
     hasBreakingChanges: false,
     mutations: [],
   } satisfies TDeepWriteable<TXalorAuditDrift>;
-
+/**
+ * DEFAULT_AUDIT_SIZE_METRICS
+ */
+export const DEFAULT_AUDIT_SIZE_METRICS: TAuditSizeMetrics = {
+  bundleSizeBytes: 0,
+  estimatedInstallFootprintBytes: 0,
+  productionDependenciesCount: 0,
+  isMissingManifest: true,
+} satisfies TAuditSizeMetrics;
 /**
  * DEFAULT OOBJECT GENEREATOR
  */
@@ -166,6 +175,7 @@ export const DEFAULT_OBJECT_MAPPER = {
   telemetry: INITIAL_MUTABLE_TELEMETRY_TEMPLATE,
   node: BASE_AUDIT_NODE_RECORD,
   drift: INITIAL_MUTABLE_DRIFT_TEMPLATE,
+  packageMetrics: DEFAULT_AUDIT_SIZE_METRICS,
 } as const;
 
 /**

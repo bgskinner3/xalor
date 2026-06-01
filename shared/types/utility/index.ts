@@ -1,2 +1,2 @@
 export * from './deep';
-export * from './branding';
+export * from './branded';

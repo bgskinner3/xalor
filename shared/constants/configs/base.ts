@@ -1,3 +1,5 @@
+import { ObjectUtils } from '../../utils';
+
 /**
  * 🔑 CORE GLOBAL KEYS
  *
@@ -5,6 +7,9 @@
  * This includes the singleton key for the Global Vault and the
  * current versioning used to prevent schema mismatches across
  * different build environments.
+ *
+ * @key brandDomainNames Defines the controlled set of allowed semantic domains for all branded types
+ * within the system architecture.
  */
 const SOLID_GLOBAL_KEYS = {
   solidVaultKey: '__SOLID_VAULT__',
@@ -12,6 +17,10 @@ const SOLID_GLOBAL_KEYS = {
   // branding keys
   solidBrandKey: '__xalorBrand',
   validBrandKey: '__valid',
+  rootDirBrandKey: 'rootDir',
+
+  //
+  brandDomainNames: ['Shape', 'Solid', 'Path', 'Mirror'],
 } as const;
 
 /**
@@ -34,6 +43,10 @@ const SOLID_EMITTER_KEYS = {
     // "import type { ISolidRegistry, ISolidIdentity } from '@bgskinner2/xalor';",
   ],
 } as const;
+// =============================================================================
+// =============================================================================
+// =============================================================================
+
 /**
  * PACKAGE_FILE_PATHS
  * 🪐 THE VIRTUAL FILESYSTEM PERSISTENCE LEDGER
@@ -47,8 +60,17 @@ const SOLID_EMITTER_KEYS = {
  * Satisfies Commandment I (Single Source of Truth) by grouping all active
  * build-time output assets under a unified structural dictionary, preventing
  * path layout desynchronization across the core transformation engines.
+ *
+ * @key intelFolderName - IDE FILE NAME OUTSIDE NODE_MODULES
+ * @key bakedFileName - FINAILIZED PRODUCTION BUILDTIME BLUEPRINT FILENAME
+ * @key vaultFileName - LIVING DEV VAULT STORAGE
+ * @key productionBaseline - FILE NAME FOR AUDIT DUMP
+ * @key vaultTemplate - vault file template name
+ * @key bridgeTemplate - IDE template name
+ * @key bridgeFileName - ide file name
+ * @key cacheFolderName - FOLE NAME FOR NODE_MODULES/.cache
  */
-const PACKAGE_FILE_PATHS = {
+export const PACKAGE_FILE_PATHS = Object.freeze({
   bridgeFileName: 'solid-env.ts',
   bridgeTemplate: 'solid-env.ts.template',
   vaultTemplate: 'vault-snapshot.json',
@@ -59,7 +81,16 @@ const PACKAGE_FILE_PATHS = {
   bakedFileName: 'baked-vault.js',
   intelFolderName: '.xalor',
   cacheFolderName: 'xalor',
-} as const;
+} as const);
+/**
+ * TYPED KEY LIST
+ */
+export const PACKAGE_FILE_KEY_NAMES = ObjectUtils.keys(PACKAGE_FILE_PATHS);
+
+// =============================================================================
+// =============================================================================
+// =============================================================================
+
 /**
  * SEARCH_FILE_NAMES
  * 🪐 THE SYSTEM EXPLORATION & DISCOVERY DIRECTORY
@@ -83,6 +114,7 @@ const SEARCH_FILE_NAMES = {
   /* prettier-ignore */ envFile: '.env',
   /* prettier-ignore */ envDevelopment: '.env.development',
   /* prettier-ignore */ gitIgnore: '.gitignore',
+  tsupConfig: 'tsup.config.ts',
 } as const;
 
 /**
@@ -134,6 +166,49 @@ export const COMPILED_DISTRIBUTION_MANIFEST = Object.freeze({
   defaultOutputTarget: 'dist',
 } as const);
 
+// ================================================================================
+// ================================================================================
+// FILE SYSTEM INDICATORS
+// ================================================================================
+// ================================================================================
+/**
+ * “workspace root markers” — they tell your system where the monorepo or repo boundary
+ * lives so all path resolution can anchor consistently.
+ */
+/* prettier-ignore */
+const WORKSPACE_INDICATORS = Object.freeze([ 'pnpm-workspace.yaml', 'nx.json', 'turbo.json', 'lerna.json', 'package-lock.json', 'yarn.lock', '.git' ] as const);
+/* prettier-ignore */
+const PACKAGE_INDICATORS = Object.freeze([ 'package.json', 'tsconfig.json', 'tsconfig.base.json', 'tsconfig.build.json' ] as const)
+/* prettier-ignore */
+const BUILD_IGNORE_DIRECTORIES = Object.freeze([ 'node_modules', 'dist', 'build', '.next', '.cache', 'coverage',   '.git' ] as const)
+/* prettier-ignore */
+const ALLOWED_BASE_FILE_EXTENSIONS = Object.freeze(['.js', '.mjs', '.ts', '.tsx'] as const)
+/* prettier-ignore */
+export const ALLOWED_EXTS_SET = new Set<string>(ALLOWED_BASE_FILE_EXTENSIONS);
+
+/**
+ * FILE_SYSTEM_SIGNAL_MAP
+ *
+ * @key workspaceIndicators
+ *  “workspace root markers” — they tell your system where the monorepo or repo boundary
+ * lives so all path resolution can anchor consistently.
+ *
+ *  @key packageIndicators
+ * Signals the local runtime or compilation domain boundaries.
+ * Used to locate specific apps, services, or packages nested inside a monorepo structure.
+ *
+ * @key ignoreDirectories
+ * Folders strictly bypassed by asset discovery, file system sweeps, or index trees.
+ * Isolates runtime trash, test logs, and build artifacts from active workspace parsing.
+ *
+ */
+export const FILE_SYSTEM_SIGNAL_MAP = {
+  workspaceIndicators: WORKSPACE_INDICATORS,
+  packageIndicators: PACKAGE_INDICATORS,
+  ignoreDirectories: BUILD_IGNORE_DIRECTORIES,
+  allowedExtensions: ALLOWED_BASE_FILE_EXTENSIONS,
+} as const;
+
 /**
  * 🌍 MASTER GLOBAL CONFIGURATION
  *
@@ -149,4 +224,5 @@ export const IS_SOLID_CONFIG_ITEMS = {
   fileNames: PACKAGE_FILE_PATHS,
   searchFileNames: SEARCH_FILE_NAMES,
   buildLayer: COMPILED_DISTRIBUTION_MANIFEST,
+  fileSystemMap: FILE_SYSTEM_SIGNAL_MAP,
 } as const;

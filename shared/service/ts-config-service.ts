@@ -49,6 +49,7 @@ export class TSConfigService {
 
     try {
       const rootStat = fs.statSync(projectRootPath);
+
       if (!rootStat.isDirectory()) return Object.freeze([]);
 
       // !!! List contents of a directory

@@ -1,6 +1,13 @@
 import type { TSolidShape, TTripleKV } from '../../shared/types';
-import type { TTopologyEdge } from '../models/types';
-import { REFERENCE_COLLECTOR_MAPPER } from '../models/constants';
+import type {
+  TTopologyEdge,
+  TDefaultObjectKeys,
+  TDefaultReturnKeyMap,
+} from '../models/types';
+import {
+  REFERENCE_COLLECTOR_MAPPER,
+  DEFAULT_OBJECT_MAPPER,
+} from '../models/constants';
 import {
   isReferenceShape,
   isObjectShape,
@@ -8,6 +15,7 @@ import {
   isArrayShape,
   isBrandedShape,
   yieldItems,
+  cloneDeep,
 } from '../../shared/utils';
 
 /** @see {@link AuditServiceDocs.recursiveReferenceTracerPipeline} */
@@ -150,4 +158,18 @@ export function buildAdjacencyMap(
   }
 
   return adjacencyMap;
+}
+/**
+ * generateDefaultPayload
+ *
+ * ROLE: Generates the default audit payload based on the provided type.
+ *
+ * @see {@link AuditServiceDocs.generateDefaultPayload}
+ */
+export function createDefaultAuditTemplate<T extends TDefaultObjectKeys>(
+  defaultType: T,
+): TDefaultReturnKeyMap<T> {
+  const baseStaticTemplate = DEFAULT_OBJECT_MAPPER[defaultType];
+
+  return cloneDeep(baseStaticTemplate);
 }
