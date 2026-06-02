@@ -2,19 +2,17 @@ import {
   LOGGER_SIGNAL_EMOJIS,
   LOGGER_LAYOUT_CONFIG,
   LOGGER_DESIGN_SPECTRUM,
-} from './constants';
+} from '../constants';
 import type {
   TLoggerTheme,
   TLoggerBannerVariant,
   TTextColorToken,
-} from '../../types';
+} from '../types';
 
 export class XalorLoggerService {
   private readonly colors = LOGGER_DESIGN_SPECTRUM;
   private readonly layout = LOGGER_LAYOUT_CONFIG;
   private readonly emojis = LOGGER_SIGNAL_EMOJIS;
-
-  // private static readonly INNER_WIDTH = LOGGER_LAYOUT_CONFIG.canvasWidth - 2;
 
   protected fillCharacters(char: string, count: number): string {
     let result = '';
@@ -40,11 +38,7 @@ export class XalorLoggerService {
       return `${isBold ? c.bold : ''}${fg}${text}${c.reset}`;
     }
 
-    // 1. Determine our solid background block color based on structural theme
     let bg: string = c.bgCanvasBlock;
-
-    // 2. 🟢 THE CRITICAL FIX: Explicitly enforce the 'string' data type here!
-    // This tells TypeScript that 'fg' can hold any variable palette string safely.
     let fg: string = theme === 'crimson' ? c.textErrorBlock : c.textCanvasBlock;
 
     if (theme === 'crimson') {
@@ -54,24 +48,21 @@ export class XalorLoggerService {
       fg = c.textFooterContrastBlock;
     }
 
-    // 3. Resolve our semantic foreground typography color accent mappings cleanly
     if (theme === 'standard') {
       if (colorToken === 'error') fg = c.textLightRed;
       if (colorToken === 'success') fg = c.textLightGreen;
       if (colorToken === 'warning') fg = c.textLightYellow;
       if (colorToken === 'info') fg = c.textLightCyan;
     } else {
-      // Both 'crimson' and 'contrast' boxes use white text rows by default but allow neon accents
       if (colorToken === 'warning') fg = c.textLightYellow;
       if (colorToken === 'info') fg = c.textLightCyan;
-      if (colorToken === 'success') fg = c.textLightGreen; // This now compiles flawlessly!
+      if (colorToken === 'success') fg = c.textLightGreen;
       if (colorToken === 'error') fg = c.textLightRed;
     }
 
     const typographyFormat = isBold ? `${c.bold}${fg}` : fg;
     const CLEAR_TO_END_OF_LINE = '\x1b[K';
 
-    // Returns a perfectly straight, completely solid, multi-theme canvas rectangle box row
     return `${bg}${typographyFormat} ${text.trimEnd()}${CLEAR_TO_END_OF_LINE}${c.reset}`;
   }
 
@@ -85,14 +76,11 @@ export class XalorLoggerService {
     for (let i = 0; i < len; i++) {
       let currentLine = rawLines[i].trim();
 
-      // Bounded index chunks division replacing unsafe while loops
       for (let cycle = 0; cycle < 100; cycle++) {
         if (currentLine.length <= targetWidth) {
           yield currentLine;
           break;
         }
-
-        // Isolate a segment that safely fits within your inner text boundaries
         const chunk = currentLine.slice(0, targetWidth);
         yield chunk;
 
@@ -101,10 +89,6 @@ export class XalorLoggerService {
     }
   }
 
-  /**
-   * 🪐 REFACTORED MULTI-LINE LOG GENERATOR
-   * Consumes chunks on-the-fly, ensuring every single sub-line is padded and colored perfectly.
-   */
   public logParagraph(
     paragraphText: string,
     theme: TLoggerTheme = 'standard',
@@ -114,12 +98,10 @@ export class XalorLoggerService {
     // Determine the true available text width space inside the box bounds
     const maxUsableTextWidth = this.layout.canvasWidth - 6;
 
-    // Stream the chunks lazily through our generator pipeline with zero array thrashing
     for (const textLineChunk of this.chunkMessageText(
       paragraphText,
       maxUsableTextWidth,
     )) {
-      // Every single chunk line gets its own unique, fully padded background strip!
       this.logLine(`     ${textLineChunk}`, theme, isBold, color);
     }
   }
@@ -134,11 +116,9 @@ export class XalorLoggerService {
     const e = this.emojis;
 
     const totalBoxWidth = l.canvasWidth;
-    const borderFillLength = totalBoxWidth - 2; // Exact outer box corner padding width
+    const borderFillLength = totalBoxWidth - 2;
 
-    // ------------------------------------------------------------------------
     // VARIANT 1: THE FILLED TITLE BAR
-    // ------------------------------------------------------------------------
     if (variant === 'filled') {
       const barCharacter = '█';
       const edgeLine = this.fillCharacters(barCharacter, totalBoxWidth);
@@ -149,9 +129,7 @@ export class XalorLoggerService {
       return;
     }
 
-    // ------------------------------------------------------------------------
     // VARIANT 2: THE MINIMAL NO-BORDER HEADER
-    // ------------------------------------------------------------------------
     if (variant === 'minimal') {
       const signalIcon = theme === 'crimson' ? e.fault : e.anchor;
 
@@ -161,9 +139,7 @@ export class XalorLoggerService {
       return;
     }
 
-    // ------------------------------------------------------------------------
     // VARIANT 3: THE SPLIT UTILITY BOX (Left Title, Right Status)
-    // ------------------------------------------------------------------------
     if (variant === 'split') {
       const borderLine = this.fillCharacters('─', borderFillLength);
       const statusText = rightStatusText ?? 'ACTIVE';
@@ -180,9 +156,7 @@ export class XalorLoggerService {
       return;
     }
 
-    // ------------------------------------------------------------------------
     // VARIANT 4: THE STANDARD BOXED FRAME (Default Fallback)
-    // ------------------------------------------------------------------------
     const horizontalBorder = this.fillCharacters('═', borderFillLength);
     console.log(this.paintLine(`╔${horizontalBorder}╗`, theme));
     console.log(this.paintLine(`║  ${title.toUpperCase()}`, theme));
@@ -195,7 +169,6 @@ export class XalorLoggerService {
     theme: TLoggerTheme = 'standard',
     color: TTextColorToken = 'default',
   ): void {
-    // Standard text composition without inline color codes polluting lengths
     const rowText = `  ${this.emojis.bullet} ${label.padEnd(26)}: ${value}`;
 
     console.log(this.paintLine(rowText, theme, false, color));
@@ -217,7 +190,6 @@ export class XalorLoggerService {
     let dividerLine = '';
     const max = this.layout.canvasWidth;
 
-    // Commandment VIII: Bounded pointer allocation loops only
     for (let i = 0; i < max; i++) {
       dividerLine += character;
     }
@@ -232,14 +204,11 @@ export class XalorLoggerService {
     const OSC_LINK_END = '\x1b\\';
     const OSC_LINK_CLOSE = '\x1b]8;;\x1b\\';
 
-    // Normalize path strings to native file URLs if targeting local disk assets
     const targetUrl =
       absoluteUrlOrPath.startsWith('http') ||
       absoluteUrlOrPath.startsWith('file')
         ? absoluteUrlOrPath
         : `file://${absoluteUrlOrPath}`;
-
-    // Wraps the string cleanly into the terminal emulator's native link interpreter
     return `${OSC_LINK_START}${targetUrl}${OSC_LINK_END}${visibleTextLabel}${OSC_LINK_CLOSE}`;
   }
 }
