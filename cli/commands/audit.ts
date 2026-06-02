@@ -1,5 +1,5 @@
 import type { ICLIConfig } from '../models';
-import { auditEngineService } from '../service/cli-audit-engine';
+import { auditEngineService } from '../service';
 import { sanitizeFlags } from '../utils';
 /**
  * RUN AUDIT COMMAND

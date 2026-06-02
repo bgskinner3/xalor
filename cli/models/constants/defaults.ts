@@ -7,6 +7,7 @@ import type {
   TXalorAuditDrift,
   IStudioOverviewPayload,
   TAuditSizeMetrics,
+  TStudioNodeItem,
 } from '../types';
 import { TDeepWriteable } from '../../../shared';
 import { TELEMETRY_API_TOKEN_NAMES } from './audit';
@@ -41,7 +42,11 @@ export const DEFAULT_AUDIT_PAYLOAD: TDeepWriteable<IXalorAuditPayload> = {
     depthWarnings: [],
     duplicateShapes: [],
   },
-  telemetry: { orphanedKeys: [], strategyDistribution: [] },
+  telemetry: {
+    orphanedKeys: [],
+    strategyDistribution: [],
+    studioAPIMapper: {},
+  },
   lifecycleFootprint: {
     developmentCacheBytes: 0,
     productionEstimatedBytes: 0,
@@ -61,29 +66,11 @@ export const DEFAULT_AUDIT_PAYLOAD: TDeepWriteable<IXalorAuditPayload> = {
 
 export const DEFAULT_AUDIT_SHARED_PAYLOAD: TDeepWriteable<TAuditToStudioSharedData> =
   {
-    globalSummary: {
-      totalRegisteredKeys: 0,
-      totalUniqueFingerprints: 0,
-      casCompressionRatio: 0,
-      totalDatabaseDiskBytes: 0,
-      highestGraphDepthRecorded: 0,
-      compileTimeOverheadMs: 0,
-    },
+    globalSummary: DEFAULT_AUDIT_PAYLOAD.summary,
     nodes: [],
-    systemHygiene: {
-      totalOrphanedKeys: 0,
-      totalCriticalDepthWarnings: 0,
-      depthWarnings: [],
-      duplicateShapes: [],
-    },
-    telemetry: {
-      orphanedKeys: [],
-      strategyDistribution: [],
-    },
-    topology: {
-      edges: [],
-      cyclicPaths: [],
-    },
+    systemHygiene: DEFAULT_AUDIT_PAYLOAD.hygiene,
+    telemetry: DEFAULT_AUDIT_PAYLOAD.telemetry,
+    lifecycleFootprint: DEFAULT_AUDIT_PAYLOAD.lifecycleFootprint,
     drift: { hasBreakingChanges: false, mutations: [] },
   } satisfies TDeepWriteable<TAuditToStudioSharedData>;
 /**
@@ -115,6 +102,7 @@ export function createInitialTelemetryPayload(): TDeepWriteable<TXalorAuditTelem
   return {
     orphanedKeys: [],
     strategyDistribution: distributionBuffer,
+    studioAPIMapper: {},
   };
 }
 export const INITIAL_MUTABLE_TELEMETRY_TEMPLATE =
@@ -171,18 +159,6 @@ export const INITIAL_MUTABLE_DRIFT_TEMPLATE: TDeepWriteable<TXalorAuditDrift> =
   } satisfies TDeepWriteable<TXalorAuditDrift>;
 
 /**
- * DEFAULT OOBJECT GENEREATOR
- */
-export const DEFAULT_OBJECT_MAPPER = {
-  original: DEFAULT_AUDIT_PAYLOAD,
-  studio: DEFAULT_AUDIT_SHARED_PAYLOAD,
-  telemetry: INITIAL_MUTABLE_TELEMETRY_TEMPLATE,
-  node: BASE_AUDIT_NODE_RECORD,
-  drift: INITIAL_MUTABLE_DRIFT_TEMPLATE,
-  packageMetrics: DEFAULT_AUDIT_SIZE_METRICS,
-} as const;
-
-/**
  * DEFAULT_STUDIO_PAYLOAD
  * ROLE: Static emergency recovery zero-state container used if snapshot disk reads fail.
  * STRATEGY: Recursively un-locks all 'readonly' constraints to create an open baseline template
@@ -195,20 +171,15 @@ export const DEFAULT_STUDIO_PAYLOAD: TDeepWriteable<IStudioOverviewPayload> = {
     globalCompactionRatio: 0,
     totalDatabaseDiskBytes: 0,
     highestGraphDepthRecorded: 0,
+    compileTimeOverheadMs: 0,
   },
   systemHygiene: {
     totalOrphanedKeys: 0,
     totalCriticalDepthWarnings: 0,
     hasBreakingContractDrift: false,
   },
-  lifecycleFootprint: {
-    developmentCacheBytes: 0,
-    productionEstimatedBytes: 0,
-    netBytesEvaporated: 0,
-    evaporationEfficiencyRatio: 0,
-  },
+  lifecycleFootprint: DEFAULT_AUDIT_PAYLOAD.lifecycleFootprint,
   registryItems: {},
-  topology: { edges: [], cyclicPaths: [] },
   environment: {
     activePort: 8001,
     executionPlatform: 'unknown',
@@ -216,3 +187,42 @@ export const DEFAULT_STUDIO_PAYLOAD: TDeepWriteable<IStudioOverviewPayload> = {
     lastTelemetrySyncTimestamp: Date.now(),
   },
 } satisfies TDeepWriteable<IStudioOverviewPayload>;
+
+export const STUDIO_NODE_TEMPLATE: TDeepWriteable<TStudioNodeItem> = {
+  identity: {
+    typeKey: '',
+    symbolName: '',
+    casFingerprint: '',
+    isOrphan: true,
+  },
+  location: {
+    filePath: '',
+    line: 0,
+    column: 0,
+    anchorIndex: 0,
+  },
+  dataShape: '',
+  metrics: {
+    depth: 0,
+    complexityScore: 'FLAT_O1',
+    nodesCollapsed: 0,
+  },
+  apisUsed: {
+    generateXalor: [],
+    validateXalor: [],
+    transformXalor: [],
+  },
+} satisfies TDeepWriteable<TStudioNodeItem>;
+/**
+ * DEFAULT OOBJECT GENEREATOR
+ */
+export const DEFAULT_OBJECT_MAPPER = {
+  original: DEFAULT_AUDIT_PAYLOAD,
+  studio: DEFAULT_AUDIT_SHARED_PAYLOAD,
+  telemetry: INITIAL_MUTABLE_TELEMETRY_TEMPLATE,
+  node: BASE_AUDIT_NODE_RECORD,
+  drift: INITIAL_MUTABLE_DRIFT_TEMPLATE,
+  packageMetrics: DEFAULT_AUDIT_SIZE_METRICS,
+  studioNode: STUDIO_NODE_TEMPLATE,
+  studioDefault: DEFAULT_STUDIO_PAYLOAD,
+} as const;

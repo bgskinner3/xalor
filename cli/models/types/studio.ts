@@ -1,5 +1,19 @@
 import type { TTaxonomyTokenKeys } from './audit';
-import type { TSolidShape } from '../../../shared';
+import type {
+  TSolidShape,
+  TRuntimeTriggerName,
+  TTripleKV,
+} from '../../../shared';
+import { TELEMETRY_API_TOKEN_NAMES } from '../constants';
+import type {
+  TXalorAuditLifecycleFootprint,
+  TAuditToStudioSharedData,
+} from './audit';
+
+/**
+ * Core primitive lookup types mapped directly from the constant manifests.
+ */
+export type TTelemetryTokenNames = (typeof TELEMETRY_API_TOKEN_NAMES)[number];
 
 /**
  * TStudioGlobalSummary
@@ -17,6 +31,7 @@ type TStudioGlobalSummary = {
   readonly globalCompactionRatio: number;
   readonly totalDatabaseDiskBytes: number;
   readonly highestGraphDepthRecorded: number;
+  readonly compileTimeOverheadMs: number;
 };
 
 /**
@@ -31,37 +46,6 @@ type TSystemHygiene = {
   readonly totalOrphanedKeys: number;
   readonly totalCriticalDepthWarnings: number;
   readonly hasBreakingContractDrift: boolean;
-};
-
-/**
- * TLifeCycleFootPrint
- * ROLE: Three-phase storage metrics tracking raw structural evaporation deltas.
- *
- * @param developmentCacheBytes Footprint size inside node_modules/.cache with spatial IDE coordinates
- * @param productionEstimatedBytes Predicted size of bare-metal validation schema migrating to production bundles
- * @param netBytesEvaporated Volume of metadata fat permanently sliced away by the build-time engine
- * @param evaporationEfficiencyRatio Performance trimming efficiency coefficient (0.00 to 1.00)
- */
-type TLifeCycleFootPrint = {
-  readonly developmentCacheBytes: number;
-  readonly productionEstimatedBytes: number;
-  readonly netBytesEvaporated: number;
-  readonly evaporationEfficiencyRatio: number;
-};
-
-/**
- * TTopology
- * ROLE: Structural sharing network edge links and cyclic reference path vectors.
- *
- * @param edges Origin-to-target mapping tracing physical type dependency vectors
- * @param cyclicPaths Multi-dimensional array tracing closed-circuit recursion loops
- */
-type TTopology = {
-  readonly edges: readonly {
-    readonly sourceKey: string;
-    readonly targetKey: string;
-  }[];
-  readonly cyclicPaths: readonly (readonly string[])[];
 };
 
 /**
@@ -97,6 +81,7 @@ type TNodeItemIdentity = {
   readonly typeKey: string;
   readonly symbolName: string;
   readonly casFingerprint: string;
+  isOrphan: boolean;
 };
 
 /**
@@ -130,6 +115,24 @@ type TNodeItemMetrics = {
 };
 
 /**
+ * TStudioApiUsageMap
+ * ROLE: Highly structured, serializable JSON registry mapping active API usage.
+ * STRATEGY: Binds nominal type keys to their exact operational strategy modifiers point-free.
+ *
+ * ## 📘 Structural Blueprint Match
+ * ```ts
+ * {
+ *   TRANSACTION_EVENT: { generateXalor: ['mock'], validateXalor: [], transformXalor: [] },
+ *   USER_ACCOUNT:      { generateXalor: ['clone', 'default'], validateXalor: [], transformXalor: [] }
+ * }
+ * ```
+ */
+export type TStudioApiUsageMap = Record<
+  string,
+  Record<TRuntimeTriggerName, string[]>
+>;
+
+/**
  * TStudioNodeItem
  *
  * ROLE:
@@ -153,8 +156,32 @@ export type TStudioNodeItem = {
   readonly location: TNodeItemLocation;
   readonly dataShape: string; // Changed to string for V1 to minimize transmission overhead
   readonly metrics: TNodeItemMetrics;
+  readonly apisUsed: Record<TRuntimeTriggerName, string[]>;
 };
-// generateSolidTypeScriptString
+
+// export type TXalorAPIMode = 'generateXalor' | 'validateXalor' | 'transformXalor';
+
+// export type TStudioNodeItem = {
+//   readonly identity: {
+//     readonly typeKey: string;
+//     readonly symbolName: string;
+//     readonly casFingerprint: string;
+//   };
+//   readonly location: {
+//     readonly filePath: string;
+//     readonly line: number;
+//     readonly column: number;
+//     readonly anchorIndex: number;
+//   };
+//   readonly dataShape: string;
+//   readonly metrics: {
+//     readonly depth: number;
+//     readonly complexityScore: string;
+//     readonly nodesCollapsed: number;
+//   };
+//   // 🟢 NEW 10X MATRIX TRACKER
+//   readonly apisUsed: Record<TXalorAPIMode, readonly string[]>;
+// };
 // ======================================================================================================
 // ======================================================================================================
 // FINAL STUDIO PAYLOAD
@@ -175,9 +202,9 @@ export type TStudioNodeItem = {
 export interface IStudioOverviewPayload {
   readonly globalSummary: TStudioGlobalSummary;
   readonly systemHygiene: TSystemHygiene;
-  readonly lifecycleFootprint: TLifeCycleFootPrint;
+  readonly lifecycleFootprint: TXalorAuditLifecycleFootprint;
   readonly registryItems: Record<string, TStudioNodeItem>;
-  readonly topology: TTopology;
+
   readonly environment: TEnvironment;
 }
 
@@ -199,3 +226,8 @@ export type TRebuildParams = {
 export type TRebuildStrategy = (params: TRebuildParams) => string;
 
 export type TRebuildShapeMapper = Record<TSolidShape['kind'], TRebuildStrategy>;
+export type TFormatNodes = {
+  studioPayload: IStudioOverviewPayload;
+  sharedData: TAuditToStudioSharedData;
+  rawVaultData: TTripleKV;
+};

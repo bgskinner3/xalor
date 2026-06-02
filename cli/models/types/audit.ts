@@ -1,5 +1,4 @@
 import {
-  TELEMETRY_API_TOKEN_NAMES,
   DRIFT_VARIANCE_CATEGORIES,
   COMPLEXITY_TAXONOMY_TOKEN_KEYS,
   DEFAULT_OBJECT_MAPPER,
@@ -9,11 +8,16 @@ import type {
   TSolidObjectRawShape,
   TDeepWriteable,
 } from '../../../shared/types';
+import type {
+  TTelemetryTokenNames,
+  TStudioApiUsageMap,
+  TStudioNodeItem,
+  IStudioOverviewPayload,
+} from './studio';
 
 /**
  * Core primitive lookup types mapped directly from the constant manifests.
  */
-export type TTelemetryTokenNames = (typeof TELEMETRY_API_TOKEN_NAMES)[number];
 export type TVarianceCategories = (typeof DRIFT_VARIANCE_CATEGORIES)[number];
 export type TTaxonomyTokenKeys = keyof typeof COMPLEXITY_TAXONOMY_TOKEN_KEYS;
 
@@ -111,6 +115,7 @@ export type TTelemetryStrategyShape = {
 export type TXalorAuditTelemetry = {
   readonly orphanedKeys: readonly string[];
   readonly strategyDistribution: readonly TTelemetryStrategyShape[];
+  readonly studioAPIMapper: TStudioApiUsageMap;
 };
 
 /**
@@ -193,7 +198,7 @@ export type TAuditToStudioSharedData = {
   readonly nodes: readonly TXalorAuditNode[];
   readonly systemHygiene: TXalorAuditHygiene;
   readonly telemetry: TXalorAuditTelemetry;
-  readonly topology: TXalorAuditTopology;
+  readonly lifecycleFootprint: TXalorAuditLifecycleFootprint;
   readonly drift: TXalorAuditDrift;
 };
 /**
@@ -246,6 +251,8 @@ type TDefaultReturnMap = {
   node: TDeepWriteable<TXalorAuditNode>;
   drift: TDeepWriteable<TXalorAuditDrift>;
   packageMetrics: TDeepWriteable<TAuditSizeMetrics>;
+  studioNode: TDeepWriteable<TStudioNodeItem>;
+  studioDefault: TDeepWriteable<IStudioOverviewPayload>;
 };
 export type TDefaultObjectKeys = keyof typeof DEFAULT_OBJECT_MAPPER;
 
@@ -356,4 +363,15 @@ export type TAPIModeCounter = {
   sanitizedFileString: string;
   registeredKeySet: Set<string>;
   counters: Record<string, number>;
+  seenKeys: Set<string>;
+};
+export type TAPIStudioModeCounter = {
+  counters: Record<string, number>;
+  sanitizedFileString: string;
+  apiUsageCollectionMap: Map<string, Record<string, Set<string>>>;
+};
+export type TCapturedAPICall = {
+  readonly apiMode: string;
+  readonly targetKey: string;
+  readonly strategyToken: string;
 };

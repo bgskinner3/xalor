@@ -1,77 +1,80 @@
-// import * as fs from 'fs';
 import * as os from 'os';
-import type { TDeepWriteable, TTripleKV } from '../../shared/types';
-import type { IStudioOverviewPayload, TXalorAuditNode } from '../models/types';
-import { yieldItems } from '../../shared/utils';
+import type {
+  IStudioOverviewPayload,
+  TDefaultObjectKeys,
+  TDefaultReturnKeyMap,
+  TFormatNodes,
+} from '../models/types';
+import {
+  yieldItems,
+  cloneDeep,
+  isValidSolidShape,
+  isKeyInObject,
+} from '../../shared/utils';
 import { fsContext } from '../../shared/service';
-// import { CLIAuditEngineService } from './audit-cli-service';
 import { auditEngineService } from './cli-audit-engine';
 import {
-  DEFAULT_STUDIO_PAYLOAD,
+  DEFAULT_OBJECT_MAPPER,
   STUDIO_COMMAND_CONFIG,
 } from '../models/constants';
 import { generateSolidTypeScriptString } from '../utils';
 
 export class StudioCLIEngineService {
-  // private readonly auditEngine: CLIAuditEngineService;
+  private createDefaultAuditTemplate<T extends TDefaultObjectKeys>(
+    defaultType: T,
+  ): TDefaultReturnKeyMap<T> {
+    const baseStaticTemplate = DEFAULT_OBJECT_MAPPER[defaultType];
 
-  // constructor(projectRoot: string) {
-  //   this.auditEngine = new CLIAuditEngineService(projectRoot);
-  // }
-
-  private generateDefaultPayload(
-    fallbackPort?: number,
-  ): TDeepWriteable<IStudioOverviewPayload> {
-    const freshPayload = JSON.parse(
-      JSON.stringify(DEFAULT_STUDIO_PAYLOAD),
-    ) as TDeepWriteable<IStudioOverviewPayload>;
-
-    freshPayload.environment.activePort =
-      fallbackPort ?? STUDIO_COMMAND_CONFIG.port;
-    freshPayload.environment.executionPlatform = os.platform();
-    freshPayload.environment.nodeRuntimeVersion = process.version;
-    freshPayload.environment.lastTelemetrySyncTimestamp = Date.now();
-
-    // Explicitly guarantee registryItems starts completely empty for the new loop pass
-    freshPayload.registryItems = {};
-
-    return freshPayload;
+    return cloneDeep(baseStaticTemplate);
   }
 
-  private formatRegistryItems(
-    studioPayload: IStudioOverviewPayload,
-    nodes: readonly TXalorAuditNode[],
-    rawVaultData: TTripleKV,
-  ) {
-    for (const node of yieldItems(nodes)) {
-      const blueprintShape =
-        rawVaultData.blueprints[node.identity.casFingerprint];
+  private formatNodes(params: TFormatNodes) {
+    const { studioPayload, rawVaultData, sharedData } = params;
+    const nodes = sharedData.nodes;
+    const { studioAPIMapper, orphanedKeys } = sharedData.telemetry;
+    const orphanLookup = new Set(orphanedKeys);
 
-      if (blueprintShape) {
-        // 🪐 THE KV ASSIGNMENT: Make the unique typeKey the primary index accessor
-        studioPayload.registryItems[node.identity.typeKey] = {
-          identity: {
-            typeKey: node.identity.typeKey,
-            symbolName: node.identity.symbolName,
-            casFingerprint: node.identity.casFingerprint,
-          },
-          location: {
-            filePath: node.location.filePath,
-            line: node.location.line,
-            column: node.location.column,
-            anchorIndex: node.location.anchor,
-          },
-          dataShape: generateSolidTypeScriptString(
-            blueprintShape,
-            rawVaultData.blueprints,
-          ),
-          metrics: {
-            depth: node.metrics.depth,
-            complexityScore: node.metrics.complexityScore,
-            nodesCollapsed: node.metrics.nodesCollapsed,
-          },
-        };
+    for (const node of yieldItems(nodes)) {
+      if (!node) continue;
+
+      const uuidName = node.identity.typeKey;
+      /* prettier-ignore */
+      const blueprintShape = rawVaultData.blueprints[node.identity.casFingerprint];
+      if (!isValidSolidShape(blueprintShape)) continue;
+
+      const template = this.createDefaultAuditTemplate('studioNode');
+
+      // Hydrate identity primitives point-free
+      template.identity.typeKey = uuidName;
+      template.identity.symbolName = node.identity.symbolName;
+      template.identity.casFingerprint = node.identity.casFingerprint;
+      template.identity.isOrphan = orphanLookup.has(uuidName);
+
+      // Hydrate spatial file system coordinates mapping tokens cleanly
+      template.location = {
+        filePath: node.location.filePath,
+        line: node.location.line,
+        column: node.location.column,
+        anchorIndex: node.location.anchor, // Map explicit parameter names safely
+      };
+
+      // V1 Optimization Handshake: Pre-compile our complex AST into flat text strings
+      template.dataShape = generateSolidTypeScriptString(
+        blueprintShape,
+        rawVaultData.blueprints,
+      );
+
+      template.metrics = {
+        depth: node.metrics.depth,
+        complexityScore: node.metrics.complexityScore,
+        nodesCollapsed: node.metrics.nodesCollapsed,
+      };
+
+      // Ingest pre-seeded API usage lists, falling back gracefully to empty lists
+      if (isKeyInObject(uuidName)(studioAPIMapper)) {
+        template.apisUsed = studioAPIMapper[uuidName];
       }
+      studioPayload.registryItems[uuidName] = template;
     }
   }
 
@@ -91,7 +94,7 @@ export class StudioCLIEngineService {
   public async compileDashboardOverviewDataset(
     activePort: number,
   ): Promise<IStudioOverviewPayload> {
-    const studioPayload = this.generateDefaultPayload(activePort);
+    const studioPayload = this.createDefaultAuditTemplate('studioDefault');
     const rawVaultData = await fsContext.ingestVaultSnapshotFromDisk();
 
     // Fire your optimized, headless audit calculator loop pass to fetch raw data calculation sheets
@@ -100,16 +103,18 @@ export class StudioCLIEngineService {
     if (!rawVaultData || sharedData.globalSummary.totalRegisteredKeys === 0) {
       return studioPayload;
     }
-
+    studioPayload.environment.activePort =
+      activePort ?? STUDIO_COMMAND_CONFIG.port;
+    studioPayload.environment.executionPlatform = os.platform();
+    studioPayload.environment.nodeRuntimeVersion = process.version;
+    studioPayload.environment.lastTelemetrySyncTimestamp = Date.now();
     // =========================================================================
     // GLOBAL SUMMARY FOOTPRINT HYDRATION
     // =========================================================================
-    /* prettier-ignore */ studioPayload.globalSummary.totalRegisteredKeys = sharedData.globalSummary.totalRegisteredKeys;
-    /* prettier-ignore */ studioPayload.globalSummary.totalUniqueFingerprints = sharedData.globalSummary.totalUniqueFingerprints;
-    /* prettier-ignore */ studioPayload.globalSummary.globalCompactionRatio = sharedData.globalSummary.casCompressionRatio;
-    /* prettier-ignore */ studioPayload.globalSummary.totalDatabaseDiskBytes = sharedData.globalSummary.totalDatabaseDiskBytes;
-    /* prettier-ignore */ studioPayload.globalSummary.highestGraphDepthRecorded = sharedData.globalSummary.highestGraphDepthRecorded;
-
+    studioPayload.globalSummary = {
+      ...sharedData.globalSummary,
+      globalCompactionRatio: sharedData.globalSummary.casCompressionRatio,
+    };
     // =========================================================================
     // SYSTEM HYGIENE FOOTPRINT HYDRATION
     // =========================================================================
@@ -120,17 +125,7 @@ export class StudioCLIEngineService {
     // =========================================================================
     // LIFECYCLE MEMORY FOOTPRINT HYDRATION
     // =========================================================================
-    /* prettier-ignore */ studioPayload.lifecycleFootprint.developmentCacheBytes = sharedData.globalSummary.totalDatabaseDiskBytes;
-    /* prettier-ignore */ studioPayload.lifecycleFootprint.productionEstimatedBytes = sharedData.globalSummary.totalDatabaseDiskBytes;
-
-    // =========================================================================
-    // TOPOLOGY LAYOUT NETWORK HYDRATION
-    // =========================================================================
-    // SECURE FIX: Map array properties point-free straight to their correct target channels
-    studioPayload.topology.edges = [...sharedData.topology.edges];
-    studioPayload.topology.cyclicPaths = sharedData.topology.cyclicPaths.map(
-      (pathRow) => [...pathRow],
-    );
+    studioPayload.lifecycleFootprint = sharedData.lifecycleFootprint;
 
     // =========================================================================
     // PHYSICAL INFRASTRUCTURE ENVIRONMENT HYDRATION
@@ -138,9 +133,22 @@ export class StudioCLIEngineService {
     studioPayload.environment.activePort = activePort;
 
     // 3. EXECUTE REGISTRY HYDRATION INTERACTION PASS
-    this.formatRegistryItems(studioPayload, sharedData.nodes, rawVaultData);
+    this.formatNodes({ studioPayload, sharedData, rawVaultData });
 
     // 4. RETURN THE COMPRESSED OBJECT ENVELOPE SECURELY FROZEN (0 compile errors!)
     return Object.freeze(studioPayload);
   }
 }
+/**
+     const studioEngine = new StudioCLIEngineService();
+    const res = await studioEngine.compileDashboardOverviewDataset(8001);
+    console.log('==========================================');
+    console.dir(res, {
+      depth: null,
+      colors: true,
+      showHidden: false,
+    });
+    console.log('==========================================');
+    console.log('==========================================');
+    console.log('\n\n\n\n');
+ */

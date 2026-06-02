@@ -95,7 +95,7 @@ export class AuditEngineService extends AuditPresenterService {
       mutableNodesCopy,
     );
     /* prettier-ignore */
-    const telemetry = await telemetryService.profileRuntimeFootprintAndOrphans(rawVaultData);
+    const telemetry = await telemetryService.profileRuntimeFootprintAndOrphans(rawVaultData, 'audit');
 
     /* prettier-ignore */
     const drift = await auditDriftService.interceptContractDriftRadar(rawVaultData);
@@ -127,7 +127,7 @@ export class AuditEngineService extends AuditPresenterService {
       lifecycleFootprint,
       drift,
       topology,
-    };
+    }
   }
 
   public async executeStudioOverviewRun(): Promise<TAuditToStudioSharedData> {
@@ -151,10 +151,13 @@ export class AuditEngineService extends AuditPresenterService {
       mutableNodesCopy,
     );
 
-    const telemetry =
-      await telemetryService.profileRuntimeFootprintAndOrphans(rawVaultData);
-    const topology =
-      topologyAuditService.analyzeDependencyGraphTopology(rawVaultData);
+    const telemetry = await telemetryService.profileRuntimeFootprintAndOrphans(
+      rawVaultData,
+      'studio',
+    );
+    const lifecycleFootprint =
+      packageAuditorService.computeLifecycleFootprintDeltas(rawVaultData);
+
     const drift =
       await auditDriftService.interceptContractDriftRadar(rawVaultData);
 
@@ -172,8 +175,8 @@ export class AuditEngineService extends AuditPresenterService {
       nodes,
       systemHygiene,
       telemetry,
-      topology,
       drift,
+      lifecycleFootprint,
     };
   }
 }

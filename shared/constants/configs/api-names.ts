@@ -19,27 +19,6 @@ export const SENTRY_TRIGGER_NAMES = [
   'generateXalor',
   'transformXalor',
 ] as const;
-/**
- * SENTRY_TRIGGER_MODES
- *
- * ROLE:
- * Concrete sub-command taxonomy configurations partitioning strategy tokens into
- * distinct runtime operational disciplines.
- *
- * STRATEGY:
- * - Deterministic Validation Boundary: Forces strict compilation-time isolation of
- *   sub-commands across core synthesis, boundary routing, and shape transformation loops.
- * - Strategy Taxonomy Enforcement: Serves as the authoritative list used by the static
- *   crawler to filter parameter structures and flag illegal runtime API tokens.
- */
-export const SENTRY_TRIGGER_MODES = {
-  generateXalor: ['default', 'mock', 'clone', 'cast'] as const,
-  validateXalor: ['guard', 'assert', 'parse', 'parseAsync', 'audit'] as const,
-  transformXalor: ['pick', 'omit', 'rename', 'merge', 'flatten'] as const,
-};
-
-// Unrolls your parent function keys natively into a strict compile-time list matrix
-export const RUNTIME_TRIGGER_NAMES = ObjectUtils.keys(SENTRY_TRIGGER_MODES);
 
 /**
  * MASTER GENERATOR MODES CONFIGURATION
@@ -96,6 +75,27 @@ export const TRANSFORM_MODE_TRIGGERS = [
   'flatten',
   'merge',
 ] as const;
+/**
+ * SENTRY_TRIGGER_MODES
+ *
+ * ROLE:
+ * Concrete sub-command taxonomy configurations partitioning strategy tokens into
+ * distinct runtime operational disciplines.
+ *
+ * STRATEGY:
+ * - Deterministic Validation Boundary: Forces strict compilation-time isolation of
+ *   sub-commands across core synthesis, boundary routing, and shape transformation loops.
+ * - Strategy Taxonomy Enforcement: Serves as the authoritative list used by the static
+ *   crawler to filter parameter structures and flag illegal runtime API tokens.
+ */
+export const SENTRY_TRIGGER_MODES = {
+  generateXalor: GENERATOR_MODE_TRIGGERS,
+  validateXalor: VALIDATION_MODE_TRIGGERS,
+  transformXalor: TRANSFORM_MODE_TRIGGERS,
+};
+
+// Unrolls your parent function keys natively into a strict compile-time list matrix
+export const RUNTIME_TRIGGER_NAMES = ObjectUtils.keys(SENTRY_TRIGGER_MODES);
 
 /**
  * STEPS TO UPDATE TRANFORMER REGISTRY

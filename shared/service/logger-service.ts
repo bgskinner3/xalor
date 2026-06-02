@@ -4,14 +4,14 @@ import {
   LOGGER_DESIGN_SPECTRUM,
   LOGGER_TOKEN_COLORS,
   LOGGER_THEME_BLOCKS,
-} from '../../constants';
+} from '../constants';
 import type {
   TLoggerTheme,
   TLoggerBannerVariant,
   TTextColorToken,
   TLoggerOutputMode,
-} from '../../types';
-import { isLiteralMatch, yieldItems, isKeyInObject } from '../../utils';
+} from '../types';
+import { isLiteralMatch, yieldItems, isKeyInObject } from '../utils';
 
 export class LoggerServiceCore {
   private readonly colors = LOGGER_DESIGN_SPECTRUM;
@@ -236,26 +236,7 @@ export class LoggerServiceCore {
 
     return buffer.join('\n');
   }
-  // public standardErrorTemplate(
-  //   subSystemLabel: string,
-  //   reason: string,
-  //   rawText: string,
-  //   mode: TLoggerOutputMode = 'log',
-  // ): string | void {
-  //   const buffer: string[] = [];
 
-  //   const label = `❌ [Xalor:${subSystemLabel}]: ${reason}`;
-  //   const reasonText = `   ↳ Reason: ${rawText}`;
-
-  //   buffer.push(this.paintLine(label, 'naked', true, 'error'));
-  //   buffer.push(this.paintLine(reasonText, 'naked', false, 'error'));
-
-  //   const finalBlockString = buffer.join('\n');
-
-  //   if (mode === 'str') return finalBlockString;
-
-  //   console.error(finalBlockString);
-  // }
   /* prettier-ignore */
   public standardErrorTemplate(subSystemLabel: string, error: unknown, mode?: 'log'): void;
   /* prettier-ignore */

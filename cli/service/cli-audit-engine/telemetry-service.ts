@@ -3,10 +3,21 @@ import type {
   IXalorAuditPayload,
   TScanTelemetryParams,
   TAPIModeCounter,
+  TAPIStudioModeCounter,
+  TCapturedAPICall,
+  TStudioApiUsageMap,
 } from '../../models/types';
 import { TSConfigService, fsContext } from '../../../shared/service';
-import type { TRuntimeTriggerName, TTripleKV } from '../../../shared/types';
-import { isAllowedFileExt, ObjectUtils } from '../../../shared/utils';
+import type {
+  TDeepWriteable,
+  TRuntimeTriggerName,
+  TTripleKV,
+} from '../../../shared/types';
+import {
+  isAllowedFileExt,
+  ObjectUtils,
+  yieldItems,
+} from '../../../shared/utils';
 import { RUNTIME_TRIGGER_NAMES } from '../../../shared/constants';
 import { TELEMETRY_API_TOKEN_NAMES } from '../../models/constants';
 import { createDefaultAuditTemplate } from '../../utils';
@@ -18,6 +29,8 @@ export class TelemetryService {
   private runtimeTriggerNames: TRuntimeTriggerName[] = RUNTIME_TRIGGER_NAMES;
   /* prettier-ignore */
   private triggerCheckRegEx = new RegExp(`\\b(${this.runtimeTriggerNames.join('|')})\\b`);
+
+  private mode: 'audit' | 'studio' = 'audit';
 
   private createTelemetryScanContext(projectRoot: string) {
     const counters: Record<string, number> = {};
@@ -81,6 +94,7 @@ export class TelemetryService {
 
   private countAPIMethodUsage(params: TAPIModeCounter) {
     const { sanitizedFileString, counters } = params;
+
     const runtimeTriggersChoiceGroup = this.runtimeTriggerNames.join('|');
     for (const strategyToken of this.strategyTokensArray) {
       const contextualRegex = new RegExp(
@@ -99,11 +113,41 @@ export class TelemetryService {
       }
     }
   }
+  private studioAPIUsageCompile(params: TAPIStudioModeCounter) {
+    const { sanitizedFileString, counters, apiUsageCollectionMap } = params;
+    const capturedCalls = this.scanAndExtractAPICalls(sanitizedFileString);
+    for (const call of yieldItems(capturedCalls)) {
+      // Increment global counter metrics point-free
+      if (call.strategyToken in counters) {
+        counters[call.strategyToken]++;
+      }
 
+      // Initialize target entry slots if first time seeing this contract symbol key
+      if (!apiUsageCollectionMap.has(call.targetKey)) {
+        apiUsageCollectionMap.set(call.targetKey, {
+          generateXalor: new Set<string>(),
+          validateXalor: new Set<string>(),
+          transformXalor: new Set<string>(),
+        });
+      }
+
+      const contractMap = apiUsageCollectionMap.get(call.targetKey);
+      if (contractMap && call.apiMode in contractMap) {
+        // Add the explicit mode token modifier natively (e.g. 'assert', 'intern')
+        contractMap[call.apiMode].add(call.strategyToken);
+        console.log(
+          ` ⚡ STRATEGY LINKED: Key '${call.targetKey}' -> Mode '${call.apiMode}' [${call.strategyToken}]`,
+        );
+      }
+    }
+  }
   private async scanTelemetryFiles(
-    params: TScanTelemetryParams,
+    params: TScanTelemetryParams & {
+      apiUsageCollectionMap: Map<string, Record<string, Set<string>>>;
+    },
   ): Promise<void> {
-    const { counters, seenKeys, registeredKeySet, targetDir, excludes } =
+    /* prettier-ignore */
+    const { counters, seenKeys, registeredKeySet, targetDir, excludes,   apiUsageCollectionMap } =
       params;
     const directoryEntries = await fsContext.asyncReadDir(targetDir);
     const { length } = directoryEntries;
@@ -122,6 +166,7 @@ export class TelemetryService {
           registeredKeySet,
           targetDir: absoluteFilePath,
           excludes,
+          apiUsageCollectionMap,
         });
         continue;
       }
@@ -143,17 +188,77 @@ export class TelemetryService {
         }
       });
 
-      this.countAPIMethodUsage({
-        sanitizedFileString,
-        registeredKeySet,
-        counters,
-      });
+      if (this.mode === 'studio') {
+        this.countAPIMethodUsage({
+          sanitizedFileString,
+          registeredKeySet,
+          counters,
+          seenKeys,
+        });
+      }
+      if (this.mode === 'studio') {
+        this.studioAPIUsageCompile({
+          sanitizedFileString,
+          apiUsageCollectionMap,
+          counters,
+        });
+      }
     }
   }
+  private scanAndExtractAPICalls(
+    sanitizedFileString: string,
+  ): readonly TCapturedAPICall[] {
+    const apiTriggersGroup = this.runtimeTriggerNames.join('|');
+    const strategyTokensGroup = this.strategyTokensArray.join('|');
+
+    // Captures: Group 1: API Mode, Group 2: Target Key Name, Group 3: Strategy Token modifier
+    const captureRegex = new RegExp(
+      `\\b(${apiTriggersGroup})\\b(?:<|\\()\\s*['"]([^'"]+)['"]\\s*,\\s*['"](${strategyTokensGroup})['"]`,
+      'g',
+    );
+
+    const matches: TCapturedAPICall[] = [];
+
+    // 🟢 10X LOOP REFACTOR (Commandment VIII & IX Alignment)
+    // matchAll extracts an iterator interface natively, removing mutable exec tracking blocks
+    for (const matchResultNode of sanitizedFileString.matchAll(captureRegex)) {
+      matches.push({
+        apiMode: matchResultNode[1]!, // e.g. "generateXalor"
+        targetKey: matchResultNode[2]!, // e.g. "ACCOUNT_META"
+        strategyToken: matchResultNode[3]!, // e.g. "intern" / "assert"
+      });
+    }
+
+    return matches;
+  }
+
+  private formatStudioAPICalls(
+    apiUsageCollectionMap: Map<
+      string,
+      Record<TRuntimeTriggerName, Set<string>>
+    >,
+  ) {
+    const apiUsageMap: TDeepWriteable<TStudioApiUsageMap> = Object.create(null);
+    for (const [key, modes] of apiUsageCollectionMap.entries()) {
+      apiUsageMap[key] = {
+        generateXalor: Array.from(modes.generateXalor),
+        validateXalor: Array.from(modes.validateXalor),
+        transformXalor: Array.from(modes.transformXalor),
+      };
+    }
+
+    return apiUsageMap;
+  }
+
   public async profileRuntimeFootprintAndOrphans(
     vault: TTripleKV,
+    mode: 'audit' | 'studio' = 'audit',
   ): Promise<IXalorAuditPayload['telemetry']> {
+    this.mode = mode;
+    /* prettier-ignore */
     const telemetryObject = createDefaultAuditTemplate('telemetry');
+    /* prettier-ignore */
+    const apiUsageCollectionMap = new Map<string,Record<string, Set<string>>>();
 
     const registeredKeys = ObjectUtils.keys(vault.references);
     /* prettier-ignore */
@@ -177,6 +282,7 @@ export class TelemetryService {
         registeredKeySet,
         targetDir,
         excludes,
+        apiUsageCollectionMap,
       });
     } catch (error) {
       const errorMsg =
@@ -187,6 +293,7 @@ export class TelemetryService {
         `❌ [Xalor Debug Error] File scanner channel failure: ${errorMsg}`,
       );
     }
+
     const keysLen = registeredKeys.length;
     for (let k = 0; k < keysLen; k++) {
       const key = registeredKeys[k];
@@ -204,6 +311,10 @@ export class TelemetryService {
       if (entry !== undefined) {
         entry.invocationCount = counters[entry.strategyToken] ?? 0;
       }
+    }
+    if (this.mode === 'studio') {
+      const apiUsageMap = this.formatStudioAPICalls(apiUsageCollectionMap);
+      telemetryObject.studioAPIMapper = apiUsageMap;
     }
 
     return telemetryObject;
