@@ -1,9 +1,11 @@
-import * as fs from 'fs';
+// import * as fs from 'fs';
 import * as os from 'os';
 import type { TDeepWriteable, TTripleKV } from '../../shared/types';
 import type { IStudioOverviewPayload, TXalorAuditNode } from '../models/types';
 import { yieldItems } from '../../shared/utils';
-import { CLIAuditEngineService } from './audit-cli-service';
+import { fsContext } from '../../shared/service';
+// import { CLIAuditEngineService } from './audit-cli-service';
+import { auditEngineService } from './cli-audit-engine';
 import {
   DEFAULT_STUDIO_PAYLOAD,
   STUDIO_COMMAND_CONFIG,
@@ -11,22 +13,12 @@ import {
 import { generateSolidTypeScriptString } from '../utils';
 
 export class StudioCLIEngineService {
-  private readonly auditEngine: CLIAuditEngineService;
+  // private readonly auditEngine: CLIAuditEngineService;
 
-  constructor(projectRoot: string) {
-    this.auditEngine = new CLIAuditEngineService(projectRoot);
-  }
-  // private generateDefaultPayload(
-  //   fallbackPort?: number,
-  // ): TDeepWriteable<IStudioOverviewPayload> {
-  //   DEFAULT_STUDIO_PAYLOAD.environment.activePort =
-  //     fallbackPort ?? STUDIO_COMMAND_CONFIG.port;
-  //   DEFAULT_STUDIO_PAYLOAD.environment.executionPlatform = os.platform();
-  //   DEFAULT_STUDIO_PAYLOAD.environment.nodeRuntimeVersion = process.version;
-  //   DEFAULT_STUDIO_PAYLOAD.environment.lastTelemetrySyncTimestamp = Date.now();
-
-  //   return DEFAULT_STUDIO_PAYLOAD;
+  // constructor(projectRoot: string) {
+  //   this.auditEngine = new CLIAuditEngineService(projectRoot);
   // }
+
   private generateDefaultPayload(
     fallbackPort?: number,
   ): TDeepWriteable<IStudioOverviewPayload> {
@@ -45,23 +37,6 @@ export class StudioCLIEngineService {
     freshPayload.registryItems = {};
 
     return freshPayload;
-  }
-
-  /**  @see {@link AuditServiceDocs.ingestRawVaultFromDisk}*/
-  private async ingestRawVaultFromDisk(): Promise<TTripleKV | null> {
-    try {
-      // Safely leverage the pre-computed vault path exposed by your internal engine
-      const vaultPath = this.auditEngine.paths.vaultFile;
-      if (!fs.existsSync(vaultPath)) {
-        return null;
-      }
-
-      const rawJson = await fs.promises.readFile(vaultPath, 'utf-8');
-      return JSON.parse(rawJson);
-    } catch {
-      // TODO: ERROR HANDLER
-      return null;
-    }
   }
 
   private formatRegistryItems(
@@ -118,10 +93,10 @@ export class StudioCLIEngineService {
     activePort: number,
   ): Promise<IStudioOverviewPayload> {
     const studioPayload = this.generateDefaultPayload(activePort);
-    const rawVaultData = await this.ingestRawVaultFromDisk();
+    const rawVaultData = await fsContext.ingestVaultSnapshotFromDisk();
 
     // Fire your optimized, headless audit calculator loop pass to fetch raw data calculation sheets
-    const sharedData = await this.auditEngine.executeStudioOverviewRun();
+    const sharedData = await auditEngineService.executeStudioOverviewRun();
 
     if (!rawVaultData || sharedData.globalSummary.totalRegisteredKeys === 0) {
       return studioPayload;

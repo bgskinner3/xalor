@@ -11,6 +11,15 @@ import type {
 import { TDeepWriteable } from '../../../shared';
 import { TELEMETRY_API_TOKEN_NAMES } from './audit';
 /**
+ * DEFAULT_AUDIT_SIZE_METRICS
+ */
+export const DEFAULT_AUDIT_SIZE_METRICS: TAuditSizeMetrics = {
+  bundleSizeBytes: 0,
+  estimatedInstallFootprintBytes: 0,
+  productionDependenciesCount: 0,
+  isMissingManifest: true,
+} satisfies TAuditSizeMetrics;
+/**
  * DEFAULT_AUDIT_PAYLOAD
  * ROLE: Emergency recovery zero-state container used if snapshot disk reads fail during main CLI cycles.
  * STRATEGY: Recursively strips 'readonly' modifiers to provide a deeply mutable scaffolding shell layout,
@@ -23,6 +32,7 @@ export const DEFAULT_AUDIT_PAYLOAD: TDeepWriteable<IXalorAuditPayload> = {
     casCompressionRatio: 0,
     totalDatabaseDiskBytes: 0,
     highestGraphDepthRecorded: 0,
+    compileTimeOverheadMs: 0,
   },
   nodes: [],
   hygiene: {
@@ -37,6 +47,7 @@ export const DEFAULT_AUDIT_PAYLOAD: TDeepWriteable<IXalorAuditPayload> = {
     productionEstimatedBytes: 0,
     netBytesEvaporated: 0,
     evaporationEfficiencyRatio: 0,
+    physicalPackageMetrics: DEFAULT_AUDIT_SIZE_METRICS,
   },
   drift: { hasBreakingChanges: false, mutations: [] },
   topology: { edges: [], cyclicPaths: [] },
@@ -56,6 +67,7 @@ export const DEFAULT_AUDIT_SHARED_PAYLOAD: TDeepWriteable<TAuditToStudioSharedDa
       casCompressionRatio: 0,
       totalDatabaseDiskBytes: 0,
       highestGraphDepthRecorded: 0,
+      compileTimeOverheadMs: 0,
     },
     nodes: [],
     systemHygiene: {
@@ -157,15 +169,7 @@ export const INITIAL_MUTABLE_DRIFT_TEMPLATE: TDeepWriteable<TXalorAuditDrift> =
     hasBreakingChanges: false,
     mutations: [],
   } satisfies TDeepWriteable<TXalorAuditDrift>;
-/**
- * DEFAULT_AUDIT_SIZE_METRICS
- */
-export const DEFAULT_AUDIT_SIZE_METRICS: TAuditSizeMetrics = {
-  bundleSizeBytes: 0,
-  estimatedInstallFootprintBytes: 0,
-  productionDependenciesCount: 0,
-  isMissingManifest: true,
-} satisfies TAuditSizeMetrics;
+
 /**
  * DEFAULT OOBJECT GENEREATOR
  */

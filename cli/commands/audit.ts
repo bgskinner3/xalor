@@ -1,5 +1,6 @@
 import type { ICLIConfig } from '../models';
-import { CLIAuditEngineService, AuditPresenterService } from '../service';
+import { AuditPresenterService } from '../service';
+import { auditEngineService } from '../service/cli-audit-engine';
 import { sanitizeFlags } from '../utils';
 /**
  * RUN AUDIT COMMAND
@@ -21,8 +22,10 @@ export async function runAuditCommand(
   }
 
   try {
-    const auditEngine = new CLIAuditEngineService(projectRoot);
-    const auditPayload = await auditEngine.executeFullAuditRun(sanitizedFlags);
+    const fixedFlagResolved = sanitizedFlags.fix ? true : false;
+    const auditPayload = await auditEngineService.executeFullAuditRun({
+      fix: fixedFlagResolved,
+    });
 
     // 2. RETRIEVE METRICS VALIDATION CEILING
     if (auditPayload.summary.totalRegisteredKeys === 0) {

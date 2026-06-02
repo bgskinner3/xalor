@@ -35,7 +35,7 @@ export function runStudioCommand(projectRootPath: string): void {
 
   process.env.XALOR_CLI_STUDIO = 'true';
 
-  const studioEngine = new StudioCLIEngineService(projectRootPath);
+  const studioEngine = new StudioCLIEngineService();
 
   const connectedClientSocketsPool = new Set<http.ServerResponse>();
 

@@ -1,4 +1,4 @@
-import type { TXalorParsedConfig } from '../../types';
+import type { TXalorParsedConfig, TTripleKV } from '../../types';
 import { ModuleKind, ScriptTarget } from 'typescript';
 import { IS_SOLID_CONFIG_ITEMS } from '../configs';
 /**
@@ -129,3 +129,11 @@ export const CONFIG_FALLBACK_DEFAULT: TXalorParsedConfig = {
   excludePatterns: IS_SOLID_CONFIG_ITEMS.buildLayer.mandatoryExcludePatterns,
   isFallbackMode: true,
 } satisfies TXalorParsedConfig;
+
+export const DEFAULT_VAULT_SHAPE_FALLBACK: TTripleKV = {
+  blueprints: {},
+  references: {},
+  manifest: {},
+  registry: {},
+  version: '1.0.0',
+} satisfies TTripleKV;

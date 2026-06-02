@@ -7,18 +7,25 @@ import type {
   TCoreFileNameMapper,
   TRecursiveReadonly,
   TRootDirBranded,
+  TTripleKV,
 } from '../types';
-import { IS_SOLID_CONFIG_ITEMS } from '../constants/configs';
-import { createBranding } from '../utils';
+import {
+  IS_SOLID_CONFIG_ITEMS,
+  DEFAULT_VAULT_SHAPE_FALLBACK,
+} from '../constants';
+import { createBranding, ObjectUtils } from '../utils';
 import {
   isWorkspace,
   isFilesystemRoot,
   isArray,
   isUndefined,
   isDir,
+  isTripleKVShape,
+  isValidSolidShape,
 } from '../utils/guards';
 
 export class FileSystemContextService {
+  private vaultFallback: TTripleKV = DEFAULT_VAULT_SHAPE_FALLBACK;
   /* prettier-ignore */
   public fileNames: TRecursiveReadonly<TCoreFileNameMapper> = IS_SOLID_CONFIG_ITEMS.fileNames;
   public searchFileNames = IS_SOLID_CONFIG_ITEMS.searchFileNames;
@@ -170,6 +177,9 @@ export class FileSystemContextService {
   public async asyncReadText(absoluteFilePath: string): Promise<string> {
     return await fs.promises.readFile(absoluteFilePath, 'utf8');
   }
+  public async asyncWrite(filePath: string, payload: string): Promise<void> {
+    await fs.promises.writeFile(filePath.valueOf(), payload, 'utf8');
+  }
   public async asyncFileStats(filePath: string): Promise<Stats> {
     return await fs.promises.stat(filePath);
   }
@@ -181,9 +191,56 @@ export class FileSystemContextService {
   }
   // ================================================================================
   // ================================================================================
-  // FILE STATS AND EXISTANCE
+  // METADATA HANDLERS
   // ================================================================================
   // ================================================================================
+  public async ingestVaultSnapshotFromDisk(): Promise<TTripleKV> {
+    try {
+      if (!this.fileExists(this.envPaths.vaultFile)) return this.vaultFallback;
+
+      const rawJsonString = await this.asyncReadText(this.envPaths.vaultFile);
+      const parsedVault: unknown = JSON.parse(rawJsonString);
+
+      if (!parsedVault || !isTripleKVShape(parsedVault))
+        return this.vaultFallback;
+      const candidate = parsedVault;
+
+      const blueprintKeys = ObjectUtils.keys(candidate.blueprints);
+      const blueprints = candidate.blueprints;
+
+      for (const key of blueprintKeys) {
+        const shapeNode = blueprints[key];
+        if (!isValidSolidShape(shapeNode)) return this.vaultFallback;
+      }
+
+      return candidate;
+    } catch {
+      // TODO: ERROR HANDLER
+      return this.vaultFallback;
+    }
+  }
+
+  /** @see {@link AuditServiceDocs.syncAuditBaselineFile} */
+  public async syncAuditedBaselineFile(vault: TTripleKV): Promise<void> {
+    try {
+      const optimizedJsonString = JSON.stringify(vault, null, 2);
+
+      await this.asyncWrite(this.envPaths.baselineFile, optimizedJsonString);
+    } catch {
+      // TODO: add our Error handler logger
+    }
+  }
+
+  /* prettier-ignore */
+  public async ingestBaselineVault(baselineFilePath: string): Promise<TTripleKV> {
+    try {
+      const rawBaselineString = await this.asyncReadText(baselineFilePath);
+      return JSON.parse(rawBaselineString);
+    } catch {
+      // TODO: ADD ERROR LOGGER
+      return this.vaultFallback;
+    }
+  }
 }
 
 export const fsContext = new FileSystemContextService();

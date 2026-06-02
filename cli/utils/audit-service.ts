@@ -1,13 +1,10 @@
-import type { TSolidShape, TTripleKV } from '../../shared/types';
+import type { TTripleKV } from '../../shared/types';
 import type {
   TTopologyEdge,
   TDefaultObjectKeys,
   TDefaultReturnKeyMap,
 } from '../models/types';
-import {
-  REFERENCE_COLLECTOR_MAPPER,
-  DEFAULT_OBJECT_MAPPER,
-} from '../models/constants';
+import { DEFAULT_OBJECT_MAPPER } from '../models/constants';
 import {
   isReferenceShape,
   isObjectShape,
@@ -17,43 +14,6 @@ import {
   yieldItems,
   cloneDeep,
 } from '../../shared/utils';
-
-/** @see {@link AuditServiceDocs.recursiveReferenceTracerPipeline} */
-export function recursiveReferenceTracerPipeline(
-  shape: TSolidShape,
-  blueprints: TTripleKV['blueprints'],
-  activeHashesInUse: Set<string>,
-): void {
-  if (!shape) return;
-
-  if (isReferenceShape(shape)) {
-    const targetHash = shape.name;
-    if (!activeHashesInUse.has(targetHash)) {
-      activeHashesInUse.add(targetHash);
-      const referencedShape = blueprints[targetHash];
-      if (referencedShape) {
-        /* prettier-ignore */
-        recursiveReferenceTracerPipeline(referencedShape, blueprints, activeHashesInUse);
-      }
-    }
-    return;
-  }
-
-  const executeDistributedCollector = <K extends TSolidShape['kind']>(
-    targetKind: K,
-    targetShape: Extract<TSolidShape, { kind: K }>,
-  ): void => {
-    const handler = REFERENCE_COLLECTOR_MAPPER[targetKind];
-    if (handler) {
-      handler(targetShape, activeHashesInUse, (child: TSolidShape) =>
-        recursiveReferenceTracerPipeline(child, blueprints, activeHashesInUse),
-      );
-    }
-  };
-
-  // Dispatch point-free with complete static safety, zero errors, and zero casting overrides
-  executeDistributedCollector(shape.kind, shape);
-}
 
 /** @see {@link AuditServiceDocs.buildTopologyEdge} */
 export function buildTopologyEdge(

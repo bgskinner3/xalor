@@ -33,6 +33,7 @@ export type TXalorAuditSummary = {
   readonly casCompressionRatio: number;
   readonly totalDatabaseDiskBytes: number;
   readonly highestGraphDepthRecorded: number;
+  readonly compileTimeOverheadMs: number;
 };
 
 export type TParsedLocation = {
@@ -82,13 +83,13 @@ export type TDuplicateShape = {
  * @param duplicateShapes Identical structures compiled under separate unique string keys
  */
 export type TXalorAuditHygiene = {
-  readonly totalOrphanedKeys: number;
+  totalOrphanedKeys: number;
   readonly totalCriticalDepthWarnings: number;
   readonly depthWarnings: readonly TDepthWarning[];
   readonly duplicateShapes: readonly TDuplicateShape[];
 };
 
-/**
+/**totalOrphanedKeys
  * TTelemetryStrategyShape
  * ROLE: Pivot mapping linking runtime strategy sub-commands to static usage markers.
  *
@@ -180,6 +181,7 @@ export type TXalorAuditLifecycleFootprint = {
   readonly productionEstimatedBytes: number;
   readonly netBytesEvaporated: number;
   readonly evaporationEfficiencyRatio: number;
+  readonly physicalPackageMetrics: TAuditSizeMetrics;
 };
 /**
  * TAuditToStudioSharedData
