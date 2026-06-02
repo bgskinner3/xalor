@@ -109,6 +109,7 @@ class AuditSummaryService {
   public async calculateCasStorageSavings(
     vault: TTripleKV,
     nodes: TXalorAuditNode[],
+    debug: boolean = false,
   ): Promise<TDeepWriteable<IXalorAuditPayload['summary']>> {
     const userVaultKeys = ObjectUtils.keys(vault.references);
     const unqHashes = ObjectUtils.keys(vault.blueprints);

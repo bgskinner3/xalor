@@ -68,7 +68,7 @@ export class AuditEngineService extends AuditPresenterService {
   /** @see {@link AuditServiceDocs.executeFullAuditRun} */
 
   /* prettier-ignore */
-  public async executeFullAuditRun(flags: { fix: boolean; }): Promise<IXalorAuditPayload> {
+  public async executeFullAuditRun(flags: { fix: boolean; debug: boolean }): Promise<IXalorAuditPayload> {
 
     const baseTemplate = this.createDefaultAuditTemplate('original');
     const performanceStartMarker = performance.now();

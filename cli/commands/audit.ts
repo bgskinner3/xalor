@@ -22,9 +22,10 @@ export async function runAuditCommand(
 
   try {
     const fix = sanitizedFlags.fix ? true : false;
-    // const debug = sanitizedFlags.debug ? true : false;
+    const debug = sanitizedFlags.debug ? true : false;
     const auditPayload = await auditEngineService.executeFullAuditRun({
       fix,
+      debug,
     });
 
     // 2. RETRIEVE METRICS VALIDATION CEILING
