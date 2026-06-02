@@ -63,32 +63,24 @@ export function runCompileCommand(projectRootPath: string): void {
 
   const diagnosticsList: ts.Diagnostic[] = [...ingestEmitResult.diagnostics];
 
-  const targetedFilesCount = localTargetedFilesSet.size;
+  // const targetedFilesCount = localTargetedFilesSet.size;
   console.log(
     `✨ Ingestion pass complete. Isolated ${localTargetedFilesSet.size} targeted file tracks from local envelope:\n` +
       `   ↳ [ ${[...localTargetedFilesSet].join(', ')} ]`,
   );
-  // ========================================================================
-  if (targetedFilesCount > 0) {
-    console.log(
-      '🪐 [Xalor CLI] Phase 2: Materializing code injections inline...',
-    );
 
-    const reifyEmitResult = program.emit(
-      undefined,
-      () => {},
-      undefined,
-      false,
-      {
-        before: [
-          xalorTransformerPlugin(program, {
-            compilationPhase: 'REIFY_RUNTIME',
-          }),
-        ],
-      },
-    );
-    diagnosticsList.push(...reifyEmitResult.diagnostics);
-  }
+  console.log(
+    '🪐 [Xalor CLI] Phase 2: Materializing code injections inline...',
+  );
+
+  const reifyEmitResult = program.emit(undefined, () => {}, undefined, false, {
+    before: [
+      xalorTransformerPlugin(program, {
+        compilationPhase: 'REIFY_RUNTIME',
+      }),
+    ],
+  });
+  diagnosticsList.push(...reifyEmitResult.diagnostics);
   // ========================================================================
   // 🛰️ DEDUPLICATED DIAGNOSTICS PERFORMANCE LEDGER
   // 🟢 FIXED: Aggregates pre-emit structural errors, pass 1 metadata warnings,
@@ -104,8 +96,6 @@ export function runCompileCommand(projectRootPath: string): void {
       );
     }
   });
-
-  // console.log('💾 Freezing workspace metadata and flushing cache registers...');
 
   // ====================================================================================
   // NATIVE ASYNC TICK BUFFER

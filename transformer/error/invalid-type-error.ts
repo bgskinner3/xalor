@@ -38,7 +38,6 @@ export class XalorInvalidTypeError extends Error {
     Object.setPrototypeOf(this, XalorInvalidTypeError.prototype);
     this.name = 'XalorInvalidTypeError';
 
-    // 🪐 THE NON-ENUMERABLE PRIVATE CONTAINER ASSIGNMENT
     if (format === 'original') {
       Object.defineProperty(this, '_failure', {
         value: failure,
@@ -74,3 +73,42 @@ export class XalorInvalidTypeError extends Error {
     return Reflect.get(this, '_keyName') as string | undefined;
   }
 }
+// // transformer/visitor.ts
+// import { XalorInvalidTypeError } from '../shared/errors/XalorInvalidTypeError';
+
+// export function checkTypeNodeCompliance(node: ts.Node, program: ts.Program) {
+//   // ... your graph safety depth validations execute here ...
+//   const conditionIsCorrupt = true; // Simulating a loop breach event
+
+//   if (conditionIsCorrupt) {
+//     const sourceFile = node.getSourceFile();
+//     const absolutePath = sourceFile.fileName; // e.g. "/src/labeled-registry-tests.ts"
+
+//     // 🟢 PATH 1: Pull the exact coordinates of the type declaration definition itself!
+//     // (This finds where the type TInfiniteLoop is physically declared in the file)
+//     const typeDeclLine = 14; // Derived from your symbol/type declaration node metrics
+//     const typeDeclChar = 5;
+//     const typeDefinitionLocation = `${absolutePath}:${typeDeclLine}:${typeDeclChar}`;
+
+//     // 🟢 PATH 2: Pull the exact line/column where the validation function was actively CALLED!
+//     // (This targets the exact character where they typed assert<T>(...) inside the source file)
+//     const { line: callLine, character: callChar } = ts.getLineAndCharacterOfPosition(
+//       sourceFile,
+//       node.getStart()
+//     );
+//     const compilerCallSiteLocation = `${absolutePath}:${callLine + 1}:${callChar + 1}`;
+
+//     // Throw the error by handing it BOTH high-precision coordinate strings!
+//     throw new XalorInvalidTypeError(
+//       'TEST_RULE_CHECK_4',
+//       typeDefinitionLocation,  // Handed to the Type Definition row
+//       {
+//         rule: 'COMPUTATIONAL_COLLAPSE',
+//         message: "Target type alias 'TInfiniteLoop' contains an un-terminated recursive loop calculation."
+//       },
+//       'compile',
+//       'formatted',
+//       compilerCallSiteLocation // Handed down as a custom override call-site parameter link!
+//     );
+//   }
+// }

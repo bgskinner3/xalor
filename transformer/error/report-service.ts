@@ -1,20 +1,21 @@
 import {
-  ANSI_COLOR_CODES,
+  // ANSI_COLOR_CODES,
   getCallerLocation,
   isInstanceOf,
   isStringFunction,
   isUndefined,
+  yieldItems,
 } from '../../shared';
 import {
   REPORT_SERVICE_MODE_ROUTER,
   COMPILER_DIAGNOSTIC_FALLBACKS,
 } from '../constants';
 import type {
-  THeaderModes,
   TReportServiceContext,
   TCompilerAnomalyKey,
   TLogAnomalyParams,
 } from '../types';
+import { xalorLog } from '../../shared';
 
 /**
  * TransformerReportService
@@ -32,62 +33,43 @@ export class TransformerReportService {
   // ===============================================================================================================
   // ===============================================================================================================
   // ===============================================================================================================
-
-  private static ansiColorCodes = ANSI_COLOR_CODES;
   private static readonly MODE_ROUTER = REPORT_SERVICE_MODE_ROUTER;
-  // 🟢 OPTIMIZED: Pre-calculated header lines mapped point-free to avoid execution variables allocations
-  private static readonly HEADER_MATRIX: Record<THeaderModes, string> = {
-    hard: `${ANSI_COLOR_CODES.red}${ANSI_COLOR_CODES.bold}❌ [Xalor Build Blocked] CRITICAL INVARIANT RULE BREACH${ANSI_COLOR_CODES.reset}`,
-    watch: `${ANSI_COLOR_CODES.yellow}${ANSI_COLOR_CODES.bold}⚠️  [Xalor Type Validator] REGISTER INTENT REJECTED${ANSI_COLOR_CODES.reset}`,
-    soft: `${ANSI_COLOR_CODES.cyan}${ANSI_COLOR_CODES.bold}ℹ️  [Xalor Diagnostic Info] SYSTEM NOTIFICATION${ANSI_COLOR_CODES.reset}`,
-  };
-
-  // 🟢 OPTIMIZED: Pre-calculated footer strings matching your exact semantic state divisions perfectly
-  private static readonly FOOTER_MATRIX: Record<THeaderModes, string> = {
-    hard: `  ${ANSI_COLOR_CODES.red}🛑 Action:${ANSI_COLOR_CODES.reset} ${ANSI_COLOR_CODES.bold}Terminating compilation process immediately to protect integrity.${ANSI_COLOR_CODES.reset}`,
-    watch: `  ${ANSI_COLOR_CODES.green}🔒 Action:${ANSI_COLOR_CODES.reset} ${ANSI_COLOR_CODES.gray}Aborted cache commit for this node. Watcher remaining active.${ANSI_COLOR_CODES.reset}`,
-    soft: `  ${ANSI_COLOR_CODES.blue}ℹ️  Action:${ANSI_COLOR_CODES.reset} ${ANSI_COLOR_CODES.gray}System notification logged successfully. Core parameters untouched.${ANSI_COLOR_CODES.reset}`,
-  };
-  // ===============================================================================================================
-  // ===============================================================================================================
-  // ===============================================================================================================
-  // PUBLIC METHODS
-  // ===============================================================================================================
-  // ===============================================================================================================
-  // ===============================================================================================================
 
   public static generateTerminalPanel(ctx: TReportServiceContext): string {
     const { keyName, fileLocation, message, rule, mode } = ctx;
-    const ansiColors = this.ansiColorCodes;
+    // 1. Resolve your visual mode token cleanly through the router dictionary mapping pass [INDEX]
+    const targetVisualMode = this.MODE_ROUTER[mode] ?? 'soft';
+    /* prettier-ignore */ const ruleLabel = rule && rule.length > 0 ? rule.toUpperCase() : 'GENERAL_FAULT';
 
-    const targetVisualMode = this.MODE_ROUTER[mode];
-
-    const statusHeader = this.HEADER_MATRIX[targetVisualMode];
-    const statusFooter = this.FOOTER_MATRIX[targetVisualMode];
+    const visualTheme = targetVisualMode === 'hard' ? 'crimson' : 'standard';
 
     const invocationCallSite = getCallerLocation();
 
-    /* prettier-ignore */
-    const ruleLabel = !isUndefined(rule) && rule.length > 0 ? rule.toUpperCase() : 'GENERAL_FAULT';
+    /* prettier-ignore */ const interactiveFileLink = xalorLog.formatTerminalLink(fileLocation, fileLocation);
+    /* prettier-ignore */ const interactiveCallSiteLink = xalorLog.formatTerminalLink(invocationCallSite, invocationCallSite);
+    const buffer: string[] = [];
 
-    const reportBuffer: string[] = [
-      `\n${ansiColors.gray}┌────────────────────────────────────────────────────────────────────────────┐${ansiColors.reset}`,
-      `  ${statusHeader}`,
-      `  ${ansiColors.cyan}➔ Target Key:${ansiColors.reset} ${ansiColors.bold}${keyName}${ansiColors.reset}`,
-      `  ${ansiColors.red}➔ Rule Category:${ansiColors.reset} ${ansiColors.magenta}${ansiColors.bold}${ruleLabel}${ansiColors.reset}`,
-      `  ${ansiColors.gray}├────────────────────────────────────────────────────────────────────────────┤${ansiColors.reset}`,
-      `  ${ansiColors.bold}💎 Type Definition (Source Link):${ansiColors.reset}`,
-      `    ${ansiColors.cyan}↳ ${fileLocation}${ansiColors.reset}`,
-      `  ${ansiColors.bold}⚡ Runtime Call Site (Invocation Link):${ansiColors.reset}`,
-      `    ${ansiColors.cyan}↳ ${invocationCallSite}${ansiColors.reset}`,
-      `  ${ansiColors.gray}├────────────────────────────────────────────────────────────────────────────┤${ansiColors.reset}`,
-      `  ${ansiColors.bold}💥 Error Details:${ansiColors.reset}`,
-      `    ${ansiColors.yellow}${message.replace(/\n/g, '\n    ')}${ansiColors.reset}`,
-      `   ${statusFooter}`,
-      `${ansiColors.gray}└────────────────────────────────────────────────────────────────────────────┘${ansiColors.reset}\n`,
-    ];
+    /* prettier-ignore */ buffer.push(xalorLog.getLogLine('', 'naked'));
+    /* prettier-ignore */ buffer.push(xalorLog.getBanner(`[Xalor Alert] ${ruleLabel.toUpperCase()}`, visualTheme));
+    /* prettier-ignore */ buffer.push(xalorLog.getPanelRow('Target Key Name', keyName, visualTheme, 'warning'));
+    /* prettier-ignore */ buffer.push(xalorLog.getPanelRow('Rule Category Track', ruleLabel, visualTheme, 'error'));
+    /* prettier-ignore */ buffer.push(xalorLog.getDivider('-', visualTheme));
+    /* prettier-ignore */ buffer.push(xalorLog.getLogLine(`  💎 Type Definition (Source Link):`, visualTheme, true));
+    /* prettier-ignore */ buffer.push(xalorLog.getLogLine(`  ↳ ${interactiveFileLink}`, visualTheme, false, 'info'));
+    /* prettier-ignore */ buffer.push(xalorLog.getLogLine(`  ⚡ Runtime Call Site (Invocation Link):`, visualTheme, true));
+    /* prettier-ignore */ buffer.push(xalorLog.getLogLine(`  ↳ ${interactiveCallSiteLink}`, visualTheme, false, 'info'));
+    /* prettier-ignore */ buffer.push(xalorLog.getDivider('-', visualTheme));
+    /* prettier-ignore */ buffer.push(xalorLog.getLogLine(`  💥 Error Details:`, visualTheme, true));
 
-    return reportBuffer.join('\n');
+    const messageLines = message.split(/\r?\n/);
+    for (const rawLine of yieldItems(messageLines)) {
+      /* prettier-ignore */ buffer.push(xalorLog.getLogLine(`     ${rawLine.trim()}`, visualTheme));
+    }
+
+    /* prettier-ignore */ buffer.push(xalorLog.getDivider('═', visualTheme));
+    /* prettier-ignore */ buffer.push(xalorLog.getLogLine('', 'naked'));
+
+    return buffer.join('\n');
   }
 
   /**
@@ -121,14 +103,6 @@ export class TransformerReportService {
       : template;
   }
 
-  /**
-   * logAnomaly
-   * CENTRAL LOGGING GATEWAY
-   *
-   * ROLE:
-   * Stateless printing endpoint that automatically normalizes text and pipes
-   * beautifully formatted ANSI border panels cleanly straight to console streams.
-   */
   public static logAnomaly(params: TLogAnomalyParams): void {
     const { keyName, fileLocation, error, mode } = params;
 

@@ -211,6 +211,48 @@ export class XalorLoggerService {
         : `file://${absoluteUrlOrPath}`;
     return `${OSC_LINK_START}${targetUrl}${OSC_LINK_END}${visibleTextLabel}${OSC_LINK_CLOSE}`;
   }
+
+  public getLogLine(
+    text: string,
+    theme: TLoggerTheme,
+    isBold = false,
+    color: TTextColorToken = 'default',
+  ): string {
+    return this.paintLine(text, theme, isBold, color);
+  }
+
+  public getBanner(title: string, theme: TLoggerTheme = 'standard'): string {
+    const totalBoxWidth = this.layout.canvasWidth;
+    const borderFillLength = totalBoxWidth - 2;
+    const horizontalBorder = this.fillCharacters('═', borderFillLength);
+
+    // Returns the exact three-tier header sequence string block
+    return [
+      this.paintLine(`╔${horizontalBorder}╗`, theme),
+      this.paintLine(`║  ${title.toUpperCase()}`, theme),
+      this.paintLine(`╚${horizontalBorder}╝`, theme),
+    ].join('\n');
+  }
+
+  public getPanelRow(
+    label: string,
+    value: string | number,
+    theme: TLoggerTheme = 'standard',
+    color: TTextColorToken = 'default',
+  ): string {
+    return this.paintLine(
+      `  ${this.emojis.bullet} ${label.padEnd(26)}: ${value}`,
+      theme,
+      false,
+      color,
+    );
+  }
+
+  public getDivider(character = '━', theme: TLoggerTheme = 'standard'): string {
+    let dividerLine = '';
+    for (let i = 0; i < this.layout.canvasWidth; i++) dividerLine += character;
+    return this.paintLine(dividerLine, theme);
+  }
 }
 
 export const xalorLog = new XalorLoggerService();
