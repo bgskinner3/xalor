@@ -97,7 +97,7 @@ xalor.register<'TX', Transaction>();
 ### 3. Validate data
 
 ```ts
-const mock = xalor.generate<'TX'>();
+xalor.validate<'TX'>(payload);
 ```
 
 ### 4. Generate mock data

@@ -1,7 +1,7 @@
 import { validateXalor } from '../../src/operations';
 import { TEST_SHAPE_REGISTRY } from '../utils/constants';
 import { seedTestVault } from '../utils';
-
+// import { xalor } from '../../src/operations/xalor-core';
 /**
  pnpm run test -- __tests__/validate/guard-xalor.test.ts
 
@@ -19,6 +19,7 @@ describe('Runtime Generator API', () => {
     it('🎯 should successfully compile a higher-order type guard closure and narrow input schemas', () => {
       // 1. Invoke the switchboard to simulate the transformer injection array output
       const isUser = validateXalor<'USER_TEST', 'guard'>();
+      // const isUser = xalor.guard<'USER_TEST'>();
       expect(isUser).toBeInstanceOf(Function);
 
       // 2. Structural Test Pass
