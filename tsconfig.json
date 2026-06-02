@@ -3,7 +3,12 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "lib": ["ESNext", "DOM", "DOM.Iterable", "ESNext.AsyncIterable"],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable",
+      "ESNext.AsyncIterable"
+    ],
     "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
@@ -26,9 +31,18 @@
     "rootDir": ".",
     "outDir": "./dist",
     "noImplicitAny": false,
-    "types": ["node", "jest"]
+    "types": [
+      "node",
+      "jest"
+    ]
   },
-  "ignoreDiagnostics": [5023, 5024, 5039, 5072, 5103],
+  "ignoreDiagnostics": [
+    5023,
+    5024,
+    5039,
+    5072,
+    5103
+  ],
   "include": [
     "src/**/*",
     "transformer/**/*",
@@ -40,7 +54,11 @@
     "intellisense-docs.d.ts",
     "cli",
     "tsup.config.ts",
-    "__tests__/setup.ts"
+    "__tests__/setup.ts",
+    "cb-docs/doc-site/**/*"
   ],
-  "exclude": ["dist", "node_modules"]
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
 }

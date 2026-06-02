@@ -188,7 +188,7 @@ export class TelemetryService {
         }
       });
 
-      if (this.mode === 'studio') {
+      if (this.mode === 'audit') {
         this.countAPIMethodUsage({
           sanitizedFileString,
           registeredKeySet,
