@@ -3,31 +3,27 @@ import {
   LOGGER_LAYOUT_CONFIG,
   LOGGER_DESIGN_SPECTRUM,
 } from './constants';
+import type {
+  TLoggerTheme,
+  TLoggerBannerVariant,
+  TTextColorToken,
+} from '../../types';
 
-export type TLoggerTheme = 'standard' | 'crimson' | 'contrast' | 'naked';
-
-export type TLoggerBannerVariant = 'boxed' | 'filled' | 'minimal' | 'split';
-export type TTextColorToken =
-  | 'default'
-  | 'error'
-  | 'success'
-  | 'warning'
-  | 'info';
 export class XalorLoggerService {
-  private static readonly colors = LOGGER_DESIGN_SPECTRUM;
-  private static readonly layout = LOGGER_LAYOUT_CONFIG;
-  private static readonly emojis = LOGGER_SIGNAL_EMOJIS;
+  private readonly colors = LOGGER_DESIGN_SPECTRUM;
+  private readonly layout = LOGGER_LAYOUT_CONFIG;
+  private readonly emojis = LOGGER_SIGNAL_EMOJIS;
 
   // private static readonly INNER_WIDTH = LOGGER_LAYOUT_CONFIG.canvasWidth - 2;
 
-  protected static fillCharacters(char: string, count: number): string {
+  protected fillCharacters(char: string, count: number): string {
     let result = '';
     for (let i = 0; i < count; i++) {
       result += char;
     }
     return result;
   }
-  private static paintLine(
+  private paintLine(
     text: string,
     theme: TLoggerTheme,
     isBold: boolean = false,
@@ -78,50 +74,8 @@ export class XalorLoggerService {
     // Returns a perfectly straight, completely solid, multi-theme canvas rectangle box row
     return `${bg}${typographyFormat} ${text.trimEnd()}${CLEAR_TO_END_OF_LINE}${c.reset}`;
   }
-  // private static paintLine(
-  //   text: string,
-  //   theme: TLoggerTheme,
-  //   isBold: boolean = false,
-  //   colorToken: TTextColorToken = 'default',
-  // ): string {
-  //   const c = this.colors;
 
-  //   // Handle unboxed naked text streams cleanly first
-  //   if (theme === 'naked') {
-  //     let fg: string = c.reset;
-  //     if (colorToken === 'error') fg = c.textLightRed;
-  //     if (colorToken === 'success') fg = c.textLightGreen;
-  //     if (colorToken === 'warning') fg = c.textLightYellow;
-  //     if (colorToken === 'info') fg = c.textLightCyan;
-  //     return `${isBold ? c.bold : ''}${fg}${text}${c.reset}`;
-  //   }
-
-  //   const bg = theme === 'crimson' ? c.bgErrorBlock : c.bgCanvasBlock;
-  //   let fg: string = theme === 'crimson' ? c.textErrorBlock : c.textCanvasBlock;
-
-  //   if (theme === 'standard') {
-  //     if (colorToken === 'error') fg = c.textLightRed;
-  //     if (colorToken === 'success') fg = c.textLightGreen;
-  //     if (colorToken === 'warning') fg = c.textLightYellow;
-  //     if (colorToken === 'info') fg = c.textLightCyan;
-  //   } else if (theme === 'crimson') {
-  //     if (colorToken === 'warning') fg = c.textLightYellow;
-  //     if (colorToken === 'info') fg = c.textLightCyan;
-  //   }
-
-  //   const typographyFormat = isBold ? `${c.bold}${fg}` : fg;
-
-  //   // ========================================================================
-  //   // 🪐 THE ANSI ERASE TO LINE-END STREAM (True 100% Span Fix)
-  //   // ========================================================================
-  //   // \x1b[K instructs the terminal to fill the rest of the terminal line
-  //   // with the active background color block automatically, ignoring emoji math!
-  //   const CLEAR_TO_END_OF_LINE = '\x1b[K';
-
-  //   // We right-trim the visible text to prevent trailing spaces from breaking the paint
-  //   return `${bg}${typographyFormat} ${text.trimEnd()}${CLEAR_TO_END_OF_LINE}${c.reset}`;
-  // }
-  public static *chunkMessageText(
+  public *chunkMessageText(
     text: string,
     targetWidth: number,
   ): Generator<string, void, unknown> {
@@ -151,7 +105,7 @@ export class XalorLoggerService {
    * 🪐 REFACTORED MULTI-LINE LOG GENERATOR
    * Consumes chunks on-the-fly, ensuring every single sub-line is padded and colored perfectly.
    */
-  public static logParagraph(
+  public logParagraph(
     paragraphText: string,
     theme: TLoggerTheme = 'standard',
     isBold: boolean = false,
@@ -170,7 +124,7 @@ export class XalorLoggerService {
     }
   }
 
-  public static banner(
+  public banner(
     title: string,
     theme: TLoggerTheme = 'standard',
     variant: TLoggerBannerVariant = 'boxed',
@@ -235,7 +189,7 @@ export class XalorLoggerService {
     console.log(this.paintLine(`╚${horizontalBorder}╝`, theme));
   }
 
-  public static panelRow(
+  public panelRow(
     label: string,
     value: string | number,
     theme: TLoggerTheme = 'standard',
@@ -246,7 +200,7 @@ export class XalorLoggerService {
 
     console.log(this.paintLine(rowText, theme, false, color));
   }
-  public static logLine(
+  public logLine(
     text: string,
     theme: TLoggerTheme = 'standard',
     isBold: boolean = false,
@@ -255,7 +209,7 @@ export class XalorLoggerService {
     console.log(this.paintLine(text, theme, isBold, color));
   }
 
-  public static divider(
+  public divider(
     character: string = '━',
     theme: TLoggerTheme = 'standard',
     color: TTextColorToken = 'default',
@@ -270,7 +224,7 @@ export class XalorLoggerService {
 
     console.log(this.paintLine(dividerLine, theme, false, color));
   }
-  public static formatTerminalLink(
+  public formatTerminalLink(
     absoluteUrlOrPath: string,
     visibleTextLabel: string,
   ): string {
@@ -289,3 +243,5 @@ export class XalorLoggerService {
     return `${OSC_LINK_START}${targetUrl}${OSC_LINK_END}${visibleTextLabel}${OSC_LINK_CLOSE}`;
   }
 }
+
+export const xalorLog = new XalorLoggerService();

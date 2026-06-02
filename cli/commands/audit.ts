@@ -1,5 +1,4 @@
 import type { ICLIConfig } from '../models';
-import { AuditPresenterService } from '../service';
 import { auditEngineService } from '../service/cli-audit-engine';
 import { sanitizeFlags } from '../utils';
 /**
@@ -51,7 +50,7 @@ export async function runAuditCommand(
       console.log(JSON.stringify(auditPayload));
     } else {
       // Fall back cleanly to painting your high-fidelity human-readable console panels
-      AuditPresenterService.renderReportTables(auditPayload);
+      auditEngineService.renderReportTables(auditPayload);
     }
 
     // 5. ENFORCE BUILD LIFECYCLE BOUNDARY CEILING

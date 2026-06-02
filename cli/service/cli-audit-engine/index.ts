@@ -17,7 +17,7 @@ import { topologyAuditService } from './topology-service';
 import { auditRegistryService } from './audit-registry-nodes';
 import { performance } from 'perf_hooks';
 import { fsContext } from '../../../shared';
-
+import { AuditPresenterService } from './audit-presenter';
 /**
  * CLIAuditEngineService
  *
@@ -46,7 +46,7 @@ import { fsContext } from '../../../shared';
  *
  * @class
  */
-export class AuditEngineService {
+export class AuditEngineService extends AuditPresenterService {
   private createDefaultAuditTemplate<T extends TDefaultObjectKeys>(
     defaultType: T,
   ): TDefaultReturnKeyMap<T> {
@@ -129,6 +129,7 @@ export class AuditEngineService {
       topology,
     };
   }
+
   public async executeStudioOverviewRun(): Promise<TAuditToStudioSharedData> {
     const performanceStartMarker = performance.now();
 

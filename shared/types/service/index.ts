@@ -57,3 +57,12 @@ export type TPackageManifestContract = {
   readonly files?: readonly unknown[];
   readonly dependencies?: Readonly<Record<string, unknown>>;
 };
+export type TLoggerTheme = 'standard' | 'crimson' | 'contrast' | 'naked';
+
+export type TLoggerBannerVariant = 'boxed' | 'filled' | 'minimal' | 'split';
+export type TTextColorToken =
+  | 'default'
+  | 'error'
+  | 'success'
+  | 'warning'
+  | 'info';

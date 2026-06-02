@@ -1,4 +1,4 @@
-import { XalorLoggerService } from './service';
+import { xalorLog } from './service';
 // import { yieldItems } from './utils';
 //  pnpm exec tsx shared/log-test.ts
 // ===============================================================================================================
@@ -136,59 +136,35 @@ export class TransformerReportService {
     // ========================================================================
     // 🧱 COMPOSABLE CANVAS DRAWING HANDSHAKE (Commandment IV & VIII)
     // ========================================================================
-    XalorLoggerService.logLine('', 'naked'); // Cushion header spacing break
-    XalorLoggerService.banner(
+    xalorLog.logLine('', 'naked'); // Cushion header spacing break
+    xalorLog.banner(
       `[Xalor Alert] ${ruleToken.toUpperCase()}`,
       visualTheme,
       'boxed',
     );
 
-    XalorLoggerService.panelRow(
-      'Target Key Name',
-      keyName,
-      visualTheme,
-      'warning',
-    );
-    XalorLoggerService.panelRow(
-      'Rule Category Track',
-      ruleToken,
-      visualTheme,
-      'error',
-    );
-    XalorLoggerService.divider('-', visualTheme);
+    xalorLog.panelRow('Target Key Name', keyName, visualTheme, 'warning');
+    xalorLog.panelRow('Rule Category Track', ruleToken, visualTheme, 'error');
+    xalorLog.divider('-', visualTheme);
 
-    XalorLoggerService.logLine(
-      `  💎 Type Definition (Source Link):`,
-      visualTheme,
-      true,
-    );
-    XalorLoggerService.logLine(
-      `  ↳ ${fileLocation}`,
-      visualTheme,
-      false,
-      'info',
-    );
-    XalorLoggerService.logLine(
+    xalorLog.logLine(`  💎 Type Definition (Source Link):`, visualTheme, true);
+    xalorLog.logLine(`  ↳ ${fileLocation}`, visualTheme, false, 'info');
+    xalorLog.logLine(
       `  ⚡ Runtime Call Site (Invocation Link):`,
       visualTheme,
       true,
     );
-    XalorLoggerService.logLine(
-      `  ↳ ${invocationCallSite}`,
-      visualTheme,
-      false,
-      'info',
-    );
-    XalorLoggerService.divider('-', visualTheme);
+    xalorLog.logLine(`  ↳ ${invocationCallSite}`, visualTheme, false, 'info');
+    xalorLog.divider('-', visualTheme);
 
-    XalorLoggerService.logLine(`  💥 Error Details:`, visualTheme, true);
+    xalorLog.logLine(`  💥 Error Details:`, visualTheme, true);
 
     // Split and align multi-line error strings safely within our box canvas matrix row lines
     // Consumes the new chunking utility to completely neutralize terminal clipping side-effects
-    XalorLoggerService.logParagraph(finalizedMessage, visualTheme);
+    xalorLog.logParagraph(finalizedMessage, visualTheme);
 
-    XalorLoggerService.divider('═', visualTheme);
-    XalorLoggerService.logLine('', 'naked');
+    xalorLog.divider('═', visualTheme);
+    xalorLog.logLine('', 'naked');
   }
 }
 
@@ -234,19 +210,19 @@ runTestHarness();
 //   console.log('⚡ Initiating layout variant diagnostic passes...\n');
 
 //   // 1. Boxed Default
-//   XalorLoggerService.banner('Boxed Audit Report', 'standard', 'boxed');
+//   xalorLog.banner('Boxed Audit Report', 'standard', 'boxed');
 //   console.log('\n');
 
 //   // 2. High-Density Filled
-//   XalorLoggerService.banner('Core Compilation Build Blocked', 'naked');
+//   xalorLog.banner('Core Compilation Build Blocked', 'naked');
 //   console.log('\n');
 
 //   // 3. Minimal Clean Trace
-//   XalorLoggerService.banner('Diagnostic Code Tracker', 'crimson', 'minimal');
+//   xalorLog.banner('Diagnostic Code Tracker', 'crimson', 'minimal');
 //   console.log('\n');
 
 //   // 4. Split Status Box
-//   XalorLoggerService.banner(
+//   xalorLog.banner(
 //     'Vfs Ingestion Engine',
 //     'standard',
 //     'split',
@@ -262,67 +238,67 @@ runTestHarness();
 //   console.log('⚡ Running color-aware layout configuration check...\n');
 
 //   // 1. Test standard light-gray block canvas with vivid colored typography lines
-//   XalorLoggerService.banner('Package Ingestion Complete', 'standard', 'boxed');
-//   XalorLoggerService.panelRow(
+//   xalorLog.banner('Package Ingestion Complete', 'standard', 'boxed');
+//   xalorLog.panelRow(
 //     'FileSystem Ingestion Status',
 //     'SUCCESS',
 //     'standard',
 //     'success',
 //   );
-//   XalorLoggerService.panelRow(
+//   xalorLog.panelRow(
 //     'Active Ingestion Channel',
 //     'Core Loader',
 //     'standard',
 //     'info',
 //   );
-//   XalorLoggerService.panelRow(
+//   xalorLog.panelRow(
 //     'Nesting Limits Warning Tracker',
 //     'Near Boundary Limit',
 //     'standard',
 //     'warning',
 //   );
-//   XalorLoggerService.divider('━', 'standard');
+//   xalorLog.divider('━', 'standard');
 
 //   console.log('\n'); // Cushion spacing break
 
 //   // 2. Test high-contrast text lines running inside your dark crimson red boxes
-//   XalorLoggerService.banner(
+//   xalorLog.banner(
 //     'Critical Operational Failure',
 //     'crimson',
 //     'filled',
 //   );
-//   XalorLoggerService.panelRow(
+//   xalorLog.panelRow(
 //     'Target Resource Key',
 //     'TUserPayload',
 //     'crimson',
 //     'warning',
 //   );
-//   XalorLoggerService.panelRow(
+//   xalorLog.panelRow(
 //     'Active Link Path Location',
 //     '/src/models/User.ts',
 //     'crimson',
 //     'info',
 //   );
-//   XalorLoggerService.logLine(
+//   xalorLog.logLine(
 //     '   [CRITICAL] Compiling process terminated to preserve graph integrity.',
 //     'crimson',
 //     true,
 //   );
-//   XalorLoggerService.divider('═', 'crimson');
+//   xalorLog.divider('═', 'crimson');
 
 //   console.log('\n'); // Cushion spacing break
 
 //   // 3. 🪐 TEST UN-BOXED NAKED TEXT LINES WITH VIVID FOREGROUNDS
-//   XalorLoggerService.logNaked(
+//   xalorLog.logNaked(
 //     '✨ [xalor:success] Ambient type validation completed beautifully!',
 //     'success',
 //   );
-//   XalorLoggerService.logNaked(
+//   xalorLog.logNaked(
 //     '🚨 [xalor:error] Invariant violation flagged at compilation baseline.',
 //     'error',
 //     true,
 //   );
-//   XalorLoggerService.logNaked(
+//   xalorLog.logNaked(
 //     'ℹ️  [xalor:info] Extracted 42 structural graph nodes from AST trees.',
 //     'info',
 //   );
