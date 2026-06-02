@@ -32,16 +32,6 @@ export class TelemetryService {
     const cleanDirName = baseIncludePath.replace('/**/*', '').replace('/*', '');
     const targetDir = fsContext.resolvePath(cleanDirName || '.');
 
-    console.log(
-      `\n🔍 [Xalor Debug] Scanning project root context: ${projectRoot}`,
-    );
-    console.log(
-      `🔍 [Xalor Debug] Active Config Fallback Mode Status: ${configMatrix.isFallbackMode}`,
-    );
-    console.log(
-      `✨ [Xalor Debug] SELECTED ANCHOR TARGET PATH: "${targetDir}"\n`,
-    );
-
     return {
       counters,
       seenKeys,
@@ -152,10 +142,6 @@ export class TelemetryService {
           console.log(` ✅ CONTRACT ENCOUNTERED: "${key}"`);
         }
       });
-
-      console.log(
-        ` 📄 [Xalor Scout] Processing Active Runtime API Script: ${fileName}`,
-      );
 
       this.countAPIMethodUsage({
         sanitizedFileString,

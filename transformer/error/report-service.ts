@@ -4,7 +4,6 @@ import {
   isInstanceOf,
   isStringFunction,
   isUndefined,
-  yieldItems,
 } from '../../shared';
 import {
   REPORT_SERVICE_MODE_ROUTER,
@@ -14,6 +13,7 @@ import type {
   TReportServiceContext,
   TCompilerAnomalyKey,
   TLogAnomalyParams,
+  THeaderModes,
 } from '../types';
 import { xalorLog } from '../../shared';
 
@@ -38,7 +38,7 @@ export class TransformerReportService {
   public static generateTerminalPanel(ctx: TReportServiceContext): string {
     const { keyName, fileLocation, message, rule, mode } = ctx;
     // 1. Resolve your visual mode token cleanly through the router dictionary mapping pass [INDEX]
-    const targetVisualMode = this.MODE_ROUTER[mode] ?? 'soft';
+    const targetVisualMode: THeaderModes = this.MODE_ROUTER[mode] ?? 'soft';
     /* prettier-ignore */ const ruleLabel = rule && rule.length > 0 ? rule.toUpperCase() : 'GENERAL_FAULT';
 
     const visualTheme = targetVisualMode === 'hard' ? 'crimson' : 'standard';
@@ -47,29 +47,14 @@ export class TransformerReportService {
 
     /* prettier-ignore */ const interactiveFileLink = xalorLog.formatTerminalLink(fileLocation, fileLocation);
     /* prettier-ignore */ const interactiveCallSiteLink = xalorLog.formatTerminalLink(invocationCallSite, invocationCallSite);
-    const buffer: string[] = [];
-
-    /* prettier-ignore */ buffer.push(xalorLog.getLogLine('', 'naked'));
-    /* prettier-ignore */ buffer.push(xalorLog.getBanner(`[Xalor Alert] ${ruleLabel.toUpperCase()}`, visualTheme));
-    /* prettier-ignore */ buffer.push(xalorLog.getPanelRow('Target Key Name', keyName, visualTheme, 'warning'));
-    /* prettier-ignore */ buffer.push(xalorLog.getPanelRow('Rule Category Track', ruleLabel, visualTheme, 'error'));
-    /* prettier-ignore */ buffer.push(xalorLog.getDivider('-', visualTheme));
-    /* prettier-ignore */ buffer.push(xalorLog.getLogLine(`  💎 Type Definition (Source Link):`, visualTheme, true));
-    /* prettier-ignore */ buffer.push(xalorLog.getLogLine(`  ↳ ${interactiveFileLink}`, visualTheme, false, 'info'));
-    /* prettier-ignore */ buffer.push(xalorLog.getLogLine(`  ⚡ Runtime Call Site (Invocation Link):`, visualTheme, true));
-    /* prettier-ignore */ buffer.push(xalorLog.getLogLine(`  ↳ ${interactiveCallSiteLink}`, visualTheme, false, 'info'));
-    /* prettier-ignore */ buffer.push(xalorLog.getDivider('-', visualTheme));
-    /* prettier-ignore */ buffer.push(xalorLog.getLogLine(`  💥 Error Details:`, visualTheme, true));
-
-    const messageLines = message.split(/\r?\n/);
-    for (const rawLine of yieldItems(messageLines)) {
-      /* prettier-ignore */ buffer.push(xalorLog.getLogLine(`     ${rawLine.trim()}`, visualTheme));
-    }
-
-    /* prettier-ignore */ buffer.push(xalorLog.getDivider('═', visualTheme));
-    /* prettier-ignore */ buffer.push(xalorLog.getLogLine('', 'naked'));
-
-    return buffer.join('\n');
+    return xalorLog.ATSErrorTemplate({
+      keyName,
+      ruleLabel,
+      fileLink: interactiveFileLink,
+      callSiteLink: interactiveCallSiteLink,
+      messagePayload: message,
+      theme: visualTheme,
+    });
   }
 
   /**

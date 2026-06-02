@@ -1,4 +1,9 @@
-import type { TXalorParsedConfig, TTripleKV } from '../../types';
+import type {
+  TXalorParsedConfig,
+  TTripleKV,
+  TTextColorToken,
+  TThemeBlocks,
+} from '../../types';
 import { ModuleKind, ScriptTarget } from 'typescript';
 import { IS_SOLID_CONFIG_ITEMS } from '../configs';
 /**
@@ -182,3 +187,27 @@ export const LOGGER_SIGNAL_EMOJIS = {
   stop: '🛑',
   lock: '🔐',
 } as const;
+
+export const LOGGER_TOKEN_COLORS: Record<TTextColorToken, string> = {
+  default: LOGGER_DESIGN_SPECTRUM.reset,
+  error: LOGGER_DESIGN_SPECTRUM.textLightRed,
+  success: LOGGER_DESIGN_SPECTRUM.textLightGreen,
+  warning: LOGGER_DESIGN_SPECTRUM.textLightYellow,
+  info: LOGGER_DESIGN_SPECTRUM.textLightCyan,
+} satisfies Record<TTextColorToken, string>;
+//* prettier-ignore */
+
+export const LOGGER_THEME_BLOCKS: TThemeBlocks = {
+  standard: {
+    bg: LOGGER_DESIGN_SPECTRUM.bgCanvasBlock,
+    fg: LOGGER_DESIGN_SPECTRUM.textCanvasBlock,
+  },
+  crimson: {
+    bg: LOGGER_DESIGN_SPECTRUM.bgErrorBlock,
+    fg: LOGGER_DESIGN_SPECTRUM.textErrorBlock,
+  },
+  contrast: {
+    bg: LOGGER_DESIGN_SPECTRUM.bgFooterContrastBlock,
+    fg: LOGGER_DESIGN_SPECTRUM.textFooterContrastBlock,
+  },
+} satisfies TThemeBlocks;

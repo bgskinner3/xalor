@@ -25,7 +25,10 @@ import type { TSolidShapeKinds } from './const-types';
  * Transformer and the Runtime.
  */
 
-/* prettier-ignore */ export type TTypeGuard<T> = (value: unknown) => value is T;
+export type TTypeGuard<T, Args extends readonly unknown[] = readonly []> = (
+  value: unknown,
+  ...extraConfigParams: Args
+) => value is T;
 /* prettier-ignore */ export type TTupleGuard<A, B,> = (value: [unknown, unknown]) => value is [A, B];
 /* prettier-ignore */ export type TNarrowingPairGuard<A extends T, B extends T, T = unknown> = ( value: [T, T], ) => value is [A, B];
 /* prettier-ignore */ export type TPrimitive = string | number | boolean | bigint;

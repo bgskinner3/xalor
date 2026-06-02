@@ -36,7 +36,7 @@ export const CLI_MODE_FLAGS_MAPPER = Object.freeze({
   compile: [],
   watch: [],
   vacuum: [],
-  audit: ['fix', 'json', 'verbose'] as const,
+  audit: ['fix', 'json', 'verbose', 'debug'] as const,
   studio: [],
 } as const);
 

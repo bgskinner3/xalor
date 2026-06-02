@@ -24,7 +24,7 @@ import {
   isValidSolidShape,
 } from '../utils/guards';
 
-export class FileSystemContextService {
+class FileSystemContextService {
   private vaultFallback: TTripleKV = DEFAULT_VAULT_SHAPE_FALLBACK;
   /* prettier-ignore */
   public fileNames: TRecursiveReadonly<TCoreFileNameMapper> = IS_SOLID_CONFIG_ITEMS.fileNames;

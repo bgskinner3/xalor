@@ -21,9 +21,10 @@ export async function runAuditCommand(
   }
 
   try {
-    const fixedFlagResolved = sanitizedFlags.fix ? true : false;
+    const fix = sanitizedFlags.fix ? true : false;
+    // const debug = sanitizedFlags.debug ? true : false;
     const auditPayload = await auditEngineService.executeFullAuditRun({
-      fix: fixedFlagResolved,
+      fix,
     });
 
     // 2. RETRIEVE METRICS VALIDATION CEILING

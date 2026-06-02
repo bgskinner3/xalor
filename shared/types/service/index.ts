@@ -57,8 +57,13 @@ export type TPackageManifestContract = {
   readonly files?: readonly unknown[];
   readonly dependencies?: Readonly<Record<string, unknown>>;
 };
-export type TLoggerTheme = 'standard' | 'crimson' | 'contrast' | 'naked';
 
+// ================================================================
+// LOGGER SERVICE
+// ================================================================
+
+export type TLoggerTheme = 'standard' | 'crimson' | 'contrast' | 'naked';
+export type TLoggerOutputMode = 'log' | 'str';
 export type TLoggerBannerVariant = 'boxed' | 'filled' | 'minimal' | 'split';
 export type TTextColorToken =
   | 'default'
@@ -66,3 +71,5 @@ export type TTextColorToken =
   | 'success'
   | 'warning'
   | 'info';
+/* prettier-ignore */
+export type TThemeBlocks = Record<Exclude<TLoggerTheme, 'naked'>, { bg: string; fg: string }>;

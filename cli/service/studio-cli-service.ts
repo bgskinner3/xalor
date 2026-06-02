@@ -22,7 +22,6 @@ export class StudioCLIEngineService {
   private generateDefaultPayload(
     fallbackPort?: number,
   ): TDeepWriteable<IStudioOverviewPayload> {
-    // 💚 CRITICAL FIX: Deep clone the blueprint so previous compilation loops don't bleed data
     const freshPayload = JSON.parse(
       JSON.stringify(DEFAULT_STUDIO_PAYLOAD),
     ) as TDeepWriteable<IStudioOverviewPayload>;

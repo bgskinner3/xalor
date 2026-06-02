@@ -223,3 +223,47 @@ export const isTupleOf =
   <A, B = never>(...guards: [TTypeGuard<A>, TTypeGuard<B>?]) =>
   (value: unknown): value is [A, B] extends [unknown, never] ? [A] : [A, B] =>
     isArray(value) && guards.every((guard, index) => guard?.(value[index]));
+
+/**
+ * ### isExactLiteralMatch
+ * @utilType Guard
+ * @name isExactLiteralMatch
+ * @category Guards Core
+ * @description Generically validates if an unknown input value matches a specific, dynamically targeted string literal token.
+ *
+ * @example
+ * ```ts
+ * type TLoggerTheme = 'standard' | 'crimson' | 'contrast' | 'naked';
+ * const looseInput: unknown = 'crimson';
+ *
+ * // 🛰️ PASS 1: AUTOMATIC LITERAL TYPE INFERENCE
+ * // TypeScript implicitly infers T as the exact literal type 'crimson' point-free.
+ * if (isExactLiteralMatch(looseInput, 'crimson')) {
+ *   // Inside this execution branch, looseInput is narrowed strictly to 'crimson'
+ *   xalorLog.banner('Operation Halt', looseInput, 'filled');
+ * }
+ *
+ * // 🛰️ PASS 2: STRICT UNION TYPE ENFORCEMENT
+ * // Explicitly adding the type parameter forces the IDE compiler to intercept
+ * // typos with a red underline the exact millisecond you write them.
+ *
+ * // 🚨 CRITICAL LINT FAILURE TRAPPED:
+ * // Throws compiler error because 'crimzon' cannot be assigned to TLoggerTheme!
+ * if (isExactLiteralMatch<TLoggerTheme>(looseInput, 'crimzon')) { ... }
+ *
+ * // ✅ BALANCED COMPILER ALIGNMENT:
+ * if (isExactLiteralMatch<TLoggerTheme>(looseInput, 'contrast')) {
+ *   // Input is narrowed strictly to the valid union variant 'contrast'
+ *   xalorLog.divider('═', looseInput);
+ * }
+ * ```
+ *
+ *
+ */
+export const isLiteralMatch: <T extends string>(
+  value: unknown,
+  targetToken: T,
+) => value is T = <T extends string>(
+  value: unknown,
+  targetToken: T,
+): value is T => isString(value) && value === targetToken;

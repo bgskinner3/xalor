@@ -106,10 +106,6 @@ export class TSConfigService {
       return CONFIG_FALLBACK_DEFAULT;
     }
 
-    console.log(
-      `🛰️ [Xalor Config] Authoritative configuration profile locked: "${chosenConfigName}"`,
-    );
-
     const readResult = ts.readConfigFile(configPath, ts.sys.readFile);
 
     if (!readResult.config || readResult.error) {
