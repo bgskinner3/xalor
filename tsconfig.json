@@ -39,7 +39,8 @@
     "__tests__",
     "intellisense-docs.d.ts",
     "cli",
-    "tsup.config.ts"
+    "tsup.config.ts",
+    "__tests__/setup.ts"
   ],
   "exclude": ["dist", "node_modules"]
 }
