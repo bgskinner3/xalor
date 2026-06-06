@@ -151,4 +151,101 @@ export const TEST_SHAPE_REGISTRY = {
       },
     },
   },
+
+  OPTIONAL_FIELDS_TEST: {
+    kind: 'object',
+    properties: {
+      mandatoryId: {
+        name: 'mandatoryId',
+        optional: false,
+        shape: { kind: 'primitive', type: 'number' },
+      },
+      optionalMeta: {
+        name: 'optionalMeta',
+        optional: true,
+        shape: { kind: 'primitive', type: 'string' },
+      },
+      optionalData: {
+        name: 'optionalData',
+        optional: true,
+        shape: {
+          kind: 'object',
+          properties: {
+            nestedFlag: {
+              name: 'nestedFlag',
+              optional: false,
+              shape: { kind: 'primitive', type: 'boolean' },
+            },
+          },
+        },
+      },
+    },
+  },
+
+  COMPLEX_UNION_TEST: {
+    kind: 'object',
+    properties: {
+      mixedValue: {
+        name: 'mixedValue',
+        optional: false,
+        shape: {
+          kind: 'union',
+          values: [
+            // 🎯 FIXED: 'type' added to satisfy the literal kind blueprint contract
+            { kind: 'literal', type: 'string', value: 'custom_literal' },
+            { kind: 'primitive', type: 'number' },
+            { kind: 'primitive', type: 'boolean' },
+          ],
+        },
+      },
+    },
+  },
+
+  BRANDED_TYPE_TEST: {
+    kind: 'object',
+    properties: {
+      userId: {
+        name: 'userId',
+        optional: false,
+        shape: {
+          // 🎯 EXACT ALIGNMENT PASS: Fulfills both 'name' and 'base' criteria flawlessly
+          kind: 'branded',
+          name: 'TUserId',
+          base: { kind: 'primitive', type: 'string' },
+        },
+      },
+    },
+  },
+
+  REFERENCE_LINK_TEST: {
+    kind: 'object',
+    properties: {
+      id: {
+        name: 'id',
+        optional: false,
+        shape: { kind: 'primitive', type: 'number' },
+      },
+      profileRef: {
+        name: 'profileRef',
+        optional: false,
+        shape: { kind: 'reference', name: 'USER_TEST' },
+      },
+    },
+  },
+
+  CIRCULAR_DEPTH_TEST: {
+    kind: 'object',
+    properties: {
+      id: {
+        name: 'id',
+        optional: false,
+        shape: { kind: 'primitive', type: 'number' },
+      },
+      selfRef: {
+        name: 'selfRef',
+        optional: false,
+        shape: { kind: 'reference', name: 'CIRCULAR_DEPTH_TEST' },
+      },
+    },
+  },
 } as const satisfies Record<string, TSolidShape>;
