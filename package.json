@@ -97,10 +97,10 @@
   },
   "scripts": {
     "prepare": "ts-patch install -s",
-    "clean": "rm -rf dist .cache",
+    "clean": "rm -rf dist .cache tsconfig.build.tsbuildinfo tsconfig.test.tsbuildinfo",
     "clean:pack": "rm -f *.tgz",
     "build": "pnpm run clean && tsc --project tsconfig.build.json --noEmit && tsup",
-    "test": "jest",
+    "test": "npm run build && jest",
     "release:canary": "npm run test && npm version prerelease --preid=alpha && npm publish --tag alpha",
     "postinstall": "node dist/scripts/postinstall.js",
     "lint": "tsc --noEmit && eslint --ext .js,.ts,.tsx .",

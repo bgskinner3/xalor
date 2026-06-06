@@ -31,48 +31,35 @@ class XalorCore {
   /* prettier-ignore */ public register<K extends keyof ISolidRegistry | (string & {})>(data?: unknown): void {
     return registerXalor<K>(data);
   }
-
   // ========================================================================
   // ========================================================================
   // VALIDATE
   // ========================================================================
   // ========================================================================
-  /**
-   * @Api validation
-   * @mode guard
-   */
-  /* prettier-ignore */ public guard<K extends keyof ISolidRegistry>(): TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>> {
-    return validateXalor<K, 'guard'>();
+  /** @Api validation  @mode guard */
+  /* prettier-ignore */ public guard<K extends keyof ISolidRegistry>(): TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>>;
+  /* prettier-ignore */ public guard<K extends keyof ISolidRegistry>(injectedKey?: K, mode?: 'guard' ): TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>> {
+    return validateXalor<K, 'guard'>(injectedKey!, mode!);
   }
-  /**
-   * @Api validation
-   * @mode assert
-   */
-
-  /* prettier-ignore */ public assert<K extends keyof ISolidRegistry>(data: unknown ): asserts data is ISolidRegistry[K] {
-    return validateXalor<K, 'assert'>(data);
+  /** @Api validation  @mode assert */
+  /* prettier-ignore */ public assert<K extends keyof ISolidRegistry>(data: unknown): asserts data is ISolidRegistry[K];
+  /* prettier-ignore */ public assert<K extends keyof ISolidRegistry>(data: unknown, injectedKey?: K, mode?: 'assert'): asserts data is ISolidRegistry[K] {
+    validateXalor<K, 'assert'>(injectedKey!, mode!, data);
   }
-  /**
-   * @Api validation
-   * @mode parse
-   */
-  /* prettier-ignore */ public parse<K extends keyof ISolidRegistry>(data: unknown): TSolidBranded<K, ISolidRegistry[K]> {
-    return validateXalor<K, 'parse'>(data);
+  /** @Api validation  @mode parse */
+  /* prettier-ignore */ public parse<K extends keyof ISolidRegistry>(data: unknown): TSolidBranded<K, ISolidRegistry[K]>;
+  /* prettier-ignore */ public parse<K extends keyof ISolidRegistry>(data: unknown, injectedKey?: K, mode?: 'parse'): TSolidBranded<K, ISolidRegistry[K]> {
+    return validateXalor<K, 'parse'>(injectedKey!, mode!, data);
   }
-  /**
-   * @Api validation
-   * @mode parseAsync
-   */
-  /* prettier-ignore */ public parseAsync<K extends keyof ISolidRegistry>(data: unknown): TSolidBranded<K, Promise<ISolidRegistry[K]>> {
-    return validateXalor<K, 'parseAsync'>(data);
+  /** @Api validation  @mode parseAsync */
+  /* prettier-ignore */ public parseAsync<K extends keyof ISolidRegistry>(data: unknown): TSolidBranded<K, Promise<ISolidRegistry[K]>>;
+  /* prettier-ignore */ public parseAsync<K extends keyof ISolidRegistry>(data: unknown, injectedKey?: K, mode?: 'parseAsync'): TSolidBranded<K, Promise<ISolidRegistry[K]>> {
+    return validateXalor<K, 'parseAsync'>(injectedKey!, mode!, data);
   }
-  /**
-   * @Api validation
-   * @mode audit
-   */
-
-  /* prettier-ignore */ public audit<K extends keyof ISolidRegistry>(data: unknown): TXalorAuditReport {
-    return validateXalor<K, 'audit'>(data);
+  /** @Api validation  @mode audit */
+  /* prettier-ignore */ public audit<_K extends keyof ISolidRegistry>(data: unknown): TXalorAuditReport;
+  /* prettier-ignore */ public audit<K extends keyof ISolidRegistry>(data: unknown, injectedKey?: K, mode?: 'audit'): TXalorAuditReport {
+    return validateXalor<K, 'audit'>(injectedKey!, mode!, data);
   }
   // ========================================================================
   // ========================================================================
@@ -149,4 +136,4 @@ class XalorCore {
   }
 }
 
-export const xalor = new XalorCore();
+export const xalor: XalorCore = new XalorCore();

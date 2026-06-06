@@ -26,31 +26,27 @@ import type {
  *
  * @see {@link RuntimeApiDocs.validateXalor}
  */
-export function validateXalor<
-  K extends keyof ISolidRegistry,
-  _M extends 'guard',
->(): TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>>; // OVERLOAD 1: THE GUARD
-export function validateXalor<
-  K extends keyof ISolidRegistry,
-  _M extends 'assert',
->(data: unknown): asserts data is ISolidRegistry[K]; //  OVERLOAD 2: THE ASSERTION
-export function validateXalor<
-  K extends keyof ISolidRegistry,
-  _M extends 'parse',
->(data: unknown): TSolidBranded<K, ISolidRegistry[K]>; // OVERLOAD 3: THE PARSER
-export function validateXalor<
-  K extends keyof ISolidRegistry,
-  _M extends 'parseAsync',
->(data: unknown): TSolidBranded<K, Promise<ISolidRegistry[K]>>; // OVERLOAD 4: THE ASYNC PARSER
-export function validateXalor<
-  _K extends keyof ISolidRegistry,
-  _M extends 'audit',
->(data: unknown): TXalorAuditReport; // OVERLOAD 5: THE AUDIT
-// --- IMPLEMENTATION ---
-export function validateXalor<
-  K extends keyof ISolidRegistry,
-  M extends TValidationXalorModes,
+/* prettier-ignore */
+export function validateXalor<K extends keyof ISolidRegistry, _M extends 'guard',
+>(injectedKey: K, mode: 'guard'): TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>>; // OVERLOAD 1: THE GUARD
+/* prettier-ignore */
+export function validateXalor<K extends keyof ISolidRegistry, _M extends 'assert',
+>(injectedKey: K, mode: 'assert', data: unknown): asserts data is ISolidRegistry[K]; //  OVERLOAD 2: THE ASSERTION
+/* prettier-ignore */
+export function validateXalor<K extends keyof ISolidRegistry, _M extends 'parse',
+>(injectedKey: K, mode: 'parse', data: unknown): TSolidBranded<K, ISolidRegistry[K]>;
+/* prettier-ignore */
+export function validateXalor<K extends keyof ISolidRegistry, _M extends 'parseAsync',
+>(injectedKey: K, mode: 'parseAsync', data: unknown): TSolidBranded<K, Promise<ISolidRegistry[K]>>; // OVERLOAD 4: THE ASYNC PARSER
+/* prettier-ignore */
+export function validateXalor<K extends keyof ISolidRegistry, _M extends 'audit',
+>(injectedKey: K, mode: 'audit', data: unknown): TXalorAuditReport; // OVERLOAD 5: THE AUDIT
+/* prettier-ignore */
+export function validateXalor<K extends keyof ISolidRegistry, M extends TValidationXalorModes,
 >(injectedKey?: K, mode?: M, data?: unknown): TValidateXalorReturn<K, M> {
+  // console.log({ injectedKey }, 'INJECTED KEY');
+  // console.log({ mode }, 'mode');
+  // console.log({ data }, 'data');
   if (!injectedKey || !mode) {
     throw new Error(
       `[xalor] 🚨 GATEWAY BLOCK: 'validateXalor' executed without compiled metadata properties.\n` +
