@@ -231,4 +231,63 @@ describe('Runtime Generator API', () => {
       }
     });
   });
+  describe('VALIDATE INLINE SINGLE-PASS TYPE GUARD', () => {
+    it('🎯 TRACK 1: should evaluate data inline in a single invocation pass and return a boolean result instantly', () => {
+      const validPayload: unknown = {
+        id: 452,
+        username: 'skinner_labs',
+        active: true,
+      };
+      expect(xalor.guard<'USER_TEST'>(validPayload)).toBe(true);
+
+      const invalidPayload: unknown = {
+        id: 'NOT_A_NUMBER',
+        username: 'hacker_one',
+      };
+      expect(xalor.guard<'USER_TEST'>(invalidPayload)).toBe(false);
+    });
+
+    it('🎯 TRACK 2: should rigorously validate exact literal values inside union constraints inline', () => {
+      expect(xalor.guard<'API_RESPONSE'>({ status: 'success' })).toBe(true);
+      expect(xalor.guard<'API_RESPONSE'>({ status: 500 })).toBe(true);
+      expect(
+        xalor.guard<'API_RESPONSE'>({ status: 'PENDING_REPLICATION_LOOP' }),
+      ).toBe(false);
+    });
+
+    it('🎯 TRACK 3: should handle deeply nested array matrices and child properties validation recursion inline', () => {
+      const validOrder: unknown = {
+        orderId: 'ORD-ALPHA-77',
+        items: [
+          { SKU: 'XAL-99', quantity: 2 },
+          { SKU: 'CORE-22', quantity: 1 },
+        ],
+      };
+      expect(xalor.guard<'STORE_ORDER'>(validOrder)).toBe(true);
+
+      const invalidOrder: unknown = {
+        orderId: 'ORD-BETA-88',
+        items: [{ SKU: 'XAL-99', quantity: 'TEN' }],
+      };
+      expect(xalor.guard<'STORE_ORDER'>(invalidOrder)).toBe(false);
+    });
+
+    it('🎯 TRACK 4: should handle empty, nullish, or invalid primitive root variables defensively inline', () => {
+      expect(xalor.guard<'USER_TEST'>(null)).toBe(false);
+      expect(xalor.guard<'USER_TEST'>(undefined)).toBe(false);
+      expect(xalor.guard<'USER_TEST'>('RAW_STRING_BLOCKED')).toBe(false);
+      expect(xalor.guard<'USER_TEST'>([])).toBe(false);
+    });
+
+    it('🎯 TRACK 5: should allow extra parameters if the blueprint layout is fully satisfied inline', () => {
+      const expandedPayload: unknown = {
+        id: 992,
+        username: 'un-tracked_extension_lane',
+        active: false,
+        strayAttribute: 'Permitted By Design Framework',
+        timestamp: 1715974000,
+      };
+      expect(xalor.guard<'USER_TEST'>(expandedPayload)).toBe(true);
+    });
+  });
 });

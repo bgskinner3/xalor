@@ -46,4 +46,20 @@
  *     default: () => handleFallbackFailure()         // Safe fallback catch-all configuration rule
  *   });
  *   ```
+ * Match
+  exact
+  partial
+  pattern
+  diff
  */
+// function assertInjectedKey<K extends keyof ISolidRegistry>(
+//   key: K | undefined,
+// ): asserts key is K {
+//   if (typeof key !== 'string' || !key) {
+//     throw new Error(
+//       `[Xalor Runtime Error] Compilation Ingress Violation: ` +
+//         `The AST transformer failed to inject a valid schema key at this call site. ` +
+//         `Ensure your files are being swept by ts-patch.`,
+//     );
+//   }
+// }

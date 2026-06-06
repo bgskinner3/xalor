@@ -86,27 +86,25 @@ export function validateObject(
     return reportError(ctx, 'object', data);
 
   const originalPath = ctx.path;
-  const payloadKeys = Object.getOwnPropertyNames(data);
-  const keyCount = payloadKeys.length;
 
-  for (let i = 0; i < keyCount; i++) {
-    if (PROTO_EXPLOIT_KEYS.has(payloadKeys[i])) {
-      return false;
-    }
-  }
+  // 1. Fetch properties using Object.keys to automatically skip non-enumerable properties
+  // const payloadKeys = Object.keys(data);
+  // const keyCount = payloadKeys.length;
 
+  // 2. Modified Blueprint Mapping: Filter entries to completely ignore prototype attack vectors
   const propertyEntries = yieldEntries(
     shape.properties,
-    (_key, _value): _key is string => true,
+    (_key, _value): _key is string => !PROTO_EXPLOIT_KEYS.has(_key), // 🛡️ Skip malicious tracking keys here
   );
 
   for (const [key, metadata] of propertyEntries) {
+    // 🛡️ Double-check to ensure prototype keys never leak into the validation loop
+    if (PROTO_EXPLOIT_KEYS.has(key)) continue;
+
     const hasProperty = Object.hasOwn(data, key);
     const value = data[key];
-
     ctx.path = originalPath === '$' ? key : `${originalPath}.${key}`;
 
-    // Force a key presence check if the TypeScript source interface demands existence
     if (metadata.requiresKeyPresence && !hasProperty) {
       const result = reportError(ctx, metadata.shape, 'missing_key_presence');
       ctx.path = originalPath;
@@ -114,7 +112,6 @@ export function validateObject(
     }
 
     if (!hasProperty || value === undefined) {
-      // Bypasses the omission gate safely if key presence was verified or marked optional
       if (metadata.optional || metadata.requiresKeyPresence) continue;
       const result = reportError(ctx, metadata.shape, 'missing');
       ctx.path = originalPath;
@@ -122,6 +119,7 @@ export function validateObject(
     }
 
     if (metadata.shape) {
+      // NOTE: Ensure this points to your new high-performance validateShapeFast/validateShape loop
       if (!validateShape(value, metadata.shape, ctx)) {
         ctx.path = originalPath;
         return false;
@@ -132,6 +130,66 @@ export function validateObject(
   ctx.path = originalPath;
   return true;
 }
+/**
+ *
+ *
+ * TODO: REMVOE
+ */
+// export function validateObject(
+//   data: unknown,
+//   shape: { properties: Record<string, TSolidObjectRawShape> },
+//   ctx: TValidationContext,
+// ): boolean {
+//   if (!isObject(data) || isNull(data) || !isRecord(data))
+//     return reportError(ctx, 'object', data);
+
+//   const originalPath = ctx.path;
+//   const payloadKeys = Object.getOwnPropertyNames(data);
+//   const keyCount = payloadKeys.length;
+
+//   for (let i = 0; i < keyCount; i++) {
+//     if (PROTO_EXPLOIT_KEYS.has(payloadKeys[i])) {
+//       return false;
+//     }
+//   }
+
+//   const propertyEntries = yieldEntries(
+//     shape.properties,
+//     (_key, _value): _key is string => true,
+//   );
+
+//   for (const [key, metadata] of propertyEntries) {
+//     const hasProperty = Object.hasOwn(data, key);
+//     const value = data[key];
+
+//     ctx.path = originalPath === '$' ? key : `${originalPath}.${key}`;
+
+//     // Force a key presence check if the TypeScript source interface demands existence
+//     if (metadata.requiresKeyPresence && !hasProperty) {
+//       const result = reportError(ctx, metadata.shape, 'missing_key_presence');
+//       ctx.path = originalPath;
+//       return result;
+//     }
+
+//     if (!hasProperty || value === undefined) {
+//       // Bypasses the omission gate safely if key presence was verified or marked optional
+//       if (metadata.optional || metadata.requiresKeyPresence) continue;
+//       const result = reportError(ctx, metadata.shape, 'missing');
+//       ctx.path = originalPath;
+//       return result;
+//     }
+
+//     if (metadata.shape) {
+//       if (!validateShape(value, metadata.shape, ctx)) {
+//         ctx.path = originalPath;
+//         return false;
+//       }
+//     }
+//   }
+
+//   ctx.path = originalPath;
+//   return true;
+// }
 
 /**
  * 💎 Graph Validators

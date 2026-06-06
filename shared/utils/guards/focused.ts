@@ -196,3 +196,55 @@ export const isTripleKVShape: TTypeGuard<TTripleKV> = (
   (isKeyInObject('registry')(value) && isRecord(value.registry)) && 
   ( isKeyInObject('references')(value) && isRecord(value.references)) && 
   (isKeyInObject('version')(value) && isString(value.version))
+
+/**
+ * 🎯 IS REGISTRY KEY (THE LIVE VAULT RADAR INGRESS)
+ *
+ * ROLE:
+ * A universal type-narrowing predicate guard used to verify if a runtime string token
+ * matches an actively hydrated compilation schema inside the live memory vault registry.
+ *
+ * STRATEGY:
+ * First confirms the arriving parameter is an evaluation-safe identifier string before
+ * safely verifying the presence of the global data vault singleton (`globalThis.__SOLID_VAULT__`).
+ * Once verified, it executes a zero-allocation, sub-nanosecond hash map check directly against
+ * the precompiled native `Map` index. Successfully passing this gateway narrows the loose token
+ * straight down to the specific generic type parameter `K`, clearing all strict type assignment
+ * restrictions across downstream Bouncer, Facade, and Strategy engines.
+ */
+export function isRegistryKey<K extends keyof ISolidRegistry>(
+  key: unknown,
+): key is K {
+  const vault = globalThis.__SOLID_VAULT__;
+  return (
+    typeof key === 'string' &&
+    vault !== undefined &&
+    vault.blueprints !== undefined &&
+    vault.blueprints.has(key)
+  );
+}
+/**
+ * 🎯 ASSERT INJECTED KEY (THE GATEHOUSE INGRESS EXCEPTION TERMINATOR)
+ *
+ * ROLE:
+ * A hard control-flow assertion gate used to verify that an incoming token
+ * is an actively hydrated, verified member of the live memory vault registry.
+ *
+ * STRATEGY:
+ * Intercepts parameters directly at the public facade boundary. Leverages the universal
+ * generic type predicate logic (`isRegistryKey`) to query the live storage blueprint Map.
+ * If the key exists, execution proceeds seamlessly and narrows the variable down to 'K'
+ * downstream. If the key is missing, empty, or uncompiled, it immediately triggers a hard,
+ * traceable diagnostic exception to prevent silent data corruption loops.
+ */
+export function assertRegistryKey<K extends keyof ISolidRegistry>(
+  key: K | unknown,
+): asserts key is K {
+  if (!isRegistryKey<K>(key)) {
+    throw new Error(
+      `[Xalor Ingress Exception] Compilation Gateway Violation:\n` +
+        `The engine failed to locate a valid, hydrated structural blueprint token for key: "${String(key)}".\n` +
+        `Verify that your background AST transformer is active and your files are swept by ts-patch.`,
+    );
+  }
+}

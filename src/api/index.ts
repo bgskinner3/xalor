@@ -2,9 +2,9 @@
 import type {
   TTypeGuard,
   TXalorAuditReport,
-  // TValidateXalorModes,
   TSolidBranded,
 } from '../../shared';
+import { isFunction, isRegistryKey, assertRegistryKey } from '../../shared';
 import type {
   TFlattenDataContext,
   TMergeContext,
@@ -38,13 +38,23 @@ class XalorCore {
   // ========================================================================
   /** @Api validation  @mode guard */
   /* prettier-ignore */ public guard<K extends keyof ISolidRegistry>(): TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>>;
-  /* prettier-ignore */ public guard<K extends keyof ISolidRegistry>(injectedKey?: K, mode?: 'guard' ): TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>> {
-    return validateXalor<K, 'guard'>(injectedKey!, mode!);
+  /* prettier-ignore */ public guard<K extends keyof ISolidRegistry>( data: unknown): data is ISolidRegistry[K]
+  /* prettier-ignore */ public guard<K extends keyof ISolidRegistry>( keyOrPayload?: K | unknown, dataKey?: K): boolean | TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>> {
+    const isProperKey = isRegistryKey<K>(keyOrPayload);
+    const finalKey = isProperKey ? keyOrPayload : dataKey;
+    assertRegistryKey(finalKey);
+    // Grab your strict function closure from the core validation engine
+    const activeGuard = validateXalor<K, 'guard'>(finalKey, 'guard');
+
+    return !isRegistryKey(keyOrPayload) && isFunction(activeGuard)
+      ? activeGuard(keyOrPayload)
+      : activeGuard;
   }
+
   /** @Api validation  @mode assert */
   /* prettier-ignore */ public assert<K extends keyof ISolidRegistry>(data: unknown): asserts data is ISolidRegistry[K];
-  /* prettier-ignore */ public assert<K extends keyof ISolidRegistry>(data: unknown, injectedKey?: K, mode?: 'assert'): asserts data is ISolidRegistry[K] {
-    validateXalor<K, 'assert'>(injectedKey!, mode!, data);
+  /* prettier-ignore */ public assert<K extends keyof ISolidRegistry>(data: unknown, injectedKey?: K): asserts data is ISolidRegistry[K] {
+    validateXalor<K, 'assert'>(injectedKey!, 'assert', data);
   }
   /** @Api validation  @mode parse */
   /* prettier-ignore */ public parse<K extends keyof ISolidRegistry>(data: unknown): TSolidBranded<K, ISolidRegistry[K]>;
