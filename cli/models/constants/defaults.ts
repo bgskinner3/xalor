@@ -164,7 +164,7 @@ export const INITIAL_MUTABLE_DRIFT_TEMPLATE: TDeepWriteable<TXalorAuditDrift> =
  * STRATEGY: Recursively un-locks all 'readonly' constraints to create an open baseline template
  * while maintaining 100% static, pure primitive string states to prevent early boot execution leakages.
  */
-export const DEFAULT_STUDIO_PAYLOAD: TDeepWriteable<IStudioOverviewPayload> = {
+export const DEFAULT_STUDIO_PAYLOAD: IStudioOverviewPayload = {
   globalSummary: {
     totalRegisteredKeys: 0,
     totalUniqueFingerprints: 0,
@@ -186,7 +186,8 @@ export const DEFAULT_STUDIO_PAYLOAD: TDeepWriteable<IStudioOverviewPayload> = {
     nodeRuntimeVersion: 'unknown',
     lastTelemetrySyncTimestamp: Date.now(),
   },
-} satisfies TDeepWriteable<IStudioOverviewPayload>;
+  blueprints: {},
+} satisfies IStudioOverviewPayload;
 
 export const STUDIO_NODE_TEMPLATE: TDeepWriteable<TStudioNodeItem> = {
   identity: {

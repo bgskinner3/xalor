@@ -252,7 +252,7 @@ type TDefaultReturnMap = {
   drift: TDeepWriteable<TXalorAuditDrift>;
   packageMetrics: TDeepWriteable<TAuditSizeMetrics>;
   studioNode: TDeepWriteable<TStudioNodeItem>;
-  studioDefault: TDeepWriteable<IStudioOverviewPayload>;
+  studioDefault: IStudioOverviewPayload;
 };
 export type TDefaultObjectKeys = keyof typeof DEFAULT_OBJECT_MAPPER;
 

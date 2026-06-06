@@ -5,6 +5,7 @@ import type {
   TDefaultReturnKeyMap,
   TFormatNodes,
 } from '../models/types';
+import type { TTripleKV } from '../../shared/types';
 import {
   yieldItems,
   cloneDeep,
@@ -17,7 +18,7 @@ import {
   DEFAULT_OBJECT_MAPPER,
   STUDIO_COMMAND_CONFIG,
 } from '../models/constants';
-import { generateSolidTypeScriptString } from '../utils';
+// import { generateSolidTypeScriptString } from '../utils';
 
 export class StudioCLIEngineService {
   private createDefaultAuditTemplate<T extends TDefaultObjectKeys>(
@@ -28,7 +29,10 @@ export class StudioCLIEngineService {
     return cloneDeep(baseStaticTemplate);
   }
 
-  private formatNodes(params: TFormatNodes) {
+  private formatNodes(
+    params: TFormatNodes,
+    references: TTripleKV['references'],
+  ) {
     const { studioPayload, rawVaultData, sharedData } = params;
     const nodes = sharedData.nodes;
     const { studioAPIMapper, orphanedKeys } = sharedData.telemetry;
@@ -59,11 +63,13 @@ export class StudioCLIEngineService {
       };
 
       // V1 Optimization Handshake: Pre-compile our complex AST into flat text strings
-      template.dataShape = generateSolidTypeScriptString(
-        blueprintShape,
-        rawVaultData.blueprints,
-      );
-
+      // template.dataShape = generateSolidTypeScriptString(
+      //   blueprintShape,
+      //   rawVaultData.blueprints,
+      // );
+      template.dataShape = isKeyInObject(uuidName)(references)
+        ? references[uuidName]
+        : 'unknown';
       template.metrics = {
         depth: node.metrics.depth,
         complexityScore: node.metrics.complexityScore,
@@ -133,12 +139,20 @@ export class StudioCLIEngineService {
     studioPayload.environment.activePort = activePort;
 
     // 3. EXECUTE REGISTRY HYDRATION INTERACTION PASS
-    this.formatNodes({ studioPayload, sharedData, rawVaultData });
+    this.formatNodes(
+      { studioPayload, sharedData, rawVaultData },
+      rawVaultData.references,
+    );
+
+    studioPayload.blueprints = rawVaultData.blueprints;
 
     // 4. RETURN THE COMPRESSED OBJECT ENVELOPE SECURELY FROZEN (0 compile errors!)
     return Object.freeze(studioPayload);
   }
 }
+
+export const studioEngine = new StudioCLIEngineService();
+
 /**
      const studioEngine = new StudioCLIEngineService();
     const res = await studioEngine.compileDashboardOverviewDataset(8001);

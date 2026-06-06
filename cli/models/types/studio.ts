@@ -3,6 +3,7 @@ import type {
   TSolidShape,
   TRuntimeTriggerName,
   TTripleKV,
+  TDeepWriteable,
 } from '../../../shared';
 
 import { TELEMETRY_API_TOKEN_NAMES } from '../constants';
@@ -201,12 +202,12 @@ export type TStudioNodeItem = {
  * @param environment Platform configuration settings and gateway stream identifiers
  */
 export interface IStudioOverviewPayload {
-  readonly globalSummary: TStudioGlobalSummary;
-  readonly systemHygiene: TSystemHygiene;
-  readonly lifecycleFootprint: TXalorAuditLifecycleFootprint;
-  readonly registryItems: Record<string, TStudioNodeItem>;
-
-  readonly environment: TEnvironment;
+  globalSummary: TDeepWriteable<TStudioGlobalSummary>;
+  systemHygiene: TDeepWriteable<TSystemHygiene>;
+  lifecycleFootprint: TXalorAuditLifecycleFootprint;
+  registryItems: Record<string, TStudioNodeItem>;
+  environment: TDeepWriteable<TEnvironment>;
+  blueprints: TTripleKV['blueprints'];
 }
 
 export type TServerCommands = Partial<Record<NodeJS.Platform, string>>;
@@ -217,16 +218,6 @@ export type TServerCommands = Partial<Record<NodeJS.Platform, string>>;
 // ======================================================================================================
 // ======================================================================================================
 
-export type TRebuildParams = {
-  readonly shape: TSolidShape;
-  readonly pool: Record<string, TSolidShape> | Map<string, TSolidShape>;
-  readonly depth: number;
-  readonly spacing: string;
-};
-
-export type TRebuildStrategy = (params: TRebuildParams) => string;
-
-export type TRebuildShapeMapper = Record<TSolidShape['kind'], TRebuildStrategy>;
 export type TFormatNodes = {
   studioPayload: IStudioOverviewPayload;
   sharedData: TAuditToStudioSharedData;

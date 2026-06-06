@@ -8,7 +8,7 @@ import {
   STUDIO_COMMAND_CONFIG,
   STUDIO_SERVER_CONNECTION_COMMANDS,
 } from '../models';
-import { StudioCLIEngineService } from '../service';
+import { studioEngine } from '../service';
 import { fsContext } from '../../shared';
 
 /**
@@ -35,8 +35,6 @@ export function runStudioCommand(projectRootPath: string): void {
   console.log('====================================================\n');
 
   process.env.XALOR_CLI_STUDIO = 'true';
-
-  const studioEngine = new StudioCLIEngineService();
 
   const connectedClientSocketsPool = new Set<http.ServerResponse>();
 
