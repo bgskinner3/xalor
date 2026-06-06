@@ -1,10 +1,7 @@
 import type { TSpatialIdentity, TInterfaceOrType } from '../../types';
 import { printGhostStructure } from './ghost-structure';
-import {
-  resolveSpatialAndExportMeta,
-  anchorSequencerImplementation,
-} from './support';
-
+import { resolveSpatialAndExportMeta } from './spatial-meta-resolver';
+import { xalorCentralContext } from '../../service';
 /**
  * getSpatialIdentity
  * 🛰️ GET SPATIAL IDENTITY (The GPS Engine)
@@ -26,9 +23,7 @@ export function getSpatialIdentity(params: TInterfaceOrType): TSpatialIdentity {
   const { symbolName, area } = resolveSpatialAndExportMeta(params);
 
   // 2. Generate the unique sequence anchor string tracking ID
-  const anchor = anchorSequencerImplementation(sourceFile);
-
-  // const isCyclicTree = isTypeRecursive(shapeType, checker);
+  const anchor = xalorCentralContext.getNextSequenceAnchor(sourceFile.fileName);
 
   const typeName = printGhostStructure({ type: shapeType, checker, node });
 

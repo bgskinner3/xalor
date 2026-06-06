@@ -27,3 +27,35 @@ export type TUnique<T extends readonly unknown[]> = {
     ? T[K]
     : never;
 };
+// /**
+//  * ## 💎 TExpandStructure — High-Fidelity Type Expansion Processor
+//  *
+//  * Forces the TypeScript Language Server (tsserver) to recursively unroll and evaluate
+//  * nested object intersections, interfaces, and mapping objects into a single flat definition literal.
+//  *
+//  * ### 🧠 Structural Strategy
+//  * By mapping over keys recursively on hover, this utility converts hidden structural type names
+//  * and complicated references into fully legible text contracts inside the developer's IDE tooltip.
+//  * To safeguard signature contracts, it implements a guard condition that passes through complex functional
+//  * callback types and method signatures untouched without stripping out input argument parameters.
+//  *
+//  * @utilType type
+//  * @name TExpandStructure
+//  * @category Advanced Type Utilities
+//  *
+//  * @example
+//  * ```ts
+//  * type TRawIntersection = { id: number } & { profile: { name: string } & { age: number } };
+//  *
+//  * // Hover tooltip displays: type TCollapsed = TRawIntersection
+//  * type TCollapsed = TRawIntersection;
+//  *
+//  * // Hover tooltip displays: type TExpanded = { id: number; profile: { name: string; age: number; }; }
+//  * type TExpanded = TExpandStructure<TRawIntersection>;
+//  * ```
+//  */
+// export type TExpandStructure<T> = T extends (...args: unknown[]) => unknown
+//   ? T
+//   : T extends object
+//     ? { [K in keyof T]: TExpandStructure<T[K]> }
+//     : T;

@@ -26,21 +26,13 @@ function executeUnrollPass(
   type: ts.Type,
   checker: ts.TypeChecker,
   node: ts.Node,
-  visitedTypes: Set<ts.Type> = new Set<ts.Type>(), // 🟢 FIXED: Internal evaluation cache tracking frame
+  visitedTypes: Set<ts.Type> = new Set<ts.Type>(),
 ): string {
   // 🪐 THE INTEGRATED INLINE CYCLIC INTERCEPTOR
-  // 🟢 FIXED: If this exact type reference is encountered again down this specific path branch,
-  // we do not crash! We return an explicit, descriptive circular indicator string token right here.
-  // if (visitedTypes.has(type)) {
-  //   const symbol = type.aliasSymbol || type.getSymbol();
-  //   const typeNameLabel = symbol !== undefined ? symbol.getName() : 'Circular';
-  //   return `[Circular ↺: ${typeNameLabel}]`;
-  // }
   if (visitedTypes.has(type)) {
     const symbol = type.aliasSymbol || type.getSymbol();
     const typeNameLabel = symbol !== undefined ? symbol.getName() : 'Circular';
 
-    // 🟢 FIXED: Format the response to return a canonical global generic layout type call string!
     // This provides beautiful structural clarity on hover cards without triggering a syntax crash.
     return `TXalorCyclicToken<"${typeNameLabel}">`;
   }
@@ -91,7 +83,6 @@ function executeUnrollPass(
   const isIntersection = isIntersectionType(type);
 
   if (isClassOrInterface || isObject || isIntersection) {
-    // If it's a generic type reference, we can also crawl arguments
     if (isTypeReference(type)) {
       const typeArguments = checker.getTypeArguments(type);
       const argLen = typeArguments.length;
@@ -161,105 +152,5 @@ function executeUnrollPass(
 export function printGhostStructure(params: TPrintGhostStructure): string {
   const { type, checker, node } = params;
 
-  // Initialize standard entry point passing a fresh, local evaluation tracking Set context
   return executeUnrollPass(type, checker, node, new Set<ts.Type>());
 }
-
-// import ts from 'typescript';
-// import {
-//   isTypeReference,
-//   isObjectTypeGuard,
-//   isUnionType,
-//   isIntersectionType,
-//   isClassOrInterfaceType,
-// } from '../../utils';
-// import type { TPrintGhostStructure } from '../../types';
-
-// /**
-//  * executeUnrollPass
-//  * THE STATIC UNROLLING MACHINE
-//  *
-//  * ROLE:
-//  * Pure, stateless execution loop that unwinds shapes recursively on the stack
-//  * without instantiating temporary configuration objects on the heap.
-//  */
-// function executeUnrollPass(
-//   type: ts.Type,
-//   checker: ts.TypeChecker,
-//   node: ts.Node,
-// ): string {
-//   if (checker.isArrayType(type) && isTypeReference(type)) {
-//     const typeArgs = checker.getTypeArguments(type);
-
-//     const itemString =
-//       typeArgs && typeArgs.length > 0
-//         ? executeUnrollPass(typeArgs[0], checker, node)
-//         : 'unknown';
-
-//     return `${itemString}[]`;
-//   }
-
-//   if (isUnionType(type)) {
-//     const constituents = type.types;
-//     const unionLen = constituents.length;
-//     const unionStringTokens: string[] = [];
-
-//     for (let i = 0; i < unionLen; i++) {
-//       const variant = constituents[i];
-//       if (variant) {
-//         unionStringTokens.push(executeUnrollPass(variant, checker, node));
-//       }
-//     }
-//     return unionStringTokens.join(' | ');
-//   }
-
-//   const isClassOrInterface = isClassOrInterfaceType(type);
-//   const isObject = isObjectTypeGuard(type);
-//   const isIntersection = isIntersectionType(type);
-
-//   if (isClassOrInterface || isObject || isIntersection) {
-//     const coreProperties = checker.getPropertiesOfType(type);
-//     const propLen = coreProperties.length;
-
-//     // Commandment VIII — Zero allocation immutable token buffering
-//     const structuralTokenBuffer: string[] = [];
-
-//     for (let i = 0; i < propLen; i++) {
-//       const p = coreProperties[i];
-//       if (p) {
-//         const pDeclaration = p.valueDeclaration || p.declarations?.[0];
-
-//         const pType = pDeclaration
-//           ? checker.getTypeOfSymbolAtLocation(p, pDeclaration)
-//           : checker.getDeclaredTypeOfSymbol(p);
-
-//         if (pType.getFlags() & ts.TypeFlags.Never) {
-//           continue;
-//         }
-
-//         const isOptional =
-//           (p.getFlags() & ts.SymbolFlags.Optional) !== 0 ? '?' : '';
-//         const structure = executeUnrollPass(pType, checker, node);
-
-//         structuralTokenBuffer.push(
-//           `${p.getName()}${isOptional}: ${structure};`,
-//         );
-//       }
-//     }
-
-//     return `{ ${structuralTokenBuffer.join(' ')} }`;
-//   }
-
-//   return checker.typeToString(type, node, ts.TypeFormatFlags.NoTruncation);
-// }
-
-// /**
-//  * printGhostStructure
-//  * TOOLING GEAR: GHOST TYPE STRINGIFIE
-//  *
-//  * @see {@link TransformerDocs.printGhostStructure}
-//  */
-// export function printGhostStructure(params: TPrintGhostStructure): string {
-//   const { type, checker, node } = params;
-//   return executeUnrollPass(type, checker, node);
-// }

@@ -20,6 +20,19 @@ declare global {
     readonly __target_type_name__: T;
   };
   /**
+   * TExpandStructure — High-Fidelity Type Expansion Processor
+   *
+   * Forces the TypeScript Language Server (tsserver) to recursively unroll and evaluate
+   * nested object intersections, interfaces, and mapping objects into a single flat definition literal.
+   *
+   */
+  export type TExpandStructure<T> = T extends (...args: unknown[]) => unknown
+    ? T
+    : T extends object
+      ? { [K in keyof T]: TExpandStructure<T[K]> }
+      : T;
+
+  /**
    * 🔗 ISOLID IDENTITY
    *
    * Stores the "Nominal" link (the import path) to the original interface.

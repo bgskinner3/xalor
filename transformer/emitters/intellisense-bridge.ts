@@ -3,7 +3,8 @@ import { IS_SOLID_CONFIG_ITEMS, REGEX_PATTERNS } from '../../shared';
 import * as fs from 'fs';
 import * as path from 'path';
 import type { TVaultSyncPayload } from '../../shared';
-import { XalorRoutesService } from '../service';
+import { XalorRoutesService, xalorCentralContext } from '../service';
+
 /**
  * temporalManifest
  *
@@ -17,12 +18,18 @@ import { XalorRoutesService } from '../service';
  * 2. MERGING: Populates the ISolidRegistry interface via declaration merging.
  * 3. OVERLOADING: Generates specific function signatures that map string
  *    keys to their respective TypeScript interfaces for the IDE.
+ type TExpandStructure<T> = T extends (...args: unknown[]) => unknown
+  ? T
+  : T extends object
+  ? { [K in keyof T]: TExpandStructure<T[K]> }
+  : T;
  */
 function temporalManifest(
   registry: Map<string, TVaultSyncPayload>,
   targetDir: string,
   emitter: typeof IS_SOLID_CONFIG_ITEMS.emitter,
 ): string {
+  const { keyHasExportedType } = xalorCentralContext.context;
   const identityLines: string[] = [];
   const registryLines: string[] = [];
 
@@ -45,32 +52,51 @@ function temporalManifest(
       .replace(REGEX_PATTERNS.backslashes, '/');
 
     // Securely parse out your coordinate elements
-    const coordinateParts = area.split(':');
-    const len = coordinateParts.length;
-    const lineNumber = len >= 2 ? coordinateParts[len - 2] : '1';
-    const columnNumber = len >= 1 ? coordinateParts[len - 1] : '1';
+    // const coordinateParts = area.split(':');
+    // const len = coordinateParts.length;
+    // const lineNumber = len >= 2 ? coordinateParts[len - 2] : '1';
+    // const columnNumber = len >= 1 ? coordinateParts[len - 1] : '1';
 
     // Verify if the type is a public named export that can be imported safely
-    const isPublicExport =
-      symbolName !== 'unknown' &&
-      !symbolName.includes('{') &&
-      !key.includes('$');
+    const isPublicExport = keyHasExportedType.has(symbolName);
 
-    if (isPublicExport) {
+    const cleanArea = area.replace(/\s+/g, '');
+    const coordinateParts = cleanArea.split(':');
+    const len = coordinateParts.length;
+
+    let lineNumber = '1';
+
+    if (len >= 2) {
+      lineNumber = coordinateParts[len - 2].replace(/\D/g, '');
+    }
+
+    // 🚀 THE IDE-STABLE WORKSPACE LINK:
+    // Uses a standard relative dot-slash notation which IDE link pickers resolve with 100% accuracy.
+    // const relativeWorkspacePath = path
+    //   .relative(process.cwd(), filePath)
+    //   .replace(/\\/g, '/'); // Force forward slashes for cross-platform stability
+
+    const absolutePath = path
+      .resolve(process.cwd(), filePath)
+      .replace(/\\/g, '/');
+
+    // 🚀 FIXED: Changes from ':33:1' to '#L33'
+    // This tells the IDE to open the absolute path, and then seek to line 33.
+    const clickableFileLink = `file://${absolutePath}#L${lineNumber}`;
+
+    if (keyHasExportedType.has(symbolName)) {
       // 🛰️ PARADIGM A: Public Named Export -> Retains your relative code imports intact
       // while using workspace-absolute links for the JSDoc @see navigation tags!
       identityLines.push(
-        [`  '${key}': import('./${relativeImportPath}').${symbolName};`].join(
-          '\n',
-        ),
+        [
+          `  /** 🔗 Source: ${clickableFileLink} */`,
+          ` /* prettier-ignore */ '${key}': import('./${relativeImportPath}').${symbolName};`,
+        ].join('\n'),
       );
     } else {
       identityLines.push(
         [
-          `    /** `,
-          `     * 🔒 Un-Exported Module Type Definition`,
-          `     * @see {@link ${workspaceAnchorPath}:${lineNumber}:${columnNumber} Inspect Code Line Source}`,
-          `     */`,
+          `  /** 🔗 Source: ${clickableFileLink} */`,
           `    /* prettier-ignore */ '${key}': ${typeName};`,
         ].join('\n'),
       );
@@ -78,7 +104,7 @@ function temporalManifest(
 
     // Populate your structural hover card registries using clean absolute workspace paths
     registryLines.push(
-      `  /** @see {@link ${workspaceAnchorPath}:${lineNumber}:${columnNumber} Source Definition Location} */\n   /* prettier-ignore */ '${key}': ${typeName};`,
+      ` /* prettier-ignore */ '${key}': TExpandStructure<ISolidIdentity['${key}']>;`,
     );
   });
 

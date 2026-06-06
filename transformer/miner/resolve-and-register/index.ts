@@ -32,6 +32,7 @@ export function resolveAndRegisterType({
   node,
   sourceFile,
   checker,
+  callNode,
 }: TTypeResolutionParams): TSolidShape {
   // const { isReifyRuntimeMode } = XalorRoutesService.resolveXalorLifecycle();
   const activeExecuteMode = XalorRoutesService.xalorCLIMode();
@@ -80,8 +81,13 @@ export function resolveAndRegisterType({
   // 1. Run the safe, shallow-probe compatibility validation radar
   verifyAndValidateType({ shapeType, checker, keyName, sourceFile });
 
-  // 2. Compute spatial location origin geometry metrics safely
-  const identity = getSpatialIdentity({ node, sourceFile, shapeType, checker });
+  const identity = getSpatialIdentity({
+    node,
+    sourceFile,
+    shapeType,
+    checker,
+    callNode,
+  });
 
   // Initialize the memory fragment map buffers
   const fragments = new Map<string, TSolidShape>();

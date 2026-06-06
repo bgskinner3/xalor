@@ -78,6 +78,7 @@ export default function xalorTransformerPlugin(
       xalorCentralContext.resetActivePassKeys();
       xalorCentralContext.resetFileCounters(sourceFile.fileName);
       xalorCentralContext.resetBlacklist();
+      // xalorCentralContext.resetExportedTypes();
       const program = isGetProgram(context)
         ? context.getProgram()
         : compilerFactoryProgram;

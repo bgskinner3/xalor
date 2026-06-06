@@ -68,5 +68,6 @@ export type TXalorEngineContext = {
   readonly isHydrated: boolean;
   readonly blacklistedKeys: Set<string>;
   readonly targetedFilesSet: Set<string>;
+  readonly keyHasExportedType: Set<string>;
   readonly compilationPhase: TCompilationPhase;
 };

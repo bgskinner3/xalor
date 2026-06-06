@@ -14,6 +14,7 @@ class XalorContextService {
   private blacklistedKeys = new Set<string>();
   private activeCompilationPhase: TCompilationPhase = 'STANDARD_INLINE';
   private targetedRuntimeFilesSet = new Set<string>();
+  private keyHasExportedType = new Set<string>();
   constructor() {
     this.ensureGlobalMemoryRegistries();
   }
@@ -69,6 +70,7 @@ class XalorContextService {
       blacklistedKeys: this.blacklistedKeys,
       targetedFilesSet: this.targetedRuntimeFilesSet,
       compilationPhase: this.activeCompilationPhase,
+      keyHasExportedType: this.keyHasExportedType,
     };
   }
   // ============================================================================================
@@ -96,7 +98,9 @@ class XalorContextService {
   public resetBlacklist(): void {
     this.blacklistedKeys.clear();
   }
-
+  public resetExportedTypes(): void {
+    this.keyHasExportedType.clear();
+  }
   // ============================================================================================
   // ACTIVE PASS KEYS
   // ============================================================================================

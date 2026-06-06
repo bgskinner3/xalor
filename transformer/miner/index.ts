@@ -69,14 +69,22 @@ export function theMiner({
     // 🪐 PATH A: THE REGISTRATION TARGET EXTRACTION LIFECYCLE
     // TODO: Rsolve complie issue to avoid dual loop
     // TODO: === that is register first then apply api second.
-    // !isReifyRuntimeMode
     if (isRegisterTarget(target)) {
       const { keyName, shapeType } = target;
       if (!isReifyRuntimeMode) return visitEachChild(node, visitor, context);
-      /* prettier-ignore */
-      const shape: TSolidShape = resolveAndRegisterType({ keyName, shapeType, node, sourceFile, checker });
 
-      // updateGlobalAndSession
+      /* prettier-ignore */
+      const symbol = shapeType.aliasSymbol || shapeType.getSymbol();
+      const declarationNode = symbol?.declarations?.[0] ?? node;
+      const shape: TSolidShape = resolveAndRegisterType({
+        keyName,
+        shapeType,
+        node: declarationNode,
+        callNode: node,
+        sourceFile,
+        checker,
+      });
+
       // Rewrite the AST call structure to physically inject the metadata arguments into your bundle
       /* prettier-ignore */
       const updatedCall = solidVisitorProcessor({ node, sourceFile, factory, target, shape });

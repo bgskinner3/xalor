@@ -5,6 +5,7 @@ import type {
   Node,
   Program,
   TransformationContext,
+  CallExpression,
 } from 'typescript';
 import type {
   TSolidShape,
@@ -51,6 +52,7 @@ export type TInterfaceOrType = {
   shapeType: Type;
   checker: TypeChecker;
   node: Node;
+  callNode?: CallExpression;
 };
 
 /**
@@ -98,6 +100,7 @@ export type TTypeResolutionParams = {
   readonly node: Node;
   readonly sourceFile: SourceFile;
   readonly checker: TypeChecker;
+  callNode?: CallExpression;
 };
 /**
  * 🪐 TVERIFYANDVALIDATETYPE PARAMETER MATRIX
