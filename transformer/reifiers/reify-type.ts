@@ -33,7 +33,6 @@ export function reifyType({
   const result = runReifierLoop(type, checker, ctx);
   return internShape(result);
 }
-// TODO: OPTIMIZE
 function runReifierLoop(
   type: Type,
   checker: TypeChecker,

@@ -97,19 +97,65 @@ xalor.register<'TX', Transaction>();
 ### 3. Validate data
 
 ```ts
-xalor.validate<'TX'>(payload);
+const payload = {
+  id: 'z2XIErEIP',
+  amount: 1200,
+  currency: 'USD',
+};
+
+xalor.parse<'TX'>(payload);
+
+/**
+ * Returns
+ * - Use `parse()` as the primary synchronous validation gate.
+ * - Verifies that the input conforms to the registered contract.
+ * - Returns the validated value with full type inference.
+ *
+ */
 ```
 
 ### 4. Generate mock data
 
 ```ts
-const mock = xalor.generate<'TX'>();
+const mock = xalor.mock<'TX'>();
+
+/**
+ * Returns
+ *  - `mock` Generates realistic, randomized data structures
+ *
+ * {
+ *   id: 's2Z7XIErEIP',
+ *   amount: 985,
+ *   currency: 'EUR'
+ * }
+ *
+ */
 ```
 
 ### 5. Transform data
 
 ```ts
-const slim = xalor.transform<'TX'>(payload, 'pick');
+const mockOrder = {
+  id: 'z2XIErEIP',
+  amount: 985,
+  currency: 'EUR',
+};
+
+const slim = xalor.pick<'TX'>({
+  data: mockOrder,
+  keys: ['id', 'currency'],
+});
+
+/**
+ * Returns
+ * - Creates a new object containing only the requested properties.
+ *  - Use `pick` to filter Set cache to retain explicit tracking keys.
+ *
+ * {
+ *   id: 's2Z7XIErEIP',
+ *   amount: 985,
+ * }
+ */
 ```
 
 <br/>
@@ -148,10 +194,13 @@ import { xalor } from '@bgskinner2/xalor';
 import { xalor } from '@bgskinner2/xalor';
 
 xalor.register();
-xalor.validate();
-xalor.generate();
-xalor.transform();
-xalor.match();
+
+xalor.parse<'USER'>();
+xalor.mock<'USER'>();
+xalor.default<'USER'>();
+xalor.cast<'USER'>();
+xalor.clone<'USER'>();
+xalor.pick<'USER'>();
 ```
 
 <br/>
@@ -159,23 +208,29 @@ xalor.match();
 ## 🧪 Validation
 
 ```typescript
-xalor.validate<'USER'>(data);
-xalor.validate<'USER'>(data, 'guard');
+xalor.assert<'USER'>();
+xalor.guard<'USER'>();
+xalor.parse<'USER'>();
+xalor.audit<'USER'>();
 ```
 
-## 🧪 Generation
+## 🏗️ Generation
 
 ```typescript
-xalor.generate<'USER'>();
-xalor.generate<'USER'>('mock');
+xalor.cast<'USER'>();
+xalor.mock<'USER'>();
+xalor.default<'USER'>();
+xalor.clone<'USER'>();
 ```
 
 ## 🔄 Transformation
 
 ```typescript
-xalor.transform<'USER'>(data, 'pick');
-xalor.transform<'USER'>(data, 'omit');
-xalor.transform<'USER'>(data, 'flatten');
+xalor.pick<'USER'>();
+xalor.omit<'USER'>();
+xalor.flatten<'USER'>();
+xalor.rename<'USER'>();
+xalor.merge<'USER'>();
 ```
 
 <br/>

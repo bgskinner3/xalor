@@ -40,7 +40,11 @@ declare global {
         };
       }[];
     };
-
+    TRANSACTION: {
+      id: string;
+      amount: number;
+      currency: 'USD' | 'EUR' | 'GBP';
+    };
     // ADVANCED ENGINE TESTING TAXONOMIES
     OPTIONAL_FIELDS_TEST: {
       mandatoryId: number;
@@ -86,9 +90,15 @@ describe('Runtime Generator API - Mock Mode', () => {
       'CIRCULAR_DEPTH_TEST',
       TEST_SHAPE_REGISTRY.CIRCULAR_DEPTH_TEST,
     );
+    seedTestVault('TRANSACTION', TEST_SHAPE_REGISTRY.TRANSACTION);
   });
 
   describe('GENERATE XALOR MOCK OBJECT', () => {
+    // it('🎯 should successfully compile high-entropy primitives from a standard user blueprint', () => {
+    //   const result = xalor.mock<'TRANSACTION'>();
+    //   console.log(result, '\n\n\n\n\n', 'RESULLLLLTTTT');
+    //   expect(result).toBeDefined();
+    // });
     it('🎯 should successfully compile high-entropy primitives from a standard user blueprint', () => {
       const result = xalor.mock<'USER_TEST'>();
 

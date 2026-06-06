@@ -101,7 +101,6 @@ export function formatTransformationArgs<T extends IBasePayload>(
   const keyLiteral = factory.createStringLiteral(raw.keyName ?? 'unknown');
   const modeLiteral = factory.createStringLiteral(mode);
 
-  // 🎯 REALIGNMENT PASS: Pushes mutation contexts to the front matching runtime signatures
   return node.arguments.length > 0
     ? [...node.arguments, keyLiteral, modeLiteral]
     : [keyLiteral, modeLiteral];

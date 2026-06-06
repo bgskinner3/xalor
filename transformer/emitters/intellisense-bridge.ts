@@ -4,7 +4,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { TVaultSyncPayload } from '../../shared';
 import { XalorRoutesService, xalorCentralContext } from '../service';
-import { fsContext } from '../../shared/service';
 
 /**
  * temporalManifest

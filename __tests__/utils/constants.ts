@@ -30,7 +30,53 @@ export const TEST_SHAPE_REGISTRY = {
       },
     },
   },
+  TRANSACTION: {
+    kind: 'object',
+    properties: {
+      id: {
+        name: 'id',
+        optional: false,
+        shape: {
+          kind: 'primitive',
+          type: 'string',
+        },
+      },
 
+      amount: {
+        name: 'amount',
+        optional: false,
+        shape: {
+          kind: 'primitive',
+          type: 'number',
+        },
+      },
+
+      currency: {
+        name: 'currency',
+        optional: false,
+        shape: {
+          kind: 'union',
+          values: [
+            {
+              kind: 'literal',
+              type: 'string',
+              value: 'USD',
+            },
+            {
+              kind: 'literal',
+              type: 'string',
+              value: 'EUR',
+            },
+            {
+              kind: 'literal',
+              type: 'string',
+              value: 'GBP',
+            },
+          ],
+        },
+      },
+    },
+  },
   COMPLEX_ORDER: {
     kind: 'object',
     properties: {
