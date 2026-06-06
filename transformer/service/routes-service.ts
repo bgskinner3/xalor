@@ -5,7 +5,7 @@ import type {
   TTransformerExecuteMode,
 } from '../../shared';
 import { XALOR_ENV_KEYS } from '../../shared';
-import { resolveXalorPaths } from '../../shared/utils';
+import { fsContext } from '../../shared/service';
 import type { TXalorLifecycleContext } from '../types';
 import { xalorCentralContext } from './context-service';
 
@@ -82,7 +82,7 @@ export class XalorRoutesService {
   public static resolveXalorPaths(
     executionContextPath?: string,
   ): TXalorResolvedPaths {
-    return resolveXalorPaths(executionContextPath);
+    return fsContext.resolveXalorPaths(executionContextPath);
   }
 
   public static getPackageRootDir(activeDirName: string): string {
@@ -94,5 +94,15 @@ export class XalorRoutesService {
     }
 
     return path.resolve(activeDirName);
+  }
+
+  public static buildAbsolutePathTypeLink(area: string, filePath: string) {
+    const lineMatch = area.match(/line:\s*(\d+)/);
+    const lineNumber = lineMatch ? lineMatch[1] : '1';
+    const root = fsContext.envPaths.rootDir;
+
+    const absolutePath = path.resolve(root, filePath).replace(/\\/g, '/');
+
+    return `file://${absolutePath}#L${lineNumber}`;
   }
 }

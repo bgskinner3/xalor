@@ -95,7 +95,7 @@ class FileSystemContextService {
   // CORE REGISTERED FILE PATHS
   // ================================================================================
   // ===============================================================================
-  private resolveXalorPaths(
+  public resolveXalorPaths(
     rootDir: string = this.projectRoot,
   ): TXalorResolvedPaths {
     const fileNames = this.fileNames;

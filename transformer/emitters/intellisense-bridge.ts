@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { TVaultSyncPayload } from '../../shared';
 import { XalorRoutesService, xalorCentralContext } from '../service';
+import { fsContext } from '../../shared/service';
 
 /**
  * temporalManifest
@@ -37,59 +38,20 @@ function temporalManifest(
     const { filePath, symbolName, area, typeName } = payload;
 
     // 🪐 RESOLUTION A: The Strict Compiler Path
-    // Computes relative file-system walkers strictly for your dynamic imports.
-    // This allows tsserver to step out of node_modules and resolve types perfectly.
     const relativeImportPath = path
       .relative(targetDir, filePath)
       .replace(REGEX_PATTERNS.backslashes, '/')
       .replace(REGEX_PATTERNS.extensions, '');
 
-    // 🛰️ RESOLUTION B: The Absolute Workspace Link Path
-    // Computes dot-free absolute anchors starting directly from the project root.
-    // This ensures JSDoc clicks map accurately regardless of what file the user hovers.
-    const workspaceAnchorPath = path
-      .relative(process.cwd(), filePath)
-      .replace(REGEX_PATTERNS.backslashes, '/');
-
-    // Securely parse out your coordinate elements
-    // const coordinateParts = area.split(':');
-    // const len = coordinateParts.length;
-    // const lineNumber = len >= 2 ? coordinateParts[len - 2] : '1';
-    // const columnNumber = len >= 1 ? coordinateParts[len - 1] : '1';
-
-    // Verify if the type is a public named export that can be imported safely
-    const isPublicExport = keyHasExportedType.has(symbolName);
-
-    const cleanArea = area.replace(/\s+/g, '');
-    const coordinateParts = cleanArea.split(':');
-    const len = coordinateParts.length;
-
-    let lineNumber = '1';
-
-    if (len >= 2) {
-      lineNumber = coordinateParts[len - 2].replace(/\D/g, '');
-    }
-
-    // 🚀 THE IDE-STABLE WORKSPACE LINK:
-    // Uses a standard relative dot-slash notation which IDE link pickers resolve with 100% accuracy.
-    // const relativeWorkspacePath = path
-    //   .relative(process.cwd(), filePath)
-    //   .replace(/\\/g, '/'); // Force forward slashes for cross-platform stability
-
-    const absolutePath = path
-      .resolve(process.cwd(), filePath)
-      .replace(/\\/g, '/');
-
-    // 🚀 FIXED: Changes from ':33:1' to '#L33'
-    // This tells the IDE to open the absolute path, and then seek to line 33.
-    const clickableFileLink = `file://${absolutePath}#L${lineNumber}`;
+    /* prettier-ignore */
+    const clickableFileLink = XalorRoutesService.buildAbsolutePathTypeLink(area, filePath);
 
     if (keyHasExportedType.has(symbolName)) {
       // 🛰️ PARADIGM A: Public Named Export -> Retains your relative code imports intact
       // while using workspace-absolute links for the JSDoc @see navigation tags!
       identityLines.push(
         [
-          `  /** 🔗 Source: ${clickableFileLink} */`,
+          ` /** 🔗 Source: ${clickableFileLink} */`,
           ` /* prettier-ignore */ '${key}': import('./${relativeImportPath}').${symbolName};`,
         ].join('\n'),
       );
@@ -97,7 +59,7 @@ function temporalManifest(
       identityLines.push(
         [
           `  /** 🔗 Source: ${clickableFileLink} */`,
-          `    /* prettier-ignore */ '${key}': ${typeName};`,
+          `  /* prettier-ignore */ '${key}': ${typeName};`,
         ].join('\n'),
       );
     }
