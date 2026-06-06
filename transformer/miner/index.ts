@@ -52,7 +52,7 @@ export function theMiner({
   context,
   sourceFile,
 }: TMinerCorParams): Visitor {
-  const { isIngestRegistryMode, isReifyRuntimeMode } =
+  const { isIngestRegistryMode, isReifyRuntimeMode, isStandardInlineMode } =
     XalorRoutesService.resolveXalorLifecycle();
   const checker = program.getTypeChecker();
   const { factory } = context;
@@ -71,7 +71,9 @@ export function theMiner({
     // TODO: === that is register first then apply api second.
     if (isRegisterTarget(target)) {
       const { keyName, shapeType } = target;
-      if (!isReifyRuntimeMode) return visitEachChild(node, visitor, context);
+
+      if (!isReifyRuntimeMode && !isStandardInlineMode)
+        return visitEachChild(node, visitor, context);
 
       /* prettier-ignore */
       const symbol = shapeType.aliasSymbol || shapeType.getSymbol();
@@ -91,10 +93,18 @@ export function theMiner({
 
       return markAsPure(updatedCall);
     }
-    if (isIngestRegistryMode && isRuntimeAPICall(target)) {
+    if (
+      isIngestRegistryMode &&
+      !isStandardInlineMode &&
+      isRuntimeAPICall(target)
+    ) {
       xalorCentralContext.addTargetedRuntimeFile(sourceFile.fileName);
     }
-    if (isIngestRegistryMode && !isRegisterTarget(target)) {
+    if (
+      isIngestRegistryMode &&
+      !isStandardInlineMode &&
+      !isRegisterTarget(target)
+    ) {
       return visitEachChild(node, visitor, context);
     }
 
