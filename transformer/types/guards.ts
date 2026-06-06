@@ -1,15 +1,11 @@
 import ts from 'typescript';
 import type { TVaultSyncPayload } from '../../shared';
-import {
-  REGISTER_MODE_TRIGGERS,
-  GENERATOR_MODE_TRIGGERS,
-  VALIDATION_MODE_TRIGGERS,
-  TRANSFORM_MODE_TRIGGERS,
-} from '../../shared/constants';
-export type TRegisterTriggers = (typeof REGISTER_MODE_TRIGGERS)[number]; // 'xalor.register'
-export type TGeneratorTriggers = (typeof GENERATOR_MODE_TRIGGERS)[number]; // 'xalor.default' | 'xalor.mock' | ...
-export type TValidationTriggers = (typeof VALIDATION_MODE_TRIGGERS)[number]; // 'xalor.guard' | 'xalor.assert' | ...
-export type TTransformTriggers = (typeof TRANSFORM_MODE_TRIGGERS)[number]; // 'xalor.pick' | 'xalor.omit' | ...
+import type {
+  TRegisterTriggers,
+  TGeneratorTriggers,
+  TValidationTriggers,
+  TTransformTriggers,
+} from '../../shared/auto';
 
 export type TManifestChecks = {
   readonly existingPayload: TVaultSyncPayload;

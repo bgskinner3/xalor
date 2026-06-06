@@ -18,7 +18,8 @@ import {
   GENERATOR_MODE_TRIGGERS,
   VALIDATION_MODE_TRIGGERS,
   TRANSFORM_MODE_TRIGGERS,
-} from '../../shared/constants';
+} from '../../shared/auto';
+
 /** @see {@link AuditServiceDocs.buildTopologyEdge} */
 export function buildTopologyEdge(
   blueprintKeys: string[],

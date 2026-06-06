@@ -2,10 +2,9 @@ import { XalethorService } from '../xalor-service';
 import type {
   TGenerateXalorReturn,
   TGenerateXalorStrategyEngine,
-  TGenerateXalorModes,
 } from '../models/types';
 import type { TSolidBranded } from '../../shared';
-
+import type { TGeneratorXalorModes } from '../../shared/auto';
 /**
  * RUNTIME API: GENERATE XALOR
  *
@@ -38,7 +37,7 @@ export function generateXalor<
 >(data: unknown): TSolidBranded<K, ISolidRegistry[K]>; // OVERLOAD 5: THE CAST
 export function generateXalor<
   K extends keyof ISolidRegistry,
-  M extends TGenerateXalorModes,
+  M extends TGeneratorXalorModes,
 >(key?: K, mode?: M, data?: unknown): TGenerateXalorReturn<K, M> {
   if (!key || !mode) {
     throw new Error(

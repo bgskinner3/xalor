@@ -6,8 +6,8 @@ import type {
   TMergeContext,
   TRenameContext,
   TPickOmitContext,
-  TTransformXalorModes,
 } from '../models/types';
+import type { TTransformXalorModes } from '../../shared/auto';
 
 /**
  * RUNTIME API: TRANSFORM XALOR

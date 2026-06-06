@@ -1,5 +1,4 @@
 // /transformer/mappers/miner-router-mapper.ts
-import ts from 'typescript';
 import type { TXalorMinerRouterMap, TRegisterRawPayload } from '../types';
 import { extractSingleKeyPayload } from '../utils';
 /**

@@ -11,7 +11,7 @@ import type {
   TDeepWriteable,
   TRuntimeTriggerName,
   TTripleKV,
-} from '../../../shared/types';
+} from '../../../shared';
 import {
   isAllowedFileExt,
   ObjectUtils,
@@ -233,14 +233,14 @@ export class TelemetryService {
     for (const matchResultNode of sanitizedFileString.matchAll(captureRegex)) {
       const strategyToken = matchResultNode[1]!; // e.g. "xalor.guard"
       const targetKey = matchResultNode[2]!; // e.g. "USER_MODEL"
-      let apiMode: TRuntimeTriggerName = 'validateXalor'; // Default bucket fallback
+      let apiMode: TRuntimeTriggerName = 'validationXalor'; // Default bucket fallback
 
       // Map specific sub-commands back into original parent telemetry buckets
-      if (isGeneratorTrigger.has(strategyToken)) apiMode = 'generateXalor';
+      if (isGeneratorTrigger.has(strategyToken)) apiMode = 'generatorXalor';
       else if (isTransformerTrigger.has(strategyToken))
         apiMode = 'transformXalor';
       else if (isValidationTrigger.has(strategyToken))
-        apiMode = 'validateXalor';
+        apiMode = 'validationXalor';
 
       matches.push({ apiMode, targetKey, strategyToken });
     }
@@ -256,8 +256,8 @@ export class TelemetryService {
     const apiUsageMap: TDeepWriteable<TStudioApiUsageMap> = Object.create(null);
     for (const [key, modes] of apiUsageCollectionMap.entries()) {
       apiUsageMap[key] = {
-        generateXalor: Array.from(modes.generateXalor),
-        validateXalor: Array.from(modes.validateXalor),
+        generatorXalor: Array.from(modes.generatorXalor),
+        validationXalor: Array.from(modes.validationXalor),
         transformXalor: Array.from(modes.transformXalor),
       };
     }

@@ -2,13 +2,13 @@ import { XalethorService } from '../xalor-service';
 import type {
   TValidateXalorReturn,
   TTValidateStrategyEngine,
-  TValidateXalorModes,
 } from '../models/types';
 import { buildValidationTools, markAsSolid } from '../utils';
 import type {
   TTypeGuard,
   TXalorAuditReport,
   TSolidBranded,
+  TValidationXalorModes,
 } from '../../shared';
 
 /**
@@ -49,7 +49,7 @@ export function validateXalor<
 // --- IMPLEMENTATION ---
 export function validateXalor<
   K extends keyof ISolidRegistry,
-  M extends TValidateXalorModes,
+  M extends TValidationXalorModes,
 >(injectedKey?: K, mode?: M, data?: unknown): TValidateXalorReturn<K, M> {
   if (!injectedKey || !mode) {
     throw new Error(

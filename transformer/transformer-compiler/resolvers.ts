@@ -1,9 +1,6 @@
 // transformer/transformer-compiler/resolvers.ts
 import ts from 'typescript';
-import {
-  TRANSFORMER_EXECUTE_MODES,
-  SENTRY_TRIGGER_NAMES,
-} from '../../shared/constants';
+import { TRANSFORMER_EXECUTE_MODES, SENTRY_TRIGGER_NAMES } from '../../shared';
 import type { TXalorLifecycleContext, TModePriorityRule } from '../types';
 import type { TTransformerExecuteMode } from '../../shared';
 import { XalorRoutesService, xalorCentralContext } from '../service';

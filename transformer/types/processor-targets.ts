@@ -1,15 +1,17 @@
 import ts from 'typescript';
 import type {
-  TRegisterTriggers,
-  TGeneratorTriggers,
-  TValidationTriggers,
-  TTransformTriggers,
   TRegisterRawPayload,
   TGenerateRawPayload,
   TValidateRawPayload,
   TTransformerRawPayload,
 } from './guards';
 import type { TSolidShape } from '../../shared';
+import type {
+  TRegisterTriggers,
+  TGeneratorTriggers,
+  TValidationTriggers,
+  TTransformTriggers,
+} from '../../shared/auto';
 export type TRewriterFunction<TPayload, TShape = TSolidShape> = (
   raw: TPayload,
   node: ts.CallExpression,

@@ -208,8 +208,8 @@ export const STUDIO_NODE_TEMPLATE: TDeepWriteable<TStudioNodeItem> = {
     nodesCollapsed: 0,
   },
   apisUsed: {
-    generateXalor: [],
-    validateXalor: [],
+    generatorXalor: [],
+    validationXalor: [],
     transformXalor: [],
   },
 } satisfies TDeepWriteable<TStudioNodeItem>;

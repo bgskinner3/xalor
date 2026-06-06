@@ -3,15 +3,10 @@ import {
   IS_SOLID_SHAPE_KINDS_CONFIG,
   AUDITOR_KEYWORDS,
   SOLID_SHAPE_PRIMITIVE_KEYS,
-  SENTRY_TRIGGER_NAMES,
-  GENERATOR_MODE_TRIGGERS,
-  VALIDATION_MODE_TRIGGERS,
-  TRANSFORM_MODE_TRIGGERS,
   CLI_COMMAND_MODES,
   TRANSFORMER_EXECUTE_MODES,
   ALL_CLI_FLAGS,
   IS_SOLID_CONFIG_ITEMS,
-  RUNTIME_TRIGGER_NAMES,
 } from '../constants';
 
 /**
@@ -41,46 +36,46 @@ export type TSolidShapePrimitiveKeys =
  *  🔒 RUNTIME API TYPES
  * ============================================================================
  */
-/**
- * TSentryTriggerName
- *
- * Core list of ALL API Names
- *
- * @see {@link FoundationalTypesDocs.TSentryTriggerName}
- */
-export type TSentryTriggerName = (typeof SENTRY_TRIGGER_NAMES)[number];
-/**
- * TRuntimeTriggerName
- *
- * Core list of ALL API Names
- *
- * @see {@link FoundationalTypesDocs.TSentryTriggerName}
- */
-export type TRuntimeTriggerName = (typeof RUNTIME_TRIGGER_NAMES)[number];
-/**
- * TGenerateXalorModes
- *
- * Generator List Modes
- *
- * @see {@link FoundationalTypesDocs.TGenerateXalorModes}
- */
-export type TGenerateXalorModes = (typeof GENERATOR_MODE_TRIGGERS)[number];
-/**
- * TValidateXalorModes
- *
- * Validation List Modes
- *
- * @see {@link FoundationalTypesDocs.TValidateXalorModes}
- */
-export type TValidateXalorModes = (typeof VALIDATION_MODE_TRIGGERS)[number];
-/**
- * TTransformXalorModes
- *
- * Transformer List Modes
- *
- * @see {@link FoundationalTypesDocs.TTransformXalorModes}
- */
-export type TTransformXalorModes = (typeof TRANSFORM_MODE_TRIGGERS)[number];
+// /**
+//  * TSentryTriggerName
+//  *
+//  * Core list of ALL API Names
+//  *
+//  * @see {@link FoundationalTypesDocs.TSentryTriggerName}
+//  */
+// export type TSentryTriggerName = (typeof SENTRY_TRIGGER_NAMES)[number];
+// /**
+//  * TRuntimeTriggerName
+//  *
+//  * Core list of ALL API Names
+//  *
+//  * @see {@link FoundationalTypesDocs.TSentryTriggerName}
+//  */
+// export type TRuntimeTriggerName = (typeof RUNTIME_TRIGGER_NAMES)[number];
+// /**
+//  * TGenerateXalorModes
+//  *
+//  * Generator List Modes
+//  *
+//  * @see {@link FoundationalTypesDocs.TGenerateXalorModes}
+//  */
+// export type TGenerateXalorModes = (typeof GENERATOR_MODE_TRIGGERS)[number];
+// /**
+//  * TValidateXalorModes
+//  *
+//  * Validation List Modes
+//  *
+//  * @see {@link FoundationalTypesDocs.TValidateXalorModes}
+//  */
+// export type TValidateXalorModes = (typeof VALIDATION_MODE_TRIGGERS)[number];
+// /**
+//  * TTransformXalorModes
+//  *
+//  * Transformer List Modes
+//  *
+//  * @see {@link FoundationalTypesDocs.TTransformXalorModes}
+//  */
+// export type TTransformXalorModes = (typeof TRANSFORM_MODE_TRIGGERS)[number];
 
 // ====================================================================================================
 // ====================================================================================================

@@ -1,6 +1,6 @@
 // transformer/utils/ast-helpers.ts
 import { SENTRY_TRIGGER_NAMES, isKeyOfArray } from '../../shared';
-import type { TSentryTriggerName } from '../../shared';
+import type { TSentryTriggerNames } from '../../shared';
 import {
   addSyntheticLeadingComment,
   SyntaxKind,
@@ -31,7 +31,7 @@ import { XalorRoutesService } from '../service';
  */
 export function getAPIName(
   node: CallExpression,
-): TSentryTriggerName | undefined {
+): TSentryTriggerNames | undefined {
   const expression = node.expression;
 
   // Path A: Standalone legacy macro identifiers (e.g., registerXalor)

@@ -5,10 +5,10 @@ import type {
   TDeepKeyOf,
 } from '../../../shared';
 import type {
-  TGenerateXalorModes,
-  TValidateXalorModes,
+  TGeneratorXalorModes,
+  TValidationXalorModes,
   TTransformXalorModes,
-} from '../types';
+} from '../../../shared';
 
 // ====================================================================
 // ====================================================================
@@ -27,14 +27,14 @@ export type TGenerateXalorResultMap<K extends keyof ISolidRegistry> = {
   cast: TSolidBranded<K, ISolidRegistry[K]>;
 };
 export type TGenerateXalorStrategyEngine<K extends keyof ISolidRegistry> = {
-  readonly [P in TGenerateXalorModes]: (
+  readonly [P in TGeneratorXalorModes]: (
     k: K,
     d: unknown,
   ) => TGenerateXalorResultMap<K>[P];
 };
 export type TGenerateXalorReturn<
   K extends keyof ISolidRegistry,
-  M extends TGenerateXalorModes,
+  M extends TGeneratorXalorModes,
 > = TGenerateXalorResultMap<K>[M];
 
 // ====================================================================
@@ -56,11 +56,11 @@ export type TValidateXalorResultMap<K extends keyof ISolidRegistry> = {
 };
 export type TValidateXalorReturn<
   K extends keyof ISolidRegistry,
-  M extends TValidateXalorModes,
+  M extends TValidationXalorModes,
 > = TValidateXalorResultMap<K>[M];
 
 export type TTValidateStrategyEngine<K extends keyof ISolidRegistry> = {
-  readonly [Mode in TValidateXalorModes]: (
+  readonly [Mode in TValidationXalorModes]: (
     k: K,
     d: unknown,
   ) => TValidateXalorResultMap<K>[Mode];

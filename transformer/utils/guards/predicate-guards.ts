@@ -24,7 +24,7 @@ import {
   GENERATOR_MODE_TRIGGERS,
   VALIDATION_MODE_TRIGGERS,
   TRANSFORM_MODE_TRIGGERS,
-} from '../../../shared/constants';
+} from '../../../shared/auto';
 import type { TransformationContext } from 'typescript';
 // ========================================================================
 // TYPE PREDICATE GUARDS (Satisfies Main Miner Loop Safety)
