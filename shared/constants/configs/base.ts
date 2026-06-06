@@ -208,6 +208,36 @@ export const FILE_SYSTEM_SIGNAL_MAP = {
   ignoreDirectories: BUILD_IGNORE_DIRECTORIES,
   allowedExtensions: ALLOWED_BASE_FILE_EXTENSIONS,
 } as const;
+/**
+ * 🪐 XALOR CLI ENVIRONMENT ENGINE CONFIGURATION MATRICES
+ *
+ * @description
+ * Establishes absolute threshold parameters, telemetry memory caps, and recursive
+ * abstract syntax tree (AST) constraint guardrails enforced across the engine lifecycle.
+ *
+ * I. STUDIO MONITORING ENGINE CONSTRAINTS
+ * @property {number} studioMemRejectionMax
+ *   Absolute memory size capacity ceiling in Megabytes (MB). Prevents standard
+ *   JavaScript heap expansion anomalies on low-spec developer systems. If memory
+ *   consumption spikes past this limit, the orchestrator triggers an instant shutdown.
+ *
+ * @property {number} studioMemNestingDepth
+ *   Maximum recursion tree boundary limits allowed before aborting. Direct protection
+ *   guardrail mitigating infinite cyclical loop references. Prevents the stack pointer
+ *   from overflowing V8 memory parameters during execution loops.
+ *
+ * @property {number} studioMemMaxBlueprintCount
+ *   Maximum scale volume footprint for localized schema pools. Caps the aggregate length
+ *   of localized schema layouts evaluated in a single pass. Guarantees object lookup
+ *   complexities (O(N)) do not stall the CPU thread.
+ */
+
+export const CLI_CONFIG_OPTIONS = {
+  // STUDIO OPTIONS
+  studioMemRejectionMax: 50.0,
+  studioMemNestingDepth: 25,
+  studioMemMaxBlueprintCount: 5000,
+} as const;
 
 /**
  * 🌍 MASTER GLOBAL CONFIGURATION
@@ -225,4 +255,5 @@ export const IS_SOLID_CONFIG_ITEMS = {
   searchFileNames: SEARCH_FILE_NAMES,
   buildLayer: COMPILED_DISTRIBUTION_MANIFEST,
   fileSystemMap: FILE_SYSTEM_SIGNAL_MAP,
+  cliConfig: CLI_CONFIG_OPTIONS,
 } as const;

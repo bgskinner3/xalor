@@ -1,7 +1,7 @@
 import type { ICLIConfig } from '../models';
 import { auditEngineService } from '../service';
 import { sanitizeFlags } from '../utils';
-// import { studioEngine } from '../service';
+
 /**
  * RUN AUDIT COMMAND
  * ROLE: Primary CLI workload worker coordinating the type-graph audit process lifecycle.
@@ -28,14 +28,7 @@ export async function runAuditCommand(
       fix,
       debug,
     });
-    // const freshPayload =
-    //   await studioEngine.compileDashboardOverviewDataset(8001);
 
-    // console.dir(freshPayload, {
-    //   depth: null, // 👈 fully recursive
-    //   colors: true, // optional, nicer output
-    // });
-    // console.log('\n\n\n\n\nn');
     // 2. RETRIEVE METRICS VALIDATION CEILING
     if (auditPayload.summary.totalRegisteredKeys === 0) {
       if (!sanitizedFlags.json) {
@@ -65,7 +58,6 @@ export async function runAuditCommand(
 
     // 5. ENFORCE BUILD LIFECYCLE BOUNDARY CEILING
     if (auditPayload.drift.hasBreakingChanges) {
-      console.log('ERRRORRR');
       process.exit(1);
     }
   } catch (error) {

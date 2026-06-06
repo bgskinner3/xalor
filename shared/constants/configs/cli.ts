@@ -113,3 +113,5 @@ export const XALOR_CLI_STATUS_MESSAGES: Readonly<Record<number, string>> =
     6194: '✅ [Xalor CLI] Code synchronization complete. Memory registries locked.',
     6193: '⚠️ [Xalor CLI] Pass completed with compilation errors. Registries isolated.',
   });
+
+export const CLI_CONFIG_OBJECT = {};

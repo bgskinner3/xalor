@@ -130,8 +130,8 @@ export class TelemetryService {
 
       if (!apiUsageCollectionMap.has(call.targetKey)) {
         apiUsageCollectionMap.set(call.targetKey, {
-          generateXalor: new Set<string>(),
-          validateXalor: new Set<string>(),
+          generatorXalor: new Set<string>(),
+          validationXalor: new Set<string>(),
           transformXalor: new Set<string>(),
         });
       }
@@ -147,9 +147,7 @@ export class TelemetryService {
   }
 
   private async scanTelemetryFiles(
-    params: TScanTelemetryParams & {
-      apiUsageCollectionMap: Map<string, Record<string, Set<string>>>;
-    },
+    params: TScanTelemetryParams,
   ): Promise<void> {
     const {
       counters,

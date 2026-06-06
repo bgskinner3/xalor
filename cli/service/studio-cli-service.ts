@@ -6,11 +6,13 @@ import type {
   TFormatNodes,
 } from '../models/types';
 import type { TTripleKV } from '../../shared/types';
+import { IS_SOLID_CONFIG_ITEMS } from '../../shared/constants';
 import {
   yieldItems,
   cloneDeep,
   isValidSolidShape,
   isKeyInObject,
+  measurePayloadSizeMB,
 } from '../../shared/utils';
 import { fsContext } from '../../shared/service';
 import { auditEngineService } from './cli-audit-engine';
@@ -18,9 +20,9 @@ import {
   DEFAULT_OBJECT_MAPPER,
   STUDIO_COMMAND_CONFIG,
 } from '../models/constants';
-// import { generateSolidTypeScriptString } from '../utils';
 
 export class StudioCLIEngineService {
+  private cliConfigOptions = IS_SOLID_CONFIG_ITEMS.cliConfig;
   private createDefaultAuditTemplate<T extends TDefaultObjectKeys>(
     defaultType: T,
   ): TDefaultReturnKeyMap<T> {
@@ -29,6 +31,48 @@ export class StudioCLIEngineService {
     return cloneDeep(baseStaticTemplate);
   }
 
+  /**
+   * CHECK MEMORY BUDGET & STRUCTURAL STABILITY GATE
+   *
+   * Role: Evaluates the aggregated dataset payload against global performance thresholds.
+   *
+   * Further Notes
+   * @see {@link StudioServiceDocs.checkMemoryBudget}
+   *
+   * !! Payload Reduction Strategies
+   * @see {@link StudioServiceDocs.ReductionStrategies}
+   */
+  private checkMemoryBudget(payload: IStudioOverviewPayload) {
+    if (!payload) return;
+
+    const currentPayloadSizeMB = measurePayloadSizeMB(payload);
+
+    const currentBlueprintCount = Object.keys(payload.blueprints || {}).length;
+    if (currentPayloadSizeMB >= this.cliConfigOptions.studioMemRejectionMax) {
+      throw new Error(
+        `ENGINE_MEMORY_CEILING_BREACHED\n` +
+          `====================================================\n` +
+          `🚨 [FATAL EXCEPTION] ENGINE MEMORY CEILING BREACHED\n` +
+          `❌ Current Weight: ${currentPayloadSizeMB} MB\n` +
+          `🔒 Absolute Production Cap: ${this.cliConfigOptions.studioMemRejectionMax} MB\n` +
+          `💡 Action: Modularize blueprints or prune nested literal sets.\n` +
+          `====================================================`,
+      );
+    }
+
+    /* prettier-ignore */
+    if (currentBlueprintCount > this.cliConfigOptions.studioMemMaxBlueprintCount) {
+      throw new Error(
+        `BLUEPRINT_DENSITY_CAP_EXCEEDED\n` +
+          `====================================================\n` +
+          `🚨 [FATAL EXCEPTION] BLUEPRINT DENSITY CAP EXCEEDED\n` +
+          `❌ Registered Blueprints: ${currentBlueprintCount}\n` +
+          `🔒 Maximum Allowed Density: ${this.cliConfigOptions.studioMemMaxBlueprintCount}\n` +
+          `💡 Action: Split giant layout matrices across workspace contexts.\n` +
+          `====================================================`,
+      );
+    }
+  }
   private formatNodes(
     params: TFormatNodes,
     references: TTripleKV['references'],
@@ -54,19 +98,13 @@ export class StudioCLIEngineService {
       template.identity.casFingerprint = node.identity.casFingerprint;
       template.identity.isOrphan = orphanLookup.has(uuidName);
 
-      // Hydrate spatial file system coordinates mapping tokens cleanly
       template.location = {
         filePath: node.location.filePath,
         line: node.location.line,
         column: node.location.column,
-        anchorIndex: node.location.anchor, // Map explicit parameter names safely
+        anchorIndex: node.location.anchor,
       };
 
-      // V1 Optimization Handshake: Pre-compile our complex AST into flat text strings
-      // template.dataShape = generateSolidTypeScriptString(
-      //   blueprintShape,
-      //   rawVaultData.blueprints,
-      // );
       template.dataShape = isKeyInObject(uuidName)(references)
         ? references[uuidName]
         : 'unknown';
@@ -76,7 +114,6 @@ export class StudioCLIEngineService {
         nodesCollapsed: node.metrics.nodesCollapsed,
       };
 
-      // Ingest pre-seeded API usage lists, falling back gracefully to empty lists
       if (isKeyInObject(uuidName)(studioAPIMapper)) {
         template.apisUsed = studioAPIMapper[uuidName];
       }
@@ -89,13 +126,14 @@ export class StudioCLIEngineService {
   // !!! EXECUTION METHODS
   // !!! ================================================================================
   // !!! ================================================================================
+
   /**
    * COMPILE DASHBOARD OVERVIEW DATASET
-   * ROLE: Master transformation engine mapping raw payload calculations to web contracts point-free.
-   * STRATEGY: Combines flat node layers with raw blueprint shapes and host environment variables.
    *
-   * @param activePort Loopback network HTTP port currently binding the Studio process
-   * @returns Fully hydrated payload satisfying the exact IStudioOverviewPayload specifications
+   * ROLE: Master transformation engine mapping raw payload calculations to web contracts point-free.
+   *
+   * Further Notes
+   * @see {@link StudioServiceDocs.compileDashboardOverviewDataset}
    */
   public async compileDashboardOverviewDataset(
     activePort: number,
@@ -109,11 +147,10 @@ export class StudioCLIEngineService {
     if (!rawVaultData || sharedData.globalSummary.totalRegisteredKeys === 0) {
       return studioPayload;
     }
-    studioPayload.environment.activePort =
-      activePort ?? STUDIO_COMMAND_CONFIG.port;
-    studioPayload.environment.executionPlatform = os.platform();
-    studioPayload.environment.nodeRuntimeVersion = process.version;
-    studioPayload.environment.lastTelemetrySyncTimestamp = Date.now();
+    /* prettier-ignore */ studioPayload.environment.activePort = activePort ?? STUDIO_COMMAND_CONFIG.port;
+    /* prettier-ignore */ studioPayload.environment.executionPlatform = os.platform();
+    /* prettier-ignore */ studioPayload.environment.nodeRuntimeVersion = process.version;
+    /* prettier-ignore */ studioPayload.environment.lastTelemetrySyncTimestamp = Date.now();
     // =========================================================================
     // GLOBAL SUMMARY FOOTPRINT HYDRATION
     // =========================================================================
@@ -131,12 +168,12 @@ export class StudioCLIEngineService {
     // =========================================================================
     // LIFECYCLE MEMORY FOOTPRINT HYDRATION
     // =========================================================================
-    studioPayload.lifecycleFootprint = sharedData.lifecycleFootprint;
+    /* prettier-ignore */ studioPayload.lifecycleFootprint = sharedData.lifecycleFootprint;
 
     // =========================================================================
     // PHYSICAL INFRASTRUCTURE ENVIRONMENT HYDRATION
     // =========================================================================
-    studioPayload.environment.activePort = activePort;
+    /* prettier-ignore */ studioPayload.environment.activePort = activePort;
 
     // 3. EXECUTE REGISTRY HYDRATION INTERACTION PASS
     this.formatNodes(
@@ -144,25 +181,12 @@ export class StudioCLIEngineService {
       rawVaultData.references,
     );
 
-    studioPayload.blueprints = rawVaultData.blueprints;
+    /* prettier-ignore */ studioPayload.blueprints = rawVaultData.blueprints;
 
-    // 4. RETURN THE COMPRESSED OBJECT ENVELOPE SECURELY FROZEN (0 compile errors!)
-    return Object.freeze(studioPayload);
+    const resolvedPayload = Object.freeze(studioPayload);
+    this.checkMemoryBudget(resolvedPayload);
+    return resolvedPayload;
   }
 }
 
 export const studioEngine = new StudioCLIEngineService();
-
-/**
-     const studioEngine = new StudioCLIEngineService();
-    const res = await studioEngine.compileDashboardOverviewDataset(8001);
-    console.log('==========================================');
-    console.dir(res, {
-      depth: null,
-      colors: true,
-      showHidden: false,
-    });
-    console.log('==========================================');
-    console.log('==========================================');
-    console.log('\n\n\n\n');
- */

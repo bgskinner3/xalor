@@ -1,6 +1,5 @@
 import type { TTaxonomyTokenKeys } from './audit';
 import type {
-  TSolidShape,
   TRuntimeTriggerName,
   TTripleKV,
   TDeepWriteable,

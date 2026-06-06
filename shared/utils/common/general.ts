@@ -63,3 +63,23 @@ export function createBranding<
 
   return objectInstance;
 }
+/**
+ * Calculates the approximate in-memory string size of any JavaScript object in Megabytes (MB).
+ * Uses a safe fallback if the serialization layer encounters massive cyclical structures.
+ *
+ * @param payload The JavaScript object or array to measure
+ * @returns The size of the stringified payload in Megabytes (MB)
+ */
+export function measurePayloadSizeMB(payload: unknown): number {
+  if (payload === undefined || payload === null) return 0;
+
+  try {
+    const stringified = JSON.stringify(payload);
+    const totalBytes = stringified.length * 2;
+    const totalMegabytes = totalBytes / (1024 * 1024);
+
+    return Number(totalMegabytes.toFixed(2));
+  } catch {
+    return -1;
+  }
+}

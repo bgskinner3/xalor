@@ -7,7 +7,8 @@ import type {
   TSolidShape,
   TSolidObjectRawShape,
   TDeepWriteable,
-} from '../../../shared/types';
+  TRuntimeTriggerName,
+} from '../../../shared';
 import type {
   TTelemetryTokenNames,
   TStudioApiUsageMap,
@@ -357,6 +358,7 @@ export type TScanTelemetryParams = {
   registeredKeySet: Set<string>;
   targetDir: string;
   excludes: readonly string[];
+  apiUsageCollectionMap: Map<string, Record<TRuntimeTriggerName, Set<string>>>;
 };
 
 export type TAPIModeCounter = {
@@ -368,7 +370,7 @@ export type TAPIModeCounter = {
 export type TAPIStudioModeCounter = {
   counters: Record<string, number>;
   sanitizedFileString: string;
-  apiUsageCollectionMap: Map<string, Record<string, Set<string>>>;
+  apiUsageCollectionMap: Map<string, Record<TRuntimeTriggerName, Set<string>>>;
 };
 export type TCapturedAPICall = {
   readonly apiMode: string;
