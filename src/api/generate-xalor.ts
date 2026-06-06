@@ -19,25 +19,20 @@ import type { TGeneratorXalorModes } from '../../shared/auto';
  *
  * @see {@link RuntimeApiDocs.generateXalor}
  */
-export function generateXalor<
-  K extends keyof ISolidRegistry,
-  _M extends 'default',
->(): TSolidBranded<K, ISolidRegistry[K]>; // OVERLOAD 1: THE DEFAULT -
-export function generateXalor<
-  K extends keyof ISolidRegistry,
-  _M extends 'mock',
->(): TSolidBranded<K, ISolidRegistry[K]>; // OVERLOAD 2: THE MOCK
-export function generateXalor<
-  K extends keyof ISolidRegistry,
-  _M extends 'clone',
->(data: unknown): TSolidBranded<K, ISolidRegistry[K]>; // OVERLOAD 3: THE CLONE
-export function generateXalor<
-  K extends keyof ISolidRegistry,
-  _M extends 'cast',
->(data: unknown): TSolidBranded<K, ISolidRegistry[K]>; // OVERLOAD 5: THE CAST
-export function generateXalor<
-  K extends keyof ISolidRegistry,
-  M extends TGeneratorXalorModes,
+/* prettier-ignore */
+export function generateXalor<K extends keyof ISolidRegistry, _M extends 'default'
+>(key: K, mode: 'default'): TSolidBranded<K, ISolidRegistry[K]>; // OVERLOAD 1: THE DEFAULT -
+/* prettier-ignore */
+export function generateXalor<K extends keyof ISolidRegistry ,_M extends 'mock'
+>(key: K, mode: 'mock'): TSolidBranded<K, ISolidRegistry[K]>; // OVERLOAD 2: THE MOCK
+/* prettier-ignore */
+export function generateXalor<K extends keyof ISolidRegistry, _M extends 'clone',
+>(key: K, mode: 'clone', data: unknown): TSolidBranded<K, ISolidRegistry[K]>; // OVERLOAD 3: THE CLONE
+/* prettier-ignore */
+export function generateXalor<K extends keyof ISolidRegistry, _M extends 'cast',
+>(key: K, mode: 'cast', data: unknown): TSolidBranded<K, ISolidRegistry[K]>; // OVERLOAD 5: THE CAST
+/* prettier-ignore */
+export function generateXalor<K extends keyof ISolidRegistry, M extends TGeneratorXalorModes,
 >(key?: K, mode?: M, data?: unknown): TGenerateXalorReturn<K, M> {
   if (!key || !mode) {
     throw new Error(

@@ -23,26 +23,31 @@ import type { TTransformXalorModes } from '../../shared/auto';
  *
  * @see {@link RuntimeApiDocs.transformXalor}
  */
+/* prettier-ignore */
 export function transformXalor<
   K extends keyof ISolidRegistry,
   _M extends 'pick',
->(ctx: TPickOmitContext<K>): ISolidRegistry[K]; // OVERLOAD 1: (pick)
+>(injectedKey: K, injectedMode: 'pick', ctx: TPickOmitContext<K>): ISolidRegistry[K];
+/* prettier-ignore */
 export function transformXalor<
   K extends keyof ISolidRegistry,
   _M extends 'omit',
->(ctx: TPickOmitContext<K>): ISolidRegistry[K]; // OVERLOAD 2: THE STRUCTURAL EXCLUSION LANE (omit)
+>(injectedKey: K, injectedMode: 'omit', ctx: TPickOmitContext<K>): ISolidRegistry[K];
+/* prettier-ignore */
 export function transformXalor<
   K extends keyof ISolidRegistry,
   _M extends 'rename',
->(ctx: TRenameContext): ISolidRegistry[K]; // OVERLOAD 3: THE NOMINAL ALIGNMENT LANE (rename)
+>(injectedKey: K, injectedMode: 'rename', ctx: TRenameContext): ISolidRegistry[K];
+/* prettier-ignore */
 export function transformXalor<
   K extends keyof ISolidRegistry,
   _M extends 'merge',
->(ctx: TMergeContext): ISolidRegistry[K]; // OVERLOAD 4: THE ENTITY AGGREGATION LANE (merge)
+>(injectedKey: K, injectedMode: 'merge', ctx: TMergeContext): ISolidRegistry[K];
+/* prettier-ignore */
 export function transformXalor<
-  _K extends keyof ISolidRegistry,
+  K extends keyof ISolidRegistry,
   _M extends 'flatten',
->(ctx: TFlattenDataContext): Record<string, string | number | boolean>; // OVERLOAD 5: THE MATRIX DECOMPRESSION LANE (flatten)
+>(injectedKey: K, injectedMode: 'flatten', ctx: TFlattenDataContext): Record<string, string | number | boolean>;
 export function transformXalor<
   K extends keyof ISolidRegistry,
   M extends TTransformXalorModes,
