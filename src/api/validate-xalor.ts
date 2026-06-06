@@ -2,12 +2,12 @@ import { XalethorService } from '../xalor-service';
 import type {
   TValidateXalorReturn,
   TTValidateStrategyEngine,
+  TValidateXalorModes,
 } from '../models/types';
 import { buildValidationTools, markAsSolid } from '../utils';
 import type {
   TTypeGuard,
   TXalorAuditReport,
-  TValidateXalorModes,
   TSolidBranded,
 } from '../../shared';
 

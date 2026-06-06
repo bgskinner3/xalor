@@ -45,7 +45,9 @@ export function registerXalor<
 export function registerXalor<_K extends keyof ISolidRegistry | (string & {})>(
   data: unknown,
 ): void;
-export function registerXalor(params?: unknown): void {
+export function registerXalor<_K extends keyof ISolidRegistry | (string & {})>(
+  params?: unknown,
+): void {
   /**
    * THE GHOST CHECK
    *
@@ -65,3 +67,4 @@ export function registerXalor(params?: unknown): void {
    */
   return;
 }
+// registerXalor({});

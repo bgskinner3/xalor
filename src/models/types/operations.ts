@@ -8,7 +8,7 @@ import type {
   TGenerateXalorModes,
   TValidateXalorModes,
   TTransformXalorModes,
-} from '../../../shared';
+} from '../types';
 
 // ====================================================================
 // ====================================================================

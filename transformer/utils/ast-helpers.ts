@@ -34,25 +34,44 @@ export function getAPIName(
 ): TSentryTriggerName | undefined {
   const expression = node.expression;
 
+  // Path A: Standalone legacy macro identifiers (e.g., registerXalor)
   if (isIdentifier(expression)) {
     const apiName = expression.text;
     if (isKeyOfArray(SENTRY_TRIGGER_NAMES)(apiName)) return apiName;
   }
 
-  if (isPropertyAccessExpression(expression)) {
-    const propertyName = expression.name.text;
-    if (isKeyOfArray(SENTRY_TRIGGER_NAMES)(propertyName)) return propertyName;
+  // Path B: Chained method structures (e.g., xalor.register or Xalor.register)
+  if (
+    isPropertyAccessExpression(expression) &&
+    isIdentifier(expression.expression)
+  ) {
+    const baseNamespace = expression.expression.text.toLowerCase(); // Enforce lowercase ("xalor")
 
-    const executeMode = XalorRoutesService.xalorCLIMode();
-    TransformerReportService.logAnomaly({
-      keyName: 'UNKNOWN_API_TRIGGER',
-      fileLocation: 'transformer/miner/mining-target.ts ↳ getAPIName',
-      error: propertyName,
-      mode: executeMode,
-    });
+    if (baseNamespace === 'xalor' && isIdentifier(expression.name)) {
+      const methodName = expression.name.text;
+
+      // Construct the unified lowercase signature key string: "xalor.register"
+      const compoundName = `${baseNamespace}.${methodName}`;
+
+      // Verify the compound string token exists exactly in our permissible trigger list
+      if (isKeyOfArray(SENTRY_TRIGGER_NAMES)(compoundName)) {
+        return compoundName;
+      }
+
+      // If the namespace is 'xalor' but the method itself is completely unmapped, log it
+      const executeMode = XalorRoutesService.xalorCLIMode();
+      TransformerReportService.logAnomaly({
+        keyName: 'UNKNOWN_API_TRIGGER',
+        fileLocation: 'transformer/miner/mining-target.ts ↳ getAPIName',
+        error: `${expression.expression.text}.${methodName}`,
+        mode: executeMode,
+      });
+    }
   }
+
   return undefined;
 }
+
 /**
  * getFormattedPosition
  * TOOLING GEAR: CODE POSITION FORMATTER

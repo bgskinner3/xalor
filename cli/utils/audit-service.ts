@@ -14,7 +14,11 @@ import {
   yieldItems,
   cloneDeep,
 } from '../../shared/utils';
-
+import {
+  GENERATOR_MODE_TRIGGERS,
+  VALIDATION_MODE_TRIGGERS,
+  TRANSFORM_MODE_TRIGGERS,
+} from '../../shared/constants';
 /** @see {@link AuditServiceDocs.buildTopologyEdge} */
 export function buildTopologyEdge(
   blueprintKeys: string[],
@@ -133,3 +137,6 @@ export function createDefaultAuditTemplate<T extends TDefaultObjectKeys>(
 
   return cloneDeep(baseStaticTemplate);
 }
+export const isGeneratorTrigger = new Set<string>(GENERATOR_MODE_TRIGGERS);
+export const isValidationTrigger = new Set<string>(VALIDATION_MODE_TRIGGERS);
+export const isTransformerTrigger = new Set<string>(TRANSFORM_MODE_TRIGGERS);

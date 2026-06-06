@@ -6,5 +6,5 @@
 /// <reference path="./models/types/definitions/intellisense-interfaces.ts" />
 
 // src/index.ts
-export * from './operations';
+export * from './api';
 export * from './models/types/definitions';

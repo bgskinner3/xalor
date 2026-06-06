@@ -1,10 +1,11 @@
+// utils/guards/predicate-guards.ts
 import type {
   TResolvedMiningRouterReturn,
   TRegisterRawPayload,
+  TProgramContext,
   TGenerateRawPayload,
   TValidateRawPayload,
   TTransformerRawPayload,
-  TProgramContext,
 } from '../../types';
 import type {
   TMirrorBrand,
@@ -17,7 +18,13 @@ import {
   isArrayOf,
   isString,
   isArray,
-} from '../../../shared';
+  isInArray,
+} from '../../../shared/utils/guards';
+import {
+  GENERATOR_MODE_TRIGGERS,
+  VALIDATION_MODE_TRIGGERS,
+  TRANSFORM_MODE_TRIGGERS,
+} from '../../../shared/constants';
 import type { TransformationContext } from 'typescript';
 // ========================================================================
 // TYPE PREDICATE GUARDS (Satisfies Main Miner Loop Safety)
@@ -30,7 +37,7 @@ import type { TransformationContext } from 'typescript';
 export function isRegisterTarget(
   target: TResolvedMiningRouterReturn | null,
 ): target is TRegisterRawPayload {
-  return target !== null && target.apiName === 'registerXalor';
+  return target !== null && target.apiName === 'xalor.register';
 }
 
 /**
@@ -40,21 +47,21 @@ export function isRegisterTarget(
 export function isGenerateTarget(
   target: TResolvedMiningRouterReturn | null,
 ): target is TGenerateRawPayload {
-  return target !== null && target.apiName === 'generateXalor';
+  return target !== null && isInArray(GENERATOR_MODE_TRIGGERS)(target.apiName);
 }
 
 /** IS VALIDATION TARGET TYPE GUARD */
 export function isValidateTarget(
   target: TResolvedMiningRouterReturn,
 ): target is TValidateRawPayload {
-  return target !== null && target.apiName === 'validateXalor';
+  return target !== null && isInArray(VALIDATION_MODE_TRIGGERS)(target.apiName);
 }
 
 /** IS Transformer TARGET TYPE GUARD */
 export function isTransformerTarget(
   target: TResolvedMiningRouterReturn,
 ): target is TTransformerRawPayload {
-  return target !== null && target.apiName === 'transformXalor';
+  return target !== null && isInArray(TRANSFORM_MODE_TRIGGERS)(target.apiName);
 }
 
 export function isRuntimeAPICall(target: TResolvedMiningRouterReturn) {

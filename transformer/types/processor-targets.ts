@@ -1,67 +1,33 @@
 import ts from 'typescript';
 import type {
-  TGenerateRawPayload,
+  TRegisterTriggers,
+  TGeneratorTriggers,
+  TValidationTriggers,
+  TTransformTriggers,
   TRegisterRawPayload,
+  TGenerateRawPayload,
   TValidateRawPayload,
   TTransformerRawPayload,
 } from './guards';
 import type { TSolidShape } from '../../shared';
-
-/**
- * 🎛️ REGISTRATION REWRITER SIGNATURE
- * Defines the structural formatting routine for type-producing registration blocks.
- */
-export type TRegisterProcessor = (
-  raw: TRegisterRawPayload,
+export type TRewriterFunction<TPayload, TShape = TSolidShape> = (
+  raw: TPayload,
   node: ts.CallExpression,
   factory: ts.NodeFactory,
-  areaString: string,
-  shape?: TSolidShape,
+  areaString?: string,
+  shape?: TShape,
 ) => ts.Expression[];
 
-/**
- * 🎛️ GENERATION REWRITER SIGNATURE
- * Defines the functional parameter injection routine for type-consuming execution blocks.
- */
-export type TGenerateProcessor = (
-  raw: TGenerateRawPayload,
-  node: ts.CallExpression,
-  factory: ts.NodeFactory,
-) => ts.Expression[];
-/**
- * 🎛️ VALIDATION REWRITER SIGNATURE (🚀 Newly Incorporated!)
- * Defines the functional parameter injection routine for type-consuming validation blocks.
- */
-export type TValidateProcessor = (
-  raw: TValidateRawPayload,
-  node: ts.CallExpression,
-  factory: ts.NodeFactory,
-) => ts.Expression[];
-/**
- * 🎛️ TRansformer REWRITER SIGNATURE (🚀 Newly Incorporated!)
- * Defines the functional parameter injection routine for type-consuming validation blocks.
- */
-export type TTransformerProcessor = (
-  raw: TTransformerRawPayload,
-  node: ts.CallExpression,
-  factory: ts.NodeFactory,
-) => ts.Expression[];
-/**
- * 🗺️ FIXED PROCESSOR REWRITE MAP SCHEMA
- *
- * ROLE:
- * Governs the rigid lookup contract for your AST parameter rewriter table.
- *
- * WHY:
- * Satisfies Commandment IV & V. Pairing each unique API block with an explicit
- * signature registry ensures that no untyped arguments arrays can bleed into the compilation stream.
- */
 export type TProcessorRewriteMap = {
-  readonly registerXalor: TRegisterProcessor;
-  readonly generateXalor: TGenerateProcessor;
-  readonly validateXalor: TValidateProcessor;
-  readonly transformXalor: TTransformerProcessor;
+  readonly [K in TRegisterTriggers]: TRewriterFunction<TRegisterRawPayload>;
+} & {
+  readonly [K in TGeneratorTriggers]: TRewriterFunction<TGenerateRawPayload>;
+} & {
+  readonly [K in TValidationTriggers]: TRewriterFunction<TValidateRawPayload>;
+} & {
+  readonly [K in TTransformTriggers]: TRewriterFunction<TTransformerRawPayload>;
 };
+
 // ========================================================================
 // DISCRIMINATED REWRITER CONTEXTS
 // ========================================================================

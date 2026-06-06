@@ -4,9 +4,9 @@ import type { TProcessorTarget } from '../types';
 import { PROCESSOR_REWRITE_MAPPER } from '../mappers';
 import {
   isGenerateTarget,
-  isRegisterTarget,
   isValidateTarget,
   isTransformerTarget,
+  isRegisterTarget,
   getFormattedPosition,
 } from '../utils';
 
@@ -30,22 +30,22 @@ export function solidVisitorProcessor({
     const areaString = getFormattedPosition(sourceFile, nodeStartPosition);
 
     /* prettier-ignore */
-    finalArgs = PROCESSOR_REWRITE_MAPPER.registerXalor( target, node, factory, areaString, shape,);
+    finalArgs = PROCESSOR_REWRITE_MAPPER['xalor.register']( target, node, factory, areaString, shape,);
   }
 
   if (isGenerateTarget(target)) {
     /* prettier-ignore */
-    finalArgs = PROCESSOR_REWRITE_MAPPER.generateXalor(target, node, factory);
+    finalArgs = PROCESSOR_REWRITE_MAPPER[target.apiName](target, node, factory);
   }
 
   if (isValidateTarget(target)) {
     /* prettier-ignore */
-    finalArgs = PROCESSOR_REWRITE_MAPPER.validateXalor(target, node, factory);
+    finalArgs = PROCESSOR_REWRITE_MAPPER[target.apiName](target, node, factory);
   }
 
   if (isTransformerTarget(target)) {
     /* prettier-ignore */
-    finalArgs = PROCESSOR_REWRITE_MAPPER.transformXalor(target, node, factory);
+    finalArgs = PROCESSOR_REWRITE_MAPPER[target.apiName](target, node, factory);
   }
 
   return factory.updateCallExpression(

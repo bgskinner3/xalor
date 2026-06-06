@@ -19,31 +19,46 @@ export function isSolidCall(
   node: ts.Node,
   checker?: ts.TypeChecker,
 ): node is ts.CallExpression {
-  if (!ts.isCallExpression(node) || !ts.isIdentifier(node.expression))
-    return false;
+  if (!ts.isCallExpression(node)) return false;
 
-  const triggers: Readonly<string[]> = SENTRY_TRIGGER_NAMES;
-  const functionName = node.expression.text;
+  const expr = node.expression;
+  let compoundName: string | undefined = undefined;
+  let identifierNode: ts.Identifier | null = null;
 
-  if (!triggers.includes(functionName)) return false;
+  // Path A: Class Instance Method syntax (e.g., xalor.guard())
+  if (ts.isPropertyAccessExpression(expr) && ts.isIdentifier(expr.expression)) {
+    if (expr.expression.text === 'xalor' && ts.isIdentifier(expr.name)) {
+      compoundName = `xalor.${expr.name.text}`;
+      identifierNode = expr.name; // Validated safe from PrivateIdentifier bounds
+    }
+  }
+  // Path B: Legacy Global Macro syntax (e.g., validateXalor())
+  else if (ts.isIdentifier(expr)) {
+    compoundName = expr.text;
+    identifierNode = expr;
+  }
 
+  // If it didn't match either structural shape, bail immediately
+  if (!compoundName || !identifierNode) return false;
+
+  // STRICT RULE CHECK: Verify the string exists exactly in our API Registry list
+  const triggers: readonly string[] = SENTRY_TRIGGER_NAMES;
+  if (!triggers.includes(compoundName)) return false;
+
+  // Deep Origin Verification Layer
   if (checker) {
-    const symbol = checker.getSymbolAtLocation(node.expression);
+    const symbol = checker.getSymbolAtLocation(identifierNode);
     const declaration = symbol?.valueDeclaration;
 
-    if (declaration && ts.isFunctionDeclaration(declaration)) {
-      const declFile = declaration.getSourceFile().fileName;
-      const callFile = node.getSourceFile().fileName;
-
-      /**
-       * If the function is declared in the SAME file where it's called,
-       * it is a "Fake" or "Shadow" function. We skip it.
-       *
-       * If they differ, it's an external import (our Library),
-       * so we trigger the Miner.
-       */
-      if (declFile === callFile) {
-        return false;
+    if (
+      declaration &&
+      (ts.isFunctionDeclaration(declaration) ||
+        ts.isMethodDeclaration(declaration))
+    ) {
+      if (
+        declaration.getSourceFile().fileName === node.getSourceFile().fileName
+      ) {
+        return false; // Local user-defined shadow function/method. Reject it.
       }
     }
   }

@@ -2,8 +2,9 @@ import { XalethorService } from '../xalor-service';
 import type {
   TGenerateXalorReturn,
   TGenerateXalorStrategyEngine,
+  TGenerateXalorModes,
 } from '../models/types';
-import type { TSolidBranded, TGenerateXalorModes } from '../../shared';
+import type { TSolidBranded } from '../../shared';
 
 /**
  * RUNTIME API: GENERATE XALOR

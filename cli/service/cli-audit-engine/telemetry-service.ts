@@ -1,5 +1,4 @@
 import type {
-  TTelemetryTokenNames,
   IXalorAuditPayload,
   TScanTelemetryParams,
   TAPIModeCounter,
@@ -18,33 +17,41 @@ import {
   ObjectUtils,
   yieldItems,
 } from '../../../shared/utils';
-import { RUNTIME_TRIGGER_NAMES } from '../../../shared/constants';
-import { TELEMETRY_API_TOKEN_NAMES } from '../../models/constants';
-import { createDefaultAuditTemplate } from '../../utils';
+import {
+  createDefaultAuditTemplate,
+  isTransformerTrigger,
+  isValidationTrigger,
+  isGeneratorTrigger,
+} from '../../utils';
+import {
+  GENERATOR_MODE_TRIGGERS,
+  VALIDATION_MODE_TRIGGERS,
+  TRANSFORM_MODE_TRIGGERS,
+} from '../../../shared';
 
 export class TelemetryService {
-  /* prettier-ignore */
-  private strategyTokensArray: readonly TTelemetryTokenNames[] = TELEMETRY_API_TOKEN_NAMES;
-  /* prettier-ignore */
-  private runtimeTriggerNames: TRuntimeTriggerName[] = RUNTIME_TRIGGER_NAMES;
-  /* prettier-ignore */
-  private triggerCheckRegEx = new RegExp(`\\b(${this.runtimeTriggerNames.join('|')})\\b`);
+  // Track all possible sub-command strings as the valid matrix
+  private runtimeTriggerNames: readonly string[] = [
+    ...GENERATOR_MODE_TRIGGERS,
+    ...VALIDATION_MODE_TRIGGERS,
+    ...TRANSFORM_MODE_TRIGGERS,
+  ];
 
+  private triggerCheckRegEx = new RegExp(
+    `\\b(${this.runtimeTriggerNames.join('|').replace(/\./g, '\\.')})\\b`,
+  );
   private mode: 'audit' | 'studio' = 'audit';
 
   private createTelemetryScanContext(projectRoot: string) {
     const counters: Record<string, number> = {};
-
-    this.strategyTokensArray.forEach((token) => {
-      if (token !== undefined) counters[token] = 0;
+    this.runtimeTriggerNames.forEach((token) => {
+      counters[token] = 0;
     });
-
     const seenKeys = new Set<string>();
     const configMatrix = TSConfigService.extractWorkspaceConfig(projectRoot);
     const baseIncludePath = configMatrix.includePatterns[0] ?? '';
     const cleanDirName = baseIncludePath.replace('/**/*', '').replace('/*', '');
     const targetDir = fsContext.resolvePath(cleanDirName || '.');
-
     return {
       counters,
       seenKeys,
@@ -56,7 +63,6 @@ export class TelemetryService {
   private skipAnnotatedLines(rawFileContentString: string): string[] {
     const rawLinesList = rawFileContentString.split(/\r?\n/);
     const sanitizedLinesBuffer: string[] = [];
-
     for (const activeLine of rawLinesList) {
       if (activeLine === undefined) continue;
       const trimmedLine = activeLine.trim();
@@ -70,7 +76,6 @@ export class TelemetryService {
         sanitizedLinesBuffer.push(activeLine);
       }
     }
-
     return sanitizedLinesBuffer;
   }
 
@@ -80,49 +85,49 @@ export class TelemetryService {
   ): boolean {
     const len = excludePatterns.length;
     const sep = fsContext.pathSep;
-
     for (let e = 0; e < len; e++) {
       const pattern = excludePatterns[e];
       if (pattern === undefined) continue;
-
-      if (absoluteFilePath.includes(`${sep}${pattern}${sep}`)) {
-        return true;
-      }
+      if (absoluteFilePath.includes(`${sep}${pattern}${sep}`)) return true;
     }
     return false;
   }
 
+  /**
+   * COUNTS SUB-METHOD INSTANCES
+   * Matches lines containing instances like xalor.guard<"KEY"> or xalor.guard("KEY")
+   */
   private countAPIMethodUsage(params: TAPIModeCounter) {
     const { sanitizedFileString, counters } = params;
 
-    const runtimeTriggersChoiceGroup = this.runtimeTriggerNames.join('|');
-    for (const strategyToken of this.strategyTokensArray) {
+    for (const strategyToken of this.runtimeTriggerNames) {
+      // Captures things like: xalor.guard<"MY_KEY"> or xalor.guard("MY_KEY")
+      const escapedToken = strategyToken.replace(/\./g, '\\.');
       const contextualRegex = new RegExp(
-        `(?:${runtimeTriggersChoiceGroup})(?:<|\\()\\s*['"][^'"]+['"]\\s*,\\s*['"]${strategyToken}['"]`,
+        `\\b${escapedToken}\\b(?:<|\\()\\s*['"][^'"]+['"]`,
         'g',
       );
 
       const segments = sanitizedFileString.split(contextualRegex);
       const matchesCount = segments.length - 1;
-
       if (matchesCount > 0) {
-        counters[strategyToken] += matchesCount;
+        counters[strategyToken] = (counters[strategyToken] ?? 0) + matchesCount;
         console.log(
-          `      ⚡ STRATEGY INSTANCE LINKED: '${strategyToken}' (${matchesCount} matches)`,
+          ` ⚡ STRATEGY INSTANCE LINKED: '${strategyToken}' (${matchesCount} matches)`,
         );
       }
     }
   }
+
   private studioAPIUsageCompile(params: TAPIStudioModeCounter) {
     const { sanitizedFileString, counters, apiUsageCollectionMap } = params;
     const capturedCalls = this.scanAndExtractAPICalls(sanitizedFileString);
+
     for (const call of yieldItems(capturedCalls)) {
-      // Increment global counter metrics point-free
       if (call.strategyToken in counters) {
         counters[call.strategyToken]++;
       }
 
-      // Initialize target entry slots if first time seeing this contract symbol key
       if (!apiUsageCollectionMap.has(call.targetKey)) {
         apiUsageCollectionMap.set(call.targetKey, {
           generateXalor: new Set<string>(),
@@ -133,22 +138,27 @@ export class TelemetryService {
 
       const contractMap = apiUsageCollectionMap.get(call.targetKey);
       if (contractMap && call.apiMode in contractMap) {
-        // Add the explicit mode token modifier natively (e.g. 'assert', 'intern')
         contractMap[call.apiMode].add(call.strategyToken);
         console.log(
-          ` ⚡ STRATEGY LINKED: Key '${call.targetKey}' -> Mode '${call.apiMode}' [${call.strategyToken}]`,
+          ` ⚡ STRATEGY LINKED: Key '${call.targetKey}' -> Category '${call.apiMode}' [${call.strategyToken}]`,
         );
       }
     }
   }
+
   private async scanTelemetryFiles(
     params: TScanTelemetryParams & {
       apiUsageCollectionMap: Map<string, Record<string, Set<string>>>;
     },
   ): Promise<void> {
-    /* prettier-ignore */
-    const { counters, seenKeys, registeredKeySet, targetDir, excludes,   apiUsageCollectionMap } =
-      params;
+    const {
+      counters,
+      seenKeys,
+      registeredKeySet,
+      targetDir,
+      excludes,
+      apiUsageCollectionMap,
+    } = params;
     const directoryEntries = await fsContext.asyncReadDir(targetDir);
     const { length } = directoryEntries;
 
@@ -156,7 +166,6 @@ export class TelemetryService {
       const entry = directoryEntries[i]!;
       const fileName = entry.name;
       const absoluteFilePath = fsContext.resolvePath(targetDir, fileName);
-
       if (this.isPathExcluded(absoluteFilePath, excludes)) continue;
 
       if (entry.isDirectory()) {
@@ -172,13 +181,10 @@ export class TelemetryService {
       }
 
       if (!isAllowedFileExt(fsContext.getExt(fileName))) continue;
-
       const rawFileString = await fsContext.asyncReadText(absoluteFilePath);
-
       if (!this.triggerCheckRegEx.test(rawFileString)) continue;
 
       const fileContent = this.skipAnnotatedLines(rawFileString);
-
       const sanitizedFileString = fileContent.join('\n');
 
       registeredKeySet.forEach((key) => {
@@ -205,30 +211,39 @@ export class TelemetryService {
       }
     }
   }
+
+  /**
+   * PARSES NEW RUNTIME EXPRESSIONS
+   * Scans for patterns like xalor.assert<"KEY"> or xalor.assert("KEY")
+   */
   private scanAndExtractAPICalls(
     sanitizedFileString: string,
   ): readonly TCapturedAPICall[] {
-    const apiTriggersGroup = this.runtimeTriggerNames.join('|');
-    const strategyTokensGroup = this.strategyTokensArray.join('|');
+    const apiTriggersGroup = this.runtimeTriggerNames
+      .join('|')
+      .replace(/\./g, '\\.');
 
-    // Captures: Group 1: API Mode, Group 2: Target Key Name, Group 3: Strategy Token modifier
+    // Group 1: The precise trigger (e.g. 'xalor.guard'), Group 2: The inner Key payload
     const captureRegex = new RegExp(
-      `\\b(${apiTriggersGroup})\\b(?:<|\\()\\s*['"]([^'"]+)['"]\\s*,\\s*['"](${strategyTokensGroup})['"]`,
+      `\\b(${apiTriggersGroup})\\b(?:<|\\()\\s*['"]([^'"]+)['"]`,
       'g',
     );
-
     const matches: TCapturedAPICall[] = [];
 
-    // 🟢 10X LOOP REFACTOR (Commandment VIII & IX Alignment)
-    // matchAll extracts an iterator interface natively, removing mutable exec tracking blocks
     for (const matchResultNode of sanitizedFileString.matchAll(captureRegex)) {
-      matches.push({
-        apiMode: matchResultNode[1]!, // e.g. "generateXalor"
-        targetKey: matchResultNode[2]!, // e.g. "ACCOUNT_META"
-        strategyToken: matchResultNode[3]!, // e.g. "intern" / "assert"
-      });
-    }
+      const strategyToken = matchResultNode[1]!; // e.g. "xalor.guard"
+      const targetKey = matchResultNode[2]!; // e.g. "USER_MODEL"
+      let apiMode: TRuntimeTriggerName = 'validateXalor'; // Default bucket fallback
 
+      // Map specific sub-commands back into original parent telemetry buckets
+      if (isGeneratorTrigger.has(strategyToken)) apiMode = 'generateXalor';
+      else if (isTransformerTrigger.has(strategyToken))
+        apiMode = 'transformXalor';
+      else if (isValidationTrigger.has(strategyToken))
+        apiMode = 'validateXalor';
+
+      matches.push({ apiMode, targetKey, strategyToken });
+    }
     return matches;
   }
 
@@ -246,7 +261,6 @@ export class TelemetryService {
         transformXalor: Array.from(modes.transformXalor),
       };
     }
-
     return apiUsageMap;
   }
 
@@ -255,14 +269,13 @@ export class TelemetryService {
     mode: 'audit' | 'studio' = 'audit',
   ): Promise<IXalorAuditPayload['telemetry']> {
     this.mode = mode;
-    /* prettier-ignore */
     const telemetryObject = createDefaultAuditTemplate('telemetry');
-    /* prettier-ignore */
-    const apiUsageCollectionMap = new Map<string,Record<string, Set<string>>>();
-
+    const apiUsageCollectionMap = new Map<
+      string,
+      Record<string, Set<string>>
+    >();
     const registeredKeys = ObjectUtils.keys(vault.references);
-    /* prettier-ignore */
-    const { counters, seenKeys, targetDir, excludes } = 
+    const { counters, seenKeys, targetDir, excludes } =
       this.createTelemetryScanContext(fsContext.projectRoot);
 
     if (!fsContext.fileExists(targetDir)) {
@@ -275,7 +288,6 @@ export class TelemetryService {
 
     try {
       const registeredKeySet = new Set(registeredKeys);
-      // Execute your high-speed inline contextual regex splits and line-erasure comment masks
       await this.scanTelemetryFiles({
         counters,
         seenKeys,
@@ -316,9 +328,7 @@ export class TelemetryService {
       const apiUsageMap = this.formatStudioAPICalls(apiUsageCollectionMap);
       telemetryObject.studioAPIMapper = apiUsageMap;
     }
-
     return telemetryObject;
   }
 }
-
 export const telemetryService = new TelemetryService();
