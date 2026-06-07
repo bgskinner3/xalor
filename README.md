@@ -162,7 +162,7 @@ xalor.clone<'USER'>();
 xalor.pick<'USER'>();
 ```
 
-** Additional validation, generation, and transformation APIs are available in the documentation.
+\*\* Additional validation, generation, and transformation APIs are available in the documentation.
 👉 [View All](#)
 
 <br/>
@@ -177,6 +177,7 @@ npx xalor compile
 ```
 
 ## Additional development tooling is documented separately.
+
 👉 [Full CLI documentation (coming soon)](#)
 
 <br/>
