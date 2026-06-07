@@ -160,29 +160,6 @@ export type TStudioNodeItem = {
   readonly apisUsed: Record<TRuntimeTriggerName, string[]>;
 };
 
-// export type TXalorAPIMode = 'generateXalor' | 'validateXalor' | 'transformXalor';
-
-// export type TStudioNodeItem = {
-//   readonly identity: {
-//     readonly typeKey: string;
-//     readonly symbolName: string;
-//     readonly casFingerprint: string;
-//   };
-//   readonly location: {
-//     readonly filePath: string;
-//     readonly line: number;
-//     readonly column: number;
-//     readonly anchorIndex: number;
-//   };
-//   readonly dataShape: string;
-//   readonly metrics: {
-//     readonly depth: number;
-//     readonly complexityScore: string;
-//     readonly nodesCollapsed: number;
-//   };
-//   // 🟢 NEW 10X MATRIX TRACKER
-//   readonly apisUsed: Record<TXalorAPIMode, readonly string[]>;
-// };
 // ======================================================================================================
 // ======================================================================================================
 // FINAL STUDIO PAYLOAD

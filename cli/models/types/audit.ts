@@ -189,6 +189,7 @@ export type TXalorAuditLifecycleFootprint = {
   readonly evaporationEfficiencyRatio: number;
   readonly physicalPackageMetrics: TAuditSizeMetrics;
 };
+
 /**
  * TAuditToStudioSharedData
  * ROLE: Local untransformed pipeline bridge type tracking raw computations shared with the Studio layer.
