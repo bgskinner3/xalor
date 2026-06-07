@@ -47,7 +47,7 @@
  *   });
  *   ```
  * Match
-  exact
+  exact partial pattern diff
   partial
   pattern
   diff
