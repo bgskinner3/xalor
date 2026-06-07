@@ -79,9 +79,9 @@ type TEnvironment = {
  * @param casFingerprint Structural content-addressable storage hash pointer
  */
 type TNodeItemIdentity = {
+  readonly id: string;
   readonly typeKey: string;
   readonly symbolName: string;
-  readonly casFingerprint: string;
   isOrphan: boolean;
 };
 
@@ -96,8 +96,7 @@ type TNodeItemIdentity = {
  */
 type TNodeItemLocation = {
   readonly filePath: string;
-  readonly line: number;
-  readonly column: number;
+  readonly filePathLink: string;
   readonly anchorIndex: number;
 };
 

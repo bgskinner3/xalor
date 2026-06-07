@@ -59,3 +59,12 @@ export function resolveXalorPaths(
     bakedFile: path.join(absoluteBridgeDir, fileNames.bakedFileName),
   };
 }
+export function buildAbsolutePathTypeLink(area: string, filePath: string) {
+  const lineMatch = area.match(/line:\s*(\d+)/);
+  const lineNumber = lineMatch ? lineMatch[1] : '1';
+  const root = process.cwd();
+
+  const absolutePath = path.resolve(root, filePath).replace(/\\/g, '/');
+
+  return `file://${absolutePath}#L${lineNumber}`;
+}

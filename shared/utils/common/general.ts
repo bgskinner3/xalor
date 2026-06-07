@@ -6,7 +6,10 @@ import type { TBrandDomain, TBrandNS } from '../../types';
  * @param input - The raw string to hash.
  * @returns A string prefixed with 'sh_' followed by the base-36 hash.
  */
-export const computeStringHash = (input: string): string => {
+export const computeStringHash = (
+  input: string,
+  header: string = 'sh_',
+): string => {
   let hash = 0;
   const len = input.length;
 
@@ -17,7 +20,7 @@ export const computeStringHash = (input: string): string => {
 
   // Use unsigned right shift (>>> 0) to avoid Math.abs()
   // This prevents negative hash collision skewing
-  return `sh_${(hash >>> 0).toString(36)}`;
+  return `${header}${(hash >>> 0).toString(36)}`;
 };
 /**
  * Creates a valid nominal instance strictly verified by the compiler.

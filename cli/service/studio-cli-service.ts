@@ -13,6 +13,8 @@ import {
   isValidSolidShape,
   isKeyInObject,
   measurePayloadSizeMB,
+  buildAbsolutePathTypeLink,
+  computeStringHash,
 } from '../../shared/utils';
 import { fsContext } from '../../shared/service';
 import { auditEngineService } from './cli-audit-engine';
@@ -88,20 +90,28 @@ export class StudioCLIEngineService {
       const uuidName = node.identity.typeKey;
       /* prettier-ignore */
       const blueprintShape = rawVaultData.blueprints[node.identity.casFingerprint];
+
+      const manifest = rawVaultData.manifest[uuidName];
       if (!isValidSolidShape(blueprintShape)) continue;
 
       const template = this.createDefaultAuditTemplate('studioNode');
 
+      /* prettier-ignore */
+      const filePathLink = buildAbsolutePathTypeLink(manifest.area, manifest.filePath);
+      const filePath = node.location.filePath;
+      // const match = filePathLink.match(/#L\d+$/);
+      const normalized = filePath.replace(/^\.\.\//, '');
+      const baseUUid = `${normalized}#L${node.location.line}`;
+
       // Hydrate identity primitives point-free
+      template.identity.id = computeStringHash(baseUUid, 'loc_');
       template.identity.typeKey = uuidName;
       template.identity.symbolName = node.identity.symbolName;
-      template.identity.casFingerprint = node.identity.casFingerprint;
       template.identity.isOrphan = orphanLookup.has(uuidName);
 
       template.location = {
-        filePath: node.location.filePath,
-        line: node.location.line,
-        column: node.location.column,
+        filePath: normalized,
+        filePathLink: filePathLink,
         anchorIndex: node.location.anchor,
       };
 

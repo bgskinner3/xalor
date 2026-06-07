@@ -191,15 +191,14 @@ export const DEFAULT_STUDIO_PAYLOAD: IStudioOverviewPayload = {
 
 export const STUDIO_NODE_TEMPLATE: TDeepWriteable<TStudioNodeItem> = {
   identity: {
+    id: '',
     typeKey: '',
     symbolName: '',
-    casFingerprint: '',
     isOrphan: true,
   },
   location: {
     filePath: '',
-    line: 0,
-    column: 0,
+    filePathLink: '',
     anchorIndex: 0,
   },
   dataShape: '',
