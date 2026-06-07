@@ -1,18 +1,112 @@
 {
   "introduction": {
     "hero": {
+      "overline": "TypeScript Runtime Engine",
+      "tag": "Early Development Preview",
       "header": "TypScript Types runtime everything",
       "description": "Xalor is a build-time TypeScript engine that turns your native types into a live runtime validation and generation system — without duplicating schemas or shipping heavy libraries.",
       "links": {
-        "docs": {},
-        "playground": {}
+        "docs": {
+          "text": "Read the docs",
+          "active": true,
+          "href": ""
+        },
+        "playground": {
+          "text": "Try the playground",
+          "active": true,
+          "href": ""
+        }
+      },
+      "terminalDisplay": {
+        "options": [
+          {
+            "id": "156a7cc4-b466-4dd5-958e-d87a00906739",
+            "title": "Register",
+            "code": "type TOrder = {\n  id: string;\n  amount: number;\n  currency: \"USD\" | \"EUR\";\n};\n\n// Register a TypeScript type with Xalor\nxalor.register<\"ORDER\", TOrder>();\n\n// Or register using a runtime object shape\nconst order = {\n  id: \"ord_7aB91XQz\",\n  amount: 249.99,\n  currency: \"EUR\"\n} as const;\n\nxalor.register<\"ORDER\">();"
+          },
+          {
+            "id": "b25c3a59-7d58-482d-99d2-dca5a2bea2ae",
+            "title": "Validation",
+            "code": "const payload = {\n  id: \"ord_7aB91XQz\",\n  amount: 249.99,\n  currency: \"USD\"\n};\n\n// Validate incoming payloads using your registered type\nxalor.parse<\"ORDER\">(payload);\n\n// Or generate type-safe guards for runtime validation\nconst guard = xalor.guard<\"ORDER\">();\n\nif (guard(payload)) {\n  // \u2705 Valid ORDER payload\n} else {\n  // \u274c Invalid ORDER payload\n}"
+          },
+          {
+            "id": "e306320b-f4db-4d68-b4cb-6c66d9994de7",
+            "title": "Transform",
+            "code": "const rawUser = {\n  id: \"usr_91Xk2\",\n  username: \"dev_bren\",\n  email: \"bren@example.com\",\n  saltToken: \"****\"\n};\n\n// Remove sensitive fields before sending to client\nconst safeUser = transformXalor<\"User\", \"omit\">({\n  mode: \"omit\",\n  data: rawUser,\n  keys: [\"passwordHash\", \"saltToken\"]\n});\n\n// Keep only what the UI needs\nconst publicUser = transformXalor<\"User\", \"pick\">({\n  mode: \"pick\",\n  data: safeUser,\n  keys: [\"id\", \"username\", \"email\"]\n});"
+          }
+        ],
+        "footnote": "Experimental Developer Preview"
       }
     },
-    "runtimeModule": {
-      "validate": {},
-      "generate": {},
-      "transform": {},
-      "match": {}
+    "whatIsXalor": {
+      "header": "What is Xalor?",
+      "description": "Xalor shifts expensive type evaluation and syntax parsing out of your browser production scripts and up into your build toolchain. It traces your native types to compile a highly compacted blueprint map, entirely eliminating execution-heavy parser dependencies.",
+      "subDescription": "Instead of reconstructing types at runtime, Xalor executes against precompiled structures created during the build process.",
+      "steps": {
+        "stepOne": {
+          "iconName": "typescript",
+          "label": "Write Native Types",
+          "description": "No custom schemas or validation languages to learn."
+        },
+        "stepTwo": {
+          "iconName": "cog-duotone",
+          "label": "Build-Time Compilation",
+          "description": "Xalor turns your types into lightweight runtime blueprints."
+        },
+        "stepThree": {
+          "iconName": "bolt-circle-duotone",
+          "label": "Runtime Pow er",
+          "description": "Validate, mock, and transform data at hardware speeds."
+        }
+      }
+    },
+    "whatYouCanDo": {
+      "header": "What you can do",
+      "description": "From a single native type definition, Xalor opens up a complete stack-wide data management framework.",
+      "features": [
+        {
+          "id": "d385ebc1-afdd-4b70-b6d1-c6785779701f",
+          "title": "Kill the Dual-Source Tax",
+          "description": "Stop manually syncing TypeScript interfaces with Zod or Yup schema files.",
+          "iconName": "hierarchy-duotone"
+        },
+        {
+          "id": "7c89fa25-c65c-42c4-abce-edca1553092f",
+          "title": "Zero Bundle Inflation",
+          "description": "Heavy validation parsers never ship to the browser. High Lighthouse scores by default.",
+
+          "iconName": "bolt-circle-duotone"
+        },
+        {
+          "id": "d7008513-37ee-4fe4-9d99-c90701a8aea3",
+          "title": "Serverless Edge Ready",
+          "description": "O(1) memory hydration drops cold starts to practically absolute zero.",
+          "iconName": "cpu-duotone"
+        },
+        {
+          "id": "b5b945cb-06a5-43b8-8f81-cbc255dc907",
+          "title": "Line-Level Traceability",
+          "description": "Error logs map failures straight to the exact file and line number in your source.",
+          "iconName": "cli-lined"
+        }
+      ]
+    },
+    "docsCta": {
+      "header": "Ready to see it in action?",
+      "description": "The fastest way to understand the performance power of Xalor is to experience it yourself. Explore our preloaded testing layouts or spin up your own configuration environment.",
+      "primaryLink": {
+        "text": "Open Playground",
+        "href": ""
+      },
+      "secondaryLink": {
+        "text": "Read Preview Docs",
+        "href": ""
+      },
+      "imageUrl": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/custom-made/nun-v9.png"
+    },
+    "earlyPreviewNote": {
+      "header": "Early Preview",
+      "description": "<p><span>Xalor is currently in active development.</span><span>This preview is intended to explore the core ideas behind the project and gather feedback while the runtime engine and tooling continue to evolve.</span><span>APIs and behaviors may change before a stable release.</span></p>"
     }
   }
 }

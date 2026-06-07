@@ -61,6 +61,16 @@ Xalor removes that separation entirely.
 
 <br/>
 
+## 📦 Installation
+
+```bash
+npm install @bgskinner2/xalor
+```
+
+### ⚙️ Explore Configuration Options [Configure →](https://github.com/bgskinner3/xalor/tree/main)
+
+<br/>
+
 ## ⚡ What Xalor gives you
 
 From a single TypeScript type, you can:
@@ -76,87 +86,36 @@ All powered by build-time compilation — not runtime schema parsing.
 
 ## 🧩 Quick Example
 
-### 1. Define a type
-
 ```ts
+// 1. Define a type
 type Transaction = {
   id: string;
   amount: number;
   currency: 'USD' | 'EUR' | 'GBP';
 };
-```
 
-### 2. Register it
-
-```ts
-import { xalor } from '@bgskinner2/xalor';
-
+// 2. Register it
 xalor.register<'TX', Transaction>();
-```
 
-### 3. Validate data
-
-```ts
-const payload = {
-  id: 'z2XIErEIP',
-  amount: 1200,
-  currency: 'USD',
-};
-
+// 3. Validate data
 xalor.parse<'TX'>(payload);
 
-/**
- * Returns
- * - Use `parse()` as the primary synchronous validation gate.
- * - Verifies that the input conforms to the registered contract.
- * - Returns the validated value with full type inference.
- *
- */
-```
-
-### 4. Generate mock data
-
-```ts
+// 4. Generate mock data
 const mock = xalor.mock<'TX'>();
 
-/**
- * Returns
- *  - `mock` Generates realistic, randomized data structures
- *
- * {
- *   id: 's2Z7XIErEIP',
- *   amount: 985,
- *   currency: 'EUR'
- * }
- *
- */
-```
-
-### 5. Transform data
-
-```ts
-const mockOrder = {
-  id: 'z2XIErEIP',
-  amount: 985,
-  currency: 'EUR',
-};
-
+// 5. Transform data
 const slim = xalor.pick<'TX'>({
-  data: mockOrder,
+  data: payload,
   keys: ['id', 'currency'],
 });
-
-/**
- * Returns
- * - Creates a new object containing only the requested properties.
- *  - Use `pick` to filter Set cache to retain explicit tracking keys.
- *
- * {
- *   id: 's2Z7XIErEIP',
- *   amount: 985,
- * }
- */
 ```
+
+## From one type, Xalor can:
+
+- Validate runtime data.
+- Generate realistic mock objects.
+- Transform object structures.
+- Maintain compile-time and runtime alignment.
 
 <br/>
 
@@ -203,35 +162,8 @@ xalor.clone<'USER'>();
 xalor.pick<'USER'>();
 ```
 
-<br/>
-
-## 🧪 Validation
-
-```typescript
-xalor.assert<'USER'>();
-xalor.guard<'USER'>();
-xalor.parse<'USER'>();
-xalor.audit<'USER'>();
-```
-
-## 🏗️ Generation
-
-```typescript
-xalor.cast<'USER'>();
-xalor.mock<'USER'>();
-xalor.default<'USER'>();
-xalor.clone<'USER'>();
-```
-
-## 🔄 Transformation
-
-```typescript
-xalor.pick<'USER'>();
-xalor.omit<'USER'>();
-xalor.flatten<'USER'>();
-xalor.rename<'USER'>();
-xalor.merge<'USER'>();
-```
+** Additional validation, generation, and transformation APIs are available in the documentation.
+👉 [View All](#)
 
 <br/>
 
@@ -242,22 +174,10 @@ xalor.merge<'USER'>();
 ```bash
 npx xalor watch
 npx xalor compile
-npx xalor studio
-npx xalor diff
-npx xalor audit
 ```
 
+## Additional development tooling is documented separately.
 👉 [Full CLI documentation (coming soon)](#)
-
-<br/>
-
-## 📦 Installation
-
-```bash
-npm install @bgskinner2/xalor
-```
-
-### ⚙️ Explore Configuration Options [Configure →](https://github.com/bgskinner3/xalor/tree/main)
 
 <br/>
 
