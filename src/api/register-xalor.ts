@@ -67,4 +67,3 @@ export function registerXalor<_K extends keyof ISolidRegistry | (string & {})>(
    */
   return;
 }
-// registerXalor({});

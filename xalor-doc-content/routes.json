@@ -2,11 +2,11 @@
   "docsLinks": [
     {
       "id": "7b2c1f2e-0c3c-4f5b-9c1d-1a0b6d2e9f11",
-      "text": "Overview",
+      "text": "Introduction",
       "iconName": "open-book",
       "href": "/xalor/docs",
       "active": true,
-      "sectionLinks": ["intro", "quick-start"]
+      "sectionLinks": ["quick-start", ""]
     },
     {
       "id": "c3f8a1a0-2b91-4c8a-953b-7c2d8e5a1a10",
@@ -18,27 +18,27 @@
     },
     {
       "id": "c3f8a1a0-2b91-4c8a-9f3b-7c2d8e5a1a10",
-    "text": "Getting Started",
+      "text": "Getting Started",
       "iconName": "rocket-tilted",
       "href": "/xalor/docs/getting-started",
       "active": false,
-      "sectionLinks": ["installation", "first-example"]
+      "sectionLinks": ["installation", ""]
     },
     {
       "id": "f2d8c1b0-91a3-4c5e-8b2d-6a7f9c1e0d33",
-        "text": "Concepts",
+      "text": "How it Works",
       "iconName": "cog-duotone",
-      "href": "/xalor/docs/concepts",
+      "href": "/xalor/docs/how-it-works",
       "active": false,
-      "sectionLinks": ["build-time", "runtime", "type-system"]
+      "sectionLinks": []
     },
     {
       "id": "9c1d7a2e-3b44-4f91-8a10-5d2e8c7b6f21",
-      "text": "API Reference",
+      "text": "Runtime API",
       "iconName": "cpu-duotone",
       "href": "/xalor/docs/api",
       "active": false,
-      "sectionLinks": ["register", "validate", "generate", "transform", "match"]
+      "sectionLinks": []
     },
     {
       "id": "d8a1c3f9-4e21-4b77-9c88-2f1a6b3d9e55",
@@ -50,9 +50,9 @@
     },
     {
       "id": "1f9b7c3a-6d44-4e22-8a91-0c5e2f8a3b77",
-       "text": "Guides",
-      "iconName": "compass-duotone",
+      "text": "Guides",
       "href": "/xalor/docs/guides",
+      "iconName": "compass-duotone",
       "active": false,
       "sectionLinks": []
     },
@@ -63,6 +63,75 @@
       "iconName": "book-duotone",
       "active": false,
       "sectionLinks": []
+    }
+  ],
+  "studioMainTabs": [
+    {
+      "id": "ce5bc238-45ee-4446-a827-2cf6ce7dede2",
+      "text": "System",
+      "iconName": "sitemap",
+      "active": true,
+      "isExternal": false,
+      "href": "#system"
+    },
+    {
+      "id": "d2201ee0-7e6f-453f-928f-512bf7a8d2d9",
+      "text": "Type",
+      "iconName": "sparkles",
+      "active": true,
+      "isExternal": false,
+      "href": "#type"
+    },
+    {
+      "id": "2662b805-806c-4a58-bb3f-0ac3b227c765",
+      "text": "Actions",
+      "iconName": "fast-flash-bolt",
+      "active": true,
+      "isExternal": false,
+      "href": "#actions"
+    },
+    {
+      "id": "b595c51f-4318-429d-bedb-b67aea779b5e",
+      "text": "Docs",
+      "iconName": "open-book",
+      "active": true,
+      "isExternal": true,
+      "href": "/xalor/docs"
+    }
+  ],
+  "studioActionTabs": [
+    {
+      "id": "f4522b30-f1d6-443a-bc49-b870a81110e8",
+      "iconName": "shield-solid",
+      "text": "Validate",
+      "active": true,
+      "subText": "Validate data against this type",
+
+      "modes": ["guard", "assert", "parse", "parseAsync", "audit"]
+    },
+    {
+      "id": "2c2ac0da-356b-4a04-8762-0cc59dcf922d",
+      "iconName": "shipping-box",
+      "text": "Generate",
+      "subText": "generate mock data and more ...",
+      "active": true,
+      "modes": ["default", "mock", "clone", "cast"]
+    },
+    {
+      "id": "db3e2338-f597-4e6f-8e56-fe0f68627f0f",
+      "iconName": "arrow-right-left",
+      "text": "Transform",
+      "subText": "Transformer Object Shape",
+      "active": true,
+      "modes": ["pick", "omit", "rename", "merge", "flatten"]
+    },
+    {
+      "id": "f87c4249-008b-46e5-b67e-bbdcec3e91f1",
+      "iconName": "target",
+      "text": "Match",
+      "subText": "Structural Matching",
+      "active": false,
+      "modes": []
     }
   ]
 }
