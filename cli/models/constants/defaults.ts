@@ -202,6 +202,7 @@ export const STUDIO_NODE_TEMPLATE: TDeepWriteable<TStudioNodeItem> = {
     anchorIndex: 0,
   },
   dataShape: '',
+  blueprintId: '',
   metrics: {
     depth: 0,
     complexityScore: 'FLAT_O1',

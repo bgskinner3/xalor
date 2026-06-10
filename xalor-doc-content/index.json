@@ -61,8 +61,8 @@
       }
     },
     "whatIsXalor": {
-      "header": "What is Xalor?",
-      "description": "Xalor shifts expensive type evaluation and syntax parsing out of your browser production scripts and up into your build toolchain. It traces your native types to compile a highly compacted blueprint map, entirely eliminating execution-heavy parser dependencies.",
+      "header": "How Xalor Works",
+      "description": "Xalor shifts heavy type parsing from the browser to your build toolchain. It compiles native types into lightweight blueprints, eliminating runtime overhead.",
       "subDescription": "Instead of reconstructing types at runtime, Xalor executes against precompiled structures created during the build process.",
       "steps": {
         "stepOne": {
@@ -81,14 +81,14 @@
           "description": "Validate, mock, and transform data at hardware speeds."
         },
         "stepFour": {
-          "iconName": "bolt-circle-duotone",
+          "iconName": "arrow-right-left",
           "label": "Execute at Runtime",
           "description": "Validate, generate, and transform data directly from precompiled blueprints."
         }
       }
     },
     "whatYouCanDo": {
-      "header": "What you can do",
+      "header": "What Makes Xalor Different",
       "description": "From a single native type definition, Xalor opens up a complete stack-wide data management framework.",
       "features": [
         {

@@ -22,7 +22,7 @@ import {
   DEFAULT_OBJECT_MAPPER,
   STUDIO_COMMAND_CONFIG,
 } from '../models/constants';
-
+import { blueprintService } from '../../shared/service';
 export class StudioCLIEngineService {
   private cliConfigOptions = IS_SOLID_CONFIG_ITEMS.cliConfig;
   private createDefaultAuditTemplate<T extends TDefaultObjectKeys>(
@@ -99,7 +99,6 @@ export class StudioCLIEngineService {
       /* prettier-ignore */
       const filePathLink = buildAbsolutePathTypeLink(manifest.area, manifest.filePath);
       const filePath = node.location.filePath;
-      // const match = filePathLink.match(/#L\d+$/);
       const normalized = filePath.replace(/^\.\.\//, '');
       const baseUUid = `${normalized}#L${node.location.line}`;
 
@@ -115,9 +114,15 @@ export class StudioCLIEngineService {
         anchorIndex: node.location.anchor,
       };
 
-      template.dataShape = isKeyInObject(uuidName)(references)
+      template.blueprintId = isKeyInObject(uuidName)(references)
         ? references[uuidName]
         : 'unknown';
+
+      template.dataShape = blueprintService.generateSolidTypeScriptString(
+        blueprintShape,
+        rawVaultData.blueprints,
+      );
+
       template.metrics = {
         depth: node.metrics.depth,
         complexityScore: node.metrics.complexityScore,

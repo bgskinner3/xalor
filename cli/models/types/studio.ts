@@ -154,7 +154,8 @@ export type TStudioApiUsageMap = Record<
 export type TStudioNodeItem = {
   readonly identity: TNodeItemIdentity;
   readonly location: TNodeItemLocation;
-  readonly dataShape: string; // Changed to string for V1 to minimize transmission overhead
+  readonly blueprintId: string;
+  readonly dataShape: string;
   readonly metrics: TNodeItemMetrics;
   readonly apisUsed: Record<TRuntimeTriggerName, string[]>;
 };
