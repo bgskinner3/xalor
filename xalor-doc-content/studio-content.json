@@ -34,5 +34,36 @@
         "iconName": "target"
       }
     }
+  },
+  "whatYouCanDo": {
+    "header": "What Makes Xalor Different",
+    "description": "From a single native type definition, Xalor opens up a complete stack-wide data management framework.",
+    "features": [
+      {
+        "id": "d385ebc1-afdd-4b70-b6d1-c6785779701f",
+        "title": "Kill the Dual-Source Tax",
+        "description": "Stop manually syncing TypeScript interfaces with Zod or Yup schema files.",
+        "iconName": "hierarchy-duotone"
+      },
+      {
+        "id": "7c89fa25-c65c-42c4-abce-edca1553092f",
+        "title": "Zero Bundle Inflation",
+        "description": "Heavy validation parsers never ship to the browser. High Lighthouse scores by default.",
+
+        "iconName": "bolt-circle-duotone"
+      },
+      {
+        "id": "d7008513-37ee-4fe4-9d99-c90701a8aea3",
+        "title": "Serverless Edge Ready",
+        "description": "O(1) memory hydration drops cold starts to practically absolute zero.",
+        "iconName": "cpu-duotone"
+      },
+      {
+        "id": "b5b945cb-06a5-43b8-8f81-cbc255dc907",
+        "title": "Line-Level Traceability",
+        "description": "Error logs map failures straight to the exact file and line number in your source.",
+        "iconName": "cli-lined"
+      }
+    ]
   }
 }

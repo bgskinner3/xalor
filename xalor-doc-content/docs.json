@@ -73,7 +73,7 @@
       "header": "System Requirements",
       "description": "You must register the transformation plugin inside your _tsconfig.json_ file. For advanced environment configurations, see the Full Setup Guide.",
       "iconName": "cog-duotone",
-      "isActive": false,
+      "isActive": true,
       "codeBlock": "{\n// tsconfig.json\n{\n  // ...\n  \"compilerOptions\": {\n    // ...\n    \"plugins\": [\n      {\n        \"transform\": \"@bgskinner2/xalor/transformer\",\n        \"type\": \"program\"\n      }\n    ]\n  }\n}\n}",
       "links": {
         "seeMore": {
@@ -98,7 +98,7 @@
         "id": "3d42b389-9a49-4cfa-9a16-a890a7709518",
         "href": "/xalor/docs/xalor-explained",
         "header": "What is Xalor?",
-        "iconName": "question-mark-lined",
+        "iconName": "layers-duotone",
         "description": "A deeper overview of Xalor — what it is, why it exists, and how it works under the hood.",
         "direction": "next"
       }
@@ -132,7 +132,7 @@
         "id": "3d42b389-9a49-4cfa-9a16-a890a7709518",
         "href": "/xalor/docs/xalor-explained",
         "header": "What is Xalor?",
-        "iconName": "question-mark-lined",
+        "iconName": "layers-duotone",
         "description": "A deeper overview of Xalor — what it is, why it exists, and how it works under the hood.",
         "direction": "back"
       },

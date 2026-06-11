@@ -2,7 +2,7 @@
   "docsLinks": [
     {
       "id": "7b2c1f2e-0c3c-4f5b-9c1d-1a0b6d2e9f11",
-      "text": "Introduction",
+      "text": "Intro",
       "iconName": "open-book",
       "href": "/xalor/docs",
       "active": true,
@@ -16,8 +16,8 @@
     },
     {
       "id": "c3f8a1a0-2b91-4c8a-953b-7c2d8e5a1a10",
-      "text": "What is Xalor?",
-      "iconName": "question-mark-lined",
+      "text": "About Xalor",
+      "iconName": "layers-duotone",
       "href": "/xalor/docs/what-is-xalor",
       "active": false,
       "sectionLinks": [
@@ -71,6 +71,40 @@
       "iconName": "book-duotone",
       "active": false,
       "sectionLinks": []
+    }
+  ],
+  "landingMarketing": [
+    {
+      "id": "62441491-b841-4562-8492-daa7b28f1045",
+      "text": "Docs",
+      "href": "/xalor/docs",
+      "iconName": "open-book",
+      "linkType": "secondary",
+      "active": true
+    },
+    {
+      "id": "f37813c1-b100-4bdf-9aae-1c2431cc5fe6",
+      "text": "Guides",
+      "href": "/xalor/docs/guides",
+      "iconName": "compass-duotone",
+      "linkType": "secondary",
+      "active": true
+    },
+    {
+      "id": "10e7588e-fc6d-488d-894c-28d6b762e6b8",
+      "text": "Github",
+      "href": "https://github.com/bgskinner3/xalor/tree/main",
+      "iconName": "export-link",
+      "linkType": "secondary",
+      "active": true
+    },
+    {
+      "id": "19ff7b73-b2af-436a-becf-6f0b94da2426",
+      "text": "Playground",
+      "href": "/xalor/studio",
+      "iconName": "play-circle",
+      "linkType": "primary",
+      "active": true
     }
   ],
   "studioMainTabs": [

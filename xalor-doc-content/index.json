@@ -14,12 +14,12 @@
         "getStarted": {
           "text": "Get Started",
           "active": false,
-          "href": "/xalor/get-started"
+          "href": "/xalor/docs/getting-started"
         },
         "playground": {
           "text": "Try the playground",
           "active": false,
-          "href": ""
+          "href": "/"
         }
       },
       "pillDisplays": [
@@ -87,36 +87,43 @@
         }
       }
     },
-    "whatYouCanDo": {
-      "header": "What Makes Xalor Different",
-      "description": "From a single native type definition, Xalor opens up a complete stack-wide data management framework.",
-      "features": [
-        {
-          "id": "d385ebc1-afdd-4b70-b6d1-c6785779701f",
-          "title": "Kill the Dual-Source Tax",
-          "description": "Stop manually syncing TypeScript interfaces with Zod or Yup schema files.",
-          "iconName": "hierarchy-duotone"
+    "runtimeModule": {
+      "header": "One Source. Infinite Capabilities.",
+      "description": "Stop maintaining separate verification engines and mock data setups. Xalor converts native types into high-speed runtime systems with zero bundle inflation.",
+      "runtimeItems": {
+        "validate": {
+          "id": "75e6323c-dc29-4357-b8d0-8e62b565f037",
+          "header": "Validate Data",
+          "description": "Ensure raw inbound payloads match your compile-time types with deep error reporting and zero runtime schema overhead.",
+          "subDescription": "Catch structural failures instantly at your system boundaries.",
+          "link": "/docs/api",
+          "iconName": "shield-check-duotone"
         },
-        {
-          "id": "7c89fa25-c65c-42c4-abce-edca1553092f",
-          "title": "Zero Bundle Inflation",
-          "description": "Heavy validation parsers never ship to the browser. High Lighthouse scores by default.",
-
-          "iconName": "bolt-circle-duotone"
+        "generate": {
+          "id": "12da4d33-ebf8-4add-9170-20e11c6cb788",
+          "header": "Generate Mocks",
+          "description": "Stamp out completely populated testing fixtures, safe default fallbacks, and mock shapes derived directly from native type graphs.",
+          "subDescription": "Instant mockup datasets generated without maintaining fixture files.",
+          "link": "/docs/api",
+          "iconName": "shipping-box"
         },
-        {
-          "id": "d7008513-37ee-4fe4-9d99-c90701a8aea3",
-          "title": "Serverless Edge Ready",
-          "description": "O(1) memory hydration drops cold starts to practically absolute zero.",
-          "iconName": "cpu-duotone"
+        "transform": {
+          "id": "f166fd7-01f9-4c5d-b114-b5cb2e9e16f1",
+          "header": "Transform Safely",
+          "description": "Pick, omit, sanitize, and reshape messy structures using type-aware utilities running on hardware-level lookup paths.",
+          "subDescription": "Peel away unsafe variables without redefining your schemas.",
+          "link": "/docs/api",
+          "iconName": "arrow-right-left"
         },
-        {
-          "id": "b5b945cb-06a5-43b8-8f81-cbc255dc907",
-          "title": "Line-Level Traceability",
-          "description": "Error logs map failures straight to the exact file and line number in your source.",
-          "iconName": "cli-lined"
+        "match": {
+          "id": "8d83e630-b733-4391-9d77-629ff1c88724",
+          "header": "No Duplication",
+          "description": "Eliminate the dual-source tax entirely. Write standard TypeScript contracts once and execute them natively anywhere across your stack.",
+          "subDescription": "Absolute architectural sync across edge paths and user frontends.",
+          "link": "/docs/api",
+          "iconName": "target"
         }
-      ]
+      }
     },
     "docsCta": {
       "header": "Ready to see it in action?",
