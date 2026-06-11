@@ -65,5 +65,32 @@
         "iconName": "cli-lined"
       }
     ]
+  },
+  "whatIsXalor": {
+    "header": "How Xalor Works",
+    "description": "Xalor shifts heavy type parsing from the browser to your build toolchain. It compiles native types into lightweight blueprints, eliminating runtime overhead.",
+    "subDescription": "Instead of reconstructing types at runtime, Xalor executes against precompiled structures created during the build process.",
+    "steps": {
+      "stepOne": {
+        "iconName": "typescript",
+        "header": "Write Native Types",
+        "description": "No custom schemas or validation languages to learn."
+      },
+      "stepTwo": {
+        "iconName": "cog-duotone",
+        "header": "Build-Time Compilation",
+        "description": "Xalor turns your types into lightweight runtime blueprints."
+      },
+      "stepThree": {
+        "iconName": "bolt-circle-duotone",
+        "header": "Runtime Power",
+        "description": "Validate, mock, and transform data at hardware speeds."
+      },
+      "stepFour": {
+        "iconName": "arrow-right-left",
+        "header": "Execute at Runtime",
+        "description": "Validate, generate, and transform data directly from precompiled blueprints."
+      }
+    }
   }
 }

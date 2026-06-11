@@ -62,28 +62,41 @@
     },
     "whatIsXalor": {
       "header": "How Xalor Works",
-      "description": "Xalor shifts heavy type parsing from the browser to your build toolchain. It compiles native types into lightweight blueprints, eliminating runtime overhead.",
-      "subDescription": "Instead of reconstructing types at runtime, Xalor executes against precompiled structures created during the build process.",
+      "description": "Xalor shifts heavy type parsing from the browser directly to your build toolchain. It compiles your native, pristine TypeScript types into lightweight, hidden blueprints—completely **eliminating production runtime overhead** and dual-source schema maintenance code loops.",
+      "subDescription": "Instead of parsing graphs or reconstructing types at runtime, Xalor executes against precompiled, content-addressed structures created entirely during the build process, yielding a flat _0.8KB client bundle footprint_.",
       "steps": {
         "stepOne": {
           "iconName": "typescript",
-          "label": "Write Native Types",
-          "description": "No custom schemas or validation languages to learn."
+          "overline": "Phase 01: Type-Time",
+          "header": "Write Native Types",
+          "description": "Declare standard TypeScript interfaces exactly as you always do. There are **no custom validation schema domain languages** to learn, no heavy script generator utilities, and zero file-tree clutter.",
+          "maskVariant": "one",
+          "image": {
+            "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/blockedge/vadar.png",
+            "alt": "vader-one"
+          }
         },
         "stepTwo": {
           "iconName": "cog-duotone",
-          "label": "Build-Time Compilation",
-          "description": "Xalor turns your types into lightweight runtime blueprints."
+          "overline": "Phase 02: Build-Time",
+          "header": "Build-Time Compilation",
+          "description": "Xalor's background watcher sweeps your codebase, extracts the Type AST, and flattens layouts into **pointer-interned structural snapshots** using ultra-compact Content-Addressable Storage (CAS) interning.",
+          "maskVariant": "two",
+          "image": {
+            "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/blockedge/lady-three.png?w=3840&q=75",
+            "alt": "lady-two"
+          }
         },
         "stepThree": {
           "iconName": "bolt-circle-duotone",
-          "label": "Runtime Power",
-          "description": "Validate, mock, and transform data at hardware speeds."
-        },
-        "stepFour": {
-          "iconName": "arrow-right-left",
-          "label": "Execute at Runtime",
-          "description": "Validate, generate, and transform data directly from precompiled blueprints."
+          "overline": "Phase 03: Run-Time",
+          "header": "Runtime Power",
+          "description": "The application boots instantly via an _O(1) memory hydration map_. Validate inbound payloads, stamp out mock test fixtures, and transform object shapes smoothly at near **hardware-level speeds**.",
+          "maskVariant": "three",
+          "image": {
+            "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/Display%20Images/xalor-header-noe-fade.png",
+            "alt": "runtime-three"
+          }
         }
       }
     },

@@ -88,7 +88,15 @@
       "href": "/xalor/docs/guides",
       "iconName": "compass-duotone",
       "linkType": "secondary",
-      "active": true
+      "active": false
+    },
+    {
+      "id": "4fafa57e-1862-4283-aee3-54d596c2ddec",
+      "text": "Roadmap",
+      "href": "/xalor/docs",
+      "iconName": "routing-duotone",
+      "linkType": "secondary",
+      "active": false
     },
     {
       "id": "10e7588e-fc6d-488d-894c-28d6b762e6b8",
@@ -104,7 +112,7 @@
       "href": "/xalor/studio",
       "iconName": "play-circle",
       "linkType": "primary",
-      "active": true
+      "active": false
     }
   ],
   "studioMainTabs": [
