@@ -1,5 +1,15 @@
 {
   "introduction": {
+    "hero": {
+      "overline": "BUILD-TIME TYPE REIFICATION ENGINE",
+      "subText": "Type-First Build Compilation with Runtime Orchestration",
+      "description": "Pristine TypeScript types compiled into live runtime blueprints. Zero schema duplication, zero bundle inflation.",
+      "image": {
+        "id": "26ca0d6a-7aa8-4db5-88a2-a9f239d58cdf",
+        "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/Display%20Images/xalor-header-noe-fade.png",
+        "alt": "header-image"
+      }
+    },
     "introduction": {
       "id": "introduction",
       "blockOne": {
