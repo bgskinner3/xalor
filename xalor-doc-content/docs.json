@@ -71,28 +71,14 @@
     "requirements": {
       "id": "requirements",
       "header": "System Requirements",
+      "description": "You must register the transformation plugin inside your _tsconfig.json_ file. For advanced environment configurations, see the Full Setup Guide.",
       "iconName": "cog-duotone",
       "isActive": false,
-      "requirements": {
-        "one": {
-          "header": "Compiler Integration",
-          "list": {
-            "listHeader": "Xalor weaves silently into your existing building pipelines",
-            "items": [
-              "TypeScript Compiler API — Connects via ts-patch to extract type layouts during the compilation process.",
-              "Zero File Clutter - Keeps your workspace pristine. No heavy script generator tools or auto-generated validation files cluttering your directories."
-            ]
-          }
-        },
-        "two": {
-          "header": "Runtime Footprint",
-          "list": {
-            "listHeader": "Run your code across any modern execution environment",
-            "items": [
-              "Universal Compatibility- Runs flawlessly on Node.js, Bun, Deno, or edge setups like Cloudflare Workers.",
-              "Boot Hydration Memory- Hydrates an isolated global memory block at _globalThis.__SOLID_VAULT_ once on startup, bypassing expensive runtime evaluation."
-            ]
-          }
+      "codeBlock": "{\n// tsconfig.json\n{\n  // ...\n  \"compilerOptions\": {\n    // ...\n    \"plugins\": [\n      {\n        \"transform\": \"@bgskinner2/xalor/transformer\",\n        \"type\": \"program\"\n      }\n    ]\n  }\n}\n}",
+      "links": {
+        "seeMore": {
+          "text": "Full Setup Guide",
+          "href": "/xalor/docs/getting-started#configuration"
         }
       }
     },
@@ -106,16 +92,134 @@
         "Massive Client Bundle Reduction- Moves data model parsing completely to the build stage. Production apps inherit tiny metadata maps rather than thousands of lines of heavy validation parsing logic.",
         "GPS Telemetry Traceability- When an object fails matching rules, Xalor flags the exact file path and line location of the target TypeScript source code instead of throwing unhelpful generic errors."
       ]
-    }
+    },
+    "bottomLinks": [
+      {
+        "id": "3d42b389-9a49-4cfa-9a16-a890a7709518",
+        "href": "/xalor/docs/xalor-explained",
+        "header": "What is Xalor?",
+        "iconName": "question-mark-lined",
+        "description": "A deeper overview of Xalor — what it is, why it exists, and how it works under the hood.",
+        "direction": "next"
+      }
+    ]
   },
   "whatIsXalor": {
-    "header": {}
+    "header": {},
+    "bottomLinks": [
+      {
+        "id": "a7c3a328-e0e8-449f-a5f9-7581b9bcb35b",
+        "href": "/xalor/docs",
+        "header": "Intro",
+        "iconName": "open-book",
+        "description": "Introduction to Xalor and a general overview.",
+        "direction": "back"
+      },
+      {
+        "id": "e74d6610-7dc1-4bbe-bf77-4d4c123403ac",
+        "href": "/xalor/docs/getting-started",
+        "header": "Getting Started",
+        "iconName": "rocket-tilted",
+        "description": "Get started with setting up simply, a dive into optional configuration and advanced settings.",
+        "direction": "next"
+      }
+    ]
   },
   "gettingStarted": {
-    "header": {}
+    "header": {},
+    "bottomLinks": [
+      {
+        "id": "3d42b389-9a49-4cfa-9a16-a890a7709518",
+        "href": "/xalor/docs/xalor-explained",
+        "header": "What is Xalor?",
+        "iconName": "question-mark-lined",
+        "description": "A deeper overview of Xalor — what it is, why it exists, and how it works under the hood.",
+        "direction": "back"
+      },
+      {
+        "id": "da04f4d2-74a7-439b-9dec-ed41cdc5d5db",
+        "href": "/xalor/docs/apis",
+        "header": "Runtime APIs",
+        "iconName": "cpu-duotone",
+        "description": "Complete reference for Xalor’s runtime APIs, including system status, internal behavior, and core interactions.",
+        "direction": "next"
+      }
+    ]
   },
-  "api": { "header": {} },
-  "cli": { "header": {} },
-  "guides": { "header": {} },
-  "reference": { "header": {} }
+  "api": {
+    "header": {},
+    "bottomLinks": [
+      {
+        "id": "e74d6610-7dc1-4bbe-bf77-4d4c123403ac",
+        "href": "/xalor/docs/getting-started",
+        "header": "Getting Started",
+        "iconName": "rocket-tilted",
+        "description": "Get started with setting up simply, a dive into optional configuration and advanced settings.",
+        "direction": "back"
+      },
+      {
+        "id": "d2b15872-c37d-4d1d-a3eb-5dd45c18bffc",
+        "href": "/xalor/docs/cli",
+        "header": "CLI",
+        "iconName": "cli-solid",
+        "description": "Set up and use the Xalor CLI — install it, explore available commands, and learn how to interact with Xalor from the terminal.",
+        "direction": "next"
+      }
+    ]
+  },
+  "cli": {
+    "header": {},
+    "bottomLinks": [
+      {
+        "id": "da04f4d2-74a7-439b-9dec-ed41cdc5d5db",
+        "href": "/xalor/docs/apis",
+        "header": "Runtime APIs",
+        "iconName": "jigsaw",
+        "description": "Complete reference for Xalor’s runtime APIs, including system status, internal behavior, and core interactions.",
+        "direction": "back"
+      },
+      {
+        "id": "e6aa68e9-412b-44b3-91f0-4b22577d304a",
+        "href": "/xalor/docs/guides",
+        "header": "Guides",
+        "iconName": "compass-duotone",
+        "description": "Practical, step-by-step guides for learning Xalor concepts and building real integrations and workflows.",
+        "direction": "next"
+      }
+    ]
+  },
+  "guides": {
+    "header": {},
+    "bottomLinks": [
+      {
+        "id": "d2b15872-c37d-4d1d-a3eb-5dd45c18bffc",
+        "href": "/xalor/docs/cli",
+        "header": "CLI",
+        "iconName": "cli-solid",
+        "description": "Set up and use the Xalor CLI — install it, explore available commands, and learn how to interact with Xalor from the terminal.",
+        "direction": "back"
+      },
+      {
+        "id": "073eca1d-b334-439f-85ec-0284c9fb2763",
+        "href": "/xalor/docs/reference",
+        "header": "Reference",
+        "iconName": "book-duotone",
+        "description": "Practical, step-by-step guides for learning Xalor concepts and building real integrations and workflows.",
+        "direction": "next"
+      }
+    ]
+  },
+  "reference": {
+    "header": {},
+    "bottomLinks": [
+      {
+        "id": "e6aa68e9-412b-44b3-91f0-4b22577d304a",
+        "href": "/xalor/docs/guides",
+        "header": "Guides",
+        "iconName": "compass-duotone",
+        "description": "Practical, step-by-step guides for learning Xalor concepts and building real integrations and workflows.",
+        "direction": "back"
+      }
+    ]
+  }
 }
