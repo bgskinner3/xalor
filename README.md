@@ -1,6 +1,8 @@
+
+
 <p align="center">
   <img
-    src="./assets/XALOR_README.png"
+    src="./assets/read-me-container.png"
     alt="Xalor hero"
     width="100%"
   />
@@ -23,11 +25,11 @@
 
 &nbsp;
 
-<p align="center">
-  📦 <a href="https://github.com/bgskinner3/axiom-kit/blob/main/packages/xalor/docs/Installation.md">Installation</a> 
-  • 📖 <a href="https://github.com/bgskinner3/axiom-kit/blob/main/packages/xalor/docs/api.md">Documentation</a> 
-  • ⚙️ <a href="https://github.com/bgskinner3/axiom-kit/blob/main/packages/xalor/docs/api.md">API Reference</a>
-</p>
+<h2 align="center">
+  📦 <a href="http://masterofsum.dev/xalor/docs/getting-started">Installation</a>
+  • 📖 <a href="http://masterofsum.dev/xalor/docs">Documentation</a>
+  • ⚙️ <a href="http://masterofsum.dev/xalor/docs/api">API Reference</a>
+</h2>
 
 <br/>
 <br/>

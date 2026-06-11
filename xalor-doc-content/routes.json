@@ -6,7 +6,13 @@
       "iconName": "open-book",
       "href": "/xalor/docs",
       "active": true,
-      "sectionLinks": ["quick-start", ""]
+      "sectionLinks": [
+        { "id": "introduction", "text": "Introduction" },
+        { "id": "features", "text": "Key Features" },
+        { "id": "installation", "text": "Installation Guide" },
+        { "id": "requirements", "text": "System Requirements" },
+        { "id": "core-advantages", "text": "Core Advantages" }
+      ]
     },
     {
       "id": "c3f8a1a0-2b91-4c8a-953b-7c2d8e5a1a10",
@@ -14,7 +20,13 @@
       "iconName": "question-mark-lined",
       "href": "/xalor/docs/what-is-xalor",
       "active": false,
-      "sectionLinks": []
+      "sectionLinks": [
+        { "id": "type-reification", "text": "Type Reification" },
+        { "id": "dual-source-tax", "text": "Dual Source Tax" },
+        { "id": "bundle-comparison", "text": "Bundle Comparison" },
+        { "id": "leadership-guarantees", "text": "Leadership Guarantees" },
+        { "id": "how-it-works", "text": "How It Works" }
+      ]
     },
     {
       "id": "c3f8a1a0-2b91-4c8a-9f3b-7c2d8e5a1a10",
@@ -22,19 +34,15 @@
       "iconName": "rocket-tilted",
       "href": "/xalor/docs/getting-started",
       "active": false,
-      "sectionLinks": ["installation", ""]
-    },
-    {
-      "id": "f2d8c1b0-91a3-4c5e-8b2d-6a7f9c1e0d33",
-      "text": "How it Works",
-      "iconName": "cog-duotone",
-      "href": "/xalor/docs/how-it-works",
-      "active": false,
-      "sectionLinks": []
+      "sectionLinks": [
+        { "id": "installation", "text": "Installation" },
+        { "id": "initialization", "text": "Initialization" },
+        { "id": "toolchain-integration", "text": "Toolchain Integration" }
+      ]
     },
     {
       "id": "9c1d7a2e-3b44-4f91-8a10-5d2e8c7b6f21",
-      "text": "Runtime API",
+      "text": "API",
       "iconName": "cpu-duotone",
       "href": "/xalor/docs/api",
       "active": false,

@@ -1,0 +1,103 @@
+{
+  "introduction": {
+    "introduction": {
+      "id": "introduction",
+      "blockOne": {
+        "header": "Introduction",
+        "description": "Xalor is a build-time TypeScript engine that transforms native types into a live runtime system for validation, generation, and transformation — without duplicating schemas or shipping heavy validation libraries."
+      },
+      "blockTwo": {
+        "header": "Core Philosophy",
+        "iconName": "brain-bulb",
+        "description": "Unlike Zod or Yup which require writing heavy runtime schemas, or macro generators like Typia which clutter your git history with generated files, Xalor uses a silent background compiler watcher to turn pristine TypeScript interfaces into optimized runtime maps.",
+        "list": [
+          "The Rule: Write TypeScript types once.",
+          "The Result: Use them natively at runtime."
+        ]
+      },
+      "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\n// 1. Write clean, standard TypeScript types\nexport interface User {\n  id: number;\n  name: string;\n  email?: string;\n}\n\n// 2. Map it to a string key identifier\nxalor.register<'USER'>();\n\n// 3. Narrow and guard data inline instantly\nconst data: unknown = { id: 101, name: 'Brennan' };\n\nif (xalor.guard<'USER'>(data)) {\n  console.log(data.name); // ✨ Fully typed automatically!\n}"
+    },
+    "features": {
+      "id": "features",
+      "header": "Key Features",
+      "iconName": "sparkles",
+      "features": {
+        "one": {
+          "header": "Robust Validation",
+          "description": "Handle external API inputs cleanly with flexible runtime safety boundaries.",
+          "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\n// Assert Mode: Throws explicit diagnostic exceptions if data fails validation\nconst profile = xalor.assert<'USER'>(payload);\n\n// Audit Mode: Non-throwing validation that returns a detailed ledger of all errors\nconst reportingLedger = xalor.audit<'USER'>(payload);"
+        },
+        "two": {
+          "header": "Structured Data Generation",
+          "description": "Generate type-safe mocks, staging state objects, or default templates out of thin air.",
+          "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\n// Instantly returns a zero-state template structure matching your interface\nconst newBlankForm = xalor.default<'USER'>();\n\n// Generates random mock datasets matching your type constraints for tests\nconst mockTestUser = xalor.mock<'USER'>();"
+        },
+        "three": {
+          "header": "Structural Transformations",
+          "description": "Manipulate object shapes inline at runtime using type properties as commands.",
+          "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\n// Safely pluck precise properties at runtime while maintaining type alignment\nconst minimizedProfile = xalor.pick<'USER'>({\n  data: complexPayload,\n  action: 'pick',\n  keys: ['id', 'name']\n});"
+        },
+        "four": {
+          "header": "Zero-Maintenance Synchronization",
+          "description": "Eliminate the manual schema-updating workflow forever. When you modify your interface, your runtime behavior changes natively on the very next compilation step.",
+          "codeBlock": "// Before:\nexport interface User { id: number; name: string; }\n\n// After (Runtime automatically mirrors this modification on save):\nexport interface User { id: number; name: string; isAdmin: boolean; }"
+        }
+      }
+    },
+    "installation": {
+      "id": "installation",
+      "header": "Installation Guide",
+      "iconName": "shipping-box",
+      "description": "Set up the core package using your preferred node dependency tool chain.",
+      "footnote": "Note: Because Xalor handles type extraction in the background, your environment needs to include our bundler transformer setup during your normal pnpm build or vite build process.",
+      "codeBlock": "npm install @bgskinner2/xalor\npnpm add @bgskinner2/xalor\nyarn add @bgskinner2/xalor"
+    },
+    "requirements": {
+      "id": "requirements",
+      "header": "System Requirements",
+      "iconName": "cog-duotone",
+      "requirements": {
+        "one": {
+          "header": "Compiler Integration",
+          "list": {
+            "listHeader": "Xalor weaves silently into your existing building pipelines",
+            "items": [
+              "TypeScript Compiler API — Connects via ts-patch to extract type layouts during the compilation process.",
+              "Zero File Clutter - Keeps your workspace pristine. No heavy script generator tools or auto-generated validation files cluttering your directories."
+            ]
+          }
+        },
+        "two": {
+          "header": "Runtime Footprint",
+          "list": {
+            "listHeader": "Run your code across any modern execution environment",
+            "items": [
+              "Universal Compatibility- Runs flawlessly on Node.js, Bun, Deno, or edge setups like Cloudflare Workers.",
+              "Boot Hydration Memory- Hydrates an isolated global memory block at `globalThis.__SOLID_VAULT__` once on startup, bypassing expensive runtime evaluation."
+            ]
+          }
+        }
+      }
+    },
+    "coreAdvantages": {
+      "id": "core-advantages",
+      "header": "Core Advantages",
+      "iconName": "rocket-tilted",
+      "list": [
+        "Eliminates the `Dual-Source Tax`- Write your data definitions precisely once. Stop maintaining matching type interfaces and validation schemas concurrently.",
+        "Massive Client Bundle Reduction- Moves data model parsing completely to the build stage. Production apps inherit tiny metadata maps rather than thousands of lines of heavy validation parsing logic.",
+        "GPS Telemetry Traceability- When an object fails matching rules, Xalor flags the exact file path and line location of the target TypeScript source code instead of throwing unhelpful generic errors."
+      ]
+    }
+  },
+  "whatIsXalor": {
+    "header": {}
+  },
+  "gettingStarted": {
+    "header": {}
+  },
+  "api": { "header": {} },
+  "cli": { "header": {} },
+  "guides": { "header": {} },
+  "reference": { "header": {} }
+}

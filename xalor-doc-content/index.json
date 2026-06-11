@@ -9,12 +9,12 @@
         "docs": {
           "text": "Explore docs",
           "active": false,
-          "href": ""
+          "href": "/xalor/docs"
         },
         "getStarted": {
           "text": "Get Started",
           "active": false,
-          "href": ""
+          "href": "/xalor/get-started"
         },
         "playground": {
           "text": "Try the playground",
