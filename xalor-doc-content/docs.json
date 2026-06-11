@@ -9,10 +9,10 @@
       "blockTwo": {
         "header": "Core Philosophy",
         "iconName": "brain-bulb",
-        "description": "Unlike Zod or Yup which require writing heavy runtime schemas, or macro generators like Typia which clutter your git history with generated files, Xalor uses a silent background compiler watcher to turn pristine TypeScript interfaces into optimized runtime maps.",
+        "description": "Unlike **Zod** or **Yup** which require writing heavy runtime schemas, or macro generators like **Typia** which clutter your git history with generated files, Xalor uses a silent background compiler watcher to turn pristine TypeScript interfaces into optimized runtime maps.",
         "list": [
-          "The Rule: Write TypeScript types once.",
-          "The Result: Use them natively at runtime."
+          "_The Rule_ Write TypeScript types once.",
+          "_The Result_ Use them natively at runtime."
         ]
       },
       "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\n// 1. Write clean, standard TypeScript types\nexport interface User {\n  id: number;\n  name: string;\n  email?: string;\n}\n\n// 2. Map it to a string key identifier\nxalor.register<'USER'>();\n\n// 3. Narrow and guard data inline instantly\nconst data: unknown = { id: 101, name: 'Brennan' };\n\nif (xalor.guard<'USER'>(data)) {\n  console.log(data.name); // ✨ Fully typed automatically!\n}"
@@ -49,7 +49,7 @@
       "header": "Installation Guide",
       "iconName": "shipping-box",
       "description": "Set up the core package using your preferred node dependency tool chain.",
-      "footnote": "Note: Because Xalor handles type extraction in the background, your environment needs to include our bundler transformer setup during your normal pnpm build or vite build process.",
+      "footnote": "Note: Because Xalor handles type extraction in the background, your environment needs to include our bundler transformer setup during your normal _pnpm build_ or _vite build_ process.",
       "codeBlock": "npm install @bgskinner2/xalor\npnpm add @bgskinner2/xalor\nyarn add @bgskinner2/xalor"
     },
     "requirements": {
@@ -73,7 +73,7 @@
             "listHeader": "Run your code across any modern execution environment",
             "items": [
               "Universal Compatibility- Runs flawlessly on Node.js, Bun, Deno, or edge setups like Cloudflare Workers.",
-              "Boot Hydration Memory- Hydrates an isolated global memory block at `globalThis.__SOLID_VAULT__` once on startup, bypassing expensive runtime evaluation."
+              "Boot Hydration Memory- Hydrates an isolated global memory block at _globalThis.__SOLID_VAULT_ once on startup, bypassing expensive runtime evaluation."
             ]
           }
         }
@@ -84,7 +84,7 @@
       "header": "Core Advantages",
       "iconName": "rocket-tilted",
       "list": [
-        "Eliminates the `Dual-Source Tax`- Write your data definitions precisely once. Stop maintaining matching type interfaces and validation schemas concurrently.",
+        "Eliminates the _Dual-Source Tax_- Write your data definitions precisely once. Stop maintaining matching type interfaces and validation schemas concurrently.",
         "Massive Client Bundle Reduction- Moves data model parsing completely to the build stage. Production apps inherit tiny metadata maps rather than thousands of lines of heavy validation parsing logic.",
         "GPS Telemetry Traceability- When an object fails matching rules, Xalor flags the exact file path and line location of the target TypeScript source code instead of throwing unhelpful generic errors."
       ]

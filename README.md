@@ -1,5 +1,3 @@
-
-
 <p align="center">
   <img
     src="./assets/read-me-container.png"
