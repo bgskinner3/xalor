@@ -100,6 +100,7 @@
         }
       }
     },
+
     "runtimeModule": {
       "header": "One Source. Infinite Capabilities.",
       "description": "Stop maintaining separate verification engines and mock data setups. Xalor converts native types into high-speed runtime systems with zero bundle inflation.",
@@ -108,6 +109,7 @@
           "id": "75e6323c-dc29-4357-b8d0-8e62b565f037",
           "header": "Validate Data",
           "description": "Ensure raw inbound payloads match your compile-time types with deep error reporting and zero runtime schema overhead.",
+          "subDescription": "Catch structural failures instantly at your system boundaries.",
           "link": "/xalor/docs/api",
           "iconName": "shield-check-duotone"
         },
@@ -115,6 +117,7 @@
           "id": "12da4d33-ebf8-4add-9170-20e11c6cb788",
           "header": "Generate Mocks",
           "description": "Stamp out completely populated testing fixtures, safe default fallbacks, and mock shapes derived directly from native type graphs.",
+          "subDescription": "Instant mockup datasets generated without maintaining fixture files.",
           "link": "/xalor/docs/api",
           "iconName": "shipping-box"
         },
@@ -122,6 +125,7 @@
           "id": "f166fd7-01f9-4c5d-b114-b5cb2e9e16f1",
           "header": "Transform Safely",
           "description": "Pick, omit, sanitize, and reshape messy structures using type-aware utilities running on hardware-level lookup paths.",
+          "subDescription": "Peel away unsafe variables without redefining your schemas.",
           "link": "/xalor/docs/api",
           "iconName": "arrow-right-left"
         },
@@ -129,6 +133,7 @@
           "id": "8d83e630-b733-4391-9d77-629ff1c88724",
           "header": "No Duplication",
           "description": "Eliminate the dual-source tax entirely. Write standard TypeScript contracts once and execute them natively anywhere across your stack.",
+          "subDescription": "Absolute architectural sync across edge paths and user frontends.",
           "link": "/xalor/docs/api",
           "iconName": "target"
         }
