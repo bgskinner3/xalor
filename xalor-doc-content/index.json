@@ -103,7 +103,7 @@
     },
 
     "runtimeModule": {
-      "iconName": "brain-bulb",
+      "iconName": "cpu-duotone",
       "header": "One Source. Infinite Capabilities.",
       "description": "Stop maintaining separate verification engines and mock data setups. Xalor converts native types into high-speed runtime systems with zero bundle inflation.",
       "runtimeItems": {
