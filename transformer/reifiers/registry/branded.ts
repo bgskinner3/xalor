@@ -1,39 +1,123 @@
 // transformer/reifiers/registry/branded.ts
-import {
-  isIntersectionType,
-  isObjectType,
-  isStringLiteralType,
-} from '../../utils';
+import { isObjectType, isStringLiteralType } from '../../utils';
 import { registerReifier } from './core';
-
+import type { Type } from 'typescript';
+import { getIntersectionParts } from './intersection';
+import type { TSolidShape } from '../../../shared/shape-domain';
 /**
  * Extracts the brand name from an Intersection type safely.
  * Example: string & { __brand: "UserId" } -> "UserId"
  */
 registerReifier((type, checker, next, ctx) => {
-  if (!isIntersectionType(type)) return undefined;
+  const parts = getIntersectionParts(type);
+
+  if (!parts.length) return undefined;
 
   let brandName: string | undefined;
-  for (const part of type.types) {
+  const baseParts: Type[] = [];
+
+  for (const part of parts) {
     if (isObjectType(part)) {
       const brandProp = checker.getPropertyOfType(part, '__brand');
+
       if (brandProp && brandProp.valueDeclaration) {
         const propType = checker.getTypeOfSymbolAtLocation(
           brandProp,
           brandProp.valueDeclaration,
         );
-        if (isStringLiteralType(propType)) brandName = propType.value;
+
+        if (isStringLiteralType(propType)) {
+          brandName = propType.value;
+          continue;
+        }
       }
     }
+
+    baseParts.push(part);
   }
 
   if (!brandName) return undefined;
 
-  const basePart = type.types.find((t) => !isObjectType(t)) ?? type.types[0];
+  const baseShape =
+    baseParts.length === 1
+      ? next(baseParts[0], ctx)
+      : ({
+          kind: 'intersection',
+          values: baseParts.map((t) => next(t, ctx)),
+        } satisfies TSolidShape);
 
   return {
     kind: 'branded',
     name: brandName,
-    base: next(basePart, ctx),
-  };
+    base: baseShape,
+  } satisfies TSolidShape;
 });
+// registerReifier((type, checker, next, ctx) => {
+//   if (!isIntersectionType(type)) return undefined;
+
+//   let brandName: string | undefined;
+//   const baseParts: Type[] = [];
+
+//   for (const part of type.types) {
+//     if (isObjectType(part)) {
+//       const brandProp = checker.getPropertyOfType(part, '__brand');
+
+//       if (brandProp && brandProp.valueDeclaration) {
+//         const propType = checker.getTypeOfSymbolAtLocation(
+//           brandProp,
+//           brandProp.valueDeclaration,
+//         );
+
+//         if (isStringLiteralType(propType)) {
+//           brandName = propType.value;
+//           continue;
+//         }
+//       }
+//     }
+
+//     baseParts.push(part);
+//   }
+
+//   if (!brandName) return undefined;
+
+//   const baseShape =
+//     baseParts.length === 1
+//       ? next(baseParts[0], ctx)
+//       : ({
+//           kind: 'intersection',
+//           values: baseParts.map((t) => next(t, ctx)),
+//         } as const);
+
+//   return {
+//     kind: 'branded',
+//     name: brandName,
+//     base: baseShape,
+//   };
+// });
+// registerReifier((type, checker, next, ctx) => {
+//   if (!isIntersectionType(type)) return undefined;
+
+//   let brandName: string | undefined;
+//   for (const part of type.types) {
+//     if (isObjectType(part)) {
+//       const brandProp = checker.getPropertyOfType(part, '__brand');
+//       if (brandProp && brandProp.valueDeclaration) {
+//         const propType = checker.getTypeOfSymbolAtLocation(
+//           brandProp,
+//           brandProp.valueDeclaration,
+//         );
+//         if (isStringLiteralType(propType)) brandName = propType.value;
+//       }
+//     }
+//   }
+
+//   if (!brandName) return undefined;
+
+//   const basePart = type.types.find((t) => !isObjectType(t)) ?? type.types[0];
+
+//   return {
+//     kind: 'branded',
+//     name: brandName,
+//     base: next(basePart, ctx),
+//   };
+// });

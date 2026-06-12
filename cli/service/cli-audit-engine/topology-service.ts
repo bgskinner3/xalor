@@ -8,7 +8,7 @@ import {
   isArrayShape,
   isBrandedShape,
   yieldItems,
-} from '../../../shared/utils';
+} from '../../../shared';
 class TopologyAuditService {
   /** @see {@link AuditServiceDocs.buildTopologyEdge} */
   private buildTopologyEdge(

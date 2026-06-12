@@ -1,33 +1,12 @@
 import type {
-  TSolidShape,
   TTypeGuard,
   TSolidMetadata,
-  TSolidShapePrimitiveKeys,
   TVaultSyncPayload,
   TXalorCLIModesMap,
   TTripleKV,
 } from '../../types';
-import { isObject, isKeyInObject, isKeyOfArray, isRecord } from './objects';
+import { isObject, isKeyInObject, isRecord } from './objects';
 import { isNull, isString } from './primitives';
-import {
-  SOLID_SHAPE_PRIMITIVE_KEYS,
-  IS_SOLID_SHAPE_KINDS_CONFIG,
-} from '../../constants';
-
-/**
- * FOCUSED SHAPE GUARDS
- *
- * These utilities provide type-safe narrowing for the TSolidShape union.
- * Essential for the recursive validation engine and AST generation to
- * resolve specific blueprint properties without type casting.
- */
-/* prettier-ignore */ export const isPrimitiveShape = (s: TSolidShape): s is Extract<TSolidShape, { kind: 'primitive' }> => s.kind === 'primitive';
-/* prettier-ignore */ export const isLiteralShape = (s: TSolidShape): s is Extract<TSolidShape, { kind: 'literal' }> => s.kind === 'literal';
-/* prettier-ignore */ export const isUnionShape = (s: TSolidShape): s is Extract<TSolidShape, { kind: 'union' }> => s.kind === 'union';
-/* prettier-ignore */ export const isObjectShape = (s: TSolidShape): s is Extract<TSolidShape, { kind: 'object' }> => s.kind === 'object';
-/* prettier-ignore */ export const isArrayShape = (s: TSolidShape): s is Extract<TSolidShape, { kind: 'array' }> => s.kind === 'array';
-/* prettier-ignore */ export const isBrandedShape = (s: TSolidShape): s is Extract<TSolidShape, { kind: 'branded' }> => s.kind === 'branded';
-/* prettier-ignore */ export const isReferenceShape = (s: TSolidShape): s is Extract<TSolidShape, { kind: 'reference' }> => s.kind === 'reference';
 
 /**
  * @utilType Guard
@@ -141,44 +120,6 @@ export const isVaultSyncPayload: TTypeGuard<TVaultSyncPayload> = (
   isKeyInObject('filePath')(val) &&
   isKeyInObject('typeName')(val) &&
   isKeyInObject('symbolName')(val);
-/**
- * 🎯 IS SOLID SHAPE PRIMITIVE KEY (THE GATEWAY ACCESS RADAR)
- *
- * ROLE:
- * A high-speed type-narrowing predicate guard used to verify if a runtime string token
- * is a registered member of the immutable primitive compaction matrix.
- *
- * STRATEGY:
- * First confirms the raw value is an evaluation-safe identifier string before executing
- * a zero-assertion, allocation-free array bounds lookup. Passing this guard natively narrows
- * the parameter down to `TSolidShapePrimitiveKeys`, clearing all strict type assignment
- * restrictions across downstream reifiers, normalizers, and runtime Bouncer modules.
- */
-export const isSolidShapePrimitiveKey: TTypeGuard<TSolidShapePrimitiveKeys> = (
-  key: unknown,
-): key is TSolidShapePrimitiveKeys =>
-  (typeof key === 'string' ||
-    typeof key === 'number' ||
-    typeof key === 'symbol') &&
-  isKeyOfArray(SOLID_SHAPE_PRIMITIVE_KEYS)(key);
-
-/**
- * isValidSolidShape
- *
- * ROLE:
- * High-Speed Outer-Boundary Discriminator Guard.
- *
- * STRATEGY:
- * Bypasses intensive recursive graph traversing. It relies on TypeScript's upstream
- * compilation safety and validates only the top-level 'kind' property array slot,
- * delivering sub-nanosecond type refinement speeds.
- */
-export const isValidSolidShape: TTypeGuard<TSolidShape> = (
-  shape: unknown,
-): shape is TSolidShape =>
-  isKeyInObject('kind')(shape) &&
-  isString(shape.kind) &&
-  isKeyInObject(shape.kind)(IS_SOLID_SHAPE_KINDS_CONFIG);
 
 /**
  * IS_TRIPLE_KV_GUARD

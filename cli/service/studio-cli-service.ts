@@ -15,7 +15,7 @@ import {
   measurePayloadSizeMB,
   buildAbsolutePathTypeLink,
   computeStringHash,
-} from '../../shared/utils';
+} from '../../shared';
 import { fsContext } from '../../shared/service';
 import { auditEngineService } from './cli-audit-engine';
 import {

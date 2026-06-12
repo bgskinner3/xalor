@@ -83,18 +83,6 @@ describe('Runtime Generator API', () => {
   //============================================================================================
   //============================================================================================
   describe('Transform XALOR PICK MODE', () => {
-    // it('🛡️ should successfully retain only deep-nested properties requested via advanced dot-notation paths', () => {
-    //   const mockOrder = { id: 's2Z7XIErEIP', amount: 985, currency: 'EUR' };
-
-    //   // ✔️ NEW ADVANCED FEATURE ENFORCED!
-    //   // Here we explicitly pick the 'orderId' and ONLY the 'SKU' property inside your child collection!
-    //   const result = xalor.pick<'TRANSACTION'>({
-    //     data: mockOrder,
-    //     keys: ['id', 'currency'],
-    //   });
-
-    //   console.log(result, 'RESULLTTT');
-    // });
     if (TEST_CONFIG_PICK_MODE.PICK_MODE_TEST_ONE.run) {
       it('🛡️ should successfully retain only requested fields from a primitive/flat object payload', () => {
         const mockUser = {
@@ -131,6 +119,19 @@ describe('Runtime Generator API', () => {
         ).toBe(false);
       });
     }
+
+    // it('🛡️ should successfully retain only deep-nested properties requested via advanced dot-notation paths', () => {
+    //   const mockOrder = { id: 's2Z7XIErEIP', amount: 985, currency: 'EUR' };
+
+    //   // ✔️ NEW ADVANCED FEATURE ENFORCED!
+    //   // Here we explicitly pick the 'orderId' and ONLY the 'SKU' property inside your child collection!
+    //   const result = xalor.pick<'TRANSACTION'>({
+    //     data: mockOrder,
+    //     keys: ['id', 'currency'],
+    //   });
+
+    //   console.log(result, 'RESULLTTT');
+    // });
     if (TEST_CONFIG_PICK_MODE.PICK_MODE_TEST_TWO.run) {
       it('🛡️ should preserve the prototype configuration mapping layers while peeling fields away', () => {
         class UserModel {

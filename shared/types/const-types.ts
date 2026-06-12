@@ -1,8 +1,6 @@
 import { XALOR_MESSAGE_HANDLER } from '../error/messages';
 import {
-  IS_SOLID_SHAPE_KINDS_CONFIG,
   AUDITOR_KEYWORDS,
-  SOLID_SHAPE_PRIMITIVE_KEYS,
   CLI_COMMAND_MODES,
   TRANSFORMER_EXECUTE_MODES,
   ALL_CLI_FLAGS,
@@ -10,26 +8,11 @@ import {
 } from '../constants';
 
 /**
- * TSolidShapeKinds
- *  The exhaustive list of supported type categories in the Solid system.
- * @see {@link FoundationalTypesDocs.TSolidShapeKinds}
- */
-export type TSolidShapeKinds = keyof typeof IS_SOLID_SHAPE_KINDS_CONFIG;
-
-/**
  * TAuditorKeywords
  * List of All Auditing key words in order to build Error messages
  * @see {@link FoundationalTypesDocs.TAuditorKeywords}
  */
 export type TAuditorKeywords = (typeof AUDITOR_KEYWORDS)[number];
-
-/**
- * TSolidShapePrimitiveKeys
- * List of All primitive key types in our Transformer
- * @see {@link FoundationalTypesDocs.TSolidShapePrimitiveKeys}
- */
-export type TSolidShapePrimitiveKeys =
-  (typeof SOLID_SHAPE_PRIMITIVE_KEYS)[number];
 
 // ====================================================================================================
 // ====================================================================================================

@@ -4,10 +4,10 @@ import type {
   StringLiteralType,
   NumberLiteralType,
   UnionType,
-  IntersectionType,
   ObjectType,
   TypeReference,
   InterfaceType,
+  IntersectionType,
 } from 'typescript';
 import ts from 'typescript';
 /**
@@ -37,6 +37,12 @@ export function isUnionType(type: Type): type is UnionType {
  * Identifies 'and' types (A & B). Essential for detecting Branded Types
  * and merged Interface metadata.
  */
+// export function isIntersectionType(type: Type): boolean {
+//   return (type.getFlags() & ts.TypeFlags.Intersection) !== 0;
+// }
+// export function isIntersectionType(type: Type): type is ts.IntersectionType {
+//   return (type.getFlags() & ts.TypeFlags.Intersection) !== 0;
+// }
 export function isIntersectionType(type: Type): type is IntersectionType {
   return type.isIntersection();
 }

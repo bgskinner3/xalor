@@ -3,11 +3,7 @@ import type {
   TPropertyDeltaContext,
   TXalorAuditDrift,
 } from '../../models/types';
-import type {
-  TDeepWriteable,
-  TTripleKV,
-  TSolidShape,
-} from '../../../shared/types';
+import type { TDeepWriteable, TTripleKV, TSolidShape } from '../../../shared';
 import { fsContext } from '../../../shared/service';
 import { PROPERTY_DRIFT_EVALUATION_RULES } from '../../models/constants';
 import { ObjectUtils, isObjectShape, yieldItems } from '../../../shared';

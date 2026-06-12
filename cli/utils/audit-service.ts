@@ -13,7 +13,7 @@ import {
   isBrandedShape,
   yieldItems,
   cloneDeep,
-} from '../../shared/utils';
+} from '../../shared';
 import {
   GENERATOR_MODE_TRIGGERS,
   VALIDATION_MODE_TRIGGERS,

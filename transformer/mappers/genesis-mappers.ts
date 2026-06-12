@@ -4,7 +4,7 @@ import type {
   TSolidShape,
   TShapeNormalizerMapper,
   TShapeInflatorMapper,
-} from '../../shared/types';
+} from '../../shared';
 /**
  * ============================================================================
  * BUILD-TIME ENCODE MAP: EXTRACT SHAPE NORMALIZERS
@@ -76,6 +76,20 @@ export const EXTRACT_SHAPE_NORMALIZERS: TShapeNormalizerMapper = {
   primitive: (shape) => shape,
   literal: (shape) => shape,
   reference: (shape) => shape,
+  instanceof: (shape) => shape,
+  intersection: (shape, flatPool, recurse) => ({
+    ...shape,
+    values: shape.values.map((v) => recurse(v, flatPool)),
+  }),
+
+  function: (shape, flatPool, recurse) => ({
+    ...shape,
+    parameters: shape.parameters.map((param) => ({
+      ...param,
+      shape: recurse(param.shape, flatPool),
+    })),
+    returnType: recurse(shape.returnType, flatPool),
+  }),
 } satisfies TShapeNormalizerMapper;
 /**
  * ============================================================================
@@ -93,7 +107,7 @@ export const EXTRACT_SHAPE_NORMALIZERS: TShapeNormalizerMapper = {
  *   and allows them to bypass the map to maintain cross-fragment tracking for the Bouncer.
  *
  * WHY:
- * Resolves the entire graph data matrix *prior* to inserting blueprints into memory.
+ * Resolves the entire graph data matrix *prizzor* to inserting blueprints into memory.
  * This ensures your validation runs carrying zero map-hopping lookup overhead.
  *
  * @see XalethorVaultArchive.hydrateFromGenesis
@@ -164,4 +178,26 @@ export const BUILD_SHAPE_INFLATORS: TShapeInflatorMapper = {
 
   primitive: (shape) => shape,
   literal: (shape) => shape,
+  /* CHANGE #3 — IMPORTANT CLARIFICATION */
+  instanceof: (shape) => {
+    // intentionally no resolution here
+    // inflator remains structural-only
+    // !!! inflator does NOT ask “what does this mean?”
+    return shape;
+  },
+
+  /* CHANGE #4 — unchanged, correct recursive structure */
+  intersection: (shape, blueprintsPool, recurse, _seen) => ({
+    ...shape,
+    values: shape.values.map((v) => recurse(v, blueprintsPool)),
+  }),
+
+  function: (shape, blueprintsPool, recurse, _seen) => ({
+    ...shape,
+    parameters: shape.parameters.map((param) => ({
+      ...param,
+      shape: recurse(param.shape, blueprintsPool),
+    })),
+    returnType: recurse(shape.returnType, blueprintsPool),
+  }),
 } satisfies TShapeInflatorMapper;

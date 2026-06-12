@@ -93,16 +93,19 @@ export function createUnionCheck(
  * blistering, single-pass linear option matching with zero heap mutations.
  */
 registerReifier((type, _checker, next, ctx) => {
-  if (!type.isUnion()) return undefined;
+  if ((type.getFlags() & ts.TypeFlags.Union) === 0) return undefined;
 
-  const totalVariants = type.types.length;
+  const variants =
+    type.getFlags() & ts.TypeFlags.Union ? (type as ts.UnionType).types : [];
+  const totalVariants = variants.length;
+
   const loopLimit =
     totalVariants > maxUnionVariants ? maxUnionVariants : totalVariants;
 
   const variantsArray: TSolidShape[] = [];
 
   for (let i = 0; i < loopLimit; i++) {
-    const variant = type.types[i];
+    const variant = variants[i];
     if (!variant) continue;
 
     const CHILD_CTX: TReifyCTX = {
@@ -119,5 +122,34 @@ registerReifier((type, _checker, next, ctx) => {
   return {
     kind: 'union',
     values: variantsArray,
-  };
+  } satisfies TSolidShape;
 });
+// registerReifier((type, _checker, next, ctx) => {
+//   if (!type.isUnion()) return undefined;
+
+//   const totalVariants = type.types.length;
+//   const loopLimit =
+//     totalVariants > maxUnionVariants ? maxUnionVariants : totalVariants;
+
+//   const variantsArray: TSolidShape[] = [];
+
+//   for (let i = 0; i < loopLimit; i++) {
+//     const variant = type.types[i];
+//     if (!variant) continue;
+
+//     const CHILD_CTX: TReifyCTX = {
+//       depth: ctx.depth + 1,
+//       maxDepth: ctx.maxDepth,
+//       fragments: ctx.fragments,
+//       parentKey: `${ctx.parentKey}_union_${i}`,
+//       seen: ctx.seen,
+//     } satisfies TReifyCTX;
+
+//     variantsArray.push(next(variant, CHILD_CTX));
+//   }
+
+//   return {
+//     kind: 'union',
+//     values: variantsArray,
+//   };
+// });

@@ -1,5 +1,5 @@
 import type { IXalorAuditPayload } from '../../models/types';
-import type { TTripleKV, TSolidShape } from '../../../shared/types';
+import type { TTripleKV, TSolidShape } from '../../../shared';
 import { fsContext } from '../../../shared/service';
 import { REFERENCE_COLLECTOR_MAPPER } from '../../models/constants';
 import { ObjectUtils, isReferenceShape, yieldItems } from '../../../shared';

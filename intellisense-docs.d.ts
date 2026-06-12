@@ -529,6 +529,25 @@ declare global {
   // ================================================================================================
   class GlobalRootTypeDocs {
     /**
+     * INSTANCE_REGISTRY_MAPPER
+     *
+     * The runtime truth table for all instanceof-based evaluation.
+     *
+     * ROLE:
+     * Maps string keys → runtime constructors + semantic category metadata.
+     *
+     * USED BY:
+     * - TSolidShape 'instanceof' AST evaluation
+     * - runtime validator engine
+     * - profiling + optimization system
+     *
+     * DESIGN PRINCIPLE:
+     * This is the SINGLE SOURCE OF TRUTH for runtime identity types.
+     * All InstanceRegistryKey and InstanceEntry types MUST be derived
+     * from this object to prevent drift.
+     */
+    static INSTANCE_REGISTRY(): void;
+    /**
      * TXalorAuditReport
      *
      * The authoritative return interface powering soft-fail introspection logic layers.
@@ -693,6 +712,22 @@ declare global {
      *    Because `TShapeNormalizerMapper` and `TShapeInflatorMapper` are mapped types, every single
      *    isolated reifier file across the codebase must be given a tuple handler token configuration
      *    to satisfy the exhaustive compiler checklist tracking rules.
+     *
+     * UPDATED:
+     *
+     * ************
+     * * ROLE IN ARCHITECTURE:
+     * This is the central recursive data structure used across:
+     * - Build-time transformer (Miner)
+     * - Runtime validator
+     * - Execution engine
+     *
+     * DESIGN MODEL:
+     * Represents a closed-world structural type system combining:
+     * - structural typing (object/array/union)
+     * - literal typing
+     * - runtime identity typing (instanceof)
+     * - compositional typing (branded/reference/function)
      */
     static TSolidShape(): void;
     /**
@@ -713,6 +748,16 @@ declare global {
      *                                 omission (`?`) vs explicit `undefined` unions. When true, forces
      *                      the Bouncer to verify the key physically exists in the payload,
      *                      even if its runtime value resolves to `undefined`.
+     *
+     * ROLE:
+     * Encodes full metadata required for validation and transformation:
+     * - structural shape
+     * - optionality
+     * - key identity
+     * - runtime presence requirements
+     *
+     * USED BY:
+     * object-kind AST nodes during validation traversal
      */
     static TSolidObjectRawShape(): void;
   }
@@ -724,6 +769,63 @@ declare global {
   // ================================================================================================
   // ================================================================================================
   class FoundationalTypesDocs {
+    static example(): void;
+    static example(): void;
+    static example(): void;
+    static example(): void;
+    static example(): void;
+    static example(): void;
+    static example(): void;
+    static example(): void;
+    static example(): void;
+    static example(): void;
+
+    /**
+     * InstanceRegistryKey
+     *
+     * The canonical set of all runtime identity type names.
+     *
+     * SOURCE OF TRUTH:
+     * Derived directly from INSTANCE_REGISTRY_MAPPER.
+     *
+     * ROLE:
+     * Used by AST nodes of kind: 'instanceof'
+     * to guarantee only valid runtime constructors are referenced.
+     */
+    static InstanceRegistryKey(): void;
+
+    /**
+     * InstanceCategory
+     *
+     * Semantic classification layer for runtime constructor-based types.
+     *
+     * ROLE:
+     * Used to group runtime identity types into execution categories
+     * for optimization, profiling, and environment-aware evaluation.
+     *
+     * NOTE:
+     * This does NOT affect structural typing.
+     * It is purely an execution-time classification system.
+     */
+    static InstanceCategory(): void;
+
+    /**
+     * TSolidShapeKinds
+     * ROLE:
+     * This defines the full "syntax space" of the AST.
+     *
+     * USAGE:
+     * - Used by transformer (build-time shape generation)
+     * - Used by runtime evaluator (dispatch execution logic)
+     *
+     * IMPORTANT:
+     * This is a CLOSED ENUMERATION.
+     * Any new kind MUST be implemented in:
+     * - AST generator
+     * - runtime evaluator
+     * - validator dispatcher
+     */
+    static TSolidShapeKinds(): void;
     /**
      * TXalorCLIModes
      *
@@ -755,6 +857,14 @@ declare global {
      * 2. TOP/BOTTOM LIMITS: System boundaries like 'any' and 'unknown' to route engine logic.
      * 3. COMPACTION SCALARS: Complex built-in system objects (e.g., 'Date', 'RegExp') flattened
      *                        into single tokens to prevent deep AST property crawls and bloat.
+     *
+     * ROLE:
+     * Defines all terminal (non-structural) values that can exist in the AST.
+     *
+     * These values:
+     * - do NOT recurse
+     * - do NOT reference other shapes
+     * - represent evaluation endpoints in the type system
      */
     static TSolidShapePrimitiveKeys(): void;
     /**

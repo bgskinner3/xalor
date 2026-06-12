@@ -1,5 +1,5 @@
 import type { TRebuildShapeMapper, TRebuildParams } from '../types';
-import type { TSolidObjectRawShape, TSolidShape } from '../types/blueprints';
+import type { TSolidObjectRawShape, TSolidShape } from '../shape-domain';
 import {
   isUndefined,
   isNull,
@@ -12,7 +12,7 @@ import {
   isObjectShape,
   isArrayShape,
   isPrimitiveShape,
-} from '../../shared/utils/guards';
+} from '../../shared';
 import { ObjectUtils } from '../../shared/utils';
 
 /**
@@ -143,6 +143,41 @@ class BlueprintService {
       }
 
       return `{\n${linesBuffer.join('\n')}\n${spacing}}`;
+    },
+    intersection: (params) => {
+      const { shape, pool, depth } = params;
+
+      if (shape.kind !== 'intersection') return 'unknown';
+
+      return shape.values
+        .map((v) => this.generateSolidTypeScriptString(v, pool, depth))
+        .join(' & ');
+    },
+
+    function: (params) => {
+      const { shape, pool, depth } = params;
+
+      if (shape.kind !== 'function') return 'unknown';
+
+      const args = shape.parameters
+        .map((p) => this.generateSolidTypeScriptString(p.shape, pool, depth))
+        .join(', ');
+
+      const ret = this.generateSolidTypeScriptString(
+        shape.returnType,
+        pool,
+        depth,
+      );
+
+      return `(${args}) => ${ret}`;
+    },
+
+    instanceof: (params) => {
+      const { shape } = params;
+
+      if (shape.kind !== 'instanceof') return String(null);
+
+      return shape.name;
     },
   } satisfies TRebuildShapeMapper;
 

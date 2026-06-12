@@ -225,17 +225,6 @@ Unlike schema-based libraries:
 
 **Instead:** Your TypeScript types are the system.
 
-<!-- <br/>
- TODO: ADD ROADMAP
-
-## 🗺 Roadmap
-
-* [ ] Advanced transformation pipelines
-* [ ] Framework integrations (Next.js, NestJS, etc.)
-* [ ] Performance benchmarking suite
-* [ ] Visual debugging tools (studio expansion)
-* [ ] Remote compilation mode -->
-
 <br/>
 
 ## 📄 License

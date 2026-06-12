@@ -64,6 +64,25 @@ export const TELEMETRY_API_TOKEN_NAMES = Object.freeze(
 export const DEPTH_STRATEGY_MAPPER: TAuditDepthMapper = {
   primitive: () => 0,
   literal: () => 0,
+  function: () => 0,
+
+  instanceof: () => 0,
+
+  intersection: (shape, blueprints, traversalStack, self) => {
+    let max = 0;
+
+    for (const branch of shape.values) {
+      const depth = self({
+        shape: branch,
+        blueprints,
+        traversalStack,
+      });
+
+      if (depth > max) max = depth;
+    }
+
+    return max;
+  },
 
   reference: (shape, blueprints, traversalStack, self) => {
     const targetHash = shape.name;
@@ -142,7 +161,9 @@ export const DEPTH_COMPLEXITY_MAPPER: TDepthComplexityMapper = [
 export const REFERENCE_COLLECTOR_MAPPER: TReferenceCollectorMapper = {
   primitive: () => {},
   literal: () => {},
+  function: () => {},
 
+  instanceof: () => {},
   reference: (_shape, _activeSet, _self) => {
     // Note: The parent loop inside executeSelfHealingPruneSweep handles resolving
     // the hash pointer and passes the actual child shape object down the callback.
@@ -168,7 +189,11 @@ export const REFERENCE_COLLECTOR_MAPPER: TReferenceCollectorMapper = {
       self(values[i]);
     }
   },
-
+  intersection: (shape, _activeSet, self) => {
+    for (const value of shape.values) {
+      self(value);
+    }
+  },
   branded: (shape, _activeSet, self) => {
     self(shape.base);
   },

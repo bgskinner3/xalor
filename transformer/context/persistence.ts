@@ -3,11 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared/constants';
 import { isReferenceShape, computeStringHash } from '../../shared';
-import type {
-  TVaultSyncPayload,
-  TTripleKV,
-  TSolidShape,
-} from '../../shared/types';
+import type { TVaultSyncPayload, TTripleKV, TSolidShape } from '../../shared';
 import { extractAndNormalizeShape } from '../utils';
 import { XalorRoutesService, xalorCentralContext } from '../service';
 import { TransformerReportService } from '../error';

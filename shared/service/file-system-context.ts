@@ -21,9 +21,8 @@ import {
   isUndefined,
   isDir,
   isTripleKVShape,
-  isValidSolidShape,
-} from '../utils/guards';
-
+} from '../utils';
+import { isValidSolidShape } from '../shape-domain';
 class FileSystemContextService {
   private vaultFallback: TTripleKV = DEFAULT_VAULT_SHAPE_FALLBACK;
   /* prettier-ignore */

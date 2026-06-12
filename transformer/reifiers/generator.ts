@@ -12,6 +12,9 @@ import {
   isBrandedShape,
   isUnionShape,
   isReferenceShape,
+  isInstanceOfShape,
+  isFunctionShape,
+  isIntersectionShape,
   mapIterableLazy,
   isNumber,
   isBoolean,
@@ -48,7 +51,7 @@ export function generateShapeAST(
   f: NodeFactory,
   shape: TSolidShape,
 ): Expression {
-  const _exhaustive: TSolidShape = shape;
+  const _exhaustive = shape;
   if (isPrimitiveShape(shape)) {
     return f.createObjectLiteralExpression([
       f.createPropertyAssignment('kind', f.createStringLiteral('primitive')),
@@ -92,6 +95,50 @@ export function generateShapeAST(
     }
 
     return f.createObjectLiteralExpression(arrayElements);
+  }
+  if (isIntersectionShape(shape)) {
+    const expressionIterator = mapIterableLazy<TSolidShape, Expression>(
+      shape.values,
+      (v) => generateShapeAST(f, v),
+    );
+
+    return f.createObjectLiteralExpression([
+      f.createPropertyAssignment('kind', f.createStringLiteral('intersection')),
+      f.createPropertyAssignment(
+        'values',
+        f.createArrayLiteralExpression([...expressionIterator]),
+      ),
+    ]);
+  }
+  if (isInstanceOfShape(shape)) {
+    return f.createObjectLiteralExpression([
+      f.createPropertyAssignment('kind', f.createStringLiteral('instanceof')),
+      f.createPropertyAssignment('name', f.createStringLiteral(shape.name)),
+    ]);
+  }
+  if (isFunctionShape(shape)) {
+    return f.createObjectLiteralExpression([
+      f.createPropertyAssignment('kind', f.createStringLiteral('function')),
+      f.createPropertyAssignment(
+        'parameters',
+        f.createArrayLiteralExpression(
+          shape.parameters.map((p) =>
+            f.createObjectLiteralExpression([
+              f.createPropertyAssignment('shape', generateShapeAST(f, p.shape)),
+              f.createPropertyAssignment(
+                'optional',
+                p.optional ? f.createTrue() : f.createFalse(),
+              ),
+              f.createPropertyAssignment('name', f.createStringLiteral(p.name)),
+            ]),
+          ),
+        ),
+      ),
+      f.createPropertyAssignment(
+        'returnType',
+        generateShapeAST(f, shape.returnType),
+      ),
+    ]);
   }
 
   if (isLiteralShape(shape)) {

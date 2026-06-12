@@ -6,11 +6,7 @@ import type {
   TCalculateDepthParams,
   TTaxonomyTokenKeys,
 } from '../../models/types';
-import type {
-  TDeepWriteable,
-  TTripleKV,
-  TSolidShape,
-} from '../../../shared/types';
+import type { TDeepWriteable, TTripleKV, TSolidShape } from '../../../shared';
 import {
   DEPTH_STRATEGY_MAPPER,
   DEPTH_COMPLEXITY_MAPPER,

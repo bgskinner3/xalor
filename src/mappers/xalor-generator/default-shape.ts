@@ -2,7 +2,44 @@ import type { TShapeDefaultMaterializeMap } from '../../models/types';
 import { ObjectUtils } from '../../../shared';
 import { PRIMITIVE_DEFAULTS } from '../../models/constants';
 import { XalethorVaultKeeper } from '../../xalor-service/vault-keeper';
+import { isObject } from '../../../shared';
+import type { InstanceRegistryKey } from '../../../shared';
+const INSTANCE_REGISTRY_MAPPER = {
+  Date: {
+    ctor: Date,
+    create: () => new Date(0),
+  },
 
+  RegExp: {
+    ctor: RegExp,
+    create: () => new RegExp(``),
+  },
+
+  Map: {
+    ctor: Map,
+    create: () => new Map(),
+  },
+
+  Set: {
+    ctor: Set,
+    create: () => new Set(),
+  },
+
+  URL: {
+    ctor: URL,
+    create: () => new URL('https://example.com'),
+  },
+
+  Promise: {
+    ctor: Promise,
+    create: () => Promise.resolve(undefined),
+  },
+};
+export function resolveInstanceFactory(
+  key: InstanceRegistryKey,
+): () => unknown {
+  return INSTANCE_REGISTRY_MAPPER[key].create;
+}
 /**
  * ============================================================================
  * 🏗️ DESIGN SYSTEM MAPPER: DEFAULT SHAPE MATERIALIZER
@@ -45,4 +82,29 @@ export const DEFAULT_SHAPE_MATERIALIZER: TShapeDefaultMaterializeMap = {
   },
 
   branded: (shape, depth, recurse) => recurse(shape.base, depth + 1),
+
+  function: (shape, depth, recurse) => {
+    const fn = (..._args: unknown[]) => recurse(shape.returnType, depth + 1);
+    return fn;
+  },
+  instanceof: (shape) => {
+    return resolveInstanceFactory(shape.name)();
+  },
+  intersection: (shape, depth, recurse) => {
+    const result: Record<string, unknown> = {};
+
+    for (const part of shape.values) {
+      const value = recurse(part, depth + 1);
+
+      if (value && isObject(value)) {
+        for (const [k, v] of Object.entries(value)) {
+          if (result[k] === undefined) {
+            result[k] = v;
+          }
+        }
+      }
+    }
+
+    return result;
+  },
 } satisfies TShapeDefaultMaterializeMap;

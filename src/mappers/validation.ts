@@ -5,6 +5,9 @@ import {
   validateObject,
   validatePrimitive,
   validateLiteral,
+  validateFunction,
+  validateIntersection,
+  validateInstanceOf,
 } from '../validation/validators';
 import type { TValidatorMapper } from '../models/types';
 import {
@@ -15,6 +18,9 @@ import {
   isBrandedShape,
   isUnionShape,
   isReferenceShape,
+  isFunctionShape,
+  isIntersectionShape,
+  isInstanceOfShape,
 } from '../../shared';
 import { validateShape } from '../validation/validate-shape';
 /**
@@ -55,4 +61,21 @@ export const SHAPE_VALIDATION_MAPPER: TValidatorMapper = {
     if (!isReferenceShape(shape)) return false;
     return validateReference(data, shape, ctx);
   },
+  function: (data, shape, ctx) => {
+    if (!isFunctionShape(shape)) return false;
+    return validateFunction(data, shape, ctx);
+  },
+  intersection: (data, shape, ctx) => {
+    if (!isIntersectionShape(shape)) return false;
+    return validateIntersection(data, shape, ctx);
+  },
+  instanceof: (data, shape, ctx) => {
+    if (!isInstanceOfShape(shape)) return false;
+    return validateInstanceOf(data, shape, ctx);
+  },
 } satisfies TValidatorMapper;
+
+/**
+ *
+ * TODO REVIEW DOUBLE VALIDATION ISSUE
+ */

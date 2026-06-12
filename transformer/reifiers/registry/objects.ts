@@ -10,8 +10,16 @@ import type { TSolidObjectRawShape } from '../../../shared';
  */
 function isObjectOrIntersectionLayout(type: Type): boolean {
   const flags = type.getFlags();
-  return (flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) !== 0;
+
+  return (
+    (flags & ts.TypeFlags.Object) !== 0 ||
+    (flags & ts.TypeFlags.Intersection) !== 0
+  );
 }
+// function isObjectOrIntersectionLayout(type: Type): boolean {
+//   const flags = type.getFlags();
+//   return (flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) !== 0;
+// }
 
 /**
  * permitsUndefined

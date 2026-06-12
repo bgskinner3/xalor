@@ -1,4 +1,4 @@
-import type { TSolidShape, TVaultSyncPayload } from '../../../shared/types';
+import type { TSolidShape, TVaultSyncPayload } from '../../../shared';
 import { isStringMirrored } from './predicate-guards';
 import type { TManifestChecks } from '../../types';
 

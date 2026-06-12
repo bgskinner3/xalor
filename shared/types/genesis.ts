@@ -1,4 +1,4 @@
-import type { TSolidShape } from './blueprints';
+import type { TSolidShape } from '../shape-domain';
 /**
  * TSHAPE_NORMALIZER_MAPPER
  *

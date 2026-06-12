@@ -23,24 +23,31 @@ export const CLONE_SHAPE_SANITIZER_MAPPER: TShapeCloneMapperMap = {
   object: (shape, data, seen, depth, recurse) => {
     if (!isObject(data) || isNull(data)) return null;
 
-    // Preserve class prototypes cleanly if tracking class instances
     const proto = Object.getPrototypeOf(data);
     const cleanObj = Object.create(proto);
+
     seen.set(data, cleanObj);
 
-    // This physically strips un-declared variables from memory cache layers.
     const blueprintProps = shape.properties;
-    for (const key in blueprintProps) {
-      if (
-        Reflect.has(blueprintProps, key) &&
-        Reflect.has(data as object, key)
-      ) {
-        const sourceValue = data[key];
-        const metadata = blueprintProps[key];
 
-        cleanObj[key] = recurse(sourceValue, metadata.shape, seen, depth + 1);
+    for (const key in blueprintProps) {
+      if (!Reflect.has(blueprintProps, key)) continue;
+      if (!Reflect.has(data as object, key)) continue;
+
+      const metadata = blueprintProps[key];
+
+      const value = recurse(
+        (data as Record<string, unknown>)[key],
+        metadata.shape,
+        seen,
+        depth + 1,
+      );
+
+      if (value !== null) {
+        cleanObj[key] = value;
       }
     }
+
     return cleanObj;
   },
   array: (shape, data, seen, depth, recurse) => {
@@ -48,14 +55,17 @@ export const CLONE_SHAPE_SANITIZER_MAPPER: TShapeCloneMapperMap = {
 
     const copy: unknown[] = [];
     seen.set(data, copy);
+
     const limit = Math.min(
       data.length,
       IS_SOLID_CONFIG_ITEMS.reifyLimit.maxObjectProperties,
     );
 
     for (let i = 0; i < limit; i++) {
-      copy[i] = recurse(data[i], shape.items, seen, depth + 1);
+      const value = recurse(data[i], shape.items, seen, depth + 1);
+      copy[i] = value;
     }
+
     return copy;
   },
   union: (shape, data, seen, depth, recurse) => {
@@ -74,4 +84,44 @@ export const CLONE_SHAPE_SANITIZER_MAPPER: TShapeCloneMapperMap = {
 
   branded: (shape, data, seen, depth, recurse) =>
     recurse(data, shape.base, seen, depth),
+
+  // ============================================
+  // 🧠 NEW: FUNCTION SUPPORT
+  // ============================================
+  function: (_shape, data) => {
+    if (typeof data !== 'function') return null;
+
+    // sanitize: preserve callable identity only
+    // (do NOT execute or inspect arguments)
+    return data;
+  },
+
+  // ============================================
+  // 🧠 NEW: INTERSECTION SUPPORT
+  // ============================================
+  intersection: (shape, data, seen, depth, recurse) => {
+    if (!data || typeof data !== 'object') return null;
+
+    let acc: unknown = data;
+
+    for (const part of shape.values) {
+      acc = recurse(acc, part, seen, depth + 1);
+
+      if (acc === null) return null;
+    }
+
+    return acc;
+  },
+
+  // ============================================
+  // 🧠 NEW: INSTANCEOF SUPPORT (SAFE VERSION)
+  // ============================================
+  instanceof: (shape, data) => {
+    if (data == null) return null;
+
+    const ctorName = (data as { constructor?: { name?: string } })?.constructor
+      ?.name;
+
+    return ctorName === shape.name ? data : null;
+  },
 } satisfies TShapeCloneMapperMap;

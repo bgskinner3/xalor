@@ -1,4 +1,4 @@
-import type { TSolidShape } from '../../../shared/types';
+import type { TSolidShape } from '../../../shared';
 
 /**
  * isTypeContractResolvabilityPure

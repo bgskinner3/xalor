@@ -118,9 +118,11 @@ export function transformerMapperObject({
    * ROUTE 4: MODE merge
    */
   if (dependency.mode === 'merge') {
-    const patchRef = (dependency.patchData as Record<string, unknown>) || {};
-    const dataRef = (data as Record<string, unknown>) || {};
+    // const patchRef = (dependency.patchData as Record<string, unknown>) || {};
+    // const dataRef = (data as Record<string, unknown>) || {};
+    const patchRef = isObject(dependency.patchData) ? dependency.patchData : {};
 
+    const dataRef = isObject(data) ? data : {};
     for (const key of Object.keys(blueprintProps)) {
       const propertyContainer = blueprintProps[key];
 
