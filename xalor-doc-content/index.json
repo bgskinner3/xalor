@@ -83,7 +83,7 @@
           "description": "Xalor's background watcher sweeps your codebase, extracts the Type AST, and flattens layouts into **pointer-interned structural snapshots** using ultra-compact Content-Addressable Storage (CAS) interning.",
           "maskVariant": "two",
           "image": {
-            "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/blockedge/lady-three.png?w=3840&q=75",
+            "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/blockedge/mikey-girl.png",
             "alt": "lady-two"
           }
         },
@@ -108,35 +108,94 @@
           "id": "75e6323c-dc29-4357-b8d0-8e62b565f037",
           "header": "Validate Data",
           "description": "Ensure raw inbound payloads match your compile-time types with deep error reporting and zero runtime schema overhead.",
-          "subDescription": "Catch structural failures instantly at your system boundaries.",
-          "link": "/docs/api",
+          "link": "/xalor/docs/api",
           "iconName": "shield-check-duotone"
         },
         "generate": {
           "id": "12da4d33-ebf8-4add-9170-20e11c6cb788",
           "header": "Generate Mocks",
           "description": "Stamp out completely populated testing fixtures, safe default fallbacks, and mock shapes derived directly from native type graphs.",
-          "subDescription": "Instant mockup datasets generated without maintaining fixture files.",
-          "link": "/docs/api",
+          "link": "/xalor/docs/api",
           "iconName": "shipping-box"
         },
         "transform": {
           "id": "f166fd7-01f9-4c5d-b114-b5cb2e9e16f1",
           "header": "Transform Safely",
           "description": "Pick, omit, sanitize, and reshape messy structures using type-aware utilities running on hardware-level lookup paths.",
-          "subDescription": "Peel away unsafe variables without redefining your schemas.",
-          "link": "/docs/api",
+          "link": "/xalor/docs/api",
           "iconName": "arrow-right-left"
         },
         "match": {
           "id": "8d83e630-b733-4391-9d77-629ff1c88724",
           "header": "No Duplication",
           "description": "Eliminate the dual-source tax entirely. Write standard TypeScript contracts once and execute them natively anywhere across your stack.",
-          "subDescription": "Absolute architectural sync across edge paths and user frontends.",
-          "link": "/docs/api",
+          "link": "/xalor/docs/api",
           "iconName": "target"
         }
       }
+    },
+
+    "verificationMatrix": {
+      "header": "Architectural Compliance Guard",
+      "subHeader": "See how Xalor transforms pristine, native TypeScript contracts into high-speed runtime systems—completely eliminating the parsing latencies, bloated files, and boilerplate of traditional dependencies.",
+      "benchmarkDocsLink": {
+        "text": "View Full Compilation & Trace Benchmarks →",
+        "href": "/xalor/docs/how-it-works#benchmarks"
+      },
+      "comparisonHeaders": [
+        "Core Engineering Capabilities",
+        "Schema-First (Zod / Valibot)",
+        "JSON Compiler (TypeBox)",
+        "Macro-First (Typia)",
+        "Xalor Engine"
+      ],
+      "matrixRows": [
+        {
+          "id": "trait-source-truth",
+          "featureTitle": "Pristine Native Types as Single Source of Truth",
+          "description": "Write standard TypeScript interfaces exactly as you always do. Modifying a native type updates runtime validation mechanics on your next save loop, completely **cutting out human schema duplication errors**.",
+          "zodStatus": "cross",
+          "typeboxStatus": "cross",
+          "typiaStatus": "check",
+          "xalorStatus": "check"
+        },
+        {
+          "id": "trait-bundle-weight",
+          "featureTitle": "Zero Client Bundle Size Inflation",
+          "description": "Heavy validation engines never ship to the browser. Parsing logic is completely stripped from your production build, dropping client runtime weights down to a **flat 0.8KB instance blueprint size**.",
+          "zodStatus": "cross",
+          "typeboxStatus": "cross",
+          "typiaStatus": "cross",
+          "xalorStatus": "check"
+        },
+        {
+          "id": "trait-workspace-hygiene",
+          "featureTitle": "Zero Workspace Clutter (No Generated Code Files)",
+          "description": "The compiler watcher runs entirely in memory. It leaves **zero massive, auto-generated validation function files** to clutter your local source directories or pollute your git history.",
+          "zodStatus": "check",
+          "typeboxStatus": "check",
+          "typiaStatus": "cross",
+          "xalorStatus": "check"
+        },
+        {
+          "id": "trait-gps-diagnostics",
+          "featureTitle": "GPS Diagnostics (File & Line-Number Error Tracing)",
+          "description": "When raw incoming data boundaries crack, error logs don't print vague path trees. Xalor traces the validation fault straight back to a **fully clickable terminal link pointing to the exact source line** where your type was declared.",
+          "zodStatus": "cross",
+          "typeboxStatus": "cross",
+          "typiaStatus": "cross",
+          "xalorStatus": "check"
+        },
+        {
+          "id": "trait-self-healing",
+          "featureTitle": "Self-Healing Automated Test Mock Factories",
+          "description": "Stop wasting hours manually creating and updating massive static mockup `.json` fixture files. Stamp out dynamic, randomized, and structurally valid dummy datasets instantly using a **single inline generator execution**.",
+          "zodStatus": "cross",
+          "typeboxStatus": "cross",
+          "typiaStatus": "check",
+          "xalorStatus": "check"
+        }
+      ]
     },
     "docsCta": {
       "header": "Ready to see it in action?",

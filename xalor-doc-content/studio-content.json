@@ -92,5 +92,183 @@
         "description": "Validate, generate, and transform data directly from precompiled blueprints."
       }
     }
+  },
+  "profilerSpecContrastMatrix": {
+    "header": "Bare-Metal Operational Profiling",
+    "subHeader": "Xalor leverages built-in compiler tracking scripts to monitor, compact, and optimize project architecture boundaries. See how our real spec metrics contrast against traditional dependencies:",
+    "studioCta": {
+      "text": "Launch Sandbox Studio to Test Custom Blueprints →",
+      "href": "/xalor/studio"
+    },
+    "metricCategories": [
+      {
+        "id": "metric-storage-speed",
+        "title": "📦 Storage Compaction & Latency",
+        "overline": "Vault Compaction Engine",
+        "xalorSummary": "User Keys: **12** | Deduplicated CAS Leaves: **21** | Trace Latency: **15ms**",
+        "description": "Xalor lowers your native types down into structural, content-addressed snapshot graphs. Shared shapes (like Address definitions used across 100 payloads) are interned and referenced via string pointer keys.",
+        "comparativeMetrics": [
+          {
+            "framework": "Schema-First (Zod)",
+            "ratio": "0% Compaction Ratio",
+            "latency": "~180ms Boot Tax",
+            "notes": "Compiles zero internal shared graphs; re-evaluates nested closures dynamically on every call path."
+          },
+          {
+            "framework": "Macro-First (Typia)",
+            "ratio": "0% Code Duplication Fix",
+            "latency": "Active Save Lags",
+            "notes": "Repeats generated code footprint layouts inline within source trees for every single contract wrapper."
+          },
+          {
+            "framework": "Xalor Engine",
+            "ratio": "11.4% Space Saved",
+            "latency": "15ms Build Sweep",
+            "notes": "Content-Addressable Interning collapses structural variance to flat database snapshot footprints.",
+            "highlight": true
+          }
+        ]
+      },
+      {
+        "id": "metric-graph-safety",
+        "title": "🚨 Graph Safety & Hygiene Status",
+        "overline": "Commandment VIII Boundaries",
+        "xalorSummary": "Critical Alarms: **0** | Apex Layer Depth: **0 / 10** | Stale Keys: **8**",
+        "description": "Your service employs a strict finite operational boundary capping file scans at **50,000 max chunks** to neutralize infinite loops, while monitoring type safety boundaries.",
+        "comparativeMetrics": [
+          {
+            "framework": "Schema-First (Zod)",
+            "ratio": "Unchecked Depth",
+            "latency": "No Stale Tracking",
+            "notes": "Recursive evaluation chains risk deep stack overflows and serverless memory hangs."
+          },
+          {
+            "framework": "Macro-First (Typia)",
+            "ratio": "Brittle Fallbacks",
+            "latency": "No Hygiene Audits",
+            "notes": "Lacks automated orphan mapping; unreferenced structures clutter workspace folders indefinitely."
+          },
+          {
+            "framework": "Xalor Engine",
+            "ratio": "Capped 25-Layer Ceiling",
+            "latency": "8 Dead Keys Flagged",
+            "notes": "Tracks structural depth safety and exposes dead-weight keys safe for automated --fix pruning.",
+            "highlight": true
+          }
+        ]
+      },
+      {
+        "id": "metric-metadata-evaporation",
+        "title": "🧼 Metadata Evaporation Deltas",
+        "overline": "Lifecycle Footprint Radar",
+        "xalorSummary": "Dev Cache: **27.17 KB** | Prod Schema Bundle: **11.60 KB** | Trim Efficiency: **57.3%**",
+        "description": "Your `PackageLifecycleAuditor` dynamically isolates spatial IDE telemetry and strips development cache records, leaving a clean, bare-metal runtime fingerprint layer.",
+        "comparativeMetrics": [
+          {
+            "framework": "Schema-First (Zod)",
+            "ratio": "0% Footprint Trimming",
+            "latency": "54.2KB Distributed Weight",
+            "notes": "Ships heavy graph parsing frameworks directly to production browser threads."
+          },
+          {
+            "framework": "Macro-First (Typia)",
+            "ratio": "Linear Inflation Scale",
+            "latency": "42.0KB Distributed Weight",
+            "notes": "Bundle sizes balloon continuously as application type trees scale out."
+          },
+          {
+            "framework": "Xalor Engine",
+            "ratio": "57.3% Fat Stripped Away",
+            "latency": "11.60KB Bare-Metal Prod",
+            "notes": "Completely purges structural metadata weights from your final distributed bundles.",
+            "highlight": true
+          }
+        ]
+      },
+      {
+        "id": "metric-physical-distribution",
+        "title": "📦 Physical Package Footprint",
+        "overline": "Node Modules Architecture Sprawl",
+        "xalorSummary": "Unpacked Size: **30.89 KB** | Active Dependencies: **1** | Projected Install: **480.89 KB**",
+        "description": "Our audit algorithm extracts manifest fields directly to calculate the true installation footprint overhead your project adds to dev servers and production serverless deployment targets.",
+        "comparativeMetrics": [
+          {
+            "framework": "Schema-First (Zod)",
+            "ratio": "Unpacked Size: High",
+            "latency": "Dependencies: Multiple",
+            "notes": "Heavier overall footprint drags serverless edge startup metrics down."
+          },
+          {
+            "framework": "Macro-First (Typia)",
+            "ratio": "Unpacked Size: Dense",
+            "latency": "Dependencies: Brittle",
+            "notes": "Incurs massive local developer installation weight due to underlying compiler parser packages."
+          },
+          {
+            "framework": "Xalor Engine",
+            "ratio": "Unpacked Size: 30.89 KB",
+            "latency": "Dependencies: 1 Hook",
+            "notes": "Ultra-lean dependencies count protects serverless function deployments from cold starts.",
+            "highlight": true
+          }
+        ]
+      }
+    ]
+  },
+  "animatedVerificationMatrix": {
+    "header": "Architectural Compliance Guard",
+    "subHeader": "See how Xalor transforms pristine, native TypeScript contracts into high-speed runtime systems—completely eliminating the parsing latencies, bloated files, and boilerplate of traditional dependencies.",
+    "benchmarkDocsLink": {
+      "text": "View Full Compilation & Trace Benchmarks →",
+      "href": "/xalor/docs/how-it-works#benchmarks"
+    },
+    "comparisonHeaders": [
+      "Capabilities Matrix",
+      "Schema-First (Zod)",
+      "Macro-First (Typia)",
+      "Xalor Engine"
+    ],
+    "matrixRows": [
+      {
+        "id": "trait-source-truth",
+        "featureTitle": "Pristine Native Types as Single Source of Truth",
+        "description": "Write standard TypeScript interfaces exactly as you always do. Modifying a native type updates runtime validation mechanics on your next save loop, completely **cutting out human schema duplication errors**.",
+        "zodStatus": "cross",
+        "typiaStatus": "check",
+        "xalorStatus": "check"
+      },
+      {
+        "id": "trait-bundle-weight",
+        "featureTitle": "Zero Client Bundle Size Inflation",
+        "description": "Heavy validation engines never ship to the browser. Parsing logic is completely stripped from your production build, dropping client runtime weights down to a **flat 0.8KB instance blueprint size**.",
+        "zodStatus": "cross",
+        "typiaStatus": "cross",
+        "xalorStatus": "check"
+      },
+      {
+        "id": "trait-gps-diagnostics",
+        "featureTitle": "GPS Diagnostics (File & Line-Number Error Tracing)",
+        "description": "When raw incoming data boundaries crack, error logs don't print vague path trees. Xalor traces the validation fault straight back to a **fully clickable terminal link pointing to the exact source line** where your type was declared.",
+        "zodStatus": "cross",
+        "typiaStatus": "cross",
+        "xalorStatus": "check"
+      },
+      {
+        "id": "trait-self-healing",
+        "featureTitle": "Self-Healing Automated Test Mock Factories",
+        "description": "Stop wasting hours manually creating and updating massive static mockup `.json` fixture files. Stamp out dynamic, randomized, and structurally valid dummy datasets instantly using a **single inline generator execution**.",
+        "zodStatus": "cross",
+        "typiaStatus": "check",
+        "xalorStatus": "check"
+      },
+      {
+        "id": "trait-ambient-bootstrap",
+        "featureTitle": "Zero-Configuration Ambient Environment Bootstrap",
+        "description": "There are zero post-install setup commands to trigger and no hidden terminal compilation loops to configure. The background watcher hydrates your editor maps silently, **erasing red IDE typing error underlines before your very first build pass**.",
+        "zodStatus": "check",
+        "typiaStatus": "cross",
+        "xalorStatus": "check"
+      }
+    ]
   }
 }

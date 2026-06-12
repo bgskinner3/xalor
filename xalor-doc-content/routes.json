@@ -21,11 +21,17 @@
       "href": "/xalor/docs/what-is-xalor",
       "active": false,
       "sectionLinks": [
+        { "id": "compilation-timeline", "text": "Compilation Lifecycle" },
         { "id": "type-reification", "text": "Type Reification" },
-        { "id": "dual-source-tax", "text": "Dual Source Tax" },
+        { "id": "twin-map-geometry", "text": "Bidirectional Geometry" },
+        { "id": "transformation-analysis", "text": "Transformation Analysis" },
         { "id": "bundle-comparison", "text": "Bundle Comparison" },
+        { "id": "ghost-emitter-type-injection", "text": "Ghost Emitter" },
+        { "id": "multiprocessor-file-lock", "text": "Multiprocessor" },
+        { "id": "vault-specification", "text": "Namespace Specification" },
         { "id": "leadership-guarantees", "text": "Leadership Guarantees" },
-        { "id": "how-it-works", "text": "How It Works" }
+        { "id": "dual-source-tax", "text": "Dual Source Tax" },
+        { "id": "ambient-bootstrap", "text": "Ambient Environment Bootstrap" }
       ]
     },
     {
