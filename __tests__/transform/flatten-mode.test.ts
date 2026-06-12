@@ -8,6 +8,8 @@ import { seedTestVault, logEngineTrace } from '../utils';
  *
  * TO RUN
  pnpm run test -- __tests__/transform/flatten-mode.test.ts
+
+ --coverage
  */
 const TEST_CONFIG_FLATTEN_MODE = {
   FLATTEN_MODE_TEST_ONE: {

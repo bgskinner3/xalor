@@ -5,7 +5,7 @@ import type {
   TThemeBlocks,
 } from '../../types';
 import { ModuleKind, ScriptTarget } from 'typescript';
-import { IS_SOLID_CONFIG_ITEMS } from '../configs';
+// import { IS_SOLID_CONFIG_ITEMS } from '../configs';
 /**
  * REGEX_PATTERNS
  *
@@ -130,8 +130,17 @@ export const CONFIG_FALLBACK_DEFAULT: TXalorParsedConfig = {
     target: ScriptTarget.Latest,
     module: ModuleKind.CommonJS,
   },
-  includePatterns: IS_SOLID_CONFIG_ITEMS.buildLayer.fallbackIncludePatterns,
-  excludePatterns: IS_SOLID_CONFIG_ITEMS.buildLayer.mandatoryExcludePatterns,
+  includePatterns: ['src/**/*', 'app/**/*', 'test/**/*'],
+  excludePatterns: [
+    'dist',
+    'build',
+    'out',
+    'lib',
+    'node_modules',
+    '.cache',
+    '.next',
+    '.xalor',
+  ],
   isFallbackMode: true,
 } satisfies TXalorParsedConfig;
 
