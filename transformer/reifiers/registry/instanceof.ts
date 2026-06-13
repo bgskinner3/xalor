@@ -1,11 +1,6 @@
 import { registerReifier } from './core';
-import { INSTANCE_REGISTRY_MAPPER } from '../../../shared';
+import { isKeyOfInstanceKind } from '../../../shared';
 
-export function isInstanceRegistryKey(
-  name: string,
-): name is keyof typeof INSTANCE_REGISTRY_MAPPER {
-  return name in INSTANCE_REGISTRY_MAPPER;
-}
 /**
  * INSTANCEOF REIFIER
  *
@@ -17,7 +12,7 @@ registerReifier((type, _checker, _next, _ctx) => {
 
   const name = symbol.getName();
 
-  if (!isInstanceRegistryKey(name)) return undefined;
+  if (!isKeyOfInstanceKind(name)) return undefined;
 
   return {
     kind: 'instanceof',

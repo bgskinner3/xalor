@@ -19,9 +19,7 @@ export type TTypeGuard<T, Args extends readonly unknown[] = readonly []> = (
 /* prettier-ignore */ export type TAnyFunction = (...args: unknown[]) => unknown;
 /* prettier-ignore */ export type TStringFunction = (dynamicValue?: string) => string;
 /* prettier-ignore */ export type TAssert<T> = (value: unknown, message?: string) => asserts value is T;
-//TODO: RESOLVE UANY
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-/* prettier-ignore */ export type TAbstractConstructor<T = object> = abstract new (...args: any[]) => T;
+
 /**
  * TGET_CALLER_LOCATION_OPTIONS
  *

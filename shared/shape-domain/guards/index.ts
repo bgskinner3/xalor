@@ -3,6 +3,7 @@ import type {
   TSolidShape,
   TSolidShapePrimitiveKeys,
   TSolidShapeLiteralKeys,
+  InstanceRegistryKey,
 } from '../types';
 import type { TTypeGuard } from '../../types';
 import {
@@ -15,6 +16,7 @@ import {
   SOLID_SHAPE_PRIMITIVE_KEYS,
   IS_SOLID_SHAPE_KINDS_CONFIG,
   SOLID_SHAPE_LITERAL_KEYS,
+  INSTANCE_REGISTRY_MAPPER,
 } from '../constants';
 /**
  * FOCUSED SHAPE GUARDS
@@ -57,6 +59,11 @@ export const isInstanceMatchOf: TTypeGuard<object, [new (...args: unknown[]) => 
 ): value is object => {
   return isInstanceOf(value, ctor) 
 };
+
+export const isKeyOfInstanceKind: TTypeGuard<InstanceRegistryKey> = (
+  val: unknown,
+): val is InstanceRegistryKey =>
+  isString(val) && isKeyInObject(val)(INSTANCE_REGISTRY_MAPPER);
 
 /**
  * 🎯 IS SOLID SHAPE PRIMITIVE KEY (THE GATEWAY ACCESS RADAR)

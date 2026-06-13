@@ -74,8 +74,3 @@ export const SHAPE_VALIDATION_MAPPER: TValidatorMapper = {
     return validateInstanceOf(data, shape, ctx);
   },
 } satisfies TValidatorMapper;
-
-/**
- *
- * TODO REVIEW DOUBLE VALIDATION ISSUE
- */

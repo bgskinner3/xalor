@@ -5,6 +5,7 @@ import type {
   TValidationContext,
   TXalorRuleKind,
   TAuditorKeywords,
+  TRegisteredInstancesUnion,
 } from '../../../shared';
 
 /**
@@ -241,14 +242,18 @@ export type TShapeFlattenMapper = {
   readonly [K in TSolidShape['kind']]: (
     shape: Extract<TSolidShape, { kind: K }>,
     val: unknown,
-    accumulator: Record<string, string | number | boolean | null>,
+    accumulator:
+      | Record<string, string | number | boolean | null>
+      | TRegisteredInstancesUnion,
     currentPath: string,
     depth: number,
     seenObjectsMap: Set<unknown>,
     recurse: (
       v: unknown,
       s: TSolidShape,
-      a: Record<string, string | number | boolean | null>,
+      a:
+        | Record<string, string | number | boolean | null>
+        | TRegisteredInstancesUnion,
       p: string,
       d: number,
       seen: Set<unknown>,

@@ -16,10 +16,8 @@ export function transformerMapperArray({
 }: TMapperArray) {
   // Symmetrically step through indices for both collections during a deep merge run
   if (dependency.mode === 'merge') {
-    const list1 = Array.isArray(data) ? data : [];
-    const list2 = Array.isArray(dependency.patchData)
-      ? dependency.patchData
-      : [];
+    const list1 = isArray(data) ? data : [];
+    const list2 = isArray(dependency.patchData) ? dependency.patchData : [];
     const maxLength = Math.max(list1.length, list2.length);
     const copy: unknown[] = [];
 

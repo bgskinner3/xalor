@@ -16,10 +16,6 @@ function isObjectOrIntersectionLayout(type: Type): boolean {
     (flags & ts.TypeFlags.Intersection) !== 0
   );
 }
-// function isObjectOrIntersectionLayout(type: Type): boolean {
-//   const flags = type.getFlags();
-//   return (flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection)) !== 0;
-// }
 
 /**
  * permitsUndefined

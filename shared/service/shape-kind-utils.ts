@@ -1,48 +1,20 @@
-// import type { TSolidShape, TSolidShapeKinds } from '../types';
-// import {
-//   isPrimitiveShape,
-//   isLiteralShape,
-//   isReferenceShape,
-//   isObjectShape,
-//   isUnionShape,
-//   isArrayShape,
-//   isBrandedShape,
-//   isInstanceOfShape,
-//   isFunctionShape,
-//   isIntersectionShape,
-// } from '../guards';
-// /**
-//  * 🔧 INSTANCE CONSTRUCTOR RESOLVER
-//  *
-//  * ROLE:
-//  * Resolves a registered InstanceRegistryKey into its runtime constructor.
-//  *
-//  * STRATEGY:
-//  * Performs direct lookup from the INSTANCE_REGISTRY_MAPPER table.
-//  *
-//  * NOTE:
-//  * This is a pure registry accessor. No validation or inference is performed.
-//  */
-// export function resolveInstanceCtor(
-//   key: InstanceRegistryKey,
-// ): InstanceConstructor {
-//   return INSTANCE_REGISTRY_MAPPER[key].ctor;
-// }
-// /**
-//  * 🧠 SHAPE KIND RESOLVER
-//  *
-//  * ROLE:
-//  * Extracts the discriminant key from a TSolidShape AST node.
-//  *
-//  * STRATEGY:
-//  * Direct property access of the `kind` field.
-//  *
-//  * NOTE:
-//  * This is a structural accessor, not a validation or transformation step.
-//  */
-// export function resolveShapeKind(shape: TSolidShape): TSolidShapeKinds {
-//   return shape.kind;
-// }
+import type {
+  TInstanceConstructorRegistry,
+  InstanceRegistryKey,
+} from '../shape-domain';
+import { INSTANCE_REGISTRY_MAPPER } from '../shape-domain';
+
+export class ShapeKindUtils {
+  public resolveInstanceCtor<K extends keyof TInstanceConstructorRegistry>(
+    key: K,
+  ): TInstanceConstructorRegistry[K] {
+    return INSTANCE_REGISTRY_MAPPER[key].ctor;
+  }
+  public getInstanceOfKind(key: InstanceRegistryKey) {
+    return INSTANCE_REGISTRY_MAPPER[key];
+  }
+}
+export const shapeKindUtilsService = new ShapeKindUtils();
 
 // /**
 //  * ============================================================================

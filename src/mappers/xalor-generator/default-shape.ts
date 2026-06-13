@@ -4,6 +4,7 @@ import { PRIMITIVE_DEFAULTS } from '../../models/constants';
 import { XalethorVaultKeeper } from '../../xalor-service/vault-keeper';
 import { isObject } from '../../../shared';
 import type { InstanceRegistryKey } from '../../../shared';
+import { shapeKindUtilsService } from '../../../shared/service';
 const INSTANCE_REGISTRY_MAPPER = {
   Date: {
     ctor: Date,
@@ -88,7 +89,8 @@ export const DEFAULT_SHAPE_MATERIALIZER: TShapeDefaultMaterializeMap = {
     return fn;
   },
   instanceof: (shape) => {
-    return resolveInstanceFactory(shape.name)();
+    const instanceKind = shapeKindUtilsService.getInstanceOfKind(shape.name);
+    return instanceKind.def();
   },
   intersection: (shape, depth, recurse) => {
     const result: Record<string, unknown> = {};

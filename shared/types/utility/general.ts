@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * ## TUnique — Constant-Time Array Uniqueness Validator
  * @utilType type
@@ -27,35 +28,21 @@ export type TUnique<T extends readonly unknown[]> = {
     ? T[K]
     : never;
 };
-// /**
-//  * ## 💎 TExpandStructure — High-Fidelity Type Expansion Processor
-//  *
-//  * Forces the TypeScript Language Server (tsserver) to recursively unroll and evaluate
-//  * nested object intersections, interfaces, and mapping objects into a single flat definition literal.
-//  *
-//  * ### 🧠 Structural Strategy
-//  * By mapping over keys recursively on hover, this utility converts hidden structural type names
-//  * and complicated references into fully legible text contracts inside the developer's IDE tooltip.
-//  * To safeguard signature contracts, it implements a guard condition that passes through complex functional
-//  * callback types and method signatures untouched without stripping out input argument parameters.
-//  *
-//  * @utilType type
-//  * @name TExpandStructure
-//  * @category Advanced Type Utilities
-//  *
-//  * @example
-//  * ```ts
-//  * type TRawIntersection = { id: number } & { profile: { name: string } & { age: number } };
-//  *
-//  * // Hover tooltip displays: type TCollapsed = TRawIntersection
-//  * type TCollapsed = TRawIntersection;
-//  *
-//  * // Hover tooltip displays: type TExpanded = { id: number; profile: { name: string; age: number; }; }
-//  * type TExpanded = TExpandStructure<TRawIntersection>;
-//  * ```
-//  */
-// export type TExpandStructure<T> = T extends (...args: unknown[]) => unknown
-//   ? T
-//   : T extends object
-//     ? { [K in keyof T]: TExpandStructure<T[K]> }
-//     : T;
+
+// /* prettier-ignore */
+// export type TDetermineInstance<CtorType> =
+//   // Rule 1: Prioritize explicit constructor signatures first to capture Streams instantly
+//   // Rule 1: Prioritize explicit constructor signatures first to capture Web Streams instantly
+//   CtorType extends { new (...args: any[]): infer R } ? R :
+//   CtorType extends abstract new (...args: any[]) => infer R ? R :
+//   // Rule 2: Fall back to prototype parsing for hybrid global interfaces (DateConstructor)
+//   CtorType extends { prototype: infer P } ? P :
+//   // 🛡️ Hard bottom boundary: fails explicitly instead of leaking type contexts
+//   never;
+/* prettier-ignore */
+export type TDetermineInstance<CtorType> =
+  // Rule 1: Checks for construct signatures FIRST
+  CtorType extends { new (...args: any[]): infer R } ? R :
+  // Rule 2: Falls back to prototypes for hybrid interfaces SECOND
+  CtorType extends { prototype: infer P } ? P :
+  never;

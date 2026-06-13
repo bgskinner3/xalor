@@ -26,8 +26,8 @@ import {
   isFunction,
   // isInstanceOf,
 } from '../../shared';
-import { yieldEntries, yieldFiltered, resolveInstanceCtor } from '../../shared';
-
+import { yieldEntries, yieldFiltered } from '../../shared';
+import { shapeKindUtilsService } from '../../shared/service';
 import { XalethorService } from '../xalor-service';
 import { PROTO_EXPLOIT_KEYS } from '../models/constants';
 
@@ -259,7 +259,7 @@ export function validateInstanceOf(
     return reportError(ctx, shape, data);
   }
 
-  const ctor = resolveInstanceCtor(shape.name);
+  const ctor = shapeKindUtilsService.resolveInstanceCtor(shape.name);
 
   if (!(data instanceof ctor)) {
     return reportError(ctx, shape.name, data);
@@ -267,50 +267,3 @@ export function validateInstanceOf(
 
   return true;
 }
-
-// export function validatePrimitive(
-//   data: unknown,
-//   shape: TSolidPrimitiveShape,
-//   ctx: TValidationContext,
-// ): boolean {
-//   const { type } = shape;
-
-//   if (type === 'any' || type === 'unknown') return true;
-
-//   if (type === 'Date') {
-//     return isInstanceOf(data, Date) && !isNaN(data.getTime())
-//       ? true
-//       : reportError(ctx, 'Date', data);
-//   }
-//   if (type === 'RegExp') {
-//     return isInstanceOf(data, RegExp) ? true : reportError(ctx, 'RegExp', data);
-//   }
-//   if (type === 'Map') {
-//     return isInstanceOf(data, Map) ? true : reportError(ctx, 'Map', data);
-//   }
-//   if (type === 'Set') {
-//     return isInstanceOf(data, Set) ? true : reportError(ctx, 'Set', data);
-//   }
-//   if (type === 'URL') {
-//     return isInstanceOf(data, URL) ? true : reportError(ctx, 'URL', data);
-//   }
-
-//   // 🛡️ 3. EXPLICIT NULL / UNDEFINED LEAF VALIDATORS
-//   if (type === 'null')
-//     return isNull(data) ? true : reportError(ctx, 'null', data);
-//   if (type === 'undefined')
-//     return isUndefined(data) ? true : reportError(ctx, 'undefined', data);
-
-//   // 📊 4. STANDARD TYPE PRIMITIVE CONTRACT CHECKS
-//   // Combines your strict dictionary checking constraints without using a switch block
-//   if (type === 'string')
-//     return isString(data) ? true : reportError(ctx, 'string', data);
-//   if (type === 'number')
-//     return isNumber(data) ? true : reportError(ctx, 'number', data);
-//   if (type === 'boolean')
-//     return isBoolean(data) ? true : reportError(ctx, 'boolean', data);
-//   if (type === 'bigint')
-//     return isBigInt(data) ? true : reportError(ctx, 'bigint', data);
-
-//   return reportError(ctx, type, data);
-// }

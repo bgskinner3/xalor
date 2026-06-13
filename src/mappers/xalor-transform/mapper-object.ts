@@ -20,8 +20,9 @@ export function transformerMapperObject({
   depth,
   recurse,
 }: TMapperObject) {
-  /* prettier-ignore */ if (dependency.mode !== 'merge' && (!isObject(data) || isNull(data) || isArray(data)))
-    return null;
+  /* prettier-ignore */
+  if (dependency.mode !== 'merge' && (!isObject(data) || isNull(data) || isArray(data)))
+     return null;
   // DEFINE PARAMETERS
   const proto = Object.getPrototypeOf(data || {});
   const cleanObj = Object.create(proto);
@@ -65,14 +66,10 @@ export function transformerMapperObject({
                   childSet.add(childKey);
                 }
               }
-
-              if (
-                propertyContainer.shape.kind === 'array' &&
-                propertyContainer.shape.items.kind === 'object'
-              ) {
-                for (const childKey of Object.keys(
-                  propertyContainer.shape.items.properties,
-                )) {
+              /* prettier-ignore */
+              if (propertyContainer.shape.kind === 'array' && propertyContainer.shape.items.kind === 'object' ) {
+                   /* prettier-ignore */ 
+                for (const childKey of Object.keys( propertyContainer.shape.items.properties,)) {
                   childSet.add(childKey);
                 }
               }
@@ -118,8 +115,6 @@ export function transformerMapperObject({
    * ROUTE 4: MODE merge
    */
   if (dependency.mode === 'merge') {
-    // const patchRef = (dependency.patchData as Record<string, unknown>) || {};
-    // const dataRef = (data as Record<string, unknown>) || {};
     const patchRef = isObject(dependency.patchData) ? dependency.patchData : {};
 
     const dataRef = isObject(data) ? data : {};

@@ -32,19 +32,3 @@ registerReifier((type, _checker, next, ctx) => {
     ),
   };
 });
-
-// registerReifier((type, checker, next, ctx) => {
-//   let targetType = type;
-
-//   if (!isIntersectionType(targetType) && targetType.aliasSymbol) {
-//     targetType = checker.getDeclaredTypeOfSymbol(targetType.aliasSymbol);
-//   }
-
-//   if (!isIntersectionType(targetType)) return undefined;
-//   if (targetType.getFlags() & TypeFlags.Union) return undefined;
-
-//   return {
-//     kind: 'intersection',
-//     values: targetType.types.map((t) => next(t, ctx)),
-//   };
-// });

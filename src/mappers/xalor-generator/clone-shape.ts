@@ -1,5 +1,5 @@
 import type { TShapeCloneMapperMap } from '../../models/types';
-import { isObject, isNull } from '../../../shared';
+import { isObject, isNull, isFunction } from '../../../shared/utils/guards';
 import { XalethorVaultKeeper } from '../../xalor-service/vault-keeper';
 import { IS_SOLID_CONFIG_ITEMS } from '../../../shared';
 import { validateShape, createInitialContext } from '../../validation';
@@ -84,21 +84,13 @@ export const CLONE_SHAPE_SANITIZER_MAPPER: TShapeCloneMapperMap = {
 
   branded: (shape, data, seen, depth, recurse) =>
     recurse(data, shape.base, seen, depth),
-
-  // ============================================
-  // 🧠 NEW: FUNCTION SUPPORT
-  // ============================================
   function: (_shape, data) => {
-    if (typeof data !== 'function') return null;
+    if (!isFunction(data)) return null;
 
     // sanitize: preserve callable identity only
     // (do NOT execute or inspect arguments)
     return data;
   },
-
-  // ============================================
-  // 🧠 NEW: INTERSECTION SUPPORT
-  // ============================================
   intersection: (shape, data, seen, depth, recurse) => {
     if (!data || typeof data !== 'object') return null;
 
@@ -112,10 +104,6 @@ export const CLONE_SHAPE_SANITIZER_MAPPER: TShapeCloneMapperMap = {
 
     return acc;
   },
-
-  // ============================================
-  // 🧠 NEW: INSTANCEOF SUPPORT (SAFE VERSION)
-  // ============================================
   instanceof: (shape, data) => {
     if (data == null) return null;
 

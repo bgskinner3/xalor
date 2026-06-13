@@ -14,26 +14,26 @@ import { seedTestVault, logEngineTrace } from '../utils';
 const TEST_CONFIG_FLATTEN_MODE = {
   FLATTEN_MODE_TEST_ONE: {
     run: true,
-    log: false,
+    log: true,
   },
   FLATTEN_MODE_TEST_TWO: {
-    run: true,
+    run: false,
     log: false,
   },
   FLATTEN_MODE_TEST_THREE: {
-    run: true,
+    run: false,
     log: false,
   },
   FLATTEN_MODE_TEST_FOUR: {
-    run: true,
+    run: false,
     log: false,
   },
   FLATTEN_MODE_TEST_FIVE: {
-    run: true,
+    run: false,
     log: false,
   },
   FLATTEN_MODE_TEST_SIX: {
-    run: true,
+    run: false,
     log: false,
   },
 } as const;

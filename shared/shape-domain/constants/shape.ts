@@ -1,6 +1,5 @@
 // /shared/shape-domain/constant.ts
-import type { InstanceEntry } from '../types';
-
+import type { TInstanceRegistryMapper } from '../types';
 /**
  * ⚙️ SHAPE KIND CONFIGURATION (AST NODE TAXONOMY)
  *
@@ -31,7 +30,8 @@ export const IS_SOLID_SHAPE_KINDS_CONFIG = Object.freeze({
   /* prettier-ignore */ branded: 'branded',
   /* prettier-ignore */ reference: 'reference',
   /* prettier-ignore */ function: 'function',
-  /* prettier-ignore */ instanceof: 'instanceof' /** @see {@link FoundationalTypesDocs} Instance-based runtime identity check (instanceof semantics) */,
+  /** @see {@link FoundationalTypesDocs} Instance-based runtime identity check (instanceof semantics) */
+  /* prettier-ignore */ instanceof: 'instanceof',
 } as const);
 
 /**
@@ -127,180 +127,36 @@ export const INSTANCE_CATEGORIES = Object.freeze({
  *   → execute value instanceof ctor
  *   → optionally use category for optimization routing
  */
-export const INSTANCE_REGISTRY_MAPPER = {
-  Date: { ctor: Date, category: INSTANCE_CATEGORIES.core },
-  RegExp: { ctor: RegExp, category: INSTANCE_CATEGORIES.core },
-
-  Map: { ctor: Map, category: INSTANCE_CATEGORIES.collection },
-  Set: { ctor: Set, category: INSTANCE_CATEGORIES.collection },
-  WeakMap: { ctor: WeakMap, category: INSTANCE_CATEGORIES.collection },
-  WeakSet: { ctor: WeakSet, category: INSTANCE_CATEGORIES.collection },
-
-  URL: { ctor: URL, category: INSTANCE_CATEGORIES.web },
-  URLSearchParams: { ctor: URLSearchParams, category: INSTANCE_CATEGORIES.web },
-
-  Request: { ctor: Request, category: INSTANCE_CATEGORIES.web },
-  Response: { ctor: Response, category: INSTANCE_CATEGORIES.web },
-  Headers: { ctor: Headers, category: INSTANCE_CATEGORIES.web },
-
-  ArrayBuffer: { ctor: ArrayBuffer, category: INSTANCE_CATEGORIES.binary },
-  DataView: { ctor: DataView, category: INSTANCE_CATEGORIES.binary },
-
-  Uint8Array: { ctor: Uint8Array, category: INSTANCE_CATEGORIES.binary },
-  Float32Array: { ctor: Float32Array, category: INSTANCE_CATEGORIES.binary },
-
-  Promise: { ctor: Promise, category: INSTANCE_CATEGORIES.async },
-} as const satisfies Record<string, InstanceEntry>;
-
-/**
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- * TODO: REMOVE
- */
-
-// /**
-//  * ⚙️ SHAPE KIND CONFIGURATION
-//  *
-//  * Defines the definitive list of data "Kinds" recognized by the Xalor engine.
-//  * This object acts as the central source of truth for both the Miner and
-//  * the Validator, ensuring that kind-string comparisons remain consistent
-//  * and protected from accidental mutation at runtime.
-//  */
-// export const IS_SOLID_SHAPE_KINDS_CONFIG = Object.freeze({
-//   primitive: 'primitive',
-//   literal: 'literal',
-
-//   union: 'union',
-//   intersection: 'intersection',
-
-//   object: 'object',
-//   array: 'array',
-
-//   branded: 'branded',
-//   reference: 'reference',
-
-//   function: 'function',
-//   instanceof: 'instanceof',
-// } as const);
-
-// /**
-//  * 🔑 SOLID SHAPE PRIMITIVE KEYS (THE IMMUTABLE COMPACTION MATRIX)
-//  *
-//  * ROLE:
-//  * The absolute, single source of truth defining the compiled runtime string constants
-//  * scanned by the diagnostic engine, the Bouncer, and the build-time Miner.
-//  *
-//  * THE IMMUTABLE BOUNDARIES MAP:
-//  * 1. BASE SYSTEM SCALARS - Standard execution properties ('string', 'number', 'boolean', 'bigint').
-//  * 2. STRUCTURAL TOP/BOTTOMS - Core compiler evaluation limits ('any', 'unknown', 'null', 'undefined').
-//  * 3. COMPACTION ENTIITES - Complex platform constructors ('Date', 'RegExp', 'Map', 'Set', 'Promise', 'URL')
-//  *                         flattened into single scalar tokens to prevent deep interface property
-//  *                         crawling and cache bloat on disk.
-//  *
-//  * STRATEGY:
-//  * Sealed using Object.freeze() and 'as const' to guarantee full runtime immutability.
-//  * Provides an allocation-free validation radar used for high-speed value checks and user-defined
-//  * type guard narrowings across application request streams.
-//  */
-// export const SOLID_SHAPE_PRIMITIVE_KEYS = Object.freeze([
-//   'string',
-//   'number',
-//   'boolean',
-//   'bigint',
-//   'symbol',
-//   'null',
-//   'undefined',
-//   'void',
-//   'never',
-//   'unknown',
-//   'any',
-// ] as const);
-
-// export const INSTANCE_CATEGORIES = Object.freeze({
-//   core: 'core',
-//   web: 'web',
-//   node: 'node',
-//   binary: 'binary',
-//   stream: 'stream',
-//   collection: 'collection',
-//   async: 'async',
-// } as const);
-
-/**
- *
- *
- *
- *
- *
- *
- * OLDDDD
- */
-// /**
-//  * ⚙️ SHAPE KIND CONFIGURATION
-//  *
-//  * Defines the definitive list of data "Kinds" recognized by the Xalor engine.
-//  * This object acts as the central source of truth for both the Miner and
-//  * the Validator, ensuring that kind-string comparisons remain consistent
-//  * and protected from accidental mutation at runtime.
-//  */
-// export const IS_SOLID_SHAPE_KINDS_CONFIG = Object.freeze({
-//   primitive: 'primitive',
-//   literal: 'literal',
-//   union: 'union',
-//   intersection: 'intersection',
-//   branded: 'branded',
-//   object: 'object',
-//   array: 'array',
-//   reference: 'reference',
-// } as const);
-
-// /**
-//  * 🔑 SOLID SHAPE PRIMITIVE KEYS (THE IMMUTABLE COMPACTION MATRIX)
-//  *
-//  * ROLE:
-//  * The absolute, single source of truth defining the compiled runtime string constants
-//  * scanned by the diagnostic engine, the Bouncer, and the build-time Miner.
-//  *
-//  * THE IMMUTABLE BOUNDARIES MAP:
-//  * 1. BASE SYSTEM SCALARS - Standard execution properties ('string', 'number', 'boolean', 'bigint').
-//  * 2. STRUCTURAL TOP/BOTTOMS - Core compiler evaluation limits ('any', 'unknown', 'null', 'undefined').
-//  * 3. COMPACTION ENTIITES - Complex platform constructors ('Date', 'RegExp', 'Map', 'Set', 'Promise', 'URL')
-//  *                         flattened into single scalar tokens to prevent deep interface property
-//  *                         crawling and cache bloat on disk.
-//  *
-//  * STRATEGY:
-//  * Sealed using Object.freeze() and 'as const' to guarantee full runtime immutability.
-//  * Provides an allocation-free validation radar used for high-speed value checks and user-defined
-//  * type guard narrowings across application request streams.
-//  */
-
-// export const SOLID_SHAPE_PRIMITIVE_KEYS = Object.freeze([
-//   'string',
-//   'number',
-//   'boolean',
-//   'bigint',
-//   'unknown',
-//   'any',
-//   'null',
-//   'undefined',
-//   'never',
-//   'void',
-//   'Date',
-//   'RegExp',
-//   'Map',
-//   'Set',
-//   'Promise',
-//   'URL',
-// ] as const);
+export const INSTANCE_REGISTRY_MAPPER: TInstanceRegistryMapper = {
+  /* prettier-ignore */ Date: { ctor: Date, category: INSTANCE_CATEGORIES.core, def: () => new Date(0) },
+  /* prettier-ignore */ RegExp: { ctor: RegExp, category: INSTANCE_CATEGORIES.core, def: () => /(?:)/ },
+  /* prettier-ignore */ Map: { ctor: Map, category: INSTANCE_CATEGORIES.collection, def: () => new Map() },
+  /* prettier-ignore */ Set: { ctor: Set, category: INSTANCE_CATEGORIES.collection, def: () => new Set() },
+  /* prettier-ignore */ WeakMap: { ctor: WeakMap, category: INSTANCE_CATEGORIES.collection, def: () => new WeakMap() },
+  /* prettier-ignore */ WeakSet: { ctor: WeakSet, category: INSTANCE_CATEGORIES.collection, def: () => new WeakSet() },
+  /* prettier-ignore */ URL: { ctor: URL, category: INSTANCE_CATEGORIES.web, def: () => new URL('http://localhost') },
+  /* prettier-ignore */ URLSearchParams: { ctor: URLSearchParams, category: INSTANCE_CATEGORIES.web, def: () => new URLSearchParams() },
+  /* prettier-ignore */ Headers: { ctor: Headers, category: INSTANCE_CATEGORIES.web, def: () => new Headers() },
+  /* prettier-ignore */ Request: { ctor: Request, category: INSTANCE_CATEGORIES.web, def: () => new Request('http://localhost') },
+  /* prettier-ignore */ Response: { ctor: Response, category: INSTANCE_CATEGORIES.web, def: () => new Response() },
+  /* prettier-ignore */ Blob: { ctor: Blob, category: INSTANCE_CATEGORIES.web, def: () => new Blob() },
+  /* prettier-ignore */ File: { ctor: File, category: INSTANCE_CATEGORIES.web, def: () => new File([], '') },
+  /* prettier-ignore */ ArrayBuffer: { ctor: ArrayBuffer, category: INSTANCE_CATEGORIES.binary, def: () => new ArrayBuffer(0) },
+  /* prettier-ignore */ DataView: { ctor: DataView, category: INSTANCE_CATEGORIES.binary, def: () => new DataView(new ArrayBuffer(0)) },
+  /* prettier-ignore */ Int8Array: { ctor: Int8Array, category: INSTANCE_CATEGORIES.binary, def: () => new Int8Array(0) },
+  /* prettier-ignore */ Uint8Array: { ctor: Uint8Array, category: INSTANCE_CATEGORIES.binary, def: () => new Uint8Array(0) },
+  /* prettier-ignore */ Uint8ClampedArray: { ctor: Uint8ClampedArray, category: INSTANCE_CATEGORIES.binary, def: () => new Uint8ClampedArray(0) },
+  /* prettier-ignore */ Int16Array: { ctor: Int16Array, category: INSTANCE_CATEGORIES.binary, def: () => new Int16Array(0) },
+  /* prettier-ignore */ Uint16Array: { ctor: Uint16Array, category: INSTANCE_CATEGORIES.binary, def: () => new Uint16Array(0) },
+  /* prettier-ignore */ Int32Array: { ctor: Int32Array, category: INSTANCE_CATEGORIES.binary, def: () => new Int32Array(0) },
+  /* prettier-ignore */ Uint32Array: { ctor: Uint32Array, category: INSTANCE_CATEGORIES.binary, def: () => new Uint32Array(0) },
+  /* prettier-ignore */ Float32Array: { ctor: Float32Array, category: INSTANCE_CATEGORIES.binary, def: () => new Float32Array(0) },
+  /* prettier-ignore */ Float64Array: { ctor: Float64Array, category: INSTANCE_CATEGORIES.binary, def: () => new Float64Array(0) },
+  /* prettier-ignore */ BigInt64Array: { ctor: BigInt64Array, category: INSTANCE_CATEGORIES.binary, def: () => new BigInt64Array(0) },
+  /* prettier-ignore */ BigUint64Array: { ctor: BigUint64Array, category: INSTANCE_CATEGORIES.binary, def: () => new BigUint64Array(0) },
+  /* prettier-ignore */ Promise: { ctor: Promise, category: INSTANCE_CATEGORIES.async, def: () => Promise.resolve() },
+  /* prettier-ignore */ ReadableStream: { ctor: ReadableStream, category: INSTANCE_CATEGORIES.stream, def: () => new ReadableStream() },
+  /* prettier-ignore */ WritableStream: { ctor: WritableStream, category: INSTANCE_CATEGORIES.stream, def: () => new WritableStream() },
+  /* prettier-ignore */ TransformStream: { ctor: TransformStream, category: INSTANCE_CATEGORIES.stream, def: () => new TransformStream() },
+} as const satisfies TInstanceRegistryMapper;
+type TTest = typeof INSTANCE_REGISTRY_MAPPER;
