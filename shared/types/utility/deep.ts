@@ -96,3 +96,55 @@ export type TRecursiveReadonly<T> = T extends (...args: unknown[]) => unknown
     : T extends object
       ? { readonly [K in keyof T]: TRecursiveReadonly<T[K]> }
       : T;
+
+/**
+ * @utilType type
+ * @name TDeepMerge
+ * @category Advanced Type Utilities
+ * @description Recursively merges two types T and U, prioritizing U's properties and preserving optionality.
+ * @link #tdeepmerge
+ *
+ * ## 🛠️ TDeepMerge — Recursive Object Merger
+ *
+ * A high-performance utility that deeply merges two structures. It maps over the
+ * combined keys of both types, handling nested objects recursively while
+ * maintaining property modifiers (like optionality).
+ *
+ * @note If a key exists in both T and U, the types are merged. If they are
+ * primitives, U typically overrides or unions with T depending on the structure.
+ *
+ * @template T - The base/original type structure.
+ * @template U - The type structure to merge into T.
+ */
+export type TDeepMerge<T, U> = T extends object
+  ? U extends object
+    ? {
+        [K in keyof (T & U)]: K extends keyof T
+          ? K extends keyof U
+            ? TDeepMerge<T[K], U[K]>
+            : T[K]
+          : K extends keyof U
+            ? U[K]
+            : never;
+      }
+    : U
+  : U;
+/**
+ * @utilType type
+ * @name TRecursivePartial
+ * @category Advanced Type Utilities
+ * @description Recursively makes every property in an object, including nested structures and arrays, optional.
+ * @link #trecursivepartial
+ *
+ * ## 🧩 TRecursivePartial — Deep Optional Utility
+ *
+ * Makes every property in an object—and all nested objects/arrays—optional.
+ * Ideal for defining partial updates for complex state trees or configuration overrides.
+ */
+export type TRecursivePartial<T> = T extends (...args: never[]) => unknown
+  ? T
+  : T extends Array<infer U>
+    ? Array<TRecursivePartial<U>>
+    : T extends object
+      ? { [P in keyof T]?: TRecursivePartial<T[P]> }
+      : T;

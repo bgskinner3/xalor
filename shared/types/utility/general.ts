@@ -29,16 +29,6 @@ export type TUnique<T extends readonly unknown[]> = {
     : never;
 };
 
-// /* prettier-ignore */
-// export type TDetermineInstance<CtorType> =
-//   // Rule 1: Prioritize explicit constructor signatures first to capture Streams instantly
-//   // Rule 1: Prioritize explicit constructor signatures first to capture Web Streams instantly
-//   CtorType extends { new (...args: any[]): infer R } ? R :
-//   CtorType extends abstract new (...args: any[]) => infer R ? R :
-//   // Rule 2: Fall back to prototype parsing for hybrid global interfaces (DateConstructor)
-//   CtorType extends { prototype: infer P } ? P :
-//   // 🛡️ Hard bottom boundary: fails explicitly instead of leaking type contexts
-//   never;
 /* prettier-ignore */
 export type TDetermineInstance<CtorType> =
   // Rule 1: Checks for construct signatures FIRST
@@ -46,3 +36,12 @@ export type TDetermineInstance<CtorType> =
   // Rule 2: Falls back to prototypes for hybrid interfaces SECOND
   CtorType extends { prototype: infer P } ? P :
   never;
+/**
+ * @utilType type
+ * @name TPrettify
+ * @category Primitive Type Utilities
+ * @description Flattens complex type intersections into a single readable object for better IDE IntelliSense.
+ * @link #tprettify
+ *
+ */
+export type TPrettify<T> = { [K in keyof T]: T[K] } & {};

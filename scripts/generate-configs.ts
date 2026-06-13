@@ -180,6 +180,7 @@ ${modeArraysBlock}
       if (api === 'generate') modeTypeName = 'TGenerateXalorModes';
       if (api === 'transform') modeTypeName = 'TTransformXalorModes';
       if (api === 'register') modeTypeName = 'TRegisterXalorModes';
+      if (api === 'match') modeTypeName = 'TMatchXalorModes';
 
       const triggersArrayName =
         api === 'validate'

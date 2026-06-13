@@ -46,7 +46,14 @@ export const VALIDATION_MODE_TRIGGERS = [
   'xalor.audit',
 ] as const;
 
-/**
+export const MATCH_MODE_TRIGGERS = [
+  'xalor.composite',
+  'xalor.reduce',
+  'xalor.intent',
+  'xalor.drift',
+] as const;
+
+/**xalor.composite,  xalor.MXreduce, xalor.intent, xalor.drift
  * SENTRY_TRIGGER_NAMES
  * Complete identifier matrix used by the compiler's static analysis layers.
  */
@@ -55,6 +62,7 @@ const RAW_SENTRY_TRIGGER_NAMES = [
   ...REGISTER_MODE_TRIGGERS,
   ...TRANSFORM_MODE_TRIGGERS,
   ...VALIDATION_MODE_TRIGGERS,
+  ...MATCH_MODE_TRIGGERS,
 ] as const;
 
 export const SENTRY_TRIGGER_NAMES = RAW_SENTRY_TRIGGER_NAMES satisfies TUnique<
@@ -69,6 +77,7 @@ export const SENTRY_TRIGGER_MODES = {
   generatorXalor: GENERATOR_MODE_TRIGGERS,
   transformXalor: TRANSFORM_MODE_TRIGGERS,
   validationXalor: VALIDATION_MODE_TRIGGERS,
+  matchXalor: MATCH_MODE_TRIGGERS,
 };
 
 export const RUNTIME_TRIGGER_NAMES = ObjectUtils.keys(SENTRY_TRIGGER_MODES);
@@ -102,3 +111,5 @@ export const VALIDATION_MODES = [
   'parseAsync',
   'audit',
 ] as const;
+
+export const MATCH_MODES = ['composite', 'reduce', 'intent', 'drift'] as const;

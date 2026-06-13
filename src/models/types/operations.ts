@@ -3,11 +3,17 @@ import type {
   TSolidBranded,
   TXalorAuditReport,
   TDeepKeyOf,
+  TDeepMerge,
+  TRecursiveReadonly,
+  TRecursivePartial,
+  TPrettify,
+  TDeepWriteable,
 } from '../../../shared';
 import type {
   TGeneratorXalorModes,
   TValidationXalorModes,
   TTransformXalorModes,
+  TMatchXalorModes,
 } from '../../../shared';
 
 // ====================================================================
@@ -175,8 +181,61 @@ export type TTransformStrategyEngine<K extends keyof ISolidRegistry> = {
 // ====================================================================
 // ====================================================================
 // ====================================================================
-// Build XALOR API TYPES
+// Match XALOR API TYPES
 // ====================================================================
 // ====================================================================
 // ====================================================================
 // ====================================================================
+// ------------------------------------------------------------------------
+
+// ====================================================================
+// Composite TYPES
+// ====================================================================
+/* prettier-ignore */
+export type ResolveCompositeIntersection<
+  KeysTuple extends readonly (keyof ISolidRegistry)[],
+  CurrentType = object,
+> = KeysTuple extends readonly [
+  infer First extends keyof ISolidRegistry,
+  ...infer Rest extends readonly (keyof ISolidRegistry)[],
+] ? ResolveCompositeIntersection<Rest,TDeepMerge<CurrentType, ISolidRegistry[First]>>
+  : TRecursiveReadonly<CurrentType>;
+
+/* prettier-ignore */
+export type TMax8CompositeKeys = 
+/* prettier-ignore */| readonly []
+/* prettier-ignore */| readonly [keyof ISolidRegistry]
+/* prettier-ignore */| readonly [keyof ISolidRegistry, keyof ISolidRegistry]
+/* prettier-ignore */| readonly [keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry]
+/* prettier-ignore */| readonly [keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry]
+/* prettier-ignore */| readonly [keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry]
+/* prettier-ignore */| readonly [keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry]
+/* prettier-ignore */| readonly [keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry]
+/* prettier-ignore */| readonly [keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry, keyof ISolidRegistry];
+
+// ====================================================================
+// ====================================================================
+// MAIN MAPPER SETUP
+// ====================================================================
+// ====================================================================
+/* prettier-ignore */
+export type TMatchXalorResultMap<SingleKey extends keyof ISolidRegistry, CompositeKeys extends TMax8CompositeKeys> = {
+  readonly composite: ResolveCompositeIntersection<CompositeKeys>;
+  readonly reduce: TDeepWriteable<ISolidRegistry[SingleKey]>;
+  readonly intent: TPrettify<ISolidRegistry[SingleKey]>;
+  readonly drift: TPrettify<TRecursivePartial<ISolidRegistry[SingleKey]>>;
+};
+/* prettier-ignore */
+export type TMatchXalorReturn<
+  K extends keyof ISolidRegistry,
+  M extends TMatchXalorModes,
+  CompositeKeys extends TMax8CompositeKeys = readonly [],
+> = TMatchXalorResultMap<K,M extends 'composite' ? CompositeKeys : readonly []>[M];
+
+/* prettier-ignore */
+export type TMatchStrategyEngine<K extends keyof ISolidRegistry,CompositeKeys extends TMax8CompositeKeys = readonly []> = {
+  readonly [Mode in TMatchXalorModes]: (
+    key: Mode extends 'composite' ? CompositeKeys : K,
+    payload: unknown,
+  ) => TMatchXalorResultMap<Mode extends 'composite' ? never : K,Mode extends 'composite' ? CompositeKeys : readonly []>[Mode];
+};
