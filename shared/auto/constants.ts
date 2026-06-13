@@ -30,7 +30,6 @@ export const REGISTER_MODE_TRIGGERS = ['xalor.register'] as const;
 export const TRANSFORM_MODE_TRIGGERS = [
   'xalor.pick',
   'xalor.omit',
-  'xalor.rename',
   'xalor.merge',
   'xalor.flatten',
 ] as const;
@@ -90,13 +89,7 @@ export const REGISTER_MODES = ['register'] as const;
  * RAW TRANSFORM STRATEGY SPECIFICATION MODES
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
-export const TRANSFORM_MODES = [
-  'pick',
-  'omit',
-  'rename',
-  'merge',
-  'flatten',
-] as const;
+export const TRANSFORM_MODES = ['pick', 'omit', 'merge', 'flatten'] as const;
 
 /**
  * RAW VALIDATION STRATEGY SPECIFICATION MODES

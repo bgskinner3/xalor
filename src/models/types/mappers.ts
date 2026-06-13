@@ -153,21 +153,13 @@ export type TPickOmitDependency = {
   readonly set: Set<string>;
 };
 
-export type TRenameDependency = {
-  readonly mode: 'rename';
-  readonly mappings: Record<string, string>;
-};
-
 export type TMergeDependency = {
   readonly mode: 'merge';
   readonly patchData: unknown;
 };
 
 /** 🎛️ AUTHORITATIVE MASTER STRATEGY DEPENDENCY UNION */
-export type TTransformDependency =
-  | TPickOmitDependency
-  | TRenameDependency
-  | TMergeDependency;
+export type TTransformDependency = TPickOmitDependency | TMergeDependency;
 
 // ========================================================================
 // 🎛️ RECURSIVE ROUTER MATRIX SCHEMAS (Zero Repetition / Zero Any)

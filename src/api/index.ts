@@ -8,7 +8,6 @@ import { isFunction, isRegistryKey, assertRegistryKey } from '../../shared';
 import type {
   TFlattenDataContext,
   TMergeContext,
-  TRenameContext,
   TPickOmitContext,
 } from '../models/types';
 import { validateXalor } from './validate-xalor';
@@ -112,12 +111,6 @@ class XalorCore {
   /* prettier-ignore */ public omit<K extends keyof ISolidRegistry>(ctx: TPickOmitContext<K>): ISolidRegistry[K];
   /* prettier-ignore */ public omit<K extends keyof ISolidRegistry>(ctx: TPickOmitContext<K>,injectedKey?: K,mode?: 'omit'): ISolidRegistry[K] {
     return transformXalor<K, 'omit'>(injectedKey!, mode!, ctx);
-  }
-
-  /** @Api transform  @mode rename */
-  /* prettier-ignore */ public rename<K extends keyof ISolidRegistry>(ctx: TRenameContext): ISolidRegistry[K];
-  /* prettier-ignore */ public rename<K extends keyof ISolidRegistry>(ctx: TRenameContext,injectedKey?: K,mode?: 'rename'): ISolidRegistry[K] {
-    return transformXalor<K, 'rename'>(injectedKey!, mode!, ctx);
   }
 
   /** @Api transform  @mode merge */

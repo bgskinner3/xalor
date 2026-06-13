@@ -122,13 +122,13 @@ export class XalethorService {
   ): ISolidRegistry[K] {
     /* prettier-ignore */ return XalethorVaultTransformer.transformPickAndOmit<K>({data,shape,filterSet: set,predicate: omitPredicateExecutioner, mode: 'omit'});
   }
-  public static executeRenameSanitizer<K extends keyof ISolidRegistry>(
-    data: unknown,
-    shape: TSolidShape,
-    mappings: Record<string, string>,
-  ): ISolidRegistry[K] {
-    /* prettier-ignore */ return XalethorVaultTransformer.transformRename<K>({ data, shape, mappings });
-  }
+  // public static executeRenameSanitizer<K extends keyof ISolidRegistry>(
+  //   data: unknown,
+  //   shape: TSolidShape,
+  //   mappings: Record<string, string>,
+  // ): ISolidRegistry[K] {
+  //   /* prettier-ignore */ return XalethorVaultTransformer.transformRename<K>({ data, shape, mappings });
+  // }
   public static executeMergeSanitizer<K extends keyof ISolidRegistry>(
     dataOne: unknown,
     dataTwo: unknown,

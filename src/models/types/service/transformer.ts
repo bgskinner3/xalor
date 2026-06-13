@@ -3,7 +3,6 @@ import type {
   TTransformDependency,
   TPickOmitDependency,
   TMergeDependency,
-  TRenameDependency,
 } from '../mappers';
 
 // ========================================================================
@@ -23,13 +22,6 @@ export type TTransformPickAndOmit = {
   readonly shape: TSolidShape;
   readonly filterSet: Set<string>;
   readonly predicate: TTransformPredicate;
-};
-
-/** 🚀 Params for public service method XalethorVaultTransformer.transformRename */
-export type TTransformRename = {
-  readonly data: unknown;
-  readonly shape: TSolidShape;
-  readonly mappings: Record<string, string>;
 };
 
 /** 🧬 Params for public service method XalethorVaultTransformer.transformMerge */
@@ -101,14 +93,6 @@ export type TTransformWorkerBase = TSanitizeSlicedObject & {
  */
 export type TExecutePickOmitFork = TTransformWorkerBase & {
   readonly dependency: TPickOmitDependency;
-};
-
-/**
- * @name TExecuteRenameFork
- * @description Parameter context targeting nominal key translation lookups.
- */
-export type TExecuteRenameFork = TTransformWorkerBase & {
-  readonly dependency: TRenameDependency;
 };
 
 /**

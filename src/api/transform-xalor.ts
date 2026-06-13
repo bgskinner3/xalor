@@ -4,7 +4,6 @@ import type {
   TTransformContext,
   TFlattenDataContext,
   TMergeContext,
-  TRenameContext,
   TPickOmitContext,
 } from '../models/types';
 import type { TTransformXalorModes } from '../../shared/auto';
@@ -34,10 +33,7 @@ export function transformXalor<
   _M extends 'omit',
 >(injectedKey: K, injectedMode: 'omit', ctx: TPickOmitContext<K>): ISolidRegistry[K];
 /* prettier-ignore */
-export function transformXalor<
-  K extends keyof ISolidRegistry,
-  _M extends 'rename',
->(injectedKey: K, injectedMode: 'rename', ctx: TRenameContext): ISolidRegistry[K];
+
 /* prettier-ignore */
 export function transformXalor<
   K extends keyof ISolidRegistry,
@@ -80,10 +76,6 @@ export function transformXalor<
       const stringKeysCollection = keys.map(String);
       const activeFilterSet = new Set<string>(stringKeysCollection);
       /* prettier-ignore */ return XalethorService.executeOmitSanitizer(data, activeShape, activeFilterSet);
-    },
-    rename: (_key, context) => {
-      const { data, mappings } = context;
-      /* prettier-ignore */ return XalethorService.executeRenameSanitizer(data, activeShape, mappings);
     },
     merge: (_key, context) => {
       const { dataOne, dataTwo } = context;

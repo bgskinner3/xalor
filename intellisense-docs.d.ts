@@ -1179,7 +1179,7 @@ declare global {
      * });
      * ```
      * -------
-     * @mode rename
+     * @mode rename - @REMOVED
      * @description
      * Nominal property alignment and structural remapping. Back-checks an incoming dictionary using an O(1) inversion
      * key sniffer to translate alternate external key names directly into your master internal blueprint schema coordinates.

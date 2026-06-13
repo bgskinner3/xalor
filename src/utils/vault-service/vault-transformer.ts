@@ -1,7 +1,6 @@
 import { isObject, isSet } from '../../../shared';
 import type {
   TExecuteMergeFork,
-  TExecuteRenameFork,
   TExecutePickOmitFork,
   TPickOmitDependency,
   TMergeDependency,
@@ -156,58 +155,6 @@ export function executePickOmitFork({
   return cleanObj;
 }
 
-/**
- * 🔪 UTILITY WORKER: NOMINAL ALIGNMENTS (RENAME MODE)
- *
- * BEHAVIOR:
- * Executes backward key re-mapping translations using inverse dictionary lookup scans.
- */
-export function executeRenameFork({
-  dependency,
-  depth,
-  predicate,
-  cleanObj,
-  dataRef,
-  props,
-  seenObjectsMap,
-  sanitizeHandler,
-}: TExecuteRenameFork): Record<string, unknown> {
-  const mappings = dependency.mappings;
-
-  for (const blueprintKey of Object.keys(props)) {
-    const metadata = props[blueprintKey];
-
-    if (metadata && metadata.shape) {
-      let rawIncomingSourceKey: string | null = null;
-      for (const [incomingKey, targetKey] of Object.entries(mappings)) {
-        if (targetKey === blueprintKey) {
-          rawIncomingSourceKey = incomingKey;
-          break;
-        }
-      }
-      const sourceObject = dataRef as Record<string, unknown>;
-      let finalResolvedKey: string | null = null;
-
-      if (
-        rawIncomingSourceKey &&
-        Object.prototype.hasOwnProperty.call(sourceObject, rawIncomingSourceKey)
-      ) {
-        finalResolvedKey = rawIncomingSourceKey;
-      } else if (
-        Object.prototype.hasOwnProperty.call(sourceObject, blueprintKey)
-      ) {
-        finalResolvedKey = blueprintKey;
-      }
-
-      if (finalResolvedKey !== null && isObject(dataRef)) {
-        const rawSourceValue = sourceObject[finalResolvedKey];
-
-        /* prettier-ignore */ cleanObj[blueprintKey] = sanitizeHandler({ val: rawSourceValue, currentShape: metadata.shape, dependency, depth: depth + 1, seenObjectsMap, predicate });
-      }
-    }
-  }
-  return cleanObj;
-}
 /**
  * 🔪 UTILITY WORKER: ENTITY AGGREGATIONS (MERGE MODE)
  *

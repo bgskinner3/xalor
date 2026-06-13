@@ -3,9 +3,7 @@ import type {
   TSanitizeSlicedObject,
   TTransformRecursionLoop,
   TTransformSanitize,
-  TTransformRename,
   TTransformPredicate,
-  TRenameDependency,
   TTransformDependency,
   TMergeDependency,
   TPickOmitDependency,
@@ -15,12 +13,7 @@ import type {
 } from '../models/types';
 import { TRANSFORM_SHAPE_MAPPER, TRANSFORM_FLATTEN_MAPPER } from '../mappers';
 
-import {
-  markAsSolid,
-  executePickOmitFork,
-  executeMergeFork,
-  executeRenameFork,
-} from '../utils';
+import { markAsSolid, executePickOmitFork, executeMergeFork } from '../utils';
 import { isObject, isNull } from '../../shared';
 import type { TSolidShape } from '../../shared';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared/constants';
@@ -130,12 +123,7 @@ export class XalethorVaultTransformer {
     // ========================================================================
     // 🎛️ FORK ROUTE 3: EVALUATES NOMINAL KEY TRANSLATIONS ('rename')
     // ========================================================================
-    if (dependency.mode === 'rename') {
-      return executeRenameFork({
-        ...workerBundle,
-        dependency: dependency as TRenameDependency,
-      });
-    }
+
     // ========================================================================
     // 🎛️ FORK ROUTE 4: EVALUATES ENTITY AGGREGATIONS ('merge')
     // ========================================================================
@@ -198,31 +186,6 @@ export class XalethorVaultTransformer {
     }
     throw new Error(
       `[xalor] Critical Failure: Failed to brand mutation output structure graph.`,
-    );
-  }
-
-  /**
-   * 🚀 PUBLIC EXECUTOR: NOMINAL KEY TRANSLATION ('rename')
-   */
-  public static transformRename<K extends keyof ISolidRegistry>({
-    data,
-    shape,
-    mappings,
-  }: TTransformRename): ISolidRegistry[K] {
-    const seenObjectsMap = new Map<unknown, unknown>();
-    const renameEnvelope: TRenameDependency = {
-      mode: 'rename',
-      mappings,
-    };
-
-    /* prettier-ignore */
-    const rawResultObj = this.sanitize({ val: data, currentShape: shape, dependency: renameEnvelope, depth: 0, seenObjectsMap });
-
-    if (markAsSolid<K, ISolidRegistry[K]>(rawResultObj)) {
-      return rawResultObj;
-    }
-    throw new Error(
-      `[xalor] Critical Failure: Failed to brand rename mutation output structure graph.`,
     );
   }
 

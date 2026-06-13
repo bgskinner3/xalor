@@ -89,28 +89,7 @@ export function transformerMapperObject({
     }
     return cleanObj;
   }
-  /**
-   * ROUTE 3: MODE RENAME
-   */
-  if (dependency.mode === 'rename') {
-    const mappings = dependency.mappings;
-    for (const blueprintKey of Object.keys(blueprintProps)) {
-      const propertyContainer = blueprintProps[blueprintKey];
-      if (propertyContainer?.shape) {
-        let rawIncomingSourceKey = blueprintKey;
-        for (const [incomingKey, targetKey] of Object.entries(mappings)) {
-          if (targetKey === blueprintKey) {
-            rawIncomingSourceKey = incomingKey;
-            break;
-          }
-        }
-        /* prettier-ignore */ if (Object.prototype.hasOwnProperty.call(dataRef, rawIncomingSourceKey)) {
-          /* prettier-ignore */ cleanObj[blueprintKey] = recurse(dataRef[rawIncomingSourceKey],propertyContainer.shape,dependency,depth + 1,);
-        }
-      }
-    }
-    return cleanObj;
-  }
+
   /**
    * ROUTE 4: MODE merge
    */
