@@ -11,8 +11,10 @@ import type {
   TPickOmitDependency,
   TTransformMerge,
   TTransformWorkerBase,
+  TFlattenAccumulator,
 } from '../models/types';
 import { TRANSFORM_SHAPE_MAPPER, TRANSFORM_FLATTEN_MAPPER } from '../mappers';
+
 import {
   markAsSolid,
   executePickOmitFork,
@@ -262,7 +264,7 @@ export class XalethorVaultTransformer {
     targetKind: SK,
     targetShape: Extract<TSolidShape, { kind: SK }>,
     targetValue: unknown,
-    accumulator: Record<string, string | number | boolean | null>,
+    accumulator: TFlattenAccumulator,
     currentPath: string,
     depth: number,
     seenObjectsMap: Set<unknown>,
@@ -273,7 +275,7 @@ export class XalethorVaultTransformer {
     ): void => {
       const internalStrategyWorker = TRANSFORM_FLATTEN_MAPPER[kindToken];
       /* prettier-ignore */
-      const recurseCallback = (v: unknown, s: TSolidShape, a: Record<string, string | number | boolean | null>, p: string, d: number, seen: Set<unknown>) => {
+      const recurseCallback = (v: unknown, s: TSolidShape, a: TFlattenAccumulator, p: string, d: number, seen: Set<unknown>) => {
         this.executeFlattenProcessor(v, s, a, p, d, seen);
       };
       // TODO: FI TYPE ISSUE
@@ -287,7 +289,7 @@ export class XalethorVaultTransformer {
   private static executeFlattenProcessor(
     val: unknown,
     currentShape: TSolidShape,
-    accumulator: Record<string, string | number | boolean | null>,
+    accumulator: TFlattenAccumulator,
     currentPath: string,
     depth: number,
     seenObjectsMap: Set<unknown>,

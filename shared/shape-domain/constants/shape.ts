@@ -159,4 +159,3 @@ export const INSTANCE_REGISTRY_MAPPER: TInstanceRegistryMapper = {
   /* prettier-ignore */ WritableStream: { ctor: WritableStream, category: INSTANCE_CATEGORIES.stream, def: () => new WritableStream() },
   /* prettier-ignore */ TransformStream: { ctor: TransformStream, category: INSTANCE_CATEGORIES.stream, def: () => new TransformStream() },
 } as const satisfies TInstanceRegistryMapper;
-type TTest = typeof INSTANCE_REGISTRY_MAPPER;

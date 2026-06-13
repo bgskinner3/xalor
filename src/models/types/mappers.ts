@@ -238,22 +238,24 @@ export type TMapperArray = {
  * ensures that your flat map handlers compile seamlessly with absolute 100% static
  * type validation, completely eliminating the 'any' keyword from your processing loops.
  */
+
+export type TFlattenAccumulator =
+  | Record<string, string | number | boolean | null>
+  | TRegisteredInstancesUnion;
+
 export type TShapeFlattenMapper = {
   readonly [K in TSolidShape['kind']]: (
     shape: Extract<TSolidShape, { kind: K }>,
     val: unknown,
-    accumulator:
-      | Record<string, string | number | boolean | null>
-      | TRegisteredInstancesUnion,
+    accumulator: TFlattenAccumulator,
+
     currentPath: string,
     depth: number,
     seenObjectsMap: Set<unknown>,
     recurse: (
       v: unknown,
       s: TSolidShape,
-      a:
-        | Record<string, string | number | boolean | null>
-        | TRegisteredInstancesUnion,
+      a: TFlattenAccumulator,
       p: string,
       d: number,
       seen: Set<unknown>,

@@ -2,7 +2,7 @@
 import { xalor } from '../../src/api';
 import { TEST_SHAPE_REGISTRY } from '../utils/constants';
 import { seedTestVault } from '../utils';
-
+import type { TInstanceConstructorRegistry } from '../../shared/shape-domain';
 // 'default', 'mock', 'clone', and 'cast' operational modes.
 /**
  pnpm run test -- __tests__/generate/mock-mode.test.ts
@@ -63,6 +63,66 @@ declare global {
       id: number;
       selfRef?: ISolidRegistry['CIRCULAR_DEPTH_TEST'];
     };
+    ALL_PLATFORM_INSTANCES_SHAPE: {
+      // === Core JS Structural Objects ===
+      readonly dateVal: TInstanceConstructorRegistry['Date'];
+      readonly regExpVal: TInstanceConstructorRegistry['RegExp'];
+
+      // === Collections ===
+      readonly mapVal: TInstanceConstructorRegistry['Map'];
+      readonly setVal: TInstanceConstructorRegistry['Set'];
+      readonly weakMapVal: TInstanceConstructorRegistry['WeakMap'];
+      readonly weakSetVal: TInstanceConstructorRegistry['WeakSet'];
+
+      // === Web Platform Data Frames ===
+      readonly urlVal: TInstanceConstructorRegistry['URL'];
+      readonly urlParamsVal: TInstanceConstructorRegistry['URLSearchParams'];
+      readonly headersVal: TInstanceConstructorRegistry['Headers'];
+      readonly requestVal: TInstanceConstructorRegistry['Request'];
+      readonly responseVal: TInstanceConstructorRegistry['Response'];
+      readonly blobVal: TInstanceConstructorRegistry['Blob'];
+      readonly fileVal: TInstanceConstructorRegistry['File'];
+
+      // === Binary Data & Typed Array Buffers ===
+      readonly arrayBufferVal: TInstanceConstructorRegistry['ArrayBuffer'];
+      readonly dataViewVal: TInstanceConstructorRegistry['DataView'];
+      readonly int8ArrayVal: TInstanceConstructorRegistry['Int8Array'];
+      readonly uint8ArrayVal: TInstanceConstructorRegistry['Uint8Array'];
+      readonly uint8ClampedArrayVal: TInstanceConstructorRegistry['Uint8ClampedArray'];
+      readonly int16ArrayVal: TInstanceConstructorRegistry['Int16Array'];
+      readonly uint16ArrayVal: TInstanceConstructorRegistry['Uint16Array'];
+      readonly int32ArrayVal: TInstanceConstructorRegistry['Int32Array'];
+      readonly uint32ArrayVal: TInstanceConstructorRegistry['Uint32Array'];
+      readonly float32ArrayVal: TInstanceConstructorRegistry['Float32Array'];
+      readonly float64ArrayVal: TInstanceConstructorRegistry['Float64Array'];
+      readonly bigInt64ArrayVal: TInstanceConstructorRegistry['BigInt64Array'];
+      readonly bigUint64ArrayVal: TInstanceConstructorRegistry['BigUint64Array'];
+
+      // === Async & Streams ===
+      readonly promiseVal: TInstanceConstructorRegistry['Promise'];
+      readonly readableStreamVal: TInstanceConstructorRegistry['ReadableStream'];
+      readonly writableStreamVal: TInstanceConstructorRegistry['WritableStream'];
+      readonly transformStreamVal: TInstanceConstructorRegistry['TransformStream'];
+    };
+    ADVANCED_COMPLEXITY_SHAPE: {
+      // === The Nested Collection Graph (Old DEEPLY_NESTED_STORE nested here) ===
+      readonly userRole: {
+        readonly SKU: string;
+        readonly quantity: number;
+        readonly logistics: {
+          readonly warehouseCode: string;
+        };
+      }[]; // 🚀 Evaluates perfectly as an array graph!
+
+      // === Web Platform Instance Frame ===
+      readonly transformStreamVal: TInstanceConstructorRegistry['TransformStream'];
+
+      // === Type-Reified Function Closure Executor ===
+      readonly executePipeline: (
+        inputData: string,
+        retryCount?: number, // 🚀 Properly typed as an optional parameter!
+      ) => TInstanceConstructorRegistry['Promise']; // Returns an active native Promise instance object!
+    };
   }
 }
 
@@ -72,6 +132,10 @@ describe('Runtime Generator API - Mock Mode', () => {
     seedTestVault('USER_TEST', TEST_SHAPE_REGISTRY.STANDARD_USER);
     seedTestVault('API_RESPONSE', TEST_SHAPE_REGISTRY.UNION_RESPONSE);
     seedTestVault('STORE_ORDER', TEST_SHAPE_REGISTRY.COMPLEX_ORDER);
+    seedTestVault(
+      'ALL_PLATFORM_INSTANCES_SHAPE',
+      TEST_SHAPE_REGISTRY.ADVANCED_COMPLEXITY_SHAPE,
+    );
     seedTestVault(
       'DEEPLY_NESTED_STORE',
       TEST_SHAPE_REGISTRY.DEEPLY_NESTED_STORE,
@@ -94,11 +158,11 @@ describe('Runtime Generator API - Mock Mode', () => {
   });
 
   describe('GENERATE XALOR MOCK OBJECT', () => {
-    // it('🎯 should successfully compile high-entropy primitives from a standard user blueprint', () => {
-    //   const result = xalor.mock<'TRANSACTION'>();
-    //   console.log(result, '\n\n\n\n\n', 'RESULLLLLTTTT');
-    //   expect(result).toBeDefined();
-    // });
+    it('🎯 should successfully compile high-entropy primitives from a standard user blueprint', () => {
+      const result = xalor.mock<'ALL_PLATFORM_INSTANCES_SHAPE'>();
+      console.log(result, '\n\n\n\n\n', 'RESULLLLLTTTT');
+      expect(result).toBeDefined();
+    });
     it('🎯 should successfully compile high-entropy primitives from a standard user blueprint', () => {
       const result = xalor.mock<'USER_TEST'>();
 

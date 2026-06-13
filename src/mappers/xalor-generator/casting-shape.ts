@@ -51,6 +51,7 @@ import { XalethorVaultKeeper } from '../../xalor-service/vault-keeper';
   },
   unknown: (data: unknown): unknown => data
 } satisfies TCastingPrimitiveMapper
+
 export const CAST_SHAPE_MAPPER: TShapeCastMapperMapper = {
   primitive: (shape, data) => {
     if (isUndefined(data) || isNull(data)) return data;
