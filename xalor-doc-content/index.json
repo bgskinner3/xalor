@@ -105,12 +105,16 @@
     "runtimeModule": {
       "header": {
         "iconName": "cpu-duotone",
-        "header": "Lifecycle API Engine",
+        "header": "Runtime API Engine",
         "overline": "One Source. Infinite Capabilities.",
         "description": "Stop maintaining separate verification engines and mock data setups. Xalor converts native types into high-speed runtime systems with zero bundle inflation.",
         "link": {
           "text": "",
           "href": ""
+        },
+        "image": {
+          "href": "",
+          "alt": ""
         }
       },
       "runtimeItems": {
@@ -192,7 +196,7 @@
           },
           "util": {
             "link": "/xalor/docs/api",
-            "header": "Upgrade Yesterday's Payloads to Today's Types",
+            "header": "Drift Matching",
             "overline": "Advanced Matching",
             "description": "Distributed systems rarely deploy in perfect lockstep. drift provides a runtime compatibility bridge that safely validates legacy payloads against previous contracts and upgrades them to your latest type definitions in memory, helping services evolve independently without breaking consumers.",
             "keyPoints": [
@@ -210,23 +214,23 @@
     },
 
     "verificationMatrix": {
-      "header": "Architectural Compliance Guard",
+      "header": "Compare Xalor",
       "subHeader": "See how Xalor transforms pristine, native TypeScript contracts into high-speed runtime systems—completely eliminating the parsing latencies, bloated files, and boilerplate of traditional dependencies.",
       "benchmarkDocsLink": {
-        "text": "View Full Compilation & Trace Benchmarks →",
+        "text": "Compilation & Trace Benchmarks",
         "href": "/xalor/docs/how-it-works#benchmarks"
       },
       "comparisonHeaders": [
         "Core Engineering Capabilities",
-        "Schema-First (Zod / Valibot)",
-        "JSON Compiler (TypeBox)",
-        "Macro-First (Typia)",
-        "Xalor Engine"
+        "Zod / Valibot",
+        "Xalor",
+        "Typia"
       ],
       "matrixRows": [
         {
           "id": "trait-source-truth",
-          "featureTitle": "Pristine Native Types as Single Source of Truth",
+          "featureTitle": "Single Source of Truth",
+          "iconName": "compass-duotone",
           "description": "Write standard TypeScript interfaces exactly as you always do. Modifying a native type updates runtime validation mechanics on your next save loop, completely **cutting out human schema duplication errors**.",
           "zodStatus": "cross",
           "typeboxStatus": "cross",
@@ -236,6 +240,7 @@
         {
           "id": "trait-bundle-weight",
           "featureTitle": "Zero Client Bundle Size Inflation",
+          "iconName": "shipping-box-duotone",
           "description": "Heavy validation engines never ship to the browser. Parsing logic is completely stripped from your production build, dropping client runtime weights down to a **flat 0.8KB instance blueprint size**.",
           "zodStatus": "cross",
           "typeboxStatus": "cross",
@@ -244,7 +249,8 @@
         },
         {
           "id": "trait-workspace-hygiene",
-          "featureTitle": "Zero Workspace Clutter (No Generated Code Files)",
+          "featureTitle": "Zero Workspace Clutter",
+          "iconName": "sparkles",
           "description": "The compiler watcher runs entirely in memory. It leaves **zero massive, auto-generated validation function files** to clutter your local source directories or pollute your git history.",
           "zodStatus": "check",
           "typeboxStatus": "check",
@@ -253,7 +259,8 @@
         },
         {
           "id": "trait-gps-diagnostics",
-          "featureTitle": "GPS Diagnostics (File & Line-Number Error Tracing)",
+          "iconName": "map-location",
+          "featureTitle": "GPS Diagnostics",
           "description": "When raw incoming data boundaries crack, error logs don't print vague path trees. Xalor traces the validation fault straight back to a **fully clickable terminal link pointing to the exact source line** where your type was declared.",
           "zodStatus": "cross",
           "typeboxStatus": "cross",
@@ -262,7 +269,8 @@
         },
         {
           "id": "trait-self-healing",
-          "featureTitle": "Self-Healing Automated Test Mock Factories",
+          "iconName": "system-health",
+          "featureTitle": "Self-Healing",
           "description": "Stop wasting hours manually creating and updating massive static mockup `.json` fixture files. Stamp out dynamic, randomized, and structurally valid dummy datasets instantly using a **single inline generator execution**.",
           "zodStatus": "cross",
           "typeboxStatus": "cross",
