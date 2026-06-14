@@ -1,18 +1,18 @@
-import { XalethorService } from '../xalor-service';
+import { XalethorService } from '../../xalor-service';
 import type {
   TTransformStrategyEngine,
   TTransformContext,
   TFlattenDataContext,
   TMergeContext,
   TPickOmitContext,
-} from '../models/types';
-import type { TTransformXalorModes } from '../../shared/auto';
+} from '../../models/types';
+import type { TTransformXalorModes } from '../../../shared/auto';
 
 /**
  * RUNTIME API: TRANSFORM XALOR
  *
  * Executes high-performance structural mutation sweeps across strongly typed data contracts.
- * Coordinates 'pick', 'omit', 'rename', 'merge', and 'flatten' operations directly in-memory.
+ * Coordinates 'pick', 'omit', 'merge', and 'flatten' operations directly in-memory.
  *
  * @example
  * ```ts
@@ -32,8 +32,6 @@ export function transformXalor<
   K extends keyof ISolidRegistry,
   _M extends 'omit',
 >(injectedKey: K, injectedMode: 'omit', ctx: TPickOmitContext<K>): ISolidRegistry[K];
-/* prettier-ignore */
-
 /* prettier-ignore */
 export function transformXalor<
   K extends keyof ISolidRegistry,

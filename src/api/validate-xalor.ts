@@ -44,9 +44,6 @@ export function validateXalor<K extends keyof ISolidRegistry, _M extends 'audit'
 /* prettier-ignore */
 export function validateXalor<K extends keyof ISolidRegistry, M extends TValidationXalorModes,
 >(injectedKey?: K, mode?: M, data?: unknown): TValidateXalorReturn<K, M> {
-  // console.log({ injectedKey }, 'INJECTED KEY');
-  // console.log({ mode }, 'mode');
-  // console.log({ data }, 'data');
   if (!injectedKey || !mode) {
     throw new Error(
       `[xalor] 🚨 GATEWAY BLOCK: 'validateXalor' executed without compiled metadata properties.\n` +

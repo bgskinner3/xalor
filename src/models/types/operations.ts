@@ -114,7 +114,6 @@ export type TFlattenDataContext = {
 export type TTransformXalorParamMap<K extends keyof ISolidRegistry> = {
   readonly pick: TPickOmitContext<K>;
   readonly omit: TPickOmitContext<K>;
-  // readonly rename: TRenameContext;
   readonly merge: TMergeContext;
   readonly flatten: TFlattenDataContext;
 };
@@ -127,7 +126,6 @@ export type TTransformXalorParamMap<K extends keyof ISolidRegistry> = {
 export type TTransformXalorResultMap<K extends keyof ISolidRegistry> = {
   readonly pick: ISolidRegistry[K];
   readonly omit: ISolidRegistry[K];
-  // readonly rename: ISolidRegistry[K];
   readonly merge: ISolidRegistry[K];
   readonly flatten: Record<string, string | number | boolean>;
 };

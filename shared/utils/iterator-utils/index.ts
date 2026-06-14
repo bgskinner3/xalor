@@ -69,7 +69,7 @@ export function* yieldFiltered<T, S extends T>(
  * Natively safe to run inside client bundles, edges, and browser windows.
  */
 export function* mapIterableLazy<T, R>(
-  items: readonly T[], // 🛡️ Accept readonly arrays to support Phase 1 shapes natively
+  items: readonly T[],
   transform: (item: T) => R,
 ): Generator<R, void, unknown> {
   const len = items.length;
