@@ -28,7 +28,54 @@
 
 //    return  [] as const
 // }
-
+// type TMatchComposite = {
+//   compositeKeys: keyof ISolidRegistry[];
+// };
+// export function matchComposite<K extends readonly (keyof ISolidRegistry)[]>() {
+//   // return typeof [''];
+// }
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 /**
  * ============================================================================
  * 🎛️ MATCH XALOR API STRATEGY SPECIFICATIONS

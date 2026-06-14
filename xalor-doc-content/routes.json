@@ -89,14 +89,6 @@
       "active": true
     },
     {
-      "id": "f37813c1-b100-4bdf-9aae-1c2431cc5fe6",
-      "text": "Guides",
-      "href": "/xalor/docs/guides",
-      "iconName": "compass-duotone",
-      "linkType": "secondary",
-      "active": false
-    },
-    {
       "id": "4fafa57e-1862-4283-aee3-54d596c2ddec",
       "text": "Roadmap",
       "href": "/xalor/docs",
