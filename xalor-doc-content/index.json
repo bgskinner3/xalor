@@ -214,10 +214,12 @@
     },
 
     "verificationMatrix": {
+      "overline": "Performance Comparison",
+      "iconName": "radar-blip-duotone",
       "header": "Compare Xalor",
-      "subHeader": "See how Xalor transforms pristine, native TypeScript contracts into high-speed runtime systems—completely eliminating the parsing latencies, bloated files, and boilerplate of traditional dependencies.",
+      "subHeader": "See how Xalor stacks up against traditional validation approaches, transforming TypeScript contracts into efficient runtime systems and removing parsing overhead, file generation bloat, and repetitive validation boilerplate.",
       "benchmarkDocsLink": {
-        "text": "Compilation & Trace Benchmarks",
+        "text": "Compilation & Benchmarks",
         "href": "/xalor/docs/how-it-works#benchmarks"
       },
       "comparisonHeaders": [
@@ -231,7 +233,7 @@
           "id": "trait-source-truth",
           "featureTitle": "Single Source of Truth",
           "iconName": "compass-duotone",
-          "description": "Write standard TypeScript interfaces exactly as you always do. Modifying a native type updates runtime validation mechanics on your next save loop, completely **cutting out human schema duplication errors**.",
+          "description": "Single TS types auto-drive runtime validation.",
           "zodStatus": "cross",
           "typiaStatus": "check",
           "xalorStatus": "check"
@@ -240,7 +242,7 @@
           "id": "trait-bundle-weight",
           "featureTitle": "Zero Client Bundle Size Inflation",
           "iconName": "shipping-box-duotone",
-          "description": "Heavy validation engines never ship to the browser. Parsing logic is completely stripped from your production build, dropping client runtime weights down to a **flat 0.8KB instance blueprint size**.",
+          "description": "Zero validation code shipped to client.",
           "zodStatus": "cross",
           "typiaStatus": "cross",
           "xalorStatus": "check"
@@ -249,7 +251,7 @@
           "id": "trait-workspace-hygiene",
           "featureTitle": "Zero Workspace Clutter",
           "iconName": "sparkles",
-          "description": "The compiler watcher runs entirely in memory. It leaves **zero massive, auto-generated validation function files** to clutter your local source directories or pollute your git history.",
+          "description": "No massive generated files in your repo.",
           "zodStatus": "check",
           "typeboxStatus": "check",
           "typiaStatus": "cross",
@@ -259,7 +261,7 @@
           "id": "trait-gps-diagnostics",
           "iconName": "map-location",
           "featureTitle": "GPS Diagnostics",
-          "description": "When raw incoming data boundaries crack, error logs don't print vague path trees. Xalor traces the validation fault straight back to a **fully clickable terminal link pointing to the exact source line** where your type was declared.",
+          "description": "Errors map directly to source lines.",
           "zodStatus": "cross",
           "typiaStatus": "cross",
           "xalorStatus": "check"
@@ -268,7 +270,7 @@
           "id": "trait-self-healing",
           "iconName": "system-health",
           "featureTitle": "Self-Healing",
-          "description": "Stop wasting hours manually creating and updating massive static mockup `.json` fixture files. Stamp out dynamic, randomized, and structurally valid dummy datasets instantly using a **single inline generator execution**.",
+          "description": "Instantly generate valid mock data.",
           "zodStatus": "cross",
           "typiaStatus": "check",
           "xalorStatus": "check"
