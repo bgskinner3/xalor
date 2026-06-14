@@ -950,8 +950,7 @@ declare global {
      * -------
      * @mode mock
      * @description
-     * Constraint-aware stochastic data simulation. Iterates across your shape graph configurations to dynamically
-     * manufacture realistic, property-compliant mock values, fully optimized for unit testing matrices.
+     * Constraint-aware stochastic data simulation. Iterates across your shape graph configurations to dynamically manufacture realistic, property-compliant mock values, fully optimized for unit testing matrices.
      * @example
      * ```ts
      * const randomUser = generateXalor<'User', 'mock'>();
@@ -1095,8 +1094,8 @@ declare global {
      * -------
      * @mode parse
      * @description
-     * Synchronous data parser gate. Verifies the input structure immediately. If parsing hits constraint errors,
-     * it leverages the auditor to trigger a structural panic throw; if valid, it outputs the verified typed instance.
+     Synchronous data parser gate. Verifies the input structure immediately. If parsing hits constraint errors,
+     it leverages the auditor to trigger a structural panic throw; if valid, it outputs the verified typed instance.
      * @example
      * ```ts
      * try {
@@ -1194,8 +1193,7 @@ declare global {
      * -------
      * @mode merge
      * @description
-     * Symmetrical deep twin-entity data aggregation. Recursively tracks matching array indices and object structural paths,
-     * prioritizing fields inside the secondary patch payload variable while safely falling back to baseline properties.
+     Symmetrical deep twin-entity data aggregation. Recursively tracks matching array indices and object structural paths, prioritizing fields inside the secondary patch payload variable while safely falling back to baseline properties.
      * @example
      * ```ts
      * const consolidatedProfile = transformXalor<'User', 'merge'>({

@@ -103,41 +103,108 @@
     },
 
     "runtimeModule": {
-      "iconName": "cpu-duotone",
-      "header": "One Source. Infinite Capabilities.",
-      "description": "Stop maintaining separate verification engines and mock data setups. Xalor converts native types into high-speed runtime systems with zero bundle inflation.",
+      "header": {
+        "iconName": "cpu-duotone",
+        "header": "Lifecycle API Engine",
+        "overline": "One Source. Infinite Capabilities.",
+        "description": "Stop maintaining separate verification engines and mock data setups. Xalor converts native types into high-speed runtime systems with zero bundle inflation.",
+        "link": {
+          "text": "",
+          "href": ""
+        }
+      },
       "runtimeItems": {
         "validate": {
           "id": "75e6323c-dc29-4357-b8d0-8e62b565f037",
-          "header": "Validate Data",
-          "description": "Ensure raw inbound payloads match your compile-time types with deep error reporting and zero runtime schema overhead.",
-          "subDescription": "Catch structural failures instantly at your system boundaries.",
-          "link": "/xalor/docs/api",
-          "iconName": "shield-check-duotone"
+          "tag": {
+            "header": "Validate Data",
+            "iconName": "shield-check-duotone",
+            "subDescription": "Catch structural failures instantly at your system boundaries."
+          },
+          "util": {
+            "href": "/xalor/docs/api",
+            "header": "Typed Data Parser",
+            "overline": "Validation gate",
+            "description": "Synchronously parses unknown input into a typed structure. Validates against the expected schema at runtime and either returns a fully typed instance or triggers a controlled validation failure through the auditor pipeline when constraints are violated.",
+            "keyPoints": [
+              "Synchronous parsing gate",
+              "Schema validation on input",
+              "Typed output on success",
+              "Controlled failure routing",
+              "Auditor-based error handling"
+            ],
+            "codeSnippet": "",
+            "snippetLanguage": "typescript"
+          }
         },
         "generate": {
           "id": "12da4d33-ebf8-4add-9170-20e11c6cb788",
-          "header": "Generate Mocks",
-          "description": "Stamp out completely populated testing fixtures, safe default fallbacks, and mock shapes derived directly from native type graphs.",
-          "subDescription": "Instant mockup datasets generated without maintaining fixture files.",
-          "link": "/xalor/docs/api",
-          "iconName": "shipping-box"
+          "tag": {
+            "header": "Generate Mocks",
+            "iconName": "shipping-box",
+            "subDescription": "Instant mockup datasets generated without maintaining fixture files."
+          },
+          "util": {
+            "link": "/xalor/docs/api",
+            "header": "Mock Data Generator",
+            "overline": "Schema-driven generation",
+            "description": "Generates realistic mock datasets from a typed schema blueprint. Traverses the input structure to produce property-compliant values with configurable constraints for testing, prototyping, and simulation.",
+            "keyPoints": [
+              "Schema-driven generation",
+              "Typed structure compliance",
+              "Realistic synthetic values",
+              "Constraint-aware output",
+              "Test-ready datasets"
+            ],
+            "codeSnippet": "",
+            "snippetLanguage": "typescript"
+          }
         },
         "transform": {
           "id": "f166fd7-01f9-4c5d-b114-b5cb2e9e16f1",
-          "header": "Transform Safely",
-          "description": "Pick, omit, sanitize, and reshape messy structures using type-aware utilities running on hardware-level lookup paths.",
-          "subDescription": "Peel away unsafe variables without redefining your schemas.",
-          "link": "/xalor/docs/api",
-          "iconName": "arrow-right-left"
+          "tag": {
+            "header": "Transformation",
+            "iconName": "arrow-right-left",
+            "subDescription": "Peel away unsafe variables without redefining your schemas."
+          },
+          "util": {
+            "link": "/xalor/docs/api",
+            "header": "Typed Deep Merge Engine",
+            "overline": "Blueprint-Driven Structural Merge",
+            "description": "Performs a strongly-typed deep merge between two object graphs following a defined schema blueprint. Traverses nested structures recursively, resolving conflicts using deterministic merge rules: explicit null values override baseline fields, undefined values defer to baseline state, and array indices are merged positionally with safe out-of-bounds extension support for patch payloads.",
+            "keyPoints": [
+              "Deep merge by blueprint",
+              "Null = overwrite",
+              "Undefined = fallback",
+              "Index merge arrays",
+              "Auto-append overflow"
+            ],
+            "codeSnippet": "",
+            "snippetLanguage": "typescript"
+          }
         },
         "match": {
           "id": "8d83e630-b733-4391-9d77-629ff1c88724",
-          "header": "No Duplication",
-          "description": "Eliminate the dual-source tax entirely. Write standard TypeScript contracts once and execute them natively anywhere across your stack.",
-          "subDescription": "Absolute architectural sync across edge paths and user frontends.",
-          "link": "/xalor/docs/api",
-          "iconName": "target"
+          "tag": {
+            "header": "Matching",
+            "iconName": "target",
+            "subDescription": "Evaluate un-typed runtime payloads against registered type blueprints."
+          },
+          "util": {
+            "link": "/xalor/docs/api",
+            "header": "Upgrade Yesterday's Payloads to Today's Types",
+            "overline": "Advanced Matching",
+            "description": "Distributed systems rarely deploy in perfect lockstep. drift provides a runtime compatibility bridge that safely validates legacy payloads against previous contracts and upgrades them to your latest type definitions in memory, helping services evolve independently without breaking consumers.",
+            "keyPoints": [
+              "Historical Contract Matching",
+              "Single-Generation Support",
+              "Selective Bundle Extraction",
+              "Zero Cache Retention",
+              "Type-Safe Migration Hooks"
+            ],
+            "codeSnippet": "",
+            "snippetLanguage": "typescript"
+          }
         }
       }
     },

@@ -39,7 +39,7 @@
  * over structural validation boundaries. It evaluates un-typed or polymorphic runtime
  * payloads against a collection of registered type blueprints, executing the closure
  * handler of the first schema it successfully validates against.
- *
+ Advanced Structural Pattern Matching. Evaluate un-typed or polymorphic runtime payloads against a collection of registered type blueprints.
  * DESIGN INVARIANTS:
  * - Governed by COMMANDMENT II (Build-Time Construction Rule) and COMMANDMENT V
  *   (Graph Integrity). The build-time transformer scouts this call-site to extract
