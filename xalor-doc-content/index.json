@@ -233,7 +233,6 @@
           "iconName": "compass-duotone",
           "description": "Write standard TypeScript interfaces exactly as you always do. Modifying a native type updates runtime validation mechanics on your next save loop, completely **cutting out human schema duplication errors**.",
           "zodStatus": "cross",
-          "typeboxStatus": "cross",
           "typiaStatus": "check",
           "xalorStatus": "check"
         },
@@ -243,7 +242,6 @@
           "iconName": "shipping-box-duotone",
           "description": "Heavy validation engines never ship to the browser. Parsing logic is completely stripped from your production build, dropping client runtime weights down to a **flat 0.8KB instance blueprint size**.",
           "zodStatus": "cross",
-          "typeboxStatus": "cross",
           "typiaStatus": "cross",
           "xalorStatus": "check"
         },
@@ -263,7 +261,6 @@
           "featureTitle": "GPS Diagnostics",
           "description": "When raw incoming data boundaries crack, error logs don't print vague path trees. Xalor traces the validation fault straight back to a **fully clickable terminal link pointing to the exact source line** where your type was declared.",
           "zodStatus": "cross",
-          "typeboxStatus": "cross",
           "typiaStatus": "cross",
           "xalorStatus": "check"
         },
@@ -273,7 +270,6 @@
           "featureTitle": "Self-Healing",
           "description": "Stop wasting hours manually creating and updating massive static mockup `.json` fixture files. Stamp out dynamic, randomized, and structurally valid dummy datasets instantly using a **single inline generator execution**.",
           "zodStatus": "cross",
-          "typeboxStatus": "cross",
           "typiaStatus": "check",
           "xalorStatus": "check"
         }

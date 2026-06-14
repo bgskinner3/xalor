@@ -227,6 +227,18 @@ Unlike schema-based libraries:
 
 <br/>
 
+## How we compare 
+
+| Feature                                                                                                                                                                                                                                                                   | Zod / Valibot | Xalor | Typia |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----- | ----- |
+| **Single Source of Truth** 🧭                  | ❌             | ✔️    | ✔️    |
+| **Zero Client Bundle Size Inflation** 📦                | ❌             | ✔️    | ❌     |
+| **Zero Workspace Clutter** ✨                               | ✔️            | ✔️    | ❌     |
+| **GPS Diagnostics** 📍 | ❌             | ✔️    | ❌     |
+| **Self-Healing** 🧬                | ❌             | ✔️    | ✔️    |
+
+
+
 ## 📄 License
 
 This project is licensed under the MIT License.
