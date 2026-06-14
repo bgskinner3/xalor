@@ -217,6 +217,10 @@
       "overline": "Performance Comparison",
       "iconName": "radar-blip-duotone",
       "header": "Compare Xalor",
+      "image": {
+        "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/blockedge/mikey-girl.png",
+        "alt": "lady-two"
+      },
       "subHeader": "See how Xalor stacks up against traditional validation approaches, transforming TypeScript contracts into efficient runtime systems and removing parsing overhead, file generation bloat, and repetitive validation boilerplate.",
       "benchmarkDocsLink": {
         "text": "Compilation & Benchmarks",

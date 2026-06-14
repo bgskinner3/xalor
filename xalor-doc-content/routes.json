@@ -18,7 +18,7 @@
       "id": "c3f8a1a0-2b91-4c8a-953b-7c2d8e5a1a10",
       "text": "About Xalor",
       "iconName": "layers-duotone",
-      "href": "/xalor/docs/what-is-xalor",
+      "href": "/xalor/docs/whatIsXalor",
       "active": false,
       "sectionLinks": [
         { "id": "compilation-timeline", "text": "Compilation Lifecycle" },
@@ -38,7 +38,7 @@
       "id": "c3f8a1a0-2b91-4c8a-9f3b-7c2d8e5a1a10",
       "text": "Getting Started",
       "iconName": "rocket-tilted",
-      "href": "/xalor/docs/getting-started",
+      "href": "/xalor/docs/gettingStarted",
       "active": false,
       "sectionLinks": [
         { "id": "installation", "text": "Installation" },
