@@ -122,7 +122,7 @@
             "subDescription": "Catch structural failures instantly at your system boundaries."
           },
           "util": {
-            "href": "/xalor/docs/api",
+            "link": "/xalor/docs/api",
             "header": "Typed Data Parser",
             "overline": "Validation gate",
             "description": "Synchronously parses unknown input into a typed structure. Validates against the expected schema at runtime and either returns a fully typed instance or triggers a controlled validation failure through the auditor pipeline when constraints are violated.",
@@ -133,7 +133,7 @@
               "Controlled failure routing",
               "Auditor-based error handling"
             ],
-            "codeSnippet": "",
+            "codeSnippet": "import { xalor } from '@bgskinner2/xalor'; \n\n/** Define your user model */ \ntype TUser = { \n  id: number; \n  username: string; \n  email: string; \n  displayName: string; \n  avatarUrl: string; \n  active: boolean; \n  role: 'user' | 'moderator' | 'admin'; \n  createdAt: Date; \n  lastLoginAt: Date; \n}; \n\n/** Register schema in xalor registry */ \nxalor.register<'USER_PROFILE', TUser>(); \n\n/** Raw API response (untrusted external input) */ \nconst apiResponse: unknown = { \n  id: 901, \n  username: 'bounce_parse_pass', \n  email: 'userEmail@example.com', \n  displayName: 'Bounce Parse Pass', \n  avatarUrl: 'https://i.pravatar.cc/150?img=12', \n  active: true, \n  role: 'user', \n  createdAt: '2025-01-10T10:00:00Z', \n  lastLoginAt: '2026-06-13T18:30:00Z' \n}; \n\n/** Field-level validation rules */ \nconst validators = { \n  email: (value) => /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value) \n}; \n\n/** Parse + validate into strongly typed USER_PROFILE model */ \nconst parsedResponse = xalor.parse<'USER_PROFILE'>(apiResponse, validators);",
             "snippetLanguage": "typescript"
           }
         },
@@ -156,7 +156,7 @@
               "Constraint-aware output",
               "Test-ready datasets"
             ],
-            "codeSnippet": "",
+            "codeSnippet": "import { xalor } from '@bgskinner2/xalor'; \n/** Define your user model */ \ntype TUser = { \n  id: number; \n  username: string; \n  email: string; \n  displayName: string; \n  avatarUrl: string; \n  active: boolean; \n  role: 'user' | 'moderator' | 'admin'; \n  createdAt: Date; \n  lastLoginAt: Date; \n}; \n\n/** Register the schema key → type mapping */ \nxalor.register<'USER_PROFILE', TUser>(); \n\n/** Generate a randomized USER_PROFILE mock with controlled overrides */ \nconst configOptions = { \n  omit: ['email', 'username'], \n  set: { \n    active: false, \n    role: 'user' \n  } \n}; \n\nconst result = xalor.mock<'USER_PROFILE'>(configOptions); \n\n/** RESULT DATA (RANDOMIZED MOCK OUTPUT) Generated via xalor.mock<'USER_PROFILE'> Notes: Fields in `omit` are removed: email, username Fields in `set` are overridden Remaining fields are randomly generated */ \n\nconst mockResultExample = { \n  id: 4821, \n  displayName: 'Nova Drift', \n  avatarUrl: 'https://i.pravatar.cc/150?img=47', \n  active: false, \n  role: 'user', \n  createdAt: new Date('2024-03-18T09:22:11Z'), \n  lastLoginAt: new Date('2026-06-12T14:41:03Z') \n};",
             "snippetLanguage": "typescript"
           }
         },
@@ -179,7 +179,7 @@
               "Index merge arrays",
               "Auto-append overflow"
             ],
-            "codeSnippet": "",
+            "codeSnippet": "import { xalor } from '@bgskinner2/xalor'; \n/** \n * Define your user model \n */ \ntype TUser = { \n  id: number; \n  username: string; \n  email: string; \n  displayName: string; \n  avatarUrl: string; \n  active: boolean; \n  role: 'user' | 'moderator' | 'admin'; \n  createdAt: Date; \n  lastLoginAt: Date; \n}; \n\n/** \n * Register schema \n */ \nxalor.register<'USER_PROFILE', TUser>(); \n\n/** \n * Active state (base persisted user data) \n */ \nconst activeState = { \n  id: 901, \n  username: 'bounce_parse_pass', \n  email: 'userEmail@example.com', \n  displayName: 'Bounce Parse Pass', \n  avatarUrl: 'https://i.pravatar.cc/150?img=12', \n  active: true, \n  role: 'moderator', \n  createdAt: new Date('2025-01-10T10:00:00Z'), \n  lastLoginAt: new Date('2026-06-10T10:00:00Z') \n}; \n\n/** \n * Patch update (partial override input) \n */ \nconst customPatch = { \n  email: 'updated.email@example.com', \n  active: false, \n  role: 'user', \n  displayName: 'Bounce Parse Updated' \n}; \n\n/** \n * Deep merge operation using schema rules \n */ \nconst result = xalor.merge<'USER_PROFILE'>({ \n  dataOne: activeState, \n  dataTwo: customPatch \n}); \n\n/** \n * RESULT (merged USER_PROFILE object) \n * - fields from patch override base state \n * - unchanged fields preserved \n */ \nconst mergedResult = { \n  id: 901, \n  username: 'bounce_parse_pass', \n  email: 'updated.email@example.com', \n  displayName: 'Bounce Parse Updated', \n  avatarUrl: 'https://i.pravatar.cc/150?img=12', \n  active: false, \n  role: 'user', \n  createdAt: new Date('2025-01-10T10:00:00Z'), \n  lastLoginAt: new Date('2026-06-10T10:00:00Z') \n};",
             "snippetLanguage": "typescript"
           }
         },
@@ -202,7 +202,7 @@
               "Zero Cache Retention",
               "Type-Safe Migration Hooks"
             ],
-            "codeSnippet": "",
+            "codeSnippet": "import { xalor } from '@bgskinner2/xalor'; \n/**\n * Define your user model\n */\ntype TUser = {\n  id: number;\n  username: string;\n  email: string;\n  preferences: {\n    theme: 'dark' | 'light';\n    notifications: boolean;\n    locale: string;\n  };\n  stats: {\n    posts: number;\n    followers: number;\n    following: number;\n  };\n};\n\n/**\n * Register the schema key → type mapping\n */\nxalor.register<'USER_PROFILE', TUser>();\n\nconst legacyPayload: unknown = {\n  id: 44102,\n  username: 'selina_kyle',\n  userTheme: 'dark', // ❌ Mismatch: Field was removed in today's V2 production schema model!\n};\n\n/**\n * Drift-driven schema migration layer\n */\nconst sanitizedPayload = xalor.drift<'USER_PROFILE'>(legacyPayload, {\n  /**\n   * Branch 1: Current V2 shape (pass-through)\n   */\n  current: (v2User) => v2User,\n\n  /**\n   * Branch 2: V1 → V2 migration bridge\n   */\n  v1_ancestor: (v1Account) => {\n    // 🚀 Active In-Memory Upcasting! Convert 'userTheme' into the new nested object layout.\n    return {\n      ...v1Account,\n      preferences: {\n        theme: v1Account.userTheme === 'dark' ? 'dark' : 'light',\n        notifications: false,\n        locale: 'en-US',\n      },\n    };\n  },\n});\n\n// The Exact Materialized V2 Object Layout Returned (Result)\n// ============================================================================\n// sanitizedPayload now becomes a fully cast, safe, and V2-compliant object:\n// ============================================================================\n// sanitizedPayload === {\n//   id: 44102,\n//   username: \"selina_kyle\",\n//   email: \"\",\n//   preferences: { theme: \"dark\", notifications: false, locale: \"en-US\" },\n//   stats: { posts: 0, followers: 0, following: 0 }\n// }",
             "snippetLanguage": "typescript"
           }
         }
