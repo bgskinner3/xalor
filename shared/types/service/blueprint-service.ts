@@ -5,7 +5,6 @@ export type TRebuildParams = {
   readonly pool: Record<string, TSolidShape> | Map<string, TSolidShape>;
   readonly depth: number;
   readonly spacing: string;
-  // 🟢 FIXED: All strategy methods accept the vertical tracing memory set contract natively
   readonly visited: Set<string>;
 };
 

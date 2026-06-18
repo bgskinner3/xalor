@@ -22,7 +22,7 @@ import {
   DEFAULT_OBJECT_MAPPER,
   STUDIO_COMMAND_CONFIG,
 } from '../models/constants';
-import { blueprintService } from '../../shared/service';
+
 export class StudioCLIEngineService {
   private cliConfigOptions = IS_SOLID_CONFIG_ITEMS.cliConfig;
   private createDefaultAuditTemplate<T extends TDefaultObjectKeys>(
@@ -117,11 +117,11 @@ export class StudioCLIEngineService {
       template.blueprintId = isKeyInObject(uuidName)(references)
         ? references[uuidName]
         : 'unknown';
-
-      template.dataShape = blueprintService.generateSolidTypeScriptString(
-        blueprintShape,
-        rawVaultData.blueprints,
-      );
+      template.dataShape = 'REBUILD IN BROWSER';
+      // template.dataShape = blueprintService.generateSolidTypeScriptString(
+      //   blueprintShape,
+      //   rawVaultData.blueprints,
+      // );
 
       template.metrics = {
         depth: node.metrics.depth,

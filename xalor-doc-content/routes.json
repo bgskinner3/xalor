@@ -183,7 +183,8 @@
       "iconName": "sitemap",
       "active": true,
       "isExternal": false,
-      "href": "#system"
+      "href": "#system",
+      "setId": "system"
     },
     {
       "id": "d2201ee0-7e6f-453f-928f-512bf7a8d2d9",
@@ -191,7 +192,8 @@
       "iconName": "sparkles",
       "active": true,
       "isExternal": false,
-      "href": "#type"
+      "href": "#type",
+      "setId": "type"
     },
     {
       "id": "2662b805-806c-4a58-bb3f-0ac3b227c765",
@@ -199,7 +201,8 @@
       "iconName": "fast-flash-bolt",
       "active": true,
       "isExternal": false,
-      "href": "#actions"
+      "href": "#actions",
+      "setId": "actions"
     },
     {
       "id": "b595c51f-4318-429d-bedb-b67aea779b5e",
@@ -207,7 +210,8 @@
       "iconName": "open-book",
       "active": true,
       "isExternal": true,
-      "href": "/xalor/docs"
+      "href": "/xalor/docs",
+      "setId": "docs"
     }
   ],
   "studioActionTabs": [
@@ -217,8 +221,8 @@
       "text": "Validate",
       "active": true,
       "subText": "Validate data against this type",
-
-      "modes": ["guard", "assert", "parse", "parseAsync", "audit"]
+      "modes": ["guard", "assert", "parse", "parseAsync", "audit"],
+      "setId": "validate"
     },
     {
       "id": "2c2ac0da-356b-4a04-8762-0cc59dcf922d",
@@ -226,7 +230,8 @@
       "text": "Generate",
       "subText": "generate mock data and more ...",
       "active": true,
-      "modes": ["default", "mock", "clone", "cast"]
+      "modes": ["default", "mock", "clone", "cast"],
+      "setId": "generate"
     },
     {
       "id": "db3e2338-f597-4e6f-8e56-fe0f68627f0f",
@@ -234,7 +239,8 @@
       "text": "Transform",
       "subText": "Transformer Object Shape",
       "active": true,
-      "modes": ["pick", "omit", "rename", "merge", "flatten"]
+      "modes": ["pick", "omit", "rename", "merge", "flatten"],
+      "setId": "transform"
     },
     {
       "id": "f87c4249-008b-46e5-b67e-bbdcec3e91f1",
@@ -242,7 +248,8 @@
       "text": "Match",
       "subText": "Structural Matching",
       "active": false,
-      "modes": []
+      "modes": [],
+      "setId": "match"
     }
   ]
 }
