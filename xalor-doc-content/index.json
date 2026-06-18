@@ -3,7 +3,7 @@
     "hero": {
       "overline": "TypeScript Runtime Engine",
       "tag": "Early Development Preview",
-      "header": "TypScript Types, runtime everything.",
+      "header": "TypeScript Types, runtime everything.",
       "description": "Xalor is a build-time TypeScript engine that turns your native types into a live runtime validation and generation system — without duplicating schemas or shipping heavy libraries.",
       "links": {
         "docs": {

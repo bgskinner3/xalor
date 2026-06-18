@@ -79,40 +79,103 @@
       "sectionLinks": []
     }
   ],
-  "landingMarketing": [
-    {
-      "id": "62441491-b841-4562-8492-daa7b28f1045",
-      "text": "Docs",
-      "href": "/xalor/docs",
-      "iconName": "open-book",
-      "linkType": "secondary",
-      "active": true
-    },
-    {
-      "id": "4fafa57e-1862-4283-aee3-54d596c2ddec",
-      "text": "Roadmap",
-      "href": "/xalor/docs",
-      "iconName": "routing-duotone",
-      "linkType": "secondary",
-      "active": false
-    },
-    {
-      "id": "10e7588e-fc6d-488d-894c-28d6b762e6b8",
-      "text": "Github",
-      "href": "https://github.com/bgskinner3/xalor/tree/main",
-      "iconName": "export-link",
-      "linkType": "secondary",
-      "active": true
-    },
-    {
-      "id": "19ff7b73-b2af-436a-becf-6f0b94da2426",
-      "text": "Playground",
-      "href": "/xalor/studio",
-      "iconName": "play-circle",
-      "linkType": "primary",
-      "active": false
+  "landingMarketing": {
+    "topNav": [
+      {
+        "id": "62441491-b841-4562-8492-daa7b28f1045",
+        "text": "Docs",
+        "href": "/xalor/docs",
+        "iconName": "open-book",
+        "linkType": "secondary",
+        "active": true
+      },
+      {
+        "id": "4fafa57e-1862-4283-aee3-54d596c2ddec",
+        "text": "Roadmap",
+        "href": "/xalor/docs",
+        "iconName": "routing-duotone",
+        "linkType": "secondary",
+        "active": false
+      },
+      {
+        "id": "10e7588e-fc6d-488d-894c-28d6b762e6b8",
+        "text": "Github",
+        "href": "https://github.com/bgskinner3/xalor/tree/main",
+        "iconName": "export-link",
+        "linkType": "secondary",
+        "active": true
+      },
+      {
+        "id": "19ff7b73-b2af-436a-becf-6f0b94da2426",
+        "text": "Playground",
+        "href": "/xalor/studio",
+        "iconName": "play-circle",
+        "linkType": "primary",
+        "active": false
+      }
+    ],
+    "footerNav": {
+      "sideModule": {
+        "iconName": "heart",
+        "header": "Early Developer Preview",
+        "description": "Things may change. Feedback is welcome!",
+        "link": {
+          "text": "Reach out!",
+          "href": "/lets-connect"
+        }
+      },
+      "links": [
+        {
+          "id": "e048bb36-c609-4bdd-97b8-8591c22793b2",
+          "colHeader": "Product",
+          "colLinks": [
+            {
+              "id": "cc109118-6211-4a3e-94f5-7a6b09e83e11",
+              "text": "Playground",
+              "href": "/xalor/studio"
+            },
+            {
+              "id": "ad93006e-f63d-43a4-a697-5389a1147458",
+              "text": "Guides",
+              "href": "/xalor/docs/guides"
+            }
+          ]
+        },
+        {
+          "id": "cfe4961a-b6a8-443f-b039-04a180fe184d",
+          "colHeader": "Resources",
+          "colLinks": [
+            {
+              "id": "e9878c25-8306-45a7-ba56-35e0327737aa",
+              "text": "Docs",
+              "href": "/xalor/docs"
+            },
+            {
+              "id": "b0ad7851-bf92-4afb-ae1b-b80e3271d32d",
+              "text": "Contact",
+              "href": "/lets-connect"
+            }
+          ]
+        },
+        {
+          "id": "53571938-a022-400c-b5be-629f21fd0eef",
+          "colHeader": "Legal",
+          "colLinks": [
+            {
+              "id": "921e5595-9129-4d90-ae90-4ba5619682d1",
+              "text": "MIT License",
+              "href": "/"
+            },
+            {
+              "id": "bb610fde-8735-4a23-902a-c2aee2dedaa8",
+              "text": "Privacy",
+              "href": "/"
+            }
+          ]
+        }
+      ]
     }
-  ],
+  },
   "studioMainTabs": [
     {
       "id": "ce5bc238-45ee-4446-a827-2cf6ce7dede2",
