@@ -5,7 +5,7 @@ import {
   isIntersectionType,
   isTypeReference,
 } from '../../utils';
-import { INSTANCE_REGISTRY_MAPPER } from '../../../shared';
+import { shapeKindUtilsService } from '../../../shared';
 
 /**
  * isCompilerTypePure
@@ -46,14 +46,10 @@ export function isCompilerTypePure(
   const cleanQualifiedName = fullyQualifiedName.replace(/Constructor$/, '');
 
   if (symbol !== undefined) {
-    if (Reflect.has(INSTANCE_REGISTRY_MAPPER, cleanSymbolName)) {
-      return true;
-    }
+    if (shapeKindUtilsService.isKnownInstanceKey(cleanSymbolName)) return true;
   }
 
-  if (Reflect.has(INSTANCE_REGISTRY_MAPPER, cleanQualifiedName)) {
-    return true;
-  }
+  if (shapeKindUtilsService.isKnownInstanceKey(cleanQualifiedName)) return true;
 
   // ========================================================================
   // Step 2: Detect raw un-serializable JavaScript symbol types

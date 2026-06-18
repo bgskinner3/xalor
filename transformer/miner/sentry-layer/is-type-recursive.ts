@@ -5,7 +5,7 @@ import {
   isIntersectionType,
   isTypeReference,
 } from '../../utils';
-import { INSTANCE_REGISTRY_MAPPER } from '../../../shared';
+import { shapeKindUtilsService } from '../../../shared';
 /**
  * isTypeRecursive
  * 🛰️ THE DEEP CIRCULAR DEPENDENCY RADAR
@@ -34,16 +34,13 @@ export function isTypeRecursive(
     const symbolName = symbol.getName();
     const cleanSymbolName = symbolName.replace(/Constructor$/, '');
 
-    if (Reflect.has(INSTANCE_REGISTRY_MAPPER, cleanSymbolName)) {
-      return false; // Known global terminal primitive. It is never impurely recursive.
-    }
+    if (shapeKindUtilsService.isKnownInstanceKey(cleanSymbolName)) return false;
   }
 
   const fullyQualifiedName = checker.typeToString(type);
   const cleanQualifiedName = fullyQualifiedName.replace(/Constructor$/, '');
-  if (Reflect.has(INSTANCE_REGISTRY_MAPPER, cleanQualifiedName)) {
+  if (shapeKindUtilsService.isKnownInstanceKey(cleanQualifiedName))
     return false;
-  }
 
   // Record this type to track the active depth path retrieval loop
   visited.add(type);

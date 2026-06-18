@@ -4,7 +4,7 @@ import { REIFIERS } from './registry/index';
 import type { TSolidShape } from '../../shared';
 import type { TReifyDispatcherBuild, TReifyCTX } from '../types';
 import { internShape } from './interning';
-import { INSTANCE_REGISTRY_MAPPER } from '../../shared';
+import { shapeKindUtilsService } from '../../shared';
 /**
  * Context Factory Replacement Utility
  */
@@ -44,7 +44,7 @@ export function reifyType({
 }: TReifyDispatcherBuild): TSolidShape {
   // Step A: Dynamic Context Gate Recovery
   const activeCtx = ctx !== undefined ? ctx : createFreshReifyCTX(25, 'root');
-  const hardenedCtx = activeCtx as IHardenedReifyCTX;
+  const hardenedCtx: IHardenedReifyCTX = activeCtx;
 
   // ========================================================================
   // 🛰️ SHIELD A: RADAR LOOP INTERCEPTOR
@@ -65,10 +65,10 @@ export function reifyType({
     const symbolName = symbol.getName();
     const cleanSymbolName = symbolName.replace(/Constructor$/, '');
 
-    if (Reflect.has(INSTANCE_REGISTRY_MAPPER, cleanSymbolName)) {
+    if (shapeKindUtilsService.isKnownInstanceKey(cleanSymbolName)) {
       return {
         kind: 'instanceof',
-        name: cleanSymbolName as keyof typeof INSTANCE_REGISTRY_MAPPER,
+        name: cleanSymbolName,
       };
     }
   }
@@ -76,10 +76,10 @@ export function reifyType({
   const fullyQualifiedName = checker
     .typeToString(type)
     .replace(/Constructor$/, '');
-  if (Reflect.has(INSTANCE_REGISTRY_MAPPER, fullyQualifiedName)) {
+  if (shapeKindUtilsService.isKnownInstanceKey(fullyQualifiedName)) {
     return {
       kind: 'instanceof',
-      name: fullyQualifiedName as keyof typeof INSTANCE_REGISTRY_MAPPER,
+      name: fullyQualifiedName,
     };
   }
 
@@ -101,9 +101,9 @@ export function reifyType({
       maxDepth: hardenedCtx.maxDepth,
       fragments: hardenedCtx.fragments,
       parentKey: fragmentKey,
-      seen: new Set<Type>(), // Pristine tracing memory map slot
-      _isCutOverride: true, // ◄ 🟢 INJECT THE SHIELD OVERRIDE FLAG
-    };
+      seen: new Set<Type>(),
+      _isCutOverride: true,
+    } satisfies IHardenedReifyCTX;
 
     // Recurse safely back to the main door. Shield C will be bypassed on the
     // next frame, forcing runReifierLoop to execute with our reset tailCtx object!
@@ -156,7 +156,7 @@ function runReifierLoop(
         const childCtx: TReifyCTX = {
           ...activeNextCtx,
           depth: activeNextCtx.depth + 1, // Enforces our depth law guard line cleanly!
-        };
+        } satisfies TReifyCTX;
         return reifyType({ type: t, checker, ctx: childCtx });
       },
       ctx,

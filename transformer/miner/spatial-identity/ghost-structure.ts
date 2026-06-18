@@ -7,7 +7,7 @@ import {
   isClassOrInterfaceType,
 } from '../../utils'; // Adjust paths to match your shared utilities
 import type { TPrintGhostStructure } from '../../types';
-import { INSTANCE_REGISTRY_MAPPER } from '../../../shared';
+import { shapeKindUtilsService } from '../../../shared';
 /**
  * executeUnrollPass
  * 🪐 THE STATIC UNROLLING MACHINE (Instance & Cyclic Shield Edition)
@@ -33,7 +33,7 @@ function executeUnrollPass(
   if (symbol !== undefined) {
     const symbolName = symbol.getName();
     const cleanSymbolName = symbolName.replace(/Constructor$/, '');
-    if (Reflect.has(INSTANCE_REGISTRY_MAPPER, cleanSymbolName)) {
+    if (shapeKindUtilsService.isKnownInstanceKey(cleanSymbolName)) {
       return cleanSymbolName;
     }
   }
@@ -51,7 +51,7 @@ function executeUnrollPass(
   ) {
     return 'Promise<unknown>';
   }
-  if (Reflect.has(INSTANCE_REGISTRY_MAPPER, cleanQualifiedName)) {
+  if (shapeKindUtilsService.isKnownInstanceKey(cleanQualifiedName)) {
     return cleanQualifiedName;
   }
 
