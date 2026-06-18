@@ -51,7 +51,7 @@ export function generateShapeAST(
   f: NodeFactory,
   shape: TSolidShape,
 ): Expression {
-  const _exhaustive = shape;
+  const _exhaustiveCheck = shape;
   if (isPrimitiveShape(shape)) {
     return f.createObjectLiteralExpression([
       f.createPropertyAssignment('kind', f.createStringLiteral('primitive')),
@@ -201,12 +201,6 @@ export function generateShapeAST(
   }
 
   if (isReferenceShape(shape)) {
-    // if (shape.name.startsWith('lazy:')) {
-    //   return f.createObjectLiteralExpression([
-    //     f.createPropertyAssignment('kind', f.createStringLiteral('reference')),
-    //     f.createPropertyAssignment('name', f.createStringLiteral(shape.name)),
-    //   ]);
-    // }
     return f.createObjectLiteralExpression([
       f.createPropertyAssignment('kind', f.createStringLiteral('reference')),
       f.createPropertyAssignment('name', f.createStringLiteral(shape.name)),
@@ -214,11 +208,10 @@ export function generateShapeAST(
   }
 
   const executeMode = XalorRoutesService.xalorCLIMode();
-
   TransformerReportService.logAnomaly({
     keyName: 'AST_GENERATION_ANOMALY',
     fileLocation: 'transformer/miner/processor.ts ↳ generateShapeAST',
-    error: _exhaustive.kind || 'undefined',
+    error: _exhaustiveCheck.kind || 'undefined',
     mode: executeMode,
   });
 

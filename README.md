@@ -227,17 +227,15 @@ Unlike schema-based libraries:
 
 <br/>
 
-## How we compare 
+## How we compare
 
-| Feature                                                                                                                                                                                                                                                                   | Zod / Valibot | Xalor | Typia |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----- | ----- |
-| **Single Source of Truth** 🧭                  | ❌             | ✔️    | ✔️    |
-| **Zero Client Bundle Size Inflation** 📦                | ❌             | ✔️    | ❌     |
-| **Zero Workspace Clutter** ✨                               | ✔️            | ✔️    | ❌     |
-| **GPS Diagnostics** 📍 | ❌             | ✔️    | ❌     |
-| **Self-Healing** 🧬                | ❌             | ✔️    | ✔️    |
-
-
+| Feature                                  | Zod / Valibot | Xalor | Typia |
+| ---------------------------------------- | ------------- | ----- | ----- |
+| **Single Source of Truth** 🧭            | ❌            | ✔️    | ✔️    |
+| **Zero Client Bundle Size Inflation** 📦 | ❌            | ✔️    | ❌    |
+| **Zero Workspace Clutter** ✨            | ✔️            | ✔️    | ❌    |
+| **GPS Diagnostics** 📍                   | ❌            | ✔️    | ❌    |
+| **Self-Healing** 🧬                      | ❌            | ✔️    | ✔️    |
 
 ## 📄 License
 

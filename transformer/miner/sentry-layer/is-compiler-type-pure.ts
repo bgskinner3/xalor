@@ -37,11 +37,9 @@ export function isCompilerTypePure(
   const fullyQualifiedName = checker.typeToString(type);
 
   // ========================================================================
-  // 🏛️ STEP 1: ADVANCED INSTANCEOF GATING
+  // STEP 1: ADVANCED INSTANCEOF GATING
   // Catch both constructors and structural instance types of allowed globals
   // ========================================================================
-
-  // Clean trailing "Constructor" suffixes to safely catch `typeof Date` or `typeof URL`
   const cleanSymbolName = symbolName.replace(/Constructor$/, '');
   const cleanQualifiedName = fullyQualifiedName.replace(/Constructor$/, '');
 
@@ -86,8 +84,6 @@ export function isCompilerTypePure(
 
   // ========================================================================
   // Step 4: Functional Interface Check
-  // 🟢 FIXED: We allow function types to pass purity checks, as long as
-  // their internal parameter types and return type structures are also pure!
   // ========================================================================
   if (
     (flags & ts.TypeFlags.Object) !== 0 &&
@@ -100,7 +96,6 @@ export function isCompilerTypePure(
       const sig = signatures[i];
       if (sig === undefined) continue;
 
-      // 1. Audit the function return type structure recursively
       const returnType = checker.getReturnTypeOfSignature(sig);
       if (
         returnType !== undefined &&
@@ -109,7 +104,6 @@ export function isCompilerTypePure(
         return false;
       }
 
-      // 2. Audit all parameters inside this function signature recursively
       const parameters = sig.getParameters();
       const paramLen = parameters.length;
       for (let j = 0; j < paramLen; j++) {

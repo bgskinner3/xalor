@@ -111,21 +111,49 @@ function serializeCanonicalFingerprint(
       return `o:{${propsStr}}`;
     }
 
-    if (isUnionShape(s)) {
-      const members = s.values.map((v) =>
-        serializeCanonicalFingerprint(v, visited),
-      );
-      visited.delete(s);
-      return `u:[${members.sort().join('|')}]`;
-    }
+    // if (isUnionShape(s)) {
+    //   const members = s.values.map((v) =>
+    //     serializeCanonicalFingerprint(v, visited),
+    //   );
+    //   visited.delete(s);
+    //   return `u:[${members.sort().join('|')}]`;
+    // }
 
-    if (isIntersectionShape(s)) {
-      const members = s.values.map((v) =>
+    if (isUnionShape(s)) {
+      const sortedNodes = [...s.values].sort((a, b) => {
+        if (a.kind !== b.kind) return a.kind.localeCompare(b.kind);
+        const nameA = 'name' in a && typeof a.name === 'string' ? a.name : '';
+        const nameB = 'name' in b && typeof b.name === 'string' ? b.name : '';
+        return nameA.localeCompare(nameB);
+      });
+
+      const members = sortedNodes.map((v) =>
         serializeCanonicalFingerprint(v, visited),
       );
       visited.delete(s);
-      return `x:[${members.sort().join('&')}]`;
+      return `u:[${members.join('|')}]`;
     }
+    if (isIntersectionShape(s)) {
+      const sortedNodes = [...s.values].sort((a, b) => {
+        if (a.kind !== b.kind) return a.kind.localeCompare(b.kind);
+        const nameA = 'name' in a && typeof a.name === 'string' ? a.name : '';
+        const nameB = 'name' in b && typeof b.name === 'string' ? b.name : '';
+        return nameA.localeCompare(nameB);
+      });
+
+      const members = sortedNodes.map((v) =>
+        serializeCanonicalFingerprint(v, visited),
+      );
+      visited.delete(s);
+      return `x:[${members.join('&')}]`;
+    }
+    // if (isIntersectionShape(s)) {
+    //   const members = s.values.map((v) =>
+    //     serializeCanonicalFingerprint(v, visited),
+    //   );
+    //   visited.delete(s);
+    //   return `x:[${members.sort().join('&')}]`;
+    // }
 
     if (isFunctionShape(s)) {
       const paramsStr = s.parameters
