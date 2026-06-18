@@ -28,7 +28,6 @@ import {
   VALIDATION_MODE_TRIGGERS,
   TRANSFORM_MODE_TRIGGERS,
 } from '../../../shared';
-
 export class TelemetryService {
   // Track all possible sub-command strings as the valid matrix
   private runtimeTriggerNames: readonly string[] = [
@@ -40,6 +39,7 @@ export class TelemetryService {
   private triggerCheckRegEx = new RegExp(
     `\\b(${this.runtimeTriggerNames.join('|').replace(/\./g, '\\.')})\\b`,
   );
+
   private mode: 'audit' | 'studio' = 'audit';
 
   private createTelemetryScanContext(projectRoot: string) {
@@ -52,6 +52,7 @@ export class TelemetryService {
     const baseIncludePath = configMatrix.includePatterns[0] ?? '';
     const cleanDirName = baseIncludePath.replace('/**/*', '').replace('/*', '');
     const targetDir = fsContext.resolvePath(cleanDirName || '.');
+
     return {
       counters,
       seenKeys,
@@ -94,20 +95,17 @@ export class TelemetryService {
   }
 
   /**
-   * COUNTS SUB-METHOD INSTANCES
+   * COUNTS SUB-METHOD INSTANCES - AUDIT ONLY
    * Matches lines containing instances like xalor.guard<"KEY"> or xalor.guard("KEY")
    */
   private countAPIMethodUsage(params: TAPIModeCounter) {
     const { sanitizedFileString, counters } = params;
-
     for (const strategyToken of this.runtimeTriggerNames) {
-      // Captures things like: xalor.guard<"MY_KEY"> or xalor.guard("MY_KEY")
       const escapedToken = strategyToken.replace(/\./g, '\\.');
       const contextualRegex = new RegExp(
         `\\b${escapedToken}\\b(?:<|\\()\\s*['"][^'"]+['"]`,
         'g',
       );
-
       const segments = sanitizedFileString.split(contextualRegex);
       const matchesCount = segments.length - 1;
       if (matchesCount > 0) {
@@ -119,6 +117,9 @@ export class TelemetryService {
     }
   }
 
+  /**
+   * COMPILES STUDIO MAPPER WITH FREQUENCY COUNTS - STUDIO ONLY
+   */
   private studioAPIUsageCompile(params: TAPIStudioModeCounter) {
     const { sanitizedFileString, counters, apiUsageCollectionMap } = params;
     const capturedCalls = this.scanAndExtractAPICalls(sanitizedFileString);
@@ -128,19 +129,28 @@ export class TelemetryService {
         counters[call.strategyToken]++;
       }
 
+      // Initialize with counter record objects instead of unique item Sets
       if (!apiUsageCollectionMap.has(call.targetKey)) {
         apiUsageCollectionMap.set(call.targetKey, {
-          generatorXalor: new Set<string>(),
-          validationXalor: new Set<string>(),
-          transformXalor: new Set<string>(),
+          generatorXalor: {},
+          validationXalor: {},
+          transformXalor: {},
         });
       }
 
       const contractMap = apiUsageCollectionMap.get(call.targetKey);
       if (contractMap && call.apiMode in contractMap) {
-        contractMap[call.apiMode].add(call.strategyToken);
+        const modeCounters = contractMap[call.apiMode] as Record<
+          string,
+          number
+        >;
+
+        // Increment frequency count for this specific strategy
+        modeCounters[call.strategyToken] =
+          (modeCounters[call.strategyToken] ?? 0) + 1;
+
         console.log(
-          ` ⚡ STRATEGY LINKED: Key '${call.targetKey}' -> Category '${call.apiMode}' [${call.strategyToken}]`,
+          ` ⚡ STUDIO STRATEGY LINKED: Key '${call.targetKey}' -> Category '${call.apiMode}' [${call.strategyToken}: ${modeCounters[call.strategyToken]}]`,
         );
       }
     }
@@ -157,6 +167,7 @@ export class TelemetryService {
       excludes,
       apiUsageCollectionMap,
     } = params;
+
     const directoryEntries = await fsContext.asyncReadDir(targetDir);
     const { length } = directoryEntries;
 
@@ -164,6 +175,7 @@ export class TelemetryService {
       const entry = directoryEntries[i]!;
       const fileName = entry.name;
       const absoluteFilePath = fsContext.resolvePath(targetDir, fileName);
+
       if (this.isPathExcluded(absoluteFilePath, excludes)) continue;
 
       if (entry.isDirectory()) {
@@ -179,6 +191,7 @@ export class TelemetryService {
       }
 
       if (!isAllowedFileExt(fsContext.getExt(fileName))) continue;
+
       const rawFileString = await fsContext.asyncReadText(absoluteFilePath);
       if (!this.triggerCheckRegEx.test(rawFileString)) continue;
 
@@ -200,6 +213,7 @@ export class TelemetryService {
           seenKeys,
         });
       }
+
       if (this.mode === 'studio') {
         this.studioAPIUsageCompile({
           sanitizedFileString,
@@ -212,7 +226,6 @@ export class TelemetryService {
 
   /**
    * PARSES NEW RUNTIME EXPRESSIONS
-   * Scans for patterns like xalor.assert<"KEY"> or xalor.assert("KEY")
    */
   private scanAndExtractAPICalls(
     sanitizedFileString: string,
@@ -221,7 +234,6 @@ export class TelemetryService {
       .join('|')
       .replace(/\./g, '\\.');
 
-    // Group 1: The precise trigger (e.g. 'xalor.guard'), Group 2: The inner Key payload
     const captureRegex = new RegExp(
       `\\b(${apiTriggersGroup})\\b(?:<|\\()\\s*['"]([^'"]+)['"]`,
       'g',
@@ -229,11 +241,10 @@ export class TelemetryService {
     const matches: TCapturedAPICall[] = [];
 
     for (const matchResultNode of sanitizedFileString.matchAll(captureRegex)) {
-      const strategyToken = matchResultNode[1]!; // e.g. "xalor.guard"
-      const targetKey = matchResultNode[2]!; // e.g. "USER_MODEL"
-      let apiMode: TRuntimeTriggerName = 'validationXalor'; // Default bucket fallback
+      const strategyToken = matchResultNode[1]!;
+      const targetKey = matchResultNode[2]!;
+      let apiMode: TRuntimeTriggerName = 'validationXalor';
 
-      // Map specific sub-commands back into original parent telemetry buckets
       if (isGeneratorTrigger.has(strategyToken)) apiMode = 'generatorXalor';
       else if (isTransformerTrigger.has(strategyToken))
         apiMode = 'transformXalor';
@@ -245,18 +256,19 @@ export class TelemetryService {
     return matches;
   }
 
+  /**
+   * FORMATS CONFIGURED STUDIO DATA ONLY
+   */
   private formatStudioAPICalls(
-    apiUsageCollectionMap: Map<
-      string,
-      Record<TRuntimeTriggerName, Set<string>>
-    >,
+    apiUsageCollectionMap: Map<string, Record<string, Record<string, number>>>,
   ) {
     const apiUsageMap: TDeepWriteable<TStudioApiUsageMap> = Object.create(null);
+
     for (const [key, modes] of apiUsageCollectionMap.entries()) {
       apiUsageMap[key] = {
-        generatorXalor: Array.from(modes.generatorXalor),
-        validationXalor: Array.from(modes.validationXalor),
-        transformXalor: Array.from(modes.transformXalor),
+        generatorXalor: { ...modes.generatorXalor },
+        validationXalor: { ...modes.validationXalor },
+        transformXalor: { ...modes.transformXalor },
       };
     }
     return apiUsageMap;
@@ -268,10 +280,12 @@ export class TelemetryService {
   ): Promise<IXalorAuditPayload['telemetry']> {
     this.mode = mode;
     const telemetryObject = createDefaultAuditTemplate('telemetry');
-    const apiUsageCollectionMap = new Map<
-      string,
-      Record<string, Set<string>>
-    >();
+
+    // Type dynamically map value based on mode to maintain total runtime isolation
+    // TODO: FIX ANY
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const apiUsageCollectionMap = new Map<string, Record<string, any>>();
+
     const registeredKeys = ObjectUtils.keys(vault.references);
     const { counters, seenKeys, targetDir, excludes } =
       this.createTelemetryScanContext(fsContext.projectRoot);
@@ -322,11 +336,15 @@ export class TelemetryService {
         entry.invocationCount = counters[entry.strategyToken] ?? 0;
       }
     }
+
+    // Isolated execution branch for studio compilation tracking
     if (this.mode === 'studio') {
       const apiUsageMap = this.formatStudioAPICalls(apiUsageCollectionMap);
       telemetryObject.studioAPIMapper = apiUsageMap;
     }
+
     return telemetryObject;
   }
 }
+
 export const telemetryService = new TelemetryService();

@@ -149,10 +149,14 @@ export function verifyTypeResolvability(
 
   // 6: Catch Open-Ended Dictionary Signatures Safely
   if ((flags & TypeFlags.Object) !== 0) {
-    if (type.aliasSymbol) {
+    const isNativeArray = checker.isArrayType(type);
+
+    // 🟢 FIXED: We check for recursive loop traps ONLY on authentic non-array
+    // object records or intersections. This completely blocks the array wrapper leak!
+    if (type.aliasSymbol && !isNativeArray) {
       const aliasName = type.aliasSymbol.getName();
       const isRunawayCalculation = isTypeRecursive(type, checker);
-      // If the alias name matches your custom infinite loop tester or a known runaway equation
+
       if (isRunawayCalculation) {
         return {
           /* prettier-ignore */

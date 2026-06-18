@@ -371,7 +371,7 @@ export type TAPIModeCounter = {
 export type TAPIStudioModeCounter = {
   counters: Record<string, number>;
   sanitizedFileString: string;
-  apiUsageCollectionMap: Map<string, Record<TRuntimeTriggerName, Set<string>>>;
+  apiUsageCollectionMap: Map<string, Record<TRuntimeTriggerName, object>>;
 };
 export type TCapturedAPICall = {
   readonly apiMode: string;

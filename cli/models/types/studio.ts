@@ -129,7 +129,7 @@ type TNodeItemMetrics = {
  */
 export type TStudioApiUsageMap = Record<
   string,
-  Record<TRuntimeTriggerName, string[]>
+  Record<TRuntimeTriggerName, Record<string, number>>
 >;
 
 /**
@@ -157,7 +157,7 @@ export type TStudioNodeItem = {
   readonly blueprintId: string;
   readonly dataShape: string;
   readonly metrics: TNodeItemMetrics;
-  readonly apisUsed: Record<TRuntimeTriggerName, string[]>;
+  readonly apisUsed: Record<TRuntimeTriggerName, Record<string, number>>;
 };
 
 // ======================================================================================================

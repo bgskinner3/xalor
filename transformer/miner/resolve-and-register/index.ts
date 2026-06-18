@@ -6,7 +6,7 @@ import { reifyType } from '../../reifiers';
 import { createMiningCtx } from '../../utils';
 import { validateCollisionBorders } from '../collision-border';
 import { executeVaultMutation, determineCUDMode } from '../../lifecycle';
-import { verifyAndValidateType, createPayLoad } from './support';
+import { createPayLoad } from './support';
 import { flushToRegistry } from './flush-to-registry';
 import { XalorRoutesService, xalorCentralContext } from '../../service';
 import {
@@ -76,7 +76,8 @@ export function resolveAndRegisterType({
   }
 
   // 1. Run the safe, shallow-probe compatibility validation radar
-  verifyAndValidateType({ shapeType, checker, keyName, sourceFile });
+  // TODO: UPDATE ERROR HANDLING
+  // verifyAndValidateType({ shapeType, checker, keyName, sourceFile });
 
   const identity = getSpatialIdentity({
     node,

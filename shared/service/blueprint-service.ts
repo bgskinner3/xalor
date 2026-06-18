@@ -38,11 +38,6 @@ class BlueprintService {
       if (!isPrimitiveShape(shape)) return 'unknown';
       return shape.type;
     },
-    // literal: (params) => {
-    //   const val = params.shape.value;
-    //   if (isUndefined(val)) return 'unknown';
-    //   return isString(val) ? `'${val}'` : String(val);
-    // },
     literal: (params: TRebuildParams) => {
       const { shape } = params;
       if (!isLiteralShape(shape)) return 'unknown';
