@@ -5,8 +5,22 @@ export type TRebuildParams = {
   readonly pool: Record<string, TSolidShape> | Map<string, TSolidShape>;
   readonly depth: number;
   readonly spacing: string;
+  // 🟢 FIXED: All strategy methods accept the vertical tracing memory set contract natively
+  readonly visited: Set<string>;
 };
 
 export type TRebuildStrategy = (params: TRebuildParams) => string;
 
-export type TRebuildShapeMapper = Record<TSolidShape['kind'], TRebuildStrategy>;
+/**
+ * 🧱 TRebuildShapeMapper — Exhaustive Polymorphic Contract Dictionary
+ * Enforces that every single shape kind is explicitly represented point-free.
+ */
+export type TRebuildShapeMapper = {
+  [K in TSolidShape['kind']]: (params: {
+    readonly shape: Extract<TSolidShape, { kind: K }>;
+    readonly pool: Record<string, TSolidShape> | Map<string, TSolidShape>;
+    readonly depth: number;
+    readonly spacing: string;
+    readonly visited: Set<string>;
+  }) => string;
+};

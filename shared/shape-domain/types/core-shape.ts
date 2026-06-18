@@ -16,19 +16,28 @@ import type { TDetermineInstance } from '../../types';
 // ===============================================================
 // INSTANCE CONSTANTS
 // ===============================================================
-/* prettier-ignore */ export type InstanceCategory = (typeof INSTANCE_CATEGORIES)[keyof typeof INSTANCE_CATEGORIES];
 
-/* prettier-ignore */ export type InstanceRegistryKey = keyof typeof INSTANCE_REGISTRY_MAPPER;
+/* prettier-ignore */
+export type InstanceCategory = (typeof INSTANCE_CATEGORIES)[keyof typeof INSTANCE_CATEGORIES];
 
-/* prettier-ignore */ export type TSolidShapeKinds = keyof typeof IS_SOLID_SHAPE_KINDS_CONFIG;
+/* prettier-ignore */
+export type InstanceRegistryKey = keyof typeof INSTANCE_REGISTRY_MAPPER;
 
-/* prettier-ignore */ export type TSolidShapePrimitiveKeys = (typeof SOLID_SHAPE_PRIMITIVE_KEYS)[number];
+/* prettier-ignore */
+export type TSolidShapeKinds = keyof typeof IS_SOLID_SHAPE_KINDS_CONFIG;
 
-/* prettier-ignore */ export type TSolidShapeLiteralKeys = (typeof SOLID_SHAPE_LITERAL_KEYS)[number];
+/* prettier-ignore */
+export type TSolidShapePrimitiveKeys = (typeof SOLID_SHAPE_PRIMITIVE_KEYS)[number];
 
-/* prettier-ignore */ type TRegistryMap = typeof INSTANCE_REGISTRY_MAPPER;
+/* prettier-ignore */
+export type TSolidShapeLiteralKeys = (typeof SOLID_SHAPE_LITERAL_KEYS)[number];
 
-/* prettier-ignore */ export type TRegisteredInstancesUnion = ReturnType<TRegistryMap[keyof TRegistryMap]['def']>;
+/* prettier-ignore */
+export type TRegistryMap = typeof INSTANCE_REGISTRY_MAPPER;
+
+/* prettier-ignore */
+export type TRegisteredInstancesUnion = ReturnType<TRegistryMap[keyof TRegistryMap]['def']>;
+
 // ===============================================================
 // ===============================================================
 // 🔷 AST CORE TYPE DEFINITIONS
@@ -70,7 +79,7 @@ export type TInstanceConstructorRegistry = {
 /** @see {@link GlobalRootTypeDocs.TSolidShape} */
 export type TSolidShape =
   | /* prettier-ignore */ { readonly kind: 'primitive'; readonly type: TSolidShapePrimitiveKeys; readonly maxLength?: number; }
-  | /* prettier-ignore */ { readonly kind: 'literal'; readonly type: 'string' | 'number' | 'boolean'; readonly value: string | number | boolean; }
+  | /* prettier-ignore */ { readonly kind: 'literal'; readonly type: TSolidShapeLiteralKeys; readonly value: string | number | boolean; }
   | /* prettier-ignore */ { readonly kind: 'union'; readonly values: readonly TSolidShape[]; }
   | /* prettier-ignore */ { readonly kind: 'intersection'; readonly values: readonly TSolidShape[]; }
   | /* prettier-ignore */ { readonly kind: 'object'; readonly properties: Readonly<Record<string, TSolidObjectRawShape>>; }
