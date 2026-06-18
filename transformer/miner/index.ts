@@ -87,7 +87,6 @@ export function theMiner({
         checker,
       });
 
-      // Rewrite the AST call structure to physically inject the metadata arguments into your bundle
       /* prettier-ignore */
       const updatedCall = solidVisitorProcessor({ node, sourceFile, factory, target, shape });
 

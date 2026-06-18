@@ -1,4 +1,4 @@
-import { computeStringHash } from '../../shared/utils';
+import { computeStableShapeHash } from '../../shared/utils';
 import type {
   TSolidObjectRawShape,
   TSolidShape,
@@ -42,46 +42,38 @@ export const EXTRACT_SHAPE_NORMALIZERS: TShapeNormalizerMapper = {
       ...shape,
       properties: normalizedProps,
     };
-    const rawStr = JSON.stringify(cleanObjectShape);
-    const objectHash = computeStringHash(rawStr);
+
+    const objectHash = computeStableShapeHash(cleanObjectShape);
     flatPool[objectHash] = cleanObjectShape;
     return { kind: 'reference', name: objectHash };
   },
-
   array: (shape, flatPool, recurse) => {
     const baseNormalized = {
       ...shape,
       items: recurse(shape.items, flatPool),
     };
-
     if (shape.elementShapes) {
-      baseNormalized.elementShapes = shape.elementShapes.map((element) =>
-        recurse(element, flatPool),
-      );
+      return {
+        ...baseNormalized,
+        elementShapes: shape.elementShapes.map((element) =>
+          recurse(element, flatPool),
+        ),
+      };
     }
-
     return baseNormalized;
   },
-
   union: (shape, flatPool, recurse) => ({
     ...shape,
     values: shape.values.map((v) => recurse(v, flatPool)),
   }),
-
-  branded: (shape, flatPool, recurse) => ({
-    ...shape,
-    base: recurse(shape.base, flatPool),
-  }),
-
-  primitive: (shape) => shape,
-  literal: (shape) => shape,
-  reference: (shape) => shape,
-  instanceof: (shape) => shape,
   intersection: (shape, flatPool, recurse) => ({
     ...shape,
     values: shape.values.map((v) => recurse(v, flatPool)),
   }),
-
+  branded: (shape, flatPool, recurse) => ({
+    ...shape,
+    base: recurse(shape.base, flatPool),
+  }),
   function: (shape, flatPool, recurse) => ({
     ...shape,
     parameters: shape.parameters.map((param) => ({
@@ -90,7 +82,12 @@ export const EXTRACT_SHAPE_NORMALIZERS: TShapeNormalizerMapper = {
     })),
     returnType: recurse(shape.returnType, flatPool),
   }),
+  primitive: (shape) => shape,
+  literal: (shape) => shape,
+  reference: (shape) => shape,
+  instanceof: (shape) => shape,
 } satisfies TShapeNormalizerMapper;
+
 /**
  * ============================================================================
  * RUNTIME DECODE MAP: BUILD SHAPE INFLATORS
@@ -114,40 +111,47 @@ export const EXTRACT_SHAPE_NORMALIZERS: TShapeNormalizerMapper = {
  */
 export const BUILD_SHAPE_INFLATORS: TShapeInflatorMapper = {
   reference: (shape, blueprintsPool, recurse, seen) => {
-    if (Reflect.has(blueprintsPool, shape.name)) {
-      // Direct string-identifier lookup check
-      if (seen.has(shape.name)) {
-        return seen.get(shape.name)!;
+    const targetHashKey = shape.name;
+
+    if (Reflect.has(blueprintsPool, targetHashKey)) {
+      if (seen.has(targetHashKey)) {
+        return seen.get(targetHashKey)!;
       }
-      // Pass the blueprintsPool explicitly back into the recursion stream
-      return recurse(blueprintsPool[shape.name], blueprintsPool);
+
+      // Forward the active target hash key identifier natively down the recursion stream
+      return recurse(
+        blueprintsPool[targetHashKey],
+        blueprintsPool,
+        targetHashKey,
+      );
     }
+
     return shape;
   },
 
-  object: (shape, blueprintsPool, recurse, seen) => {
+  object: (shape, blueprintsPool, recurse, seen, activeHashKey) => {
     const inflatedProps: Record<string, TSolidObjectRawShape> = {};
     const proxyStub: TSolidShape = { ...shape, properties: inflatedProps };
 
-    const targetHash = Object.keys(blueprintsPool).find(
-      (hash) => blueprintsPool[hash] === shape,
-    );
-
-    if (targetHash) {
-      seen.set(targetHash, proxyStub);
+    // Constant-time O(1) tracking assignment using the inherited tracking string parameter context
+    if (activeHashKey !== undefined) {
+      seen.set(activeHashKey, proxyStub);
     }
+
     for (const key in shape.properties) {
       if (Reflect.has(shape.properties, key)) {
         const prop = shape.properties[key];
         inflatedProps[key] = {
           ...prop,
-          shape: recurse(prop.shape, blueprintsPool),
+          shape: recurse(prop.shape, blueprintsPool, undefined),
         };
       }
     }
-    if (targetHash) {
-      seen.delete(targetHash);
+
+    if (activeHashKey !== undefined) {
+      seen.delete(activeHashKey);
     }
+
     return proxyStub;
   },
 
@@ -157,10 +161,13 @@ export const BUILD_SHAPE_INFLATORS: TShapeInflatorMapper = {
       items: recurse(shape.items, blueprintsPool),
     };
 
-    if (shape.elementShapes) {
-      baseInflated.elementShapes = shape.elementShapes.map((element) =>
-        recurse(element, blueprintsPool),
-      );
+    if (shape.elementShapes !== undefined) {
+      return {
+        ...baseInflated,
+        elementShapes: shape.elementShapes.map((element) =>
+          recurse(element, blueprintsPool),
+        ),
+      };
     }
 
     return baseInflated;
@@ -176,17 +183,6 @@ export const BUILD_SHAPE_INFLATORS: TShapeInflatorMapper = {
     base: recurse(shape.base, blueprintsPool),
   }),
 
-  primitive: (shape) => shape,
-  literal: (shape) => shape,
-  /* CHANGE #3 — IMPORTANT CLARIFICATION */
-  instanceof: (shape) => {
-    // intentionally no resolution here
-    // inflator remains structural-only
-    // !!! inflator does NOT ask “what does this mean?”
-    return shape;
-  },
-
-  /* CHANGE #4 — unchanged, correct recursive structure */
   intersection: (shape, blueprintsPool, recurse, _seen) => ({
     ...shape,
     values: shape.values.map((v) => recurse(v, blueprintsPool)),
@@ -200,4 +196,14 @@ export const BUILD_SHAPE_INFLATORS: TShapeInflatorMapper = {
     })),
     returnType: recurse(shape.returnType, blueprintsPool),
   }),
+
+  // Terminal scalar shapes require no recursive unboxing passes—return cleanly unchanged
+  primitive: (shape) => shape,
+  literal: (shape) => shape,
+  instanceof: (shape) => {
+    // intentionally no resolution here
+    // inflator remains structural-only
+    // !!! inflator does NOT ask “what does this mean?”
+    return shape;
+  },
 } satisfies TShapeInflatorMapper;

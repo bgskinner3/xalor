@@ -1,5 +1,6 @@
 // transformer/miner/interning.ts
 import type { TSolidShape } from '../../shared';
+import { computeStableShapeHash } from '../../shared';
 /**
  * SHAPE FINGERPRINTS
  * A private cache that stores unique structures.
@@ -9,14 +10,34 @@ import type { TSolidShape } from '../../shared';
 const shapeCache = new Map<string, TSolidShape>();
 
 export function internShape(shape: TSolidShape): TSolidShape {
-  const fingerprint = JSON.stringify(shape);
+  // FIX GAUNTLET: We eliminate JSON.stringify entirely from the evaluation pipeline.
+  // We invoke our canonical bitwise fingerprinter which possesses built-in circular-reference shielding.
+  const stableHashKey = computeStableShapeHash(shape);
 
-  const existing = shapeCache.get(fingerprint);
-
+  const existing = shapeCache.get(stableHashKey);
   if (existing) {
     return existing;
   }
 
-  shapeCache.set(fingerprint, shape);
+  shapeCache.set(stableHashKey, shape);
   return shape;
 }
+
+/**
+ *
+ *
+ *
+ * TODO: REMOVE
+ */
+// export function internShape(shape: TSolidShape): TSolidShape {
+//   const fingerprint = JSON.stringify(shape);
+
+//   const existing = shapeCache.get(fingerprint);
+
+//   if (existing) {
+//     return existing;
+//   }
+
+//   shapeCache.set(fingerprint, shape);
+//   return shape;
+// }

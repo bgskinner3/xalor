@@ -37,8 +37,10 @@ export type TShapeInflatorMapper = {
     recurse: (
       s: TSolidShape,
       pool?: Record<string, TSolidShape>,
+      activeHashKey?: string,
     ) => TSolidShape,
     // 🧠 SYSTEM ANCHOR: Tracks current cyclic parent addresses up the call stack frame
     seen: Map<string, TSolidShape>,
+    activeHashKey?: string,
   ) => TSolidShape;
 };

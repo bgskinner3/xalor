@@ -201,6 +201,12 @@ export function generateShapeAST(
   }
 
   if (isReferenceShape(shape)) {
+    // if (shape.name.startsWith('lazy:')) {
+    //   return f.createObjectLiteralExpression([
+    //     f.createPropertyAssignment('kind', f.createStringLiteral('reference')),
+    //     f.createPropertyAssignment('name', f.createStringLiteral(shape.name)),
+    //   ]);
+    // }
     return f.createObjectLiteralExpression([
       f.createPropertyAssignment('kind', f.createStringLiteral('reference')),
       f.createPropertyAssignment('name', f.createStringLiteral(shape.name)),

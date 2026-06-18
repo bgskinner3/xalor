@@ -19,7 +19,6 @@ export const PROCESSOR_REWRITE_MAPPER: TProcessorRewriteMap = {
   // ========================================================================
   // REGISTRATION
   // ========================================================================
-
   'xalor.register': (raw, node, factory, areaString, shape) => {
     if (!raw || !shape) return [...node.arguments];
 
@@ -73,3 +72,37 @@ export const PROCESSOR_REWRITE_MAPPER: TProcessorRewriteMap = {
   /* prettier-ignore */
   'xalor.flatten':    (raw, node, factory) => formatTransformationArgs('flatten', raw, node, factory),
 } satisfies TProcessorRewriteMap;
+
+/**
+ *
+ *
+ *
+ * TODO: REVIEW
+ */
+
+// 'xalor.register': (raw, node, factory, areaString, shape) => {
+//   if (!raw || !shape) return [...node.arguments];
+
+//   const metadataExpression = factory.createObjectLiteralExpression([
+//     /* prettier-ignore */
+//     factory.createPropertyAssignment('key', factory.createStringLiteral(raw.keyName)),
+//     /* prettier-ignore */
+//     factory.createPropertyAssignment('area', factory.createStringLiteral(areaString ?? '')),
+//     /* prettier-ignore */
+//     factory.createPropertyAssignment('version', factory.createStringLiteral(IS_SOLID_CONFIG_ITEMS.solidVersion)),
+//     /* prettier-ignore */
+//     factory.createPropertyAssignment('shape', generateShapeAST(factory, shape)),
+//   ]);
+
+//   // 🟢 FIXED: If a runtime argument exists, we replace it with a clean nominal string
+//   // key placeholder or flat primitive descriptor. This completely severs all ties
+//   // between the output file code and recursive standard library parameters!
+//   if (node.arguments.length > 0) {
+//     return [
+//       factory.createStringLiteral(`OpaqueRuntimePayload:${raw.keyName}`),
+//       metadataExpression,
+//     ];
+//   }
+
+//   return [metadataExpression];
+// },

@@ -65,6 +65,6 @@ export type TSentryTriggerNames =
 export type TRuntimeTriggerName =
   (typeof constants.RUNTIME_TRIGGER_NAMES)[number];
 
-export type TMatchTriggers = (typeof constants.MATCH_MODES)[number];
+// export type TMatchTriggers = (typeof constants.MATCH_MODES)[number];
 
-export type TMatchXalorModes = (typeof constants.MATCH_MODES)[number];
+// export type TMatchXalorModes = (typeof constants.MATCH_MODES)[number];

@@ -5,15 +5,15 @@ import type {
   TDeepKeyOf,
   TDeepMerge,
   TRecursiveReadonly,
-  TRecursivePartial,
-  TPrettify,
-  TDeepWriteable,
+  // TRecursivePartial,
+  // TPrettify,
+  // TDeepWriteable,
 } from '../../../shared';
 import type {
   TGeneratorXalorModes,
   TValidationXalorModes,
   TTransformXalorModes,
-  TMatchXalorModes,
+  // TMatchXalorModes,
 } from '../../../shared';
 
 // ====================================================================
@@ -217,23 +217,23 @@ export type TMax8CompositeKeys =
 // ====================================================================
 // ====================================================================
 /* prettier-ignore */
-export type TMatchXalorResultMap<SingleKey extends keyof ISolidRegistry, CompositeKeys extends TMax8CompositeKeys> = {
-  readonly composite: ResolveCompositeIntersection<CompositeKeys>;
-  readonly reduce: TDeepWriteable<ISolidRegistry[SingleKey]>;
-  readonly intent: TPrettify<ISolidRegistry[SingleKey]>;
-  readonly drift: TPrettify<TRecursivePartial<ISolidRegistry[SingleKey]>>;
-};
-/* prettier-ignore */
-export type TMatchXalorReturn<
-  K extends keyof ISolidRegistry,
-  M extends TMatchXalorModes,
-  CompositeKeys extends TMax8CompositeKeys = readonly [],
-> = TMatchXalorResultMap<K,M extends 'composite' ? CompositeKeys : readonly []>[M];
+// export type TMatchXalorResultMap<SingleKey extends keyof ISolidRegistry, CompositeKeys extends TMax8CompositeKeys> = {
+//   readonly composite: ResolveCompositeIntersection<CompositeKeys>;
+//   readonly reduce: TDeepWriteable<ISolidRegistry[SingleKey]>;
+//   readonly intent: TPrettify<ISolidRegistry[SingleKey]>;
+//   readonly drift: TPrettify<TRecursivePartial<ISolidRegistry[SingleKey]>>;
+// };
+// /* prettier-ignore */
+// export type TMatchXalorReturn<
+//   K extends keyof ISolidRegistry,
+//   M extends TMatchXalorModes,
+//   CompositeKeys extends TMax8CompositeKeys = readonly [],
+// > = TMatchXalorResultMap<K,M extends 'composite' ? CompositeKeys : readonly []>[M];
 
-/* prettier-ignore */
-export type TMatchStrategyEngine<K extends keyof ISolidRegistry,CompositeKeys extends TMax8CompositeKeys = readonly []> = {
-  readonly [Mode in TMatchXalorModes]: (
-    key: Mode extends 'composite' ? CompositeKeys : K,
-    payload: unknown,
-  ) => TMatchXalorResultMap<Mode extends 'composite' ? never : K,Mode extends 'composite' ? CompositeKeys : readonly []>[Mode];
-};
+// /* prettier-ignore */
+// export type TMatchStrategyEngine<K extends keyof ISolidRegistry,CompositeKeys extends TMax8CompositeKeys = readonly []> = {
+//   readonly [Mode in TMatchXalorModes]: (
+//     key: Mode extends 'composite' ? CompositeKeys : K,
+//     payload: unknown,
+//   ) => TMatchXalorResultMap<Mode extends 'composite' ? never : K,Mode extends 'composite' ? CompositeKeys : readonly []>[Mode];
+// };

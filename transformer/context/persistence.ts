@@ -2,7 +2,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared/constants';
-import { isReferenceShape, computeStringHash } from '../../shared';
+import { isReferenceShape, computeStableShapeHash } from '../../shared';
 import type { TVaultSyncPayload, TTripleKV, TSolidShape } from '../../shared';
 import { extractAndNormalizeShape } from '../utils';
 import { XalorRoutesService, xalorCentralContext } from '../service';
@@ -44,6 +44,8 @@ export function buildSnapshotFromRegistry(
 
   registry.forEach((meta, key) => {
     const { shape, area, anchor, symbolName, typeName } = meta;
+
+    // Normalize multi-OS file markers to standard forward slashes cleanly
     const filePath = path
       .relative(rootDir, meta.filePath)
       .split(path.sep)
@@ -54,9 +56,16 @@ export function buildSnapshotFromRegistry(
       snapshot.blueprints,
     );
 
-    const targetReferenceString = isReferenceShape(pointerReference)
-      ? pointerReference.name
-      : internAndRegisterShape(shape, snapshot.blueprints);
+    let targetReferenceString: string;
+
+    if (isReferenceShape(pointerReference)) {
+      targetReferenceString = pointerReference.name;
+    } else {
+      targetReferenceString = internAndRegisterShape(
+        pointerReference,
+        snapshot.blueprints,
+      );
+    }
 
     snapshot.references[key] = targetReferenceString;
     snapshot.manifest[key] = { area, filePath, anchor };
@@ -82,9 +91,7 @@ export function internAndRegisterShape(
   shape: TSolidShape,
   blueprints: Record<string, TSolidShape>,
 ): string {
-  const serializedString = JSON.stringify(shape);
-
-  const uniqueStructuralHash = computeStringHash(serializedString);
+  const uniqueStructuralHash = computeStableShapeHash(shape);
 
   blueprints[uniqueStructuralHash] = shape;
 
@@ -137,3 +144,129 @@ export async function serializeAndFlushVault(rootDir: string): Promise<void> {
     });
   }
 }
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * TODO REMVOEW
+ */
+// export function buildSnapshotFromRegistry(
+//   rootDir: string,
+//   registry: Map<string, TVaultSyncPayload>,
+// ): TTripleKV {
+//   const snapshot: TTripleKV = {
+//     blueprints: {},
+//     references: {},
+//     manifest: {},
+//     registry: {},
+//     version: IS_SOLID_CONFIG_ITEMS.solidVersion,
+//   } satisfies TTripleKV;
+
+//   registry.forEach((meta, key) => {
+//     const { shape, area, anchor, symbolName, typeName } = meta;
+//     const filePath = path
+//       .relative(rootDir, meta.filePath)
+//       .split(path.sep)
+//       .join('/');
+
+//     const pointerReference = extractAndNormalizeShape(
+//       shape,
+//       snapshot.blueprints,
+//     );
+
+//     const targetReferenceString = isReferenceShape(pointerReference)
+//       ? pointerReference.name
+//       : internAndRegisterShape(shape, snapshot.blueprints);
+
+//     snapshot.references[key] = targetReferenceString;
+//     snapshot.manifest[key] = { area, filePath, anchor };
+//     snapshot.registry[key] = { symbolName, typeName };
+//   });
+
+//   return snapshot;
+// }
+// /**
+//  * internAndRegisterShape
+//  * THE BLUCPRINT INTERNING MACHINE
+//  *
+//  * ROLE:
+//  * Generates a deterministic content-addressed identifier token for a raw
+//  * structural shape layout and caches it securely in the blueprints collection vault.
+//  *
+//  * WHY:
+//  * Satisfies Commandment VIII (Internal Efficiency). By operating as a pure,
+//  * stateless function, it eliminates the heap closure allocation costs of inline
+//  * IIFEs during intensive development watch-mode compilation passes.
+//  */
+// export function internAndRegisterShape(
+//   shape: TSolidShape,
+//   blueprints: Record<string, TSolidShape>,
+// ): string {
+//   const serializedString = JSON.stringify(shape);
+
+//   const uniqueStructuralHash = computeStringHash(serializedString);
+
+//   blueprints[uniqueStructuralHash] = shape;
+
+//   return uniqueStructuralHash;
+// }
+
+// /**
+//  * THE ATOMIC CHANGE SHIELD
+//  * Compares incoming bytes against current disk storage to intercept redundant mutations.
+//  */
+// function shouldWritePayload(
+//   targetVaultFile: string,
+//   newJsonString: string,
+// ): boolean {
+//   if (!fs.existsSync(targetVaultFile)) {
+//     return true;
+//   }
+
+//   const existingDiskBytes = fs.readFileSync(targetVaultFile, 'utf8');
+//   return existingDiskBytes !== newJsonString;
+// }
+// /**
+//  * PURE VAULT SNAPSHOT SERIALIZER
+//  *
+//  * ROLE:
+//  * Master orchestration block coordinating the final memory-to-disk cache serialization.
+//  */
+// export async function serializeAndFlushVault(rootDir: string): Promise<void> {
+//   const { globalKeyRegistry } = xalorCentralContext.context;
+//   const paths = XalorRoutesService.resolveXalorPaths(rootDir);
+
+//   const snapshot = buildSnapshotFromRegistry(rootDir, globalKeyRegistry);
+//   const newJsonPayload = JSON.stringify(snapshot, null, 2);
+
+//   try {
+//     if (!fs.existsSync(paths.cacheDir)) {
+//       fs.mkdirSync(paths.cacheDir, { recursive: true });
+//     }
+
+//     if (!shouldWritePayload(paths.vaultFile, newJsonPayload)) return;
+
+//     await fs.promises.writeFile(paths.vaultFile, newJsonPayload, 'utf-8');
+//   } catch (error: unknown) {
+//     const mode = XalorRoutesService.xalorCLIMode();
+//     TransformerReportService.logAnomaly({
+//       keyName: 'VAULT_FLUSH_IO_FAULT',
+//       fileLocation: paths.vaultFile,
+//       error,
+//       mode: mode,
+//     });
+//   }
+// }

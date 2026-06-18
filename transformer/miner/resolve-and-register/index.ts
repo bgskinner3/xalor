@@ -46,7 +46,6 @@ export function resolveAndRegisterType({
     const errorDetails =
       'Compiler intercepted un-serializable property structures (functions, raw symbols, or private internal prefixes).';
 
-    // 🟢 FIXED: Pass 'keyName' explicitly down to retain "STRESS_PURITY_REJECTION" on your terminal screen!
     TransformerReportService.logAnomaly({
       keyName: 'REGISTRATION_REJECTED_BREACH',
       fileLocation: sourceFile.fileName,
@@ -63,8 +62,6 @@ export function resolveAndRegisterType({
         errorDetails,
       );
 
-      // 🟢 FIXED: Pass the fully-compiled message panel string straight down into the constructor slot,
-      // completely matching the structural V8 syntax line contract to obliterate the array brackets!
       throw new XalorInvalidTypeError(
         keyName, // Retains your actual code UUID key token natively
         sourceFile.fileName,
@@ -97,9 +94,7 @@ export function resolveAndRegisterType({
   const shape: TSolidShape = reifyType({ type: shapeType, checker, ctx });
 
   // ========================================================================
-  // 🪐 PROTECTION LAYER 2: POST-REIFICATION DATA STRUCTURAL VERIFICATION
-  // 🟢 FIXED: Implemented here! Sweeps the fully unrolled JSON tree to catch
-  // hidden deep structural unknowns before any payload objects are created.
+  // 🪐 PROTECTION LAYER 2: POST-REIFICATION DATA STRUCTURAL VERIFICATION.
   // ========================================================================
   if (!isTypeContractResolvabilityPure(shape)) {
     const errorDetails =
@@ -120,7 +115,6 @@ export function resolveAndRegisterType({
         errorDetails,
       );
 
-      // 🟢 FIXED: Pass the fully-compiled message panel string straight down into the constructor slot!
       throw new XalorInvalidTypeError(
         keyName,
         sourceFile.fileName,

@@ -8,12 +8,12 @@
       "links": {
         "docs": {
           "text": "Explore docs",
-          "active": false,
+          "active": true,
           "href": "/xalor/docs"
         },
         "getStarted": {
           "text": "Get Started",
-          "active": false,
+          "active": true,
           "href": "/xalor/docs/getting-started"
         },
         "playground": {
