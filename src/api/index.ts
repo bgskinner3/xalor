@@ -1,14 +1,9 @@
 // /src/api/index.ts
 import type { TTypeGuard, TSolidBranded } from '../../shared';
 import { isRegistryKey, assertRegistryKey } from '../../shared';
-import type {
-  TFlattenDataContext,
-  TMergeContext,
-  TPickOmitContext,
-} from '../models/types';
+import type { IXalorMergeContext } from '../models/types';
 import { registerXalor } from './register';
-import { generateXalor } from './generate-xalor';
-import { transformXalor } from './transform';
+import { transformXalorMerge } from './transform';
 import { validateXalorGuard, validateXalorParse } from './validate';
 import { generateXalorDefault } from './generate';
 class XalorCore {
@@ -52,11 +47,9 @@ class XalorCore {
   }
   /** @Api validation  @mode parse */
   /* prettier-ignore */ public parse<K extends keyof ISolidRegistry>(data: unknown, _compiledKeyReference?: K): TSolidBranded<K, ISolidRegistry[K]> {
-    const activeKey = _compiledKeyReference;
+    assertRegistryKey(_compiledKeyReference);
 
-    assertRegistryKey(activeKey);
-
-    return validateXalorParse<K>(activeKey, data);
+    return validateXalorParse<K>(_compiledKeyReference, data);
   }
   // ========================================================================
   // ========================================================================
@@ -71,9 +64,9 @@ class XalorCore {
   /** @Api generator  @mode default */
   /* prettier-ignore */
   public default<K extends keyof ISolidRegistry>(_compiledKeyReference?: K): TSolidBranded<K, ISolidRegistry[K]> {
-    const activeKey = _compiledKeyReference;
-    assertRegistryKey(activeKey);
-    return generateXalorDefault<K>(activeKey);
+    assertRegistryKey(_compiledKeyReference);
+
+    return generateXalorDefault<K>(_compiledKeyReference);
   }
   // ========================================================================
   // ========================================================================
@@ -84,35 +77,11 @@ class XalorCore {
   // ========================================================================
   // ========================================================================
   // ========================================================================
-
-  // ========================================================================
-  // ========================================================================
-  // TRANSFORM
-  // ========================================================================
-  // ========================================================================
-
-  /** @Api transform  @mode pick */
-  /* prettier-ignore */ public pick<K extends keyof ISolidRegistry>(ctx: TPickOmitContext<K>): ISolidRegistry[K];
-  /* prettier-ignore */ public pick<K extends keyof ISolidRegistry>(ctx: TPickOmitContext<K>,injectedKey?: K,mode?: 'pick'): ISolidRegistry[K] {
-    return transformXalor<K, 'pick'>(injectedKey!, mode!, ctx);
-  }
-
-  /** @Api transform  @mode omit */
-  /* prettier-ignore */ public omit<K extends keyof ISolidRegistry>(ctx: TPickOmitContext<K>): ISolidRegistry[K];
-  /* prettier-ignore */ public omit<K extends keyof ISolidRegistry>(ctx: TPickOmitContext<K>,injectedKey?: K,mode?: 'omit'): ISolidRegistry[K] {
-    return transformXalor<K, 'omit'>(injectedKey!, mode!, ctx);
-  }
-
   /** @Api transform  @mode merge */
-  /* prettier-ignore */ public merge<K extends keyof ISolidRegistry>(ctx: TMergeContext): ISolidRegistry[K];
-  /* prettier-ignore */ public merge<K extends keyof ISolidRegistry>(ctx: TMergeContext,injectedKey?: K,mode?: 'merge'): ISolidRegistry[K] {
-    return transformXalor<K, 'merge'>(injectedKey!, mode!, ctx);
-  }
+  /* prettier-ignore */ public merge<K extends keyof ISolidRegistry>(ctx: IXalorMergeContext<ISolidRegistry[K]>, _compiledKeyReference?: K): TSolidBranded<K, ISolidRegistry[K]> {
+    assertRegistryKey(_compiledKeyReference);
 
-  /** @Api transform  @mode flatten */
-  /* prettier-ignore */ public flatten<_K extends keyof ISolidRegistry>(ctx: TFlattenDataContext): Record<string, string | number | boolean>;
-  /* prettier-ignore */ public flatten<K extends keyof ISolidRegistry>(ctx: TFlattenDataContext,injectedKey?: K,mode?: 'flatten'): Record<string, string | number | boolean> {
-    return transformXalor<K, 'flatten'>(injectedKey!, mode!, ctx);
+    return transformXalorMerge<K>(_compiledKeyReference, ctx);
   }
 }
 

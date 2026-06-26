@@ -104,7 +104,7 @@ function mergeHelper<T extends Record<string, unknown>>(
  * @param {T[]} sources - An array of objects to merge.
  * @returns {T | Record<string, never>} A new object containing the merged result.
  */
-export function mergeDeepArray<T extends Record<string, unknown>>(
+function mergeDeepArray<T extends Record<string, unknown>>(
   sources: T[],
 ): T | Record<string, never> {
   const first = sources[0];

@@ -2,14 +2,16 @@ import type {
   TSolidMetadata,
   TSolidError,
   TSolidBranded,
-  TSolidShape,
+
+  // TSolidShape,
 } from '../../shared';
-import { pickPredicateExecutioner, omitPredicateExecutioner } from '../utils';
 import { XalethorVaultKeeper } from './vault-keeper';
 import { XalethorVaultValidator } from './vault-validator';
 import { XalethorVaultAuditor } from './vault-auditor';
 import { XalethorVaultGenerator } from './vault-generator';
-import { XalethorVaultTransformer } from './vault-transformer';
+import { XalethorVaultTransform } from './vault-transform';
+import type { IXalorMergeContext } from '../models/types/operations';
+// import { XalethorVaultTransformer } from './vault-transformer';
 
 export class XalethorService {
   // ============================================================
@@ -108,33 +110,11 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   // ============================================================
-  public static executePickSanitizer<K extends keyof ISolidRegistry>(
-    data: unknown,
-    shape: TSolidShape,
-    set: Set<string>,
-  ): ISolidRegistry[K] {
-    /* prettier-ignore */ return XalethorVaultTransformer.transformPickAndOmit<K>({data,shape,filterSet: set,predicate: pickPredicateExecutioner, mode:'pick'});
-  }
-  public static executeOmitSanitizer<K extends keyof ISolidRegistry>(
-    data: unknown,
-    shape: TSolidShape,
-    set: Set<string>,
-  ): ISolidRegistry[K] {
-    /* prettier-ignore */ return XalethorVaultTransformer.transformPickAndOmit<K>({data,shape,filterSet: set,predicate: omitPredicateExecutioner, mode: 'omit'});
-  }
+
   public static executeMergeSanitizer<K extends keyof ISolidRegistry>(
-    dataOne: unknown,
-    dataTwo: unknown,
-    shape: TSolidShape,
-  ): ISolidRegistry[K] {
+    ctx: IXalorMergeContext<ISolidRegistry[K]>,
+  ): unknown {
     /* prettier-ignore */
-    return XalethorVaultTransformer.transformMerge<K>({ dataOne, dataTwo, shape });
-  }
-  public static executeFlattenSanitizer(
-    data: unknown,
-    shape: TSolidShape,
-  ): Record<string, string | number | boolean> {
-    /* prettier-ignore */
-    return XalethorVaultTransformer.transformFlatten({ data, shape });
+    return XalethorVaultTransform.transformMerge<K>(ctx);
   }
 }

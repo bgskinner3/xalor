@@ -1,62 +1,48 @@
 import { XalethorService } from '../../xalor-service';
-import type {
-  TTransformStrategyEngine,
-  TTransformContext,
-  TFlattenDataContext,
-  TMergeContext,
-  TPickOmitContext,
-} from '../../models/types';
-import type { TTransformXalorModes } from '../../../shared/auto';
+import { markAsSolid } from '../../utils';
+import { isRecord } from '../../../shared/utils/guards';
+import type { IXalorMergeContext } from '../../models/types/operations';
+import { BRAND_SYMBOL } from '../../../shared';
 import type { TSolidBranded } from '../../../shared';
 
-export interface IXalorMergeContext<T> {
-  /** The baseline target object graph retrieved from memory, state, or database storage */
-  readonly dataOne: unknown;
-
-  /** The incoming secondary partial delta payload patch containing property overrides */
-  readonly dataTwo: unknown;
-
-  /** Optional: Explicit root-field extraction retention list (Zod-like pick) */
-  readonly pick?: Array<keyof T | string>;
-
-  /** Optional: Root property exclusion pruning list (Zod-like omit) */
-  readonly omit?: Array<keyof T | string>;
-
-  /**
-   * Optional Zod-Style Value Projectors: Intercept and map values dynamically inline.
-   * Enforces strict type tracking over both the incoming value and the surrounding parent graph state.
-   */
-  readonly map?: Partial<{
-    [K in keyof T]: (
-      value: T[K],
-      // 🧠 SAFE LOGICAL REFINEMENT: Replaces 'any' with a deeply read-only partial of T.
-      // Allows safe, type-checked sibling cross-referencing inside user-defined callbacks!
-      parentGraph: Readonly<Partial<T>>,
-    ) => T[K]; // Enforces that the mapper transforms or casts to the valid blueprint type
-  }>;
-}
-
 /**
- * Public function signature contract mapping for transformXalorMerge.
- * Satisfies COMMANDMENT IV (Operation Isolation) and COMMANDMENT IX (Zero Type Escape Hatches).
+ * RUNTIME API: TRANSFORM XALOR MERGE
+ *
+ * Synchronously executes a single-pass deep object mutation. Blends baseline fields
+ * with patch modifications and applies root filters while preserving nominal brand stamps.
+ *
+ * NOTE: Object Two (`ctx.dataTwo`) takes absolute overwrite preference over Object One.
+ *
+ * @see {@link RuntimeApiCoreDocs.transformXalorMerge}
+ *
  */
-export type TTransformMergeSignature = <K extends keyof ISolidRegistry>(
+export function transformXalorMerge<K extends keyof ISolidRegistry>(
   injectedKey: K,
   ctx: IXalorMergeContext<ISolidRegistry[K]>,
-) => TSolidBranded<K, ISolidRegistry[K]>;
-/**
- OPTIONS 
+): TSolidBranded<K, ISolidRegistry[K]> {
+  // 1. Enforce strict parameter presence to protect system boundaries (Commandment V)
+  if (!injectedKey || !ctx) {
+    throw new Error(
+      `[xalor] 🚨 GATEWAY BLOCK: 'transformXalorMerge' executed without compiled metadata properties.\n` +
+        `Ensure your build-time transformer plugin is active.`,
+    );
+  }
+  const activeShape = XalethorService.blueprintVault(injectedKey);
+  if (!activeShape) {
+    throw new Error(
+      `[xalor] 🚨 Transformation failed: Blueprint missing from Vault for key: ${injectedKey}`,
+    );
+  }
 
- omit,
- pick
+  const resultPayload = XalethorService.executeMergeSanitizer(ctx);
 
- map 
+  if (isRecord(resultPayload)) {
+    Reflect.set(resultPayload, BRAND_SYMBOL, ['Solid', injectedKey]);
 
- 
- */
+    if (markAsSolid<K, ISolidRegistry[K]>(resultPayload)) return resultPayload;
+  }
 
-export function transformXalorMerge<
-  K extends readonly (keyof ISolidRegistry)[],
->() {
-  // return typeof [''];
+  throw new Error(
+    `[xalor] 🚨 Evolution layer merge failed structurally for contract key: ${injectedKey}`,
+  );
 }

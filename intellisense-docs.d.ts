@@ -922,7 +922,6 @@ declare global {
     static example(): void;
     static example(): void;
     static example(): void;
-    static example(): void;
 
     // ========================================================================
     // ========================================================================
@@ -1107,6 +1106,68 @@ declare global {
      * @returns {TSolidBranded<K, ISolidRegistry[K]>} An ironclad, nominally-branded, fully-cast primitive or record structure.
      */
     static generateXalorCast(): void;
+
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    // !! CATEGORY 4: THE TRANSFORMATION PILLAR (BLANK-SLATE HYDRATION)
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    /**
+     * @api transformation
+     * @mode merge
+     * @description
+     * Public Category 3 Ingress Gate executing high-velocity, single-pass deep object mutations.
+     * Resolves structural modifications by unrolling baseline graphs (`dataOne`), recursively
+     * overlaying incoming delta patches (`dataTwo`), and applying key selection modifiers natively.
+     *
+     * Enforces a strict, fail-fast boundary circuit breaker that intercepts layout collapse,
+     * hydrates runtime cryptographic tokens onto conforming structures, and drops type anomalies.
+     *
+     * DATA HIERARCHY PREFERENCE MATRIX:
+     * - Object Two (`ctx.dataTwo`) acts as an absolute override patch layer over Object One (`ctx.dataOne`).
+     * - Primitives & Literals: Matching paths inside Object Two flatly overwrite Object One values.
+     * - Objects: Symmetrically steps into nested containers to fuse child nodes instead of wiping graphs.
+     * - Arrays: Combines collection items item-by-item using strict index-aligned layout positioning.
+     * - Null States: Explicit null declarations inside the patch act as deliberate fields nullification payloads.
+     *
+     * GRAPH MANIPULATION ORDER OF OPERATIONS:
+     * - ➊ Ingress Inversion: Combines both graph layers safely via circular-safe utilities.
+     * - ➋ Selection Masks (`pick`): Retains only explicit white-listed keys at depth layer zero.
+     * - ➌ Exclusion Masks (`omit`): Prunes out black-listed property fields from the remaining keys.
+     * - ➍ Value Projectors (`map`): Executes functional mapping callbacks over fully-sanitized fields,
+     *     supplying the completed, masked asset object container context flatly as a parent reference.
+     *
+     * DESIGN INVARIANTS:
+     * - Satisfies COMMANDMENT I & III: Resolves structural contracts exclusively via the pre-compiled Registry.
+     * - Satisfies COMMANDMENT IV: Performs a single, isolated semantic operation (Transformation / Merge).
+     * - Satisfies COMMANDMENT VIII: Zero runtime strategy allocations; tree-shakes fully from client profiles.
+     * - Satisfies COMMANDMENT IX: Zero 'any' variables, zero manual type assertions, zero type bleeding.
+     *
+     * @example
+     * ```ts
+     * const updatedProfile = transformXalorMerge('USER_TEST', {
+     *   dataOne: currentDatabaseUserRecord,
+     *   dataTwo: { username: 'neo_patched', active: true },
+     *   pick: ['id', 'username', 'active'],
+     *   omit: ['active'],
+     *   map: { username: (name) => name.toUpperCase() }
+     * });
+     *
+     * console.log(updatedProfile.username); // "NEO_PATCHED"
+     * console.log(Reflect.has(updatedProfile, 'active')); // false (Pruned out cleanly!)
+     * ```
+     *
+     * !! NOTE: Object Two (`ctx.dataTwo`) takes absolute overwrite preference over Object One.
+     *
+     * @param {keyof ISolidRegistry} injectedKey - The authoritative pre-compiled registry target key token.
+     * @param {IXalorMergeContext<ISolidRegistry[K]>} ctx - Structured parameters containing data nodes and execution filters.
+     * @returns {TSolidBranded<K, ISolidRegistry[K]>} An ironclad, nominally-branded, mutated data asset fulfilling the type contract.
+     */
+    static transformXalorMerge(): void;
   }
 
   class RuntimeApiDocs {
