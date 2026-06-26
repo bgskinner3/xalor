@@ -47,7 +47,8 @@ export function resolveXalorPaths(
     : process.cwd();
 
   /* prettier-ignore */ const absoluteCacheDir = path.join( rootDir, 'node_modules', '.cache', fileNames.cacheFolderName);
-  /* prettier-ignore */ const absoluteBridgeDir = path.join(rootDir, fileNames.intelFolderName);
+  /* prettier-ignore */ const absoluteBridgeDir = path.join(rootDir, 'node_modules', '.cache', fileNames.cacheFolderName);
+  // /* prettier-ignore */ const absoluteBridgeDir = path.join(rootDir, fileNames.intelFolderName); // FILE OUTSIDE MODULES
 
   return {
     rootDir,

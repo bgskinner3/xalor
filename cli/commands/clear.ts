@@ -65,9 +65,11 @@ export function runClearCommand(projectRootPath: string): void {
       /* prettier-ignore */
       vaultFile: path.join(projectRootPath, 'node_modules', '.cache', fileNames.cacheFolderName, fileNames.vaultFileName),
       /* prettier-ignore */
-      bridgeDir: path.join(projectRootPath, fileNames.intelFolderName),
+      bridgeDir: path.join(projectRootPath, 'node_modules', '.cache', fileNames.cacheFolderName),
+      //path.join(projectRootPath, fileNames.intelFolderName), // FILE OUTSIDE MODULES
       /* prettier-ignore */
-      bridgeFile: path.join(projectRootPath, fileNames.intelFolderName, fileNames.bridgeFileName),
+      bridgeFile: path.join(projectRootPath, 'node_modules', '.cache', fileNames.cacheFolderName, fileNames.bridgeFileName),
+      // bridgeFile: path.join(projectRootPath, fileNames.intelFolderName, fileNames.bridgeFileName), // FILE OUTSIDE MODULES
     },
     source: {
       /* prettier-ignore */

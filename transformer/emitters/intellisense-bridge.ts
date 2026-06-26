@@ -84,6 +84,10 @@ function temporalManifest(
     ...registryLines,
     '  }',
     '}',
+    '',
+    // 🚀 THE FIX FOR ts(2669): Explicitly seals the file as an isolated external module.
+    // This removes ambient duplication errors while adding 0 bytes to the compiled runtime bundle!
+    'export {};',
   ]
     .join('\n')
     .trim();
