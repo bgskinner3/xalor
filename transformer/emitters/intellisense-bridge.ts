@@ -77,10 +77,23 @@ function temporalManifest(
     );
   });
 
+  // ====================================================================================
+  // FALLBACKS
+  // ====================================================================================
+
+  if (identityLines.length === 0) {
+    /* prettier-ignore */ identityLines.push('    /* Baseline Ambient Fallback */ [key: string]: any;');
+  }
+  if (registryLines.length === 0) {
+    /* prettier-ignore */ registryLines.push('    /* Baseline Ambient Fallback */ [key: string]: any;');
+  }
+  if (driftRegistryLines.length === 0) {
+    /* prettier-ignore */ driftRegistryLines.push('    /* Baseline Ambient Fallback */ [key: string]: never;');
+  }
+
   return [
     emitter.banner,
     `/* eslint-disable ${emitter.eslintDisabled.join(' ')} */`,
-    // 🟢 SPREADS NOTHING HERE BECAUSE IMPORTS IS EMPTY ARRAY:
     ...emitter.imports,
     '',
     'declare global {',
@@ -97,8 +110,6 @@ function temporalManifest(
     '  }',
     '}',
     '',
-    // 🚀 THE FIX FOR ts(2669): Explicitly seals the file as an isolated external module.
-    // This removes ambient duplication errors while adding 0 bytes to the compiled runtime bundle!
     'export {};',
   ]
     .join('\n')
