@@ -3,44 +3,8 @@ import { ObjectUtils } from '../../../shared';
 import { PRIMITIVE_DEFAULTS } from '../../models/constants';
 import { XalethorVaultKeeper } from '../../xalor-service/vault-keeper';
 import { isObject } from '../../../shared';
-import type { InstanceRegistryKey } from '../../../shared';
 import { shapeKindUtilsService } from '../../../shared/service';
-const INSTANCE_REGISTRY_MAPPER = {
-  Date: {
-    ctor: Date,
-    create: () => new Date(0),
-  },
 
-  RegExp: {
-    ctor: RegExp,
-    create: () => new RegExp(``),
-  },
-
-  Map: {
-    ctor: Map,
-    create: () => new Map(),
-  },
-
-  Set: {
-    ctor: Set,
-    create: () => new Set(),
-  },
-
-  URL: {
-    ctor: URL,
-    create: () => new URL('https://example.com'),
-  },
-
-  Promise: {
-    ctor: Promise,
-    create: () => Promise.resolve(undefined),
-  },
-};
-export function resolveInstanceFactory(
-  key: InstanceRegistryKey,
-): () => unknown {
-  return INSTANCE_REGISTRY_MAPPER[key].create;
-}
 /**
  * ============================================================================
  * 🏗️ DESIGN SYSTEM MAPPER: DEFAULT SHAPE MATERIALIZER

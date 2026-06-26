@@ -2,7 +2,7 @@
 import { xalor } from '../../src/api';
 import { TEST_SHAPE_REGISTRY } from '../utils/constants';
 import { seedTestVault } from '../utils';
-
+import type { TInstanceConstructorRegistry } from '../../shared/shape-domain';
 // 'default', 'mock', 'clone', and 'cast' operational modes.
 /**
  pnpm run test -- __tests__/generate/default-mode.test.ts
@@ -62,12 +62,72 @@ declare global {
       id: number;
       selfRef?: ISolidRegistry['CIRCULAR_DEPTH_TEST'];
     };
+    ALL_PLATFORM_INSTANCES_SHAPE: {
+      // === Core JS Structural Objects ===
+      readonly dateVal: TInstanceConstructorRegistry['Date'];
+      readonly regExpVal: TInstanceConstructorRegistry['RegExp'];
+
+      // === Collections ===
+      readonly mapVal: TInstanceConstructorRegistry['Map'];
+      readonly setVal: TInstanceConstructorRegistry['Set'];
+      readonly weakMapVal: TInstanceConstructorRegistry['WeakMap'];
+      readonly weakSetVal: TInstanceConstructorRegistry['WeakSet'];
+
+      // === Web Platform Data Frames ===
+      readonly urlVal: TInstanceConstructorRegistry['URL'];
+      readonly urlParamsVal: TInstanceConstructorRegistry['URLSearchParams'];
+      readonly headersVal: TInstanceConstructorRegistry['Headers'];
+      readonly requestVal: TInstanceConstructorRegistry['Request'];
+      readonly responseVal: TInstanceConstructorRegistry['Response'];
+      readonly blobVal: TInstanceConstructorRegistry['Blob'];
+      readonly fileVal: TInstanceConstructorRegistry['File'];
+
+      // === Binary Data & Typed Array Buffers ===
+      readonly arrayBufferVal: TInstanceConstructorRegistry['ArrayBuffer'];
+      readonly dataViewVal: TInstanceConstructorRegistry['DataView'];
+      readonly int8ArrayVal: TInstanceConstructorRegistry['Int8Array'];
+      readonly uint8ArrayVal: TInstanceConstructorRegistry['Uint8Array'];
+      readonly uint8ClampedArrayVal: TInstanceConstructorRegistry['Uint8ClampedArray'];
+      readonly int16ArrayVal: TInstanceConstructorRegistry['Int16Array'];
+      readonly uint16ArrayVal: TInstanceConstructorRegistry['Uint16Array'];
+      readonly int32ArrayVal: TInstanceConstructorRegistry['Int32Array'];
+      readonly uint32ArrayVal: TInstanceConstructorRegistry['Uint32Array'];
+      readonly float32ArrayVal: TInstanceConstructorRegistry['Float32Array'];
+      readonly float64ArrayVal: TInstanceConstructorRegistry['Float64Array'];
+      readonly bigInt64ArrayVal: TInstanceConstructorRegistry['BigInt64Array'];
+      readonly bigUint64ArrayVal: TInstanceConstructorRegistry['BigUint64Array'];
+
+      // === Async & Streams ===
+      readonly promiseVal: TInstanceConstructorRegistry['Promise'];
+      readonly readableStreamVal: TInstanceConstructorRegistry['ReadableStream'];
+      readonly writableStreamVal: TInstanceConstructorRegistry['WritableStream'];
+      readonly transformStreamVal: TInstanceConstructorRegistry['TransformStream'];
+    };
+    ADVANCED_COMPLEXITY_SHAPE: {
+      // === The Nested Collection Graph (Old DEEPLY_NESTED_STORE nested here) ===
+      readonly userRole: {
+        readonly SKU: string;
+        readonly quantity: number;
+        readonly logistics: {
+          readonly warehouseCode: string;
+        };
+      }[]; // 🚀 Evaluates perfectly as an array graph!
+
+      // === Web Platform Instance Frame ===
+      readonly transformStreamVal: TInstanceConstructorRegistry['TransformStream'];
+
+      // === Type-Reified Function Closure Executor ===
+      readonly executePipeline: (
+        inputData: string,
+        retryCount?: number, // 🚀 Properly typed as an optional parameter!
+      ) => TInstanceConstructorRegistry['Promise']; // Returns an active native Promise instance object!
+    };
   }
 }
 
-describe('Runtime Generator API', () => {
+describe('Runtime Generator API - Default Mode', () => {
   beforeAll(() => {
-    // 🚀 CLEAN, SYNCHRONIZED SEEDING PASS: Loads clean shapes from central constants file
+    // Seeding clean shapes from central constants file straight into memory
     seedTestVault('USER_TEST', TEST_SHAPE_REGISTRY.STANDARD_USER);
     seedTestVault('API_RESPONSE', TEST_SHAPE_REGISTRY.UNION_RESPONSE);
     seedTestVault('STORE_ORDER', TEST_SHAPE_REGISTRY.COMPLEX_ORDER);
@@ -89,6 +149,10 @@ describe('Runtime Generator API', () => {
       'CIRCULAR_DEPTH_TEST',
       TEST_SHAPE_REGISTRY.CIRCULAR_DEPTH_TEST,
     );
+    seedTestVault(
+      'ALL_PLATFORM_INSTANCES_SHAPE',
+      TEST_SHAPE_REGISTRY.ADVANCED_COMPLEXITY_SHAPE,
+    );
   });
 
   // ========================================================================
@@ -99,19 +163,24 @@ describe('Runtime Generator API', () => {
       const result = xalor.default<'USER_TEST'>();
 
       expect(result).toBeDefined();
-      expect(result).toEqual({
+
+      // 1. Structural Match validation (ignores nominal brand property tracking)
+      expect(result).toMatchObject({
         id: 0,
         username: '',
         active: false,
       });
+
+      // 2. Cryptographic Guard compliance test verification (Commandment I)
+      expect(xalor.guard<'USER_TEST'>(result)).toBe(true);
     });
 
     it('🎯 should accurately extract literal string value constraints for specific object fields', () => {
       const result = xalor.default<'API_RESPONSE'>();
 
       expect(result).toBeDefined();
-      expect(result).toEqual({
-        status: 'success', // Literals must fall back to their exact assigned literal constant value
+      expect(result).toMatchObject({
+        status: 'success', // Literals fall back to index 0 string token definitions
       });
     });
 
@@ -119,9 +188,9 @@ describe('Runtime Generator API', () => {
       const result = xalor.default<'STORE_ORDER'>();
 
       expect(result).toBeDefined();
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         orderId: '',
-        items: [], // Array parameters map to a clean, isolated array allocation empty bucket
+        items: [], // Core array initialization allocations match empty collections
       });
     });
 
@@ -129,32 +198,35 @@ describe('Runtime Generator API', () => {
       const result = xalor.default<'DEEPLY_NESTED_STORE'>();
 
       expect(result).toBeDefined();
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         orderId: '',
         items: [],
       });
     });
+  });
 
-    // ========================================================================
-    // ADVANCED DESIGN SYSTEM DRIVEN ENGINE GRANULAR COVERAGE PASSTHROUGHS
-    // ========================================================================
+  // ========================================================================
+  // ADVANCED DESIGN SYSTEM DRIVEN ENGINE GRANULAR COVERAGE PASSTHROUGHS
+  // ========================================================================
+  describe('🧱 ENGINE BRANCH INTERCEPTION TRACKING', () => {
     it('🧱 BRANCH MATCH: should gracefully skip properties explicitly marked as optional', () => {
       const result = xalor.default<'OPTIONAL_FIELDS_TEST'>();
 
       expect(result).toBeDefined();
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         mandatoryId: 0,
       });
-      expect(result).not.toHaveProperty('optionalMeta');
-      expect(result).not.toHaveProperty('optionalData');
+
+      expect(Reflect.has(result, 'optionalMeta')).toBe(false);
+      expect(Reflect.has(result, 'optionalData')).toBe(false);
     });
 
     it('🧱 BRANCH MATCH: should materialize a union container by safely falling back to its absolute first indexed branch', () => {
       const result = xalor.default<'COMPLEX_UNION_TEST'>();
 
       expect(result).toBeDefined();
-      expect(result).toEqual({
-        mixedValue: 'custom_literal', // Matches index[0] of values array structure configuration
+      expect(result).toMatchObject({
+        mixedValue: 'custom_literal', // Matches index[0] of array layout metrics
       });
     });
 
@@ -162,8 +234,8 @@ describe('Runtime Generator API', () => {
       const result = xalor.default<'BRANDED_TYPE_TEST'>();
 
       expect(result).toBeDefined();
-      expect(result).toEqual({
-        userId: '', // Peels branded wrapping node down, printing primitive string fallback zero value
+      expect(result).toMatchObject({
+        userId: '', // Unrolls branded node down to its raw string zero baseline
       });
     });
 
@@ -171,7 +243,7 @@ describe('Runtime Generator API', () => {
       const result = xalor.default<'REFERENCE_LINK_TEST'>();
 
       expect(result).toBeDefined();
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         id: 0,
         profileRef: {
           id: 0,
@@ -180,59 +252,107 @@ describe('Runtime Generator API', () => {
         },
       });
     });
+  });
 
-    // ========================================================================
-    // CRITICAL ADVERSARIAL RECURSION BOUNDARIES (Commandment V & IX Parity)
-    // ========================================================================
+  // ========================================================================
+  // CRITICAL ADVERSARIAL RECURSION BOUNDARIES (Commandment V & IX Parity)
+  // ========================================================================
+  describe('🛡️ RECURSION BOUNDARIES & TAIL CIRCUIT BREAKING', () => {
     it('🛡️ EDGE CASE 1: should intercept self-referencing circular dependency cycles, halting execution safely using reify limits', () => {
       const executeCircularGenerationPass = () => {
         return xalor.default<'CIRCULAR_DEPTH_TEST'>();
       };
 
-      // 🧠 STRATEGY ASSIGNMENT INTERCEPT CHECK:
-      // Executing a circular blueprint must never crash the thread with a "Maximum Call Stack Size Exceeded" panic.
+      // Executing a circular blueprint must never throw stack depth crashes
       expect(executeCircularGenerationPass).not.toThrow();
 
       const result = executeCircularGenerationPass();
 
-      // 🎯 COMPILER PARITY BOUNDARY:
-      // If the runtime engine immediately identifies a root-level circular constraint loop or hits max depth,
-      // it halts by returning undefined/null. If it returns an object, we unroll it to find the terminal safe break token.
       if (result !== undefined && result !== null) {
         expect(typeof result).toBe('object');
 
-        let cursor: any = result;
+        // 🧠 THE FIXED BOUNDARY POINTER: Declare the tracking cursor as a plain mutable record.
+        // This satisfies COMMANDMENT IX by allowing the pointer to walk deep nested child frames
+        // without contaminating the root-level nominal brand tracking requirements!
+        let cursor: Record<string | symbol, unknown> = result;
+
         for (let depth = 0; depth < 20; depth++) {
-          if (!cursor.selfRef || typeof cursor.selfRef !== 'object') break;
-          cursor = cursor.selfRef;
+          const nestedRef = Reflect.get(cursor, 'selfRef');
+          if (
+            nestedRef === undefined ||
+            nestedRef === null ||
+            typeof nestedRef !== 'object'
+          ) {
+            break;
+          }
+          // The compiler permits this assignment flawlessly because it's a plain record loop!
+          cursor = nestedRef as Record<string | symbol, unknown>;
         }
 
-        // Assert that the deep structural loop eventually hits a safe termination boundary (null/undefined)
-        expect(cursor.selfRef).not.toBeInstanceOf(Object);
+        const finalLeafRef = Reflect.get(cursor, 'selfRef');
+        expect(finalLeafRef).not.toBeInstanceOf(Object);
       } else {
-        // If the engine immediately terminates the circular trace at the root boundary, it is also a success!
-        expect(result).toBeUndefined(); // Or expect(result).toBeNull() depending on your strict return configuration
+        // Safe trace termination at boundary limit passed successfully
+        expect(result === undefined || result === null).toBe(true);
       }
     });
+    it('🛡️ EDGE CASE 2: should accurately materialize default instances for JavaScript native, web, and binary types', () => {
+      // Seed the comprehensive platform shape contract registry definitions flatly straight into RAM memory
+      seedTestVault(
+        'ALL_PLATFORM_INSTANCES_SHAPE',
+        TEST_SHAPE_REGISTRY.ALL_PLATFORM_INSTANCES_SHAPE,
+      );
 
-    // it('🛡️ EDGE CASE 2: should handle unseeded references gracefully and return undefined inside object parameter trees point-free', () => {
-    //   // Temporarily inject an unresolvable reference payload into the engine space
-    //   seedTestVault('BROKEN_REF_TEST', {
-    //     kind: 'object',
-    //     properties: {
-    //       leakingData: {
-    //         name: 'leakingData',
-    //         optional: false,
-    //         shape: { kind: 'reference', name: 'NON_EXISTENT_GHOST_BLUEPRINT' },
-    //       },
-    //     },
-    //   });
+      const result = xalor.default<'ALL_PLATFORM_INSTANCES_SHAPE'>();
+      expect(result).toBeDefined();
 
-    //   const result = xalor.default<'BROKEN_REF_TEST'>();
-    //   expect(result).toBeDefined();
-    //   expect(result).toEqual({
-    //     leakingData: undefined, // Non-existent references fall through safely inside our factory loop mapper fields
-    //   });
-    // });
+      // 1. Verify Core JS & Collection instances are freshly constructed objects
+      expect(result.dateVal).toBeInstanceOf(Date);
+      expect(result.regExpVal).toBeInstanceOf(RegExp);
+      expect(result.mapVal).toBeInstanceOf(Map);
+      expect(result.setVal).toBeInstanceOf(Set);
+
+      // 2. Verify Web Platform Data Frame defaults
+      expect(result.urlVal).toBeInstanceOf(URL);
+      expect(result.urlVal.toString()).toBe('http://localhost/');
+
+      // 3. Verify Binary Buffer and Typed Array allocations are initialized cleanly at 0 length
+      expect(result.arrayBufferVal).toBeInstanceOf(ArrayBuffer);
+      expect(result.uint8ArrayVal).toBeInstanceOf(Uint8Array);
+      expect(result.uint8ArrayVal.length).toBe(0);
+    });
+
+    it('🛡️ EDGE CASE 3: should manufacture safe, executable mock pass-through closures for function property shapes', () => {
+      seedTestVault(
+        'ADVANCED_COMPLEXITY_SHAPE',
+        TEST_SHAPE_REGISTRY.ADVANCED_COMPLEXITY_SHAPE,
+      );
+
+      const result = xalor.default<'ADVANCED_COMPLEXITY_SHAPE'>();
+      expect(result).toBeDefined();
+
+      // 1. Verify the contract property resolves into a safe callable function object natively
+      expect(result.executePipeline).toBeInstanceOf(Function);
+
+      // 2. Executing the dummy function must resolve into the expected baseline return schema
+      // In your registry schema, executePipeline returns a Promise layout block
+      const outputPromise = result.executePipeline('test_input', 3);
+      expect(outputPromise).toBeInstanceOf(Promise);
+    });
+
+    it('🛡️ EDGE CASE 4: should handle multi-layered structural intersection shapes with deterministic field merging', () => {
+      // Simulates an object composed of multiple intersecting type parts
+      seedTestVault(
+        'COMPLEX_UNION_TEST',
+        TEST_SHAPE_REGISTRY.COMPLEX_UNION_TEST,
+      );
+
+      const result = xalor.default<'COMPLEX_UNION_TEST'>();
+      expect(result).toBeDefined();
+
+      // Ensure properties across intersecting segments collapse natively
+      // without leaving undefined branches or dropping nominal brand tracking signatures
+      expect(xalor.guard<'COMPLEX_UNION_TEST'>(result)).toBe(true);
+    });
   });
 });

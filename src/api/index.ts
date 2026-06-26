@@ -10,7 +10,7 @@ import { registerXalor } from './register';
 import { generateXalor } from './generate-xalor';
 import { transformXalor } from './transform';
 import { validateXalorGuard, validateXalorParse } from './validate';
-
+import { generateXalorDefault } from './generate';
 class XalorCore {
   // ========================================================================
   // ========================================================================
@@ -58,17 +58,34 @@ class XalorCore {
 
     return validateXalorParse<K>(activeKey, data);
   }
+  // ========================================================================
+  // ========================================================================
+  // ========================================================================
+  // ========================================================================
+  // !! CATEGORY 3: THE GENERATION PILLAR (BLANK-SLATE HYDRATION)
+  // ========================================================================
+  // ========================================================================
+  // ========================================================================
+  // ========================================================================
+
+  /** @Api generator  @mode default */
+  /* prettier-ignore */
+  public default<K extends keyof ISolidRegistry>(_compiledKeyReference?: K): TSolidBranded<K, ISolidRegistry[K]> {
+    const activeKey = _compiledKeyReference;
+    assertRegistryKey(activeKey);
+    return generateXalorDefault<K>(activeKey);
+  }
 
   // ========================================================================
   // ========================================================================
   // GENERATE
   // ========================================================================
   // ========================================================================
-  /** @Api generator  @mode default */
-  /* prettier-ignore */ public default<K extends keyof ISolidRegistry>(): TSolidBranded<K, ISolidRegistry[K]>;
-  /* prettier-ignore */ public default<K extends keyof ISolidRegistry>(injectedKey?: K, mode?: 'default'): TSolidBranded<K, ISolidRegistry[K]> {
-    return generateXalor<K, 'default'>(injectedKey!, mode!);
-  }
+  // /** @Api generator  @mode default */
+  // /* prettier-ignore */ public default<K extends keyof ISolidRegistry>(): TSolidBranded<K, ISolidRegistry[K]>;
+  // /* prettier-ignore */ public default<K extends keyof ISolidRegistry>(injectedKey?: K, mode?: 'default'): TSolidBranded<K, ISolidRegistry[K]> {
+  //   return generateXalor<K, 'default'>(injectedKey!, mode!);
+  // }
   /** @Api generator  @mode mock */
   /* prettier-ignore */ public mock<K extends keyof ISolidRegistry>(): TSolidBranded<K, ISolidRegistry[K]>;
   /* prettier-ignore */ public mock<K extends keyof ISolidRegistry>(injectedKey?: K, mode?: 'mock'): TSolidBranded<K, ISolidRegistry[K]> {
