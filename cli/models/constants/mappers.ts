@@ -35,20 +35,17 @@ export const CLI_LOGGER_MAPPER: Record<TCLIBootStrapModes | 'help', (projectRoot
 ======================================================================
 🪐 XALOR CLI ENVIRONMENT GATEWAY MANUAL
 ======================================================================
-Usage: xalor <command> [options]
+
+Usage: xalor <command>
 
 Commands:
   watch    🔭 Start real-time reflection watcher daemon (HMR)
   compile  ⚡ Execute single-pass sync graph AST builder
   audit    📊 Profile macro operational health and validation density
   studio   🛰️ Launch secure Cross-Origin localhost workspace UI
-  vacuum   🧹 Purge stale un-referenced CAS cache cache leaf pointers
+  vacuum   🧹 Purge stale un-referenced CAS cache leaf pointers
   clear    🔥 Hard flash-purge node_modules cache back to zero
 
-Options (audit only):
-  -f, --fix      🚿 Evict orphaned type keys and optimize snapshot databases
-  -j, --json     📄 Emit raw JSON metrics structure to standard output stream
-  -v, --verbose  🔍 Expose deep compiler token mapping details
 ======================================================================
     `
 } satisfies Record<TCLIBootStrapModes | 'help', (projectRootPath: string) => string>;

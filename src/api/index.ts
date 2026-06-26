@@ -1,24 +1,20 @@
 // /src/api/index.ts
-import type {
-  TTypeGuard,
-  TXalorAuditReport,
-  TSolidBranded,
-} from '../../shared';
-import { isFunction, isRegistryKey, assertRegistryKey } from '../../shared';
+import type { TTypeGuard, TSolidBranded } from '../../shared';
+import { isRegistryKey, assertRegistryKey } from '../../shared';
 import type {
   TFlattenDataContext,
   TMergeContext,
   TPickOmitContext,
 } from '../models/types';
-import { validateXalor } from './validate-xalor';
-import { registerXalor } from './register-xalor';
+import { registerXalor } from './register';
 import { generateXalor } from './generate-xalor';
-import { transformXalor } from './transform-xalor';
+import { transformXalor } from './transform';
+import { validateXalorGuard, validateXalorParse } from './validate';
 
 class XalorCore {
   // ========================================================================
   // ========================================================================
-  // VALIDATE
+  // !! CORE OPERATIONS: SYSTEM INGRESS REGISTRATION
   // ========================================================================
   // ========================================================================
   /**
@@ -32,7 +28,11 @@ class XalorCore {
   }
   // ========================================================================
   // ========================================================================
-  // VALIDATE
+  // ========================================================================
+  // ========================================================================
+  // !! CATEGORY 2: THE VALIDATION PILLAR (INGRESS SECURITY)
+  // ========================================================================
+  // ========================================================================
   // ========================================================================
   // ========================================================================
   /** @Api validation  @mode guard */
@@ -41,35 +41,24 @@ class XalorCore {
   /* prettier-ignore */ public guard<K extends keyof ISolidRegistry>( keyOrPayload?: K | unknown, dataKey?: K): boolean | TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>> {
     const isProperKey = isRegistryKey<K>(keyOrPayload);
     const finalKey = isProperKey ? keyOrPayload : dataKey;
+
     assertRegistryKey(finalKey);
-    // Grab your strict function closure from the core validation engine
-    const activeGuard = validateXalor<K, 'guard'>(finalKey, 'guard');
 
-    return !isRegistryKey(keyOrPayload) && isFunction(activeGuard)
-      ? activeGuard(keyOrPayload)
-      : activeGuard;
-  }
+    const activeGuard = validateXalorGuard<K>(finalKey);
 
-  /** @Api validation  @mode assert */
-  /* prettier-ignore */ public assert<K extends keyof ISolidRegistry>(data: unknown): asserts data is ISolidRegistry[K];
-  /* prettier-ignore */ public assert<K extends keyof ISolidRegistry>(data: unknown, injectedKey?: K): asserts data is ISolidRegistry[K] {
-    validateXalor<K, 'assert'>(injectedKey!, 'assert', data);
+    if (!isProperKey) return activeGuard(keyOrPayload);
+
+    return activeGuard;
   }
   /** @Api validation  @mode parse */
-  /* prettier-ignore */ public parse<K extends keyof ISolidRegistry>(data: unknown): TSolidBranded<K, ISolidRegistry[K]>;
-  /* prettier-ignore */ public parse<K extends keyof ISolidRegistry>(data: unknown, injectedKey?: K, mode?: 'parse'): TSolidBranded<K, ISolidRegistry[K]> {
-    return validateXalor<K, 'parse'>(injectedKey!, mode!, data);
+  /* prettier-ignore */ public parse<K extends keyof ISolidRegistry>(data: unknown, _compiledKeyReference?: K): TSolidBranded<K, ISolidRegistry[K]> {
+    const activeKey = _compiledKeyReference;
+
+    assertRegistryKey(activeKey);
+
+    return validateXalorParse<K>(activeKey, data);
   }
-  /** @Api validation  @mode parseAsync */
-  /* prettier-ignore */ public parseAsync<K extends keyof ISolidRegistry>(data: unknown): TSolidBranded<K, Promise<ISolidRegistry[K]>>;
-  /* prettier-ignore */ public parseAsync<K extends keyof ISolidRegistry>(data: unknown, injectedKey?: K, mode?: 'parseAsync'): TSolidBranded<K, Promise<ISolidRegistry[K]>> {
-    return validateXalor<K, 'parseAsync'>(injectedKey!, mode!, data);
-  }
-  /** @Api validation  @mode audit */
-  /* prettier-ignore */ public audit<_K extends keyof ISolidRegistry>(data: unknown): TXalorAuditReport;
-  /* prettier-ignore */ public audit<K extends keyof ISolidRegistry>(data: unknown, injectedKey?: K, mode?: 'audit'): TXalorAuditReport {
-    return validateXalor<K, 'audit'>(injectedKey!, mode!, data);
-  }
+
   // ========================================================================
   // ========================================================================
   // GENERATE
@@ -95,6 +84,7 @@ class XalorCore {
   /* prettier-ignore */ public cast<K extends keyof ISolidRegistry>(data: unknown,injectedKey?: K,mode?: 'cast'): TSolidBranded<K, ISolidRegistry[K]> {
     return generateXalor<K, 'cast'>(injectedKey!, mode!, data);
   }
+
   // ========================================================================
   // ========================================================================
   // TRANSFORM

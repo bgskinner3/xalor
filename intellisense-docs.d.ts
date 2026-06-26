@@ -918,6 +918,89 @@ declare global {
     static TSentryTriggerName(): void;
   }
 
+  class RuntimeApiCoreDocs {
+    static example(): void;
+    static example(): void;
+    static example(): void;
+    static example(): void;
+    static example(): void;
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    // !! CATEGORY 2: THE VALIDATION PILLAR (INGRESS SECURITY)
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    /**
+     * @api validation
+     * @mode parse
+     * @description
+     * Synchronously processes data ingress contracts. Evaluates raw incoming physical data
+     * shapes instantly against precompiled Vault registry blueprints and stamps your cryptographic brand.
+     *
+     * Enforces a strict, fail-fast boundary gate that intercepts malformed data streams
+     * instantly, throwing traceable GPS terminal diagnostics while avoiding micro-task queue overhead.
+     *
+     * DESIGN INVARIANTS:
+     * - Satisfies COMMANDMENT I & III: Resolves structural contracts exclusively via the pre-compiled Registry.
+     * - Satisfies COMMANDMENT IV: Performs a single, isolated semantic operation (Synchronous Schema Parsing).
+     * - Satisfies COMMANDMENT VIII: Zero runtime strategy allocations or nested middleman traversal layers.
+     * - Satisfies COMMANDMENT IX: Zero 'any' variables, zero 'as' type assertions, and zero 'switch' branching.
+     *
+     * @example
+     * ```ts
+     * try {
+     *   const verifiedUser = validateXalorParse('USER_ACCOUNT', rawPayload);
+     *   // rawPayload is safely validated, cast, and nominally branded to ISolidRegistry['USER_ACCOUNT']!
+     *   console.log(verifiedUser.username);
+     * } catch (error) {
+     *   console.error("Ingress Validation Failed:", error.message);
+     * }
+     * ```
+     *
+     * @param {keyof ISolidRegistry} injectedKey - The authoritative pre-compiled registry target key token.
+     * @param {unknown} data - The raw incoming untrusted runtime object payload instance to evaluate.
+     * @returns {TSolidBranded<K, ISolidRegistry[K]>} An ironclad, nominally-branded, verified data asset matching the type contract.
+     */
+    static validateXalorParse(): void;
+    /**
+     * @api validation
+     * @mode guard
+     * @description
+     * Generates an isolated, stateless type predicate closure to narrow incoming network
+     * data streams at runtime boundaries with near-zero allocation footprints.
+     *
+     * Performs sub-microsecond structural evaluation passes over raw runtime payloads
+     * without mutative state updates, saving side-effects or panic halts.
+     *
+     * DESIGN INVARIANTS:
+     * - Satisfies COMMANDMENT I & III: Resolves structural contracts exclusively via the pre-compiled Registry.
+     * - Satisfies COMMANDMENT IV: Performs a single, isolated semantic operation (Type Guard Generation).
+     * - Satisfies COMMANDMENT VIII: Zero runtime strategy allocations or nested middleman traversal layers.
+     * - Satisfies COMMANDMENT IX: Zero 'any' variables, zero 'as' type assertions, and zero 'switch' branching.
+     *
+     * @example
+     * ```ts
+     * const isUserValid = validateXalorGuard('USER_ACCOUNT');
+     *
+     * if (isUserValid(rawPayload)) {
+     *   // rawPayload is safely narrowed and branded to ISolidRegistry['USER_ACCOUNT'] natively!
+     *   console.log(rawPayload.username);
+     * }
+     * ```
+     *
+     * @param {keyof ISolidRegistry} injectedKey - The authoritative pre-compiled registry target key token.
+     * @returns {TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>>} An ironclad, nominally-branded type predicate closure.
+     */
+    static validateXalorGuard(): void;
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+  }
+
   class RuntimeApiDocs {
     // ================================================================================================
     // ================================================================================================

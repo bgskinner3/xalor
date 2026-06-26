@@ -26,6 +26,7 @@ docs.md
 /dist
 dist/
 /notes.md
+/saved.md
 
 # docs 
 is-solid-docs.d.ts

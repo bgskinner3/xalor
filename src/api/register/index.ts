@@ -1,5 +1,5 @@
-import { XalethorService } from '../xalor-service';
-import { isMetaData } from '../../shared';
+import { XalethorService } from '../../xalor-service';
+import { isMetaData } from '../../../shared';
 /**
  * RUNTIME API: REGISTER XALOR
  *
