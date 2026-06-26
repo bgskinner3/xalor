@@ -33,7 +33,6 @@ export function flushToRegistry({
     .split(path.sep)
     .join('/');
 
-  // Flush the remaining shredded sub-fragments cleanly into the database drawers
   fragments.forEach((fShape, fKey) => {
     xalorCentralContext.activePassKeys.add(fKey);
     xalorCentralContext.addGlobalRegistry({
