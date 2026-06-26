@@ -486,9 +486,13 @@ describe('Runtime Generator API', () => {
       expect(result).toBeDefined();
       expect(Reflect.get(result, 'username')).toBe('hacker');
 
-      // 🚀 SECURITY ASSURANCE: Ensure prototype pollution vectors are fully mitigated
+      // 🚀 GLOBAL PROTECTION SECURITY ASSURANCE: Complete prototype pollution protection verified
       expect((Object.prototype as any).polluted).toBeUndefined();
-      expect(Reflect.has(result, '__proto__')).toBe(false);
+
+      // 🧠 FIXED INVARIANT CHECK: Reflect.has checks inherited prototype linkages, which always returns true.
+      // Object.hasOwn checks for explicit malicious literal key replication on the output shell!
+      expect(Object.hasOwn(result, '__proto__')).toBe(false);
+      expect(Object.hasOwn(result, 'constructor')).toBe(false);
     });
 
     // it('🛡️ TRACK 12: should successfully deep-merge properties onto recursively frozen or sealed object nodes without runtime crashes', () => {

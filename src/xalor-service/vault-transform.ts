@@ -59,26 +59,48 @@ export class XalethorVaultTransform {
     // II. Delegate straight to your variadic Axiom-Kit graph aggregator engine portal (Commandment VIII)
     // II. Delegate straight to your variadic Axiom-Kit graph aggregator engine portal (Commandment VIII)
     /* prettier-ignore */
+    // const rawMergedResult: unknown = mergeDeep(baseRecord, patchRecord);
+
+    // // III. Handle root-level masking and mapping options sequentially inside a single processing boundary
+    // // 🧠 FIXED PROTECTION BOUNDARY GATE (Commandment V Invariant Enforcement):
+    // // If rawMergedResult yields undefined/null, fallback cleanly to your local baseRecord container!
+    // const targetPayload = isRecord(rawMergedResult)
+    //   ? rawMergedResult
+    //   : baseRecord;
+    // const resultPayload: Record<string | symbol, unknown> = targetPayload;
+    // if (Reflect.has(resultPayload, '__proto__')) {
+    //   Reflect.deleteProperty(resultPayload, '__proto__');
+    // }
+    // if (Reflect.has(resultPayload, 'constructor')) {
+    //   Reflect.deleteProperty(resultPayload, 'constructor');
+    // }
+    // // HANDLE PICK AND OMITTING OF DATA OBJECT
+    // /* prettier-ignore */
+    // if (ctx.pick) this.executeRootPick(resultPayload, ctx.pick);
+    // /* prettier-ignore */
+    // if (ctx.omit) this.executeRootOmit(resultPayload, ctx.omit);
+
+    // // incorporate mapping LAST to evaluate a fully-masked schema context frame
+    // /* prettier-ignore */
+    // if (ctx.map) this.executeRootMap(resultPayload, ctx.map as Record<string, unknown>);
+
     const rawMergedResult: unknown = mergeDeep(baseRecord, patchRecord);
 
-    // III. Handle root-level masking and mapping options sequentially inside a single processing boundary
-    // 🧠 FIXED PROTECTION BOUNDARY GATE (Commandment V Invariant Enforcement):
-    // If rawMergedResult yields undefined/null, fallback cleanly to your local baseRecord container!
-    const targetPayload = isRecord(rawMergedResult)
-      ? rawMergedResult
-      : baseRecord;
-    const resultPayload: Record<string | symbol, unknown> = targetPayload;
+    if (isRecord(rawMergedResult)) {
+      const resultPayload: Record<string | symbol, unknown> = rawMergedResult;
 
-    // HANDLE PICK AND OMITTING OF DATA OBJECT
-    /* prettier-ignore */
-    if (ctx.pick) this.executeRootPick(resultPayload, ctx.pick);
-    /* prettier-ignore */
-    if (ctx.omit) this.executeRootOmit(resultPayload, ctx.omit);
+      // ➊ STEP 1: Handle pick filtering first to lock down allowed properties boundaries
+      if (ctx.pick) this.executeRootPick(resultPayload, ctx.pick);
 
-    // incorporate mapping LAST to evaluate a fully-masked schema context frame
-    /* prettier-ignore */
-    if (ctx.map) this.executeRootMap(resultPayload, ctx.map as Record<string, unknown>);
+      // ➋ STEP 2: Handle omit filtering second to prune away targeted fields
+      if (ctx.omit) this.executeRootOmit(resultPayload, ctx.omit);
 
-    return resultPayload;
+      // ➌ STEP 3: Handle Zod-Style functional mapping projections LAST
+      if (ctx.map)
+        this.executeRootMap(resultPayload, ctx.map as Record<string, unknown>);
+
+      return resultPayload;
+    }
+    return rawMergedResult;
   }
 }
