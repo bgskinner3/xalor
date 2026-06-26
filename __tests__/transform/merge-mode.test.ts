@@ -495,33 +495,38 @@ describe('Runtime Generator API', () => {
       expect(Object.hasOwn(result, 'constructor')).toBe(false);
     });
 
-    // it('🛡️ TRACK 12: should successfully deep-merge properties onto recursively frozen or sealed object nodes without runtime crashes', () => {
-    //   const baselineState = Object.freeze({
-    //     id: 202,
-    //     username: 'frozen_baseline',
-    //     active: false,
-    //   });
+    it('🛡️ TRACK 12: should successfully deep-merge properties onto recursively frozen or sealed object nodes without runtime crashes', () => {
+      const baselineState = Object.freeze({
+        id: 202,
+        username: 'frozen_baseline',
+        active: false,
+      });
 
-    //   const incomingPatch = { username: 'unfrozen_patch', active: true };
+      const incomingPatch = { username: 'unfrozen_patch', active: true };
 
-    //   const executeFrozenMerge = () => {
-    //     return xalor.merge<'USER_TEST'>({
-    //       dataOne: baselineState,
-    //       dataTwo: incomingPatch,
-    //     });
-    //   };
+      const executeFrozenMerge = () => {
+        return xalor.merge<'USER_TEST'>({
+          dataOne: baselineState,
+          dataTwo: incomingPatch,
+        });
+      };
 
-    //   // Merging onto explicitly locked runtime assets must never throw a V8 extension mutation error
-    //   expect(executeFrozenMerge).not.toThrow();
+      // Merging onto explicitly locked runtime assets must never throw a V8 extension mutation error
+      expect(executeFrozenMerge).not.toThrow();
 
-    //   const result = executeFrozenMerge();
-    //   expect(result).toMatchObject({
-    //     id: 202,
-    //     username: 'unfrozen_patch',
-    //     active: true,
-    //   });
-    //   expect(Object.isFrozen(result)).toBe(false); // The morphed result container remains mutable for application use
-    // });
+      const result = (() =>
+        xalor.merge<'USER_TEST'>({
+          dataOne: baselineState,
+          dataTwo: incomingPatch,
+        }))();
+
+      expect(result).toMatchObject({
+        id: 202,
+        username: 'unfrozen_patch',
+        active: true,
+      });
+      expect(Object.isFrozen(result)).toBe(false); // The morphed result container remains mutable for application use
+    });
 
     it('🛡️ TRACK 13: should handle asymmetric type crossover collisions when a primitive scalar encounters a structural sub-object patch', () => {
       // Seed a mixed logical taxonomic structural blueprint definition
