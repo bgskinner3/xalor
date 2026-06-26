@@ -13,6 +13,7 @@ import type {
   TValidationTriggers,
   TTransformTriggers,
   TMatchTriggers,
+  TMatchXalorModes,
 } from '../../shared/auto';
 export type TRewriterFunction<TPayload, TShape = TSolidShape> = (
   raw: TPayload,
@@ -94,3 +95,19 @@ export type TProcessorTarget =
   | TValidateProcessorTarget
   | TTransformerProcessorTarget
   | TMatchProcessorTarget;
+
+// ====================================================================================
+// ====================================================================================
+// DRIFT PROCESSOR MAPPER TYPES
+// ====================================================================================
+// ====================================================================================
+export type TMatchProcessorHandler = (
+  raw: { readonly keyName: string },
+  node: ts.CallExpression,
+  factory: ts.NodeFactory,
+) => ts.Expression[];
+
+export type TMatchProcessorMapper = Record<
+  TMatchXalorModes,
+  TMatchProcessorHandler
+>;

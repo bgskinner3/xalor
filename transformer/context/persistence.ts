@@ -43,6 +43,11 @@ export function buildSnapshotFromRegistry(
     version: IS_SOLID_CONFIG_ITEMS.solidVersion,
   } satisfies TTripleKV;
 
+  // ================================================
+  // ================================================
+  // STAGE ONE BUILD OUT THE BASE VAULT KEYS
+  // ================================================
+  // ================================================
   registry.forEach((meta, key) => {
     const { shape, area, anchor, symbolName, typeName } = meta;
 
@@ -71,6 +76,21 @@ export function buildSnapshotFromRegistry(
     snapshot.references[key] = targetReferenceString;
     snapshot.manifest[key] = { area, filePath, anchor };
     snapshot.registry[key] = { symbolName, typeName };
+  });
+
+  // ================================================
+  // ================================================
+  // STAGE TWO: HANDLE SPECAIL VAULT STORAGES
+  // a. histroical drift
+  // ================================================
+  // ================================================
+  const { driftRegistry } = xalorCentralContext.context;
+
+  driftRegistry.forEach((lineage, evolutionToken) => {
+    snapshot.driftTracking[evolutionToken] = {
+      currentKey: lineage.currentKey,
+      ancestorKey: lineage.ancestorKey,
+    };
   });
 
   return snapshot;
@@ -125,6 +145,7 @@ export async function serializeAndFlushVault(rootDir: string): Promise<void> {
   const paths = XalorRoutesService.resolveXalorPaths(rootDir);
 
   const snapshot = buildSnapshotFromRegistry(rootDir, globalKeyRegistry);
+
   const newJsonPayload = JSON.stringify(snapshot, null, 2);
 
   try {

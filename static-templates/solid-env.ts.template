@@ -45,9 +45,6 @@ declare global {
    * - Satisfies COMMANDMENT IX: Prevents type bleeding into loose fallback shapes on cold-starts.
    */
   interface ISolidDriftRegistry {
-    [key: string]: {
-      readonly current: any;
-      readonly v1_ancestor: any;
-    };
+    [key: string]: any
   }
 }

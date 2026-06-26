@@ -219,6 +219,40 @@ class FileSystemContextService {
     }
   }
 
+  public ingestVaultSnapshotFromDiskSync(): TTripleKV {
+    try {
+      // 1. Guard against uninitialized database cache storage files on disk
+      if (!this.fileExists(this.envPaths.vaultFile)) {
+        return this.vaultFallback;
+      }
+
+      // 2. Execute blocking local read pass to capture disk bytes instantly
+      const rawJsonString = this.readText(this.envPaths.vaultFile);
+      const parsedVault: unknown = JSON.parse(rawJsonString);
+
+      // 3. Structural Integrity verification check
+      if (!parsedVault || !isTripleKVShape(parsedVault)) {
+        return this.vaultFallback;
+      }
+
+      const candidate = parsedVault;
+      const blueprintKeys = ObjectUtils.keys(candidate.blueprints);
+      const blueprints = candidate.blueprints;
+
+      // 4. Validate every individual child node shape to protect the registry graph
+      for (const key of blueprintKeys) {
+        const shapeNode = blueprints[key];
+        if (!isValidSolidShape(shapeNode)) {
+          return this.vaultFallback;
+        }
+      }
+
+      return candidate;
+    } catch {
+      // Return pristine baseline fallback configs on unexpected local I/O anomalies
+      return this.vaultFallback;
+    }
+  }
   /** @see {@link AuditServiceDocs.syncAuditBaselineFile} */
   public async syncAuditedBaselineFile(vault: TTripleKV): Promise<void> {
     try {

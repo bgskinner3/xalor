@@ -11,6 +11,7 @@ import type {
   TTransformXalorModes,
   TValidationXalorModes,
 } from '../../shared';
+import { MATCH_PROCESSOR_MAPPER } from '../mappers/match-processor-mapper';
 /**
  * Reusable utility to scrape out a single string-literal generic argument from index [0]
  * and dynamically compute the execution mode flavor directly from the fully qualified API name string.
@@ -119,9 +120,15 @@ export function formatMatchArgs<T extends IBasePayload>(
   node: CallExpression,
   factory: NodeFactory,
 ): Expression[] {
+  // 1. Fetch the authoritative bytecode handler point-free out of the routing table
+  const targetedHandler = MATCH_PROCESSOR_MAPPER[mode];
+
+  if (targetedHandler && raw.keyName) {
+    return targetedHandler({ keyName: raw.keyName }, node, factory);
+  }
+
   const keyLiteral = factory.createStringLiteral(raw.keyName ?? 'unknown');
   const modeLiteral = factory.createStringLiteral(mode);
-
   return node.arguments.length > 0
     ? [...node.arguments, keyLiteral, modeLiteral]
     : [keyLiteral, modeLiteral];

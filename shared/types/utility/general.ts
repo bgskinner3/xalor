@@ -45,3 +45,18 @@ export type TDetermineInstance<CtorType> =
  *
  */
 export type TPrettify<T> = { [K in keyof T]: T[K] } & {};
+
+/**
+ * 🔗 REVERSE LOOKUP ENGINE
+ *
+ * Performance Profile: O(1) Shallow Index Map lookup.
+ * Strategy: Scans ISolidRegistry to find which specific plaintext string key maps
+ * exactly to the provided structural type payload shape.
+ */
+export type TExtractRegistryKeyName<T> = {
+  [K in keyof ISolidRegistry]: ISolidRegistry[K] extends T
+    ? T extends ISolidRegistry[K]
+      ? K
+      : never
+    : never;
+}[keyof ISolidRegistry];

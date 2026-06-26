@@ -1,6 +1,15 @@
-import type { TVaultSyncPayload, TTransformerExecuteMode } from '../../shared';
+import type {
+  TVaultSyncPayload,
+  TTransformerExecuteMode,
+  TTripleKV,
+} from '../../shared';
 import type { SourceFile, Program, TransformationContext } from 'typescript';
 import { CUD_EXECUTION_MODES } from '../constants';
+import type {
+  TSessionPathKeys,
+  TGlobalKeyRegistry,
+  TDriftLineageEntry,
+} from './context';
 
 export type TXalorLifecycleContext = {
   readonly isWatchMode: boolean;
@@ -81,6 +90,23 @@ export type TPersistenceGateParams = {
   readonly file: SourceFile;
   readonly program: Program;
   readonly rootDir: string;
+};
+
+export type TBacktrackingSweepParams = {
+  readonly currentSessionPath: TSessionPathKeys;
+  readonly globalKeyRegistry: TGlobalKeyRegistry;
+  readonly activePassKeys: Set<string>;
+  readonly driftRegistry: Map<string, TDriftLineageEntry>;
+  readonly historicalDrift: TTripleKV['driftTracking'];
+};
+
+export type TFlushAndHarvestParams = {
+  readonly file: SourceFile;
+  readonly program: Program;
+  readonly rootDir: string;
+  readonly globalKeyRegistry: TGlobalKeyRegistry;
+  readonly isTestEnvironment: boolean;
+  readonly isDevelopmentPass: boolean;
 };
 /**
  * TCudExecutionMode

@@ -18,20 +18,17 @@ import { XalorRoutesService, xalorCentralContext } from '../service';
  * 2. MERGING: Populates the ISolidRegistry interface via declaration merging.
  * 3. OVERLOADING: Generates specific function signatures that map string
  *    keys to their respective TypeScript interfaces for the IDE.
- type TExpandStructure<T> = T extends (...args: unknown[]) => unknown
-  ? T
-  : T extends object
-  ? { [K in keyof T]: TExpandStructure<T[K]> }
-  : T;
+
  */
 function temporalManifest(
   registry: Map<string, TVaultSyncPayload>,
   targetDir: string,
   emitter: typeof IS_SOLID_CONFIG_ITEMS.emitter,
 ): string {
-  const { keyHasExportedType } = xalorCentralContext.context;
+  const { keyHasExportedType, driftRegistry } = xalorCentralContext.context;
   const identityLines: string[] = [];
   const registryLines: string[] = [];
+  const driftRegistryLines: string[] = [];
 
   registry.forEach((payload, key) => {
     const { filePath, symbolName, area, typeName } = payload;
@@ -69,6 +66,17 @@ function temporalManifest(
     );
   });
 
+  driftRegistry.forEach((payload, key) => {
+    const { ancestorKey, currentKey } = payload;
+    const ancestorTypeString =
+      ancestorKey && ancestorKey.trim() !== ''
+        ? `ISolidRegistry['${ancestorKey}']`
+        : 'never';
+    driftRegistryLines.push(
+      ` /* prettier-ignore */ '${key}': { readonly current: ISolidRegistry['${currentKey}'];  readonly v1_ancestor: ${ancestorTypeString};  }`,
+    );
+  });
+
   return [
     emitter.banner,
     `/* eslint-disable ${emitter.eslintDisabled.join(' ')} */`,
@@ -85,10 +93,7 @@ function temporalManifest(
     '  }',
     '',
     '  interface ISolidDriftRegistry {',
-    '    [key: string]: {',
-    '      readonly current: any;',
-    '      readonly v1_ancestor: any;',
-    '    };',
+    ...driftRegistryLines,
     '  }',
     '}',
     '',

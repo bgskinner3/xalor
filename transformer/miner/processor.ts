@@ -42,8 +42,9 @@ export function solidVisitorProcessor({
   /* prettier-ignore */
   if (isTransformerTarget(target)) finalArgs = PROCESSOR_REWRITE_MAPPER[target.apiName](target, node, factory);
 
-  /* prettier-ignore */
-  if (isMatchTarget(target)) finalArgs = PROCESSOR_REWRITE_MAPPER[target.apiName](target, node, factory);
+  if (isMatchTarget(target)) {
+    finalArgs = PROCESSOR_REWRITE_MAPPER[target.apiName](target, node, factory);
+  }
 
   return factory.updateCallExpression(
     node,

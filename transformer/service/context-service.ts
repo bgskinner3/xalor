@@ -6,6 +6,7 @@ import type {
   TDeleteSessionRegistry,
   TSessionPathKeys,
   TCompilationPhase,
+  TDriftLineageEntry,
 } from '../types';
 import { XalorRoutesService } from './routes-service';
 
@@ -29,11 +30,12 @@ class XalorContextService {
     globalThis.__XALOR_ROOT_DIR__ ||= process.cwd();
     /* prettier-ignore */
     globalThis.__XALOR_BOOT_HYDRATED__ ||= false
-
     /* prettier-ignore */
     globalThis.__XALOR_SEQUENCE_COUNTERS__ ||= new Map<string, number>();
     /* prettier-ignore */
     globalThis.__XALOR_TARGETED_RUNTIME_FILES_SET__ ||= new Set<string>();
+    /* prettier-ignore */
+    globalThis.__XALOR_DRIFT_REGISTRY__ ||= new Map<string, TDriftLineageEntry>();
   }
   get globalKeyRegistry() {
     return globalThis.__XALOR_GLOBAL_KEY_REGISTRY__!;
@@ -53,7 +55,9 @@ class XalorContextService {
   get sequenceCounters() {
     return globalThis.__XALOR_SEQUENCE_COUNTERS__!;
   }
-
+  get driftRegistry() {
+    return globalThis.__XALOR_DRIFT_REGISTRY__!;
+  }
   public static getInstance(): XalorContextService {
     if (!XalorContextService.instance) {
       XalorContextService.instance = new XalorContextService();
@@ -71,6 +75,7 @@ class XalorContextService {
       targetedFilesSet: this.targetedRuntimeFilesSet,
       compilationPhase: this.activeCompilationPhase,
       keyHasExportedType: this.keyHasExportedType,
+      driftRegistry: this.driftRegistry,
     };
   }
   // ============================================================================================
@@ -186,6 +191,23 @@ class XalorContextService {
   public setCompilationPhase(phase: TCompilationPhase): void {
     this.activeCompilationPhase = phase;
   }
+  // ============================================================================================
+  // 🧬 EVOLUTION DRIFT REGISTRY
+  // ============================================================================================
+  /* prettier-ignore */
+  public addDriftLineage(evolutionToken: string, lineage: TDriftLineageEntry): void {
+    this.driftRegistry.set(evolutionToken, lineage);
+  }
+
+  /* prettier-ignore */
+  public deleteFromDriftRegistry(evolutionToken: string): boolean {
+    return this.driftRegistry.delete(evolutionToken);
+  }
+
+  /* prettier-ignore */
+  public getDriftLineage(evolutionToken: string): TDriftLineageEntry | undefined {
+    return this.driftRegistry.get(evolutionToken);
+  }
 
   // ============================================================================================
   // SHARED REGISTRY
@@ -228,6 +250,7 @@ class XalorContextService {
     // 1. Clear ambient Map registry allocations cleanly point-free
     this.globalKeyRegistry.clear();
     this.sequenceCounters.clear();
+    this.driftRegistry.clear();
 
     // 2. Clear  transient tracking sets
     this.activePassKeys.clear();

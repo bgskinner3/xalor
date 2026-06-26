@@ -2,9 +2,10 @@ import type {
   TSolidBranded,
   TDeepMerge,
   TRecursiveReadonly,
+  TExtractRegistryKeyName,
 } from '../../../shared';
 import type { TGeneratorXalorModes } from '../../../shared';
-
+import { BRAND_SYMBOL } from '../../../shared';
 // ====================================================================
 // ====================================================================
 // ====================================================================
@@ -100,12 +101,12 @@ export type TMax8CompositeKeys =
 
 // ====================================================================
 // ====================================================================
-// MAIN MAPPER SETUP
+// MATCH DRIFT TYPES
 // ====================================================================
 // ====================================================================
 
 /**
- * 🎛️ CATEGORY 5 MATCH: AUTOMATED DRIFT INFRASTRUCTURE PARAMETERS CONTRACT
+ *  AUTOMATED DRIFT INFRASTRUCTURE PARAMETERS CONTRACT
  *
  * Progressive disclosure matrix enabling backward-compatible version matching.
  * Uses strict registry index lookups to guarantee 100% autocomplete safety.
@@ -122,8 +123,8 @@ export type TMax8CompositeKeys =
  *
  */
 export interface IXalorDriftContext<D extends keyof ISolidDriftRegistry, R> {
-  /* prettier-ignore */ readonly currentKey: ISolidDriftRegistry[D] extends { activeKey: infer CK } ? CK : keyof ISolidRegistry;
-  /* prettier-ignore */ readonly ancestralKey?: ISolidDriftRegistry[D] extends { historicalKey: infer AK; } ? AK : keyof ISolidRegistry;
+  /* prettier-ignore */ readonly currentKey: TExtractRegistryKeyName<ISolidDriftRegistry[D]['current']>;
+  /* prettier-ignore */ readonly ancestralKey?: TExtractRegistryKeyName<ISolidDriftRegistry[D]['v1_ancestor']>;
   /* prettier-ignore */ readonly strict?: boolean;
   /* prettier-ignore */ readonly prune?: boolean;
   /* prettier-ignore */ readonly current: (value: ISolidDriftRegistry[D]['current']) => R;
@@ -131,11 +132,36 @@ export interface IXalorDriftContext<D extends keyof ISolidDriftRegistry, R> {
   /* prettier-ignore */ readonly default: () => R;
 }
 
+/**
+ * NOMINAL BRAND COMPILER ATTACHER
+ *
+ * ROLE:
+ * Isolates the nominal branding intersection calculations away from function signatures.
+ *
+ * STRATEGY:
+ * Evaluates the final computed shape 'R'. If 'R' perfectly matches a named type inside
+ * your main registry, it appends the framework metadata tag. Otherwise, it yields a clean object.
+ */
+/* prettier-ignore */
+type TApplyNominalBrand<R> = R & (TExtractRegistryKeyName<R> extends never 
+  ? object 
+  : { readonly [BRAND_SYMBOL]: ['Solid', TExtractRegistryKeyName<R>] }
+);
+
+/**
+ * CATEGORY 5 MATCH: CENTRALIZED DRIFT EXECUTOR
+ *
+ * ROLE:
+ * Clean, positionally aligned signature format ready for AOT compile-time rewrites.
+ */
+/* prettier-ignore */
 export type TXalorDriftExecutor = <
   K extends keyof ISolidDriftRegistry,
-  R = unknown,
+  R extends Partial<ISolidDriftRegistry[K]['current']> = ISolidDriftRegistry[K]['current'],
 >(
   payload: unknown,
   ctx: IXalorDriftContext<K, R>,
+  targetLiveKeyStr?: keyof ISolidRegistry,
+  targetOldKeyStr?: keyof ISolidRegistry,
   injectedKey?: K,
-) => R;
+) => TApplyNominalBrand<R>;

@@ -44,6 +44,26 @@ export type TSessionRegistry = {
   [projectRelativeFilePath: string]: TSessionPathKeys;
 };
 
+/**
+ * TDriftLineageEntry
+ * 🧬 THE COMPILER EVOLUTION CONTRACT MATRIX
+ *
+ * ROLE:
+ * Represents the resolved, compilation-frame structural mapping metadata
+ * for a multi-generational evolution token lifecycle.
+ *
+ * @key currentKey - The authoritative string key registration token representing today's active production type contract.
+ *                   Maps directly to a property key inside `ISolidRegistry` (e.g., 'USER_ACCOUNT_V2').
+ *
+ * @key ancestorKey - The historical ancestral string key registration token representing yesterday's contract format.
+ *                    Maps directly to an ancestor property key inside `ISolidRegistry` (e.g., 'USER_ACCOUNT_V1').
+ *
+ */
+export type TDriftLineageEntry = {
+  readonly currentKey: string;
+  readonly ancestorKey: string;
+};
+
 // ==============================================================================
 // ==============================================================================
 // CONTEXT METHODS
@@ -70,4 +90,5 @@ export type TXalorEngineContext = {
   readonly targetedFilesSet: Set<string>;
   readonly keyHasExportedType: Set<string>;
   readonly compilationPhase: TCompilationPhase;
+  readonly driftRegistry: Map<string, TDriftLineageEntry>;
 };

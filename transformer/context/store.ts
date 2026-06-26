@@ -1,6 +1,6 @@
 // transformer/context/store.ts
 import type { TVaultSyncPayload } from '../../shared/types';
-import type { TSessionRegistry } from '../types';
+import type { TSessionRegistry, TDriftLineageEntry } from '../types';
 
 declare global {
   // ======================================================================
@@ -9,6 +9,7 @@ declare global {
   var __XALOR_GLOBAL_KEY_REGISTRY__: Map<string, TVaultSyncPayload> | undefined;
   var __XALOR_TRACE_CACHE__: TSessionRegistry | undefined;
   var __XALOR_ACTIVE_PASS_KEYS__: Set<string> | undefined;
+  var __XALOR_DRIFT_REGISTRY__: Map<string, TDriftLineageEntry> | undefined;
 
   // ======================================================================
   // BOOTLOADER
