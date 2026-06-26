@@ -6,6 +6,7 @@ import type {
   TGenerateRawPayload,
   TValidateRawPayload,
   TTransformerRawPayload,
+  TMatchRawPayload,
 } from '../../types';
 import type {
   TMirrorBrand,
@@ -19,11 +20,13 @@ import {
   isString,
   isArray,
   isInArray,
+  isNull,
 } from '../../../shared/utils/guards';
 import {
   GENERATOR_MODE_TRIGGERS,
   VALIDATION_MODE_TRIGGERS,
   TRANSFORM_MODE_TRIGGERS,
+  MATCH_MODE_TRIGGERS,
 } from '../../../shared/auto';
 import type { TransformationContext } from 'typescript';
 // ========================================================================
@@ -37,7 +40,7 @@ import type { TransformationContext } from 'typescript';
 export function isRegisterTarget(
   target: TResolvedMiningRouterReturn | null,
 ): target is TRegisterRawPayload {
-  return target !== null && target.apiName === 'xalor.register';
+  return !isNull(target) && target.apiName === 'xalor.register';
 }
 
 /**
@@ -47,28 +50,36 @@ export function isRegisterTarget(
 export function isGenerateTarget(
   target: TResolvedMiningRouterReturn | null,
 ): target is TGenerateRawPayload {
-  return target !== null && isInArray(GENERATOR_MODE_TRIGGERS)(target.apiName);
+  return !isNull(target) && isInArray(GENERATOR_MODE_TRIGGERS)(target.apiName);
 }
 
 /** IS VALIDATION TARGET TYPE GUARD */
 export function isValidateTarget(
   target: TResolvedMiningRouterReturn,
 ): target is TValidateRawPayload {
-  return target !== null && isInArray(VALIDATION_MODE_TRIGGERS)(target.apiName);
+  return !isNull(target) && isInArray(VALIDATION_MODE_TRIGGERS)(target.apiName);
 }
 
 /** IS Transformer TARGET TYPE GUARD */
 export function isTransformerTarget(
   target: TResolvedMiningRouterReturn,
 ): target is TTransformerRawPayload {
-  return target !== null && isInArray(TRANSFORM_MODE_TRIGGERS)(target.apiName);
+  return !isNull(target) && isInArray(TRANSFORM_MODE_TRIGGERS)(target.apiName);
+}
+
+/** IS Transformer TARGET TYPE GUARD */
+export function isMatchTarget(
+  target: TResolvedMiningRouterReturn,
+): target is TMatchRawPayload {
+  return !isNull(target) && isInArray(MATCH_MODE_TRIGGERS)(target.apiName);
 }
 
 export function isRuntimeAPICall(target: TResolvedMiningRouterReturn) {
   return (
     isTransformerTarget(target) ||
     isValidateTarget(target) ||
-    isGenerateTarget(target)
+    isGenerateTarget(target) ||
+    isMatchTarget(target)
   );
 }
 

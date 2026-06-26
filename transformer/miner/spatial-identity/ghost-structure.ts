@@ -8,6 +8,8 @@ import {
 } from '../../utils'; // Adjust paths to match your shared utilities
 import type { TPrintGhostStructure } from '../../types';
 import { shapeKindUtilsService } from '../../../shared';
+import { isUndefined } from '../../../shared/utils/guards';
+
 /**
  * executeUnrollPass
  * 🪐 THE STATIC UNROLLING MACHINE (Instance & Cyclic Shield Edition)
@@ -30,7 +32,7 @@ function executeUnrollPass(
   // 🏛️ STEP 1: GLOBAL INSTANCE TERMINAL SHIELD
   // ========================================================================
   const symbol = type.getSymbol() ?? type.aliasSymbol;
-  if (symbol !== undefined) {
+  if (!isUndefined(symbol)) {
     const symbolName = symbol.getName();
     const cleanSymbolName = symbolName.replace(/Constructor$/, '');
     if (shapeKindUtilsService.isKnownInstanceKey(cleanSymbolName)) {
@@ -86,7 +88,7 @@ function executeUnrollPass(
 
     for (let i = 0; i < unionLen; i++) {
       const variant = constituents[i];
-      if (variant !== undefined) {
+      if (!isUndefined(variant)) {
         unionStringTokens.push(
           executeUnrollPass(variant, checker, node, childVisited),
         );
@@ -106,8 +108,9 @@ function executeUnrollPass(
     // Separate pure functional call handlers from structural data object tables
     if (type.getCallSignatures().length > 0) {
       const funcSymbol = type.getSymbol() ?? type.aliasSymbol;
-      const funcLabelName =
-        funcSymbol !== undefined ? funcSymbol.getName() : 'Function';
+      const funcLabelName = !isUndefined(funcSymbol)
+        ? funcSymbol.getName()
+        : 'Function';
       return `TXalorCyclicToken<"${funcLabelName}">`;
     }
 
@@ -121,15 +124,16 @@ function executeUnrollPass(
 
         for (let i = 0; i < argLen; i++) {
           const arg = typeArguments[i];
-          if (arg !== undefined) {
+          if (!isUndefined(arg)) {
             genericArgBuffer.push(
               executeUnrollPass(arg, checker, node, childVisited),
             );
           }
         }
         const symbolObj = type.aliasSymbol || type.getSymbol();
-        const genericBaseName =
-          symbolObj !== undefined ? symbolObj.getName() : 'Anonymous';
+        const genericBaseName = !isUndefined(symbolObj)
+          ? symbolObj.getName()
+          : 'Anonymous';
         return `${genericBaseName}<${genericArgBuffer.join(', ')}>`;
       }
     }
@@ -138,8 +142,6 @@ function executeUnrollPass(
     const propLen = coreProperties.length;
     const structuralTokenBuffer: string[] = [];
 
-    // 🟢 FIXED: We allocate a fresh, isolated branch cache frame for our properties sweep loop.
-    // Sibling properties cannot contaminate or mutate each other's ancestry vertical history!
     const loopVisited = new Set<ts.Type>(visitedTypes);
     loopVisited.add(type);
 

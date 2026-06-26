@@ -21,10 +21,15 @@ export type TVaultManifestEntry = {
  */
 export type TVaultRegistryEntry = { symbolName: string; typeName: string };
 
+/**
+ * TVaultDriftEntry
+ *
+ * @key version - The ancestral generation token label constraint marker
+ * @key hash - The content-addressed hash identifier pointing back into the blueprints pool
+ *
+ */
 type TVaultDriftEntry = {
-  /** The ancestral generation token label constraint marker */
   readonly version: 'v1_ancestor';
-  /** The content-addressed hash identifier pointing back into the blueprints pool */
   readonly hash: string;
 };
 
@@ -73,6 +78,7 @@ export type TSolidError = {
   area?: string; // Runtime failure GPS
   origin?: string | TVaultManifestEntry; // Definition GPS
 };
+
 /**
  * TXalorRuleKind
  *
@@ -90,28 +96,30 @@ export type TXalorRuleKind =
 /**
  * TXalorIssue
  *
+ * @key path - The full dot-notation breadcrumb path matching the payload (e.g., '$.address.zip')
+ * @key expected - A human-readable description or stringified representation of the required shape
+ * @key received - A stringified JSON or primitive readout of the broken input that was provided
+ * @key rule - The specific type-system rule or boundary law that was violated
+ *
  * @see {@link GlobalRootTypeDocs.TXalorIssue }
  */
 export type TXalorIssue = {
-  /** The full dot-notation breadcrumb path matching the payload (e.g., '$.address.zip') */
   path: string;
-  /** A human-readable description or stringified representation of the required shape */
   expected: string;
-  /** A stringified JSON or primitive readout of the broken input that was provided */
   received: string;
-  /** The specific type-system rule or boundary law that was violated */
   rule: TXalorRuleKind;
 };
 
 /**
  * TXalorAuditReport
  *
+ * @key valid - Quick flag indicating if the data satisfies the target blueprint
+ * @key issues - An array containing deterministic diagnostic traces for each failure found
+ *
  * @see {@link GlobalRootTypeDocs.TXalorAuditReport }
  */
 export type TXalorAuditReport = {
-  /** Quick flag indicating if the data satisfies the target blueprint */
   valid: boolean;
-  /** An array containing deterministic diagnostic traces for each failure found */
   issues: TXalorIssue[];
 };
 /**

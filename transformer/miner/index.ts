@@ -8,6 +8,7 @@ import {
   isGenerateTarget,
   isValidateTarget,
   isTransformerTarget,
+  isMatchTarget,
   isRuntimeAPICall,
 } from '../utils';
 import type { Visitor, Node } from 'typescript';
@@ -92,18 +93,14 @@ export function theMiner({
 
       return markAsPure(updatedCall);
     }
-    if (
-      isIngestRegistryMode &&
-      !isStandardInlineMode &&
-      isRuntimeAPICall(target)
-    ) {
+
+    /* prettier-ignore */
+    if (isIngestRegistryMode && !isStandardInlineMode && isRuntimeAPICall(target)) {
       xalorCentralContext.addTargetedRuntimeFile(sourceFile.fileName);
     }
-    if (
-      isIngestRegistryMode &&
-      !isStandardInlineMode &&
-      !isRegisterTarget(target)
-    ) {
+
+    /* prettier-ignore */
+    if (isIngestRegistryMode && !isStandardInlineMode && !isRegisterTarget(target)) {
       return visitEachChild(node, visitor, context);
     }
 
@@ -134,6 +131,17 @@ export function theMiner({
       }
       return markAsPure(updatedCall);
     }
+
+    // PATH Match: matchXalor
+    if (isMatchTarget(target)) {
+      /* prettier-ignore */
+      const updatedCall = solidVisitorProcessor({ node, sourceFile, factory, target });
+      if (isReifyRuntimeMode) {
+        console.log(`🎯 [Xalor CLI] Match Type Key: '${target.keyName}'`);
+      }
+      return markAsPure(updatedCall);
+    }
+
     return visitEachChild(node, visitor, context);
   };
   return visitor;

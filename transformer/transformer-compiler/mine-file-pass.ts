@@ -35,9 +35,7 @@ function catchFileMiningError(error: unknown, sourceFile: SourceFile): void {
   //  PATH A: CONTROLLED STRUCTURAL TYPE RULE VIOLATIONS
   // ========================================================================
   if (isInstanceOf(error, XalorInvalidTypeError)) {
-    if (!isWatch) {
-      xalorCentralContext.hardResetAllMemoryStores();
-    }
+    if (!isWatch) xalorCentralContext.hardResetAllMemoryStores();
 
     if (lifecycle.isOneShotCompileMode || lifecycle.isProductionVacuumMode) {
       throw error;
@@ -59,9 +57,7 @@ function catchFileMiningError(error: unknown, sourceFile: SourceFile): void {
   // ========================================================================
   // PATH B: UNEXPECTED INTERNAL SYSTEM FAULTS
   // ========================================================================
-  if (!isWatch) {
-    xalorCentralContext.hardResetAllMemoryStores();
-  }
+  if (!isWatch) xalorCentralContext.hardResetAllMemoryStores();
 
   if (lifecycle.isOneShotCompileMode || lifecycle.isProductionVacuumMode) {
     throw error;

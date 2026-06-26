@@ -216,7 +216,7 @@ export function assertRegistryKey<K extends keyof ISolidRegistry>(
 export function assertDriftRegistryKey<K extends keyof ISolidDriftRegistry>(
   key: K | unknown,
 ): asserts key is K {
-  if (!isRegistryKey<K>(key)) {
+  if (!isDriftRegistryKey<K>(key)) {
     throw new Error(
       `[Xalor Ingress Exception] Compilation Gateway Violation:\n` +
         `The engine failed to locate a valid, hydrated structural blueprint token for key: "${String(key)}".\n` +
