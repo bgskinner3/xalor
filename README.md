@@ -33,33 +33,42 @@
 <br/>
 
 <div align="center">
-  <p style="font-size:20px; max-width:700px;">
-    <em>“A build-time TypeScript engine that turns your native types into a live runtime validation and generation system — without duplicating schemas or shipping heavy validation libraries.”</em>
+  <p style="font-size:18px; max-width:700px;">
+    <em>“An ahead-of-time (AOT) TypeScript compilation engine that transforms static type contracts into live runtime validation and pattern-matching systems—without duplicating schemas or inflating client bundle sizes.”</em>
   </p>
 </div>
 
 <br/>
 <br/>
 
-## ✨ Why Xalor exists
+In modern high-scale TypeScript applications:
+* **Type Erasure:** Types only exist at compile time; runtime verification requires completely detached schema definitions (Zod, Yup, ArkType).
+* **Workspace Clutter:** Maintaining duplicated static types alongside manual validation schemas introduces immediate code drift.
+* **Bundle Inflation:** Traditional validation libraries force the client browser to download heavy runtime parsing engines, inflating bundle sizes by up to 50KB.
+* **Procedural Overkill:** Evaluating complex polymorphic network payloads results in massive, brittle `if/else` or `switch` type-guard matrices.
 
-In most TypeScript apps today:
+**Xalor removes this separation entirely.** Your TypeScript types become your live runtime metadata.
 
-- Types exist only at compile time
-- Runtime validation requires separate schemas (Zod, Yup, etc.)
-- Mocking and transformation logic is duplicated across the stack
-- Types and runtime behavior slowly drift apart
+---
 
-Xalor removes that separation entirely.
+## 🧠 The Architecture
 
-<br/>
+Unlike standard runtime parsing engines, Xalor utilizes a two-phase ahead-of-time (AOT) compilation strategy via a custom compiler plugin:
 
-## 🧠 Core Idea
+```text
+TypeScript Source File (.ts)
+       │
+       ▼  (Build Time / ts-patch sweep)
+Xalor AST Transformer  ──> Extracts structural metadata blueprints
+       │
+       ▼  (Injects optimized code-gen lookups)
+Production JavaScript Output (0 KB Client Parser Overhead)
+```
 
-- **The Rule:** Write TypeScript types once.
-- **The Result:** Use them natively at runtime.
+1. **Build-Time Compilation:** The Xalor AST transformer scans your source code call-sites during the compilation phase, parses complex generic or recursive structures, and embeds lightweight static lookup blueprints into the production JavaScript artifact.
+2. **Zero-Overhead Runtime:** The runtime library bypasses parsing or type reconstruction completely, evaluating incoming payloads directly against pre-compiled schema graphs.
 
-<br/>
+---
 
 ## 📦 Installation
 
@@ -67,178 +76,94 @@ Xalor removes that separation entirely.
 npm install @bgskinner2/xalor
 ```
 
-### ⚙️ Explore Configuration Options [Configure →](https://github.com/bgskinner3/xalor/tree/main)
+*Note: To enable AOT type extraction, ensure your project compiler layer is configured with `ts-patch` or the corresponding Xalor plugin wrapper.*
 
-<br/>
+---
 
-## ⚡ What Xalor gives you
+## 🧩 Core Capabilities & API
 
-From a single TypeScript type, you can:
-
-- ✅ Validate runtime data
-- 🧪 Generate mock objects
-- 🔄 Transform object shapes
-- 🧭 Perform structural matching
-
-All powered by build-time compilation — not runtime schema parsing.
-
-<br/>
-
-## 🧩 Quick Example
+### 1. Structural Validation & Data Generation
+Xalor exposes a clean, centralized instance interface. Native type parameters direct the underlying pre-compiled blueprints.
 
 ```ts
-// 1. Define a type
+import { xalor } from '@bgskinner2/xalor';
+
+// 1. Define a native type (Supports complex generics and recursive trees)
 type Transaction = {
   id: string;
   amount: number;
   currency: 'USD' | 'EUR' | 'GBP';
 };
 
-// 2. Register it
+// 2. Register your layout contract
 xalor.register<'TX', Transaction>();
 
-// 3. Validate data
-xalor.parse<'TX'>(payload);
+// 3. Fast structural runtime validation
+const data: unknown = fetchIncomingPayload();
+const payload = xalor.parse<'TX'>(data); // Strongly-typed output!
 
-// 4. Generate mock data
-const mock = xalor.mock<'TX'>();
+// 4. Instant data mocking for test suites
+const mockData = xalor.mock<'TX'>();
+```
 
-// 5. Transform data
-const slim = xalor.pick<'TX'>({
-  data: payload,
-  keys: ['id', 'currency'],
+### 2. Functional Pattern Matching (`xalor`)
+Execute pure, declarative structural pattern matching over unknown or polymorphic payloads. Xalor bypasses procedural condition loops, executing the closure handler of the first matching contract.
+
+```ts
+import { xalor } from '@bgskinner2/xalor';
+
+// Process an un-typed or polymorphic network stream
+const eventPayload: unknown = fetchIncomingWebhookEvent();
+
+const response = xalor.match(eventPayload, {
+  USER_LOGOUT: (user) => handleUserLogout(user),   // 'user' is fully typed and narrowed via registry
+  STORE_ORDER: (order) => processCheckout(order), // 'order' is fully typed and narrowed via registry
+  default: () => handleFallbackFailure()          // Safe fall-through catch-all gate
 });
+
 ```
 
-## From one type, Xalor can:
+---
 
-- Validate runtime data.
-- Generate realistic mock objects.
-- Transform object structures.
-- Maintain compile-time and runtime alignment.
+## 🛠️ CLI Developer Tooling
 
-<br/>
-
-## ⚙️ How it works (simplified)
-
-**Xalor has two phases:**
-
-### 🏗 Build time
-
-- TypeScript types are analyzed
-- Runtime blueprints are generated
-- Optimized lookup structures are created
-
-### ⚡ Runtime
-
-- No schema parsing
-- No type reconstruction
-- Direct execution from precompiled blueprints
-
-This keeps runtime operations fast and lightweight.
-
-<br/>
-
-## 🧠 API design
-
-Xalor exposes a single instance:
-
-```typescript
-import { xalor } from '@bgskinner2/xalor';
-```
-
-### Core methods
-
-```typescript
-import { xalor } from '@bgskinner2/xalor';
-
-xalor.register();
-
-xalor.parse<'USER'>();
-xalor.mock<'USER'>();
-xalor.default<'USER'>();
-xalor.cast<'USER'>();
-xalor.clone<'USER'>();
-xalor.pick<'USER'>();
-```
-
-\*\* Additional validation, generation, and transformation APIs are available in the documentation.
-👉 [View All](#)
-
-<br/>
-
-## 🛠 CLI (Development Tooling)
-
-`Xalor` includes a build-time development CLI:
+Xalor includes an ahead-of-time (AOT) development toolset to manage compilation lifecycles, monitor schema optimization metrics, and prevent type drift:
 
 ```bash
+# Actively watch your source files and hot-reload runtime blueprints
 npx xalor watch
+
+# Manually trigger an out-of-band workspace AST metadata compilation sweep
 npx xalor compile
+
+# Profile type graph optimization metrics and scan for dead code orphans
+npx xalor audit
 ```
 
-## Additional development tooling is documented separately.
+### 🛰️ Deep-Dive Intelligence
 
-👉 [Full CLI documentation (coming soon)](#)
+Running `npx xalor audit` triggers our operational compiler profiler, outputting real-time ledger diagnostics directly to your terminal:
+* **Storage Compaction:** Visualizes Content-Addressable Storage (CAS) node deduplication ratios.
+* **Metadata Evaporation:** Tracks the exact volume of development footprint stripped away for bare-metal production builds.
+* **Dead-Code Shaking:** Statically scans call-sites to flag unused or orphaned contract keys instantly.
 
-<br/>
+👉 **Ready to explore the full suite?** View the [Full CLI Reference & Studio Guide](http://masterofsum.dev/xalor/docs) to learn about `build`, `clear`, and our local interactive orchestration dashboard.
+---
 
-## 🚀 Getting Started
+## 📊 Ecosystem Comparison
 
-```bash
-npx xalor init
-```
+| Feature | Zod / Valibot | Typia | **Xalor** |
+| :--- | :---: | :---: | :---: |
+| **Single Source of Truth** 🧭 | ❌ | ✔️ | **✔️** |
+| **Zero Client Bundle Inflation** 📦 | ❌ | ✔️ | **✔️** |
+| **Zero Workspace Setup Clutter** ✨ | ✔️ | ❌ | **✔️** |
+| **GPS Diagnostic Tracing** 📍 | ❌ | ❌ | **✔️** |
+| **Self-Healing Types** 🧬 | ❌ | ✔️ | **✔️** |
+| **Native Pattern Matching API** 🎛️ | ❌ | ❌ | **✔️** |
 
-👉 [Installation & setup guide](#)
-
-<br/>
-
-## 📚 Documentation
-
-- [Getting Started](#)
-- [API Reference](#)
-- [CLI Reference](#)
-- [Guides](#)
-- [How It Works](#)
-
-<br/>
-
-## 🧭 Mental Model
-
-```text
-TypeScript Types
-       ↓
-Build-Time Compilation
-       ↓
-Runtime System (validation / generation / transformation)
-```
-
-<br/>
-
-## 💡 Why This Is Different
-
-Unlike schema-based libraries:
-
-- ❌ No duplicated validation schemas
-- ❌ No runtime schema parsing
-- ❌ No drift between types and runtime logic
-- ❌ No separate validation system to maintain
-
-**Instead:** Your TypeScript types are the system.
-
-<br/>
-
-## How we compare
-
-| Feature                                  | Zod / Valibot | Xalor | Typia |
-| ---------------------------------------- | ------------- | ----- | ----- |
-| **Single Source of Truth** 🧭            | ❌            | ✔️    | ✔️    |
-| **Zero Client Bundle Size Inflation** 📦 | ❌            | ✔️    | ❌    |
-| **Zero Workspace Clutter** ✨            | ✔️            | ✔️    | ❌    |
-| **GPS Diagnostics** 📍                   | ❌            | ✔️    | ❌    |
-| **Self-Healing** 🧬                      | ❌            | ✔️    | ✔️    |
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
-
-© 2024 Brennan Skinner
+This project is licensed under the MIT License.  
+© 2026 Brennan Skinner
