@@ -75,32 +75,15 @@ class XalorCore {
     assertRegistryKey(activeKey);
     return generateXalorDefault<K>(activeKey);
   }
-
   // ========================================================================
   // ========================================================================
-  // GENERATE
   // ========================================================================
   // ========================================================================
-  // /** @Api generator  @mode default */
-  // /* prettier-ignore */ public default<K extends keyof ISolidRegistry>(): TSolidBranded<K, ISolidRegistry[K]>;
-  // /* prettier-ignore */ public default<K extends keyof ISolidRegistry>(injectedKey?: K, mode?: 'default'): TSolidBranded<K, ISolidRegistry[K]> {
-  //   return generateXalor<K, 'default'>(injectedKey!, mode!);
-  // }
-  /** @Api generator  @mode mock */
-  /* prettier-ignore */ public mock<K extends keyof ISolidRegistry>(): TSolidBranded<K, ISolidRegistry[K]>;
-  /* prettier-ignore */ public mock<K extends keyof ISolidRegistry>(injectedKey?: K, mode?: 'mock'): TSolidBranded<K, ISolidRegistry[K]> {
-    return generateXalor<K, 'mock'>(injectedKey!, mode!);
-  }
-  /** @Api generator  @mode clone */
-  /* prettier-ignore */ public clone<K extends keyof ISolidRegistry>(data: unknown): TSolidBranded<K, ISolidRegistry[K]>;
-  /* prettier-ignore */ public clone<K extends keyof ISolidRegistry>(data: unknown,injectedKey?: K,mode?: 'clone'): TSolidBranded<K, ISolidRegistry[K]> {
-    return generateXalor<K, 'clone'>(injectedKey!, mode!, data);
-  }
-  /** @Api generator  @mode cast */
-  /* prettier-ignore */ public cast<K extends keyof ISolidRegistry>(data: unknown): TSolidBranded<K, ISolidRegistry[K]>;
-  /* prettier-ignore */ public cast<K extends keyof ISolidRegistry>(data: unknown,injectedKey?: K,mode?: 'cast'): TSolidBranded<K, ISolidRegistry[K]> {
-    return generateXalor<K, 'cast'>(injectedKey!, mode!, data);
-  }
+  // !! CATEGORY 4: THE TRANSFORMATION PILLAR (BLANK-SLATE HYDRATION)
+  // ========================================================================
+  // ========================================================================
+  // ========================================================================
+  // ========================================================================
 
   // ========================================================================
   // ========================================================================

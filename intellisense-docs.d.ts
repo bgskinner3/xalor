@@ -1031,6 +1031,82 @@ declare global {
      * @returns {TSolidBranded<K, ISolidRegistry[K]>} An ironclad, nominally-branded, safe fallback data asset template.
      */
     static generateXalorDefault(): void;
+
+    /**
+     * RUNTIME API: GENERATE XALOR MOCK
+     *
+     * Converts a static TSolidShape blueprint into a randomized, high-entropy
+     * physical mock layout using a clean O(1) dictionary lookup map.
+     * generateXalorMock
+     * DESIGN INVARIANTS:
+     * - Satisfies COMMANDMENT I & III: Reads static type specifications flatly out of the main Vault Registry.
+     * - Satisfies COMMANDMENT IV: Performs a single, isolated semantic operation (Random Mock Simulation).
+     * - Satisfies COMMANDMENT VIII: Zero-allocation inline strategy dispatch; tree-shakes fully from client bundles.
+     * - Satisfies COMMANDMENT IX: Zero 'any' variables, zero manual type escape hatches or casting overrides.
+     *
+     * @example
+     * ```ts
+     * const fakeUser = generateXalorMock('USER_ACCOUNT');
+     * console.log(fakeUser.username); // "abcde12345" -> Random high-entropy data string!
+     * ```
+     *
+     * @param {keyof ISolidRegistry} injectedKey - The authoritative pre-compiled registry target key token.
+     * @returns {TSolidBranded<K, ISolidRegistry[K]>} An ironclad, nominally-branded, high-entropy simulated data asset object.
+     *
+     */
+    static generateXalorMock(): void;
+    /**
+     * RUNTIME API: GENERATE XALOR CLONE
+     *
+     * Performs a deep, circular-safe copy of an input object while physically
+     * scrubbing away any keys or structural elements NOT defined in the blueprint contract.
+     *
+     * DESIGN INVARIANTS:
+     * - Satisfies COMMANDMENT I & III: Reads static type specifications flatly out of the main Vault Registry.
+     * - Satisfies COMMANDMENT IV: Performs a single, isolated semantic operation (Deep Structural Copy & Scrubbing).
+     * - Satisfies COMMANDMENT VIII: Zero-allocation inline strategy dispatch; tree-shakes fully from client bundles.
+     * - Satisfies COMMANDMENT IX: Zero 'any' variables, zero manual type escape hatches or casting overrides.
+     *
+     * @example
+     * ```ts
+     * const dirtyPayload = { id: 101, username: 'neo', untrackedHackerKey: 'exploit' };
+     * const cleanClone = generateXalorClone('USER_ACCOUNT', dirtyPayload);
+     *
+     * console.log(cleanClone.username); // "neo"
+     * console.log(Reflect.has(cleanClone, 'untrackedHackerKey')); // false (Scrubbed by contract!)
+     * ```
+     *
+     * @param {keyof ISolidRegistry} injectedKey - The authoritative pre-compiled registry target key token.
+     * @param {unknown} data - The raw incoming object payload stream to deeply duplicate and sanitize.
+     * @returns {TSolidBranded<K, ISolidRegistry[K]>} An ironclad, nominally-branded, scrubbed data duplicate asset object.
+     */
+    static generateXalorClone(): void;
+    /**
+     * RUNTIME API: GENERATE XALOR CAST
+     *
+     * Coerces loose runtime data values cleanly into the exact structural and
+     * primitive types demanded by your type blueprint contracts.
+     *
+     * DESIGN INVARIANTS:
+     * - Satisfies COMMANDMENT I & III: Reads static type specifications flatly out of the main Vault Registry.
+     * - Satisfies COMMANDMENT IV: Performs a single, isolated semantic operation (Type Coercion & Casting).
+     * - Satisfies COMMANDMENT VIII: Zero-allocation inline strategy dispatch; tree-shakes fully from client bundles.
+     * - Satisfies COMMANDMENT IX: Zero 'any' variables, zero manual type escape hatches or casting overrides.
+     *
+     * @example
+     * ```ts
+     * const loosePayload = { id: "404", username: 'selina', active: "true" };
+     * const castedAsset = generateXalorCast('USER_ACCOUNT', loosePayload);
+     *
+     * console.log(castedAsset.id);     // 404 (Safely coerced to a number!)
+     * console.log(castedAsset.active); // true (Safely coerced to a boolean!)
+     * ```
+     *
+     * @param {keyof ISolidRegistry} injectedKey - The authoritative pre-compiled registry target key token.
+     * @param {unknown} data - The loose incoming data structure to force through the primitive type coercers.
+     * @returns {TSolidBranded<K, ISolidRegistry[K]>} An ironclad, nominally-branded, fully-cast primitive or record structure.
+     */
+    static generateXalorCast(): void;
   }
 
   class RuntimeApiDocs {

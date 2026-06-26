@@ -148,3 +148,42 @@ export type TRecursivePartial<T> = T extends (...args: never[]) => unknown
     : T extends object
       ? { [P in keyof T]?: TRecursivePartial<T[P]> }
       : T;
+/**
+ * @utilType type
+ * @name TTupleToIntersection
+ * @category Advanced Type Utilities
+ * @description Transforms an ordered tuple of types into a single intersection type (A & B & C).
+ * @link #ttupletointersection
+ *
+ * ## 🧬 TTupleToIntersection — Variadic Type Merger
+ *
+ * Converts a tuple of types (like those from a spread argument) into a single
+ * intersected type. This is the type-level engine behind high-performance
+ * merge utilities.
+ *
+ * It explicitly unrolls the first 5 members for maximum stability and performance,
+ * falling back to a general intersection for larger arrays.
+ *
+ * @template T - An array or tuple of types to be intersected.
+ *
+ * @example
+ * ```ts
+ * type Configs = [{ id: number }, { name: string }, { active: boolean }];
+ *
+ * // Result: { id: number } & { name: string } & { active: boolean }
+ * type FullConfig = TTupleToIntersection<Configs>;
+ * ```
+ */
+export type TTupleToIntersection<T extends unknown[]> = T extends [infer A]
+  ? A
+  : T extends [infer A, infer B]
+    ? A & B
+    : T extends [infer A, infer B, infer C]
+      ? A & B & C
+      : T extends [infer A, infer B, infer C, infer D]
+        ? A & B & C & D
+        : T extends [infer A, infer B, infer C, infer D, infer E]
+          ? A & B & C & D & E
+          : T extends (infer U)[]
+            ? U
+            : unknown;
