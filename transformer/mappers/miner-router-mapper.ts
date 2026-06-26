@@ -51,24 +51,15 @@ export const XALOR_MINING_ROUTER_MAPPER: TXalorMinerRouterMap = {
   // GENERATION METHODS
   // ========================================================================
   /* prettier-ignore */ 'xalor.default':    (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.default'),
-  // /* prettier-ignore */ 'xalor.mock':       (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.mock'),
-  // /* prettier-ignore */ 'xalor.clone':      (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.clone'),
-  // /* prettier-ignore */ 'xalor.cast':       (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.cast'),
 
   // ========================================================================
   // VALIDATION METHODS
   // ========================================================================
   /* prettier-ignore */ 'xalor.guard':      (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.guard'),
-  // /* prettier-ignore */ 'xalor.assert':     (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.assert'),
   /* prettier-ignore */ 'xalor.parse':      (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.parse'),
-  // /* prettier-ignore */ 'xalor.parseAsync': (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.parseAsync'),
-  // /* prettier-ignore */ 'xalor.audit':      (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.audit'),
 
   // ========================================================================
   // TRANSFORMATION METHODS
   // ========================================================================
-  // /* prettier-ignore */ 'xalor.pick':       (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.pick'),
-  // /* prettier-ignore */ 'xalor.omit':       (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.omit'),
   /* prettier-ignore */ 'xalor.merge':      (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.merge'),
-  // /* prettier-ignore */ 'xalor.flatten':    (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.flatten'),
 } satisfies TXalorMinerRouterMap;

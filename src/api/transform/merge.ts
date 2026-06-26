@@ -49,18 +49,3 @@ export function transformXalorMerge<K extends keyof ISolidRegistry>(
     `[xalor] 🚨 Evolution layer merge failed structurally for contract key: ${injectedKey}`,
   );
 }
-/**
- * NOTES: ADVANCED ROADMAP METRICS (V2/V3 Moonshot Engineering Vectors)
- *
- * - [ ] Inline Cryptographic PII Masking Gateway (`ctx.mask`):
- *       Automatically mask sensitive data strings or evaluate hash closures over fields
- *       before sending assets to downstream application logs or network sockets.
- *
- * - [ ] RFC 6902 State Differential Telemetry Outputs (`ctx.patch`):
- *       Allow the mutation engine to yield formal JSON-patch modification descriptions,
- *       enabling real-time WebSocket state streaming with near-zero bundle footprints.
- *
- * - [ ] Distributed Optimistic Reconciliation Strategy Handler (`ctx.reconcile`):
- *       Incorporate vector-clock reconciliation triggers directly inside your property
- *       loops to resolve online/offline data collisions smoothly right at runtime.
- */
