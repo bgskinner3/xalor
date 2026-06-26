@@ -44,7 +44,12 @@ export const MATCH_PROCESSOR_MAPPER: TMatchProcessorMapper = {
         ancestralKey ||=
           extractLiteralStringFromProperty(property, 'ancestralKey') ?? '';
       }
-
+      if (currentKey && ancestralKey && currentKey === ancestralKey) {
+        console.warn(
+          `⚠️ [Xalor Compiler] Cross-Collision Blocked: Evolution token '${evolutionToken}' maps identical keys for current and ancestral lanes ('${currentKey}'). Falling back point-free.`,
+        );
+        return [...node.arguments];
+      }
       if (currentKey && evolutionToken) {
         xalorCentralContext.addDriftLineage(evolutionToken, {
           currentKey,

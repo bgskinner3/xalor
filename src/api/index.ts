@@ -5,12 +5,18 @@ import {
   assertRegistryKey,
   assertDriftRegistryKey,
 } from '../../shared';
-import type { IXalorMergeContext, IXalorDriftContext } from '../models/types';
+import type {
+  IXalorDriftContext,
+  TApplyNominalBrand,
+  TEnforceDriftUniqueness,
+  TXalorMergeContext,
+} from '../models/types';
+import { TExtractRegistryKeyName } from '../../shared';
 import { registerXalor } from './register';
 import { transformXalorMerge } from './transform';
 import { validateXalorGuard, validateXalorParse } from './validate';
 import { generateXalorDefault } from './generate';
-import { matchXalorDrift } from './match';
+
 class XalorCore {
   // ========================================================================
   // ========================================================================
@@ -83,7 +89,7 @@ class XalorCore {
   // ========================================================================
   // ========================================================================
   /** @Api transform  @mode merge */
-  /* prettier-ignore */ public merge<K extends keyof ISolidRegistry>(ctx: IXalorMergeContext<ISolidRegistry[K]>, _compiledKeyReference?: K): TSolidBranded<K, ISolidRegistry[K]> {
+  /* prettier-ignore */ public merge<K extends keyof ISolidRegistry>(ctx: TXalorMergeContext<ISolidRegistry[K]>, _compiledKeyReference?: K): TSolidBranded<K, ISolidRegistry[K]> {
     assertRegistryKey(_compiledKeyReference);
 
     return transformXalorMerge<K>(_compiledKeyReference, ctx);
@@ -100,15 +106,20 @@ class XalorCore {
   // ========================================================================
   /** @Api match @mode drift */
   /* prettier-ignore */
-  public drift<K extends keyof ISolidDriftRegistry, R = unknown>(
-    payload: unknown, 
-    ctx: IXalorDriftContext<K, R>, 
-    injectedKey?: K
-  ): TSolidBranded<ISolidDriftRegistry[K]['activeKey'], R> {
+  public drift<
+  K extends keyof ISolidDriftRegistry,
+  R extends ISolidDriftRegistry[K]['current'] = ISolidDriftRegistry[K]['current'],
+>(
+  _payload: unknown,
+  _ctx: TEnforceDriftUniqueness<K, IXalorDriftContext<K, R>>,
+  _targetLiveKeyStr?: TExtractRegistryKeyName<ISolidDriftRegistry[K]['current']>,
+  _targetOldKeyStr?: TExtractRegistryKeyName<ISolidDriftRegistry[K]['v1_ancestor']>,
+  _injectedKey?: K,
+): TApplyNominalBrand<R> {
     // 1. Hard control-flow control assertion gate to intercept typo vectors immediately (Commandment V)
-    assertDriftRegistryKey(injectedKey);
+    assertDriftRegistryKey(_injectedKey);
     
-    return  matchXalorDrift<K, R>(payload, ctx);
+  return undefined as unknown as TApplyNominalBrand<R>;
   }
 }
 

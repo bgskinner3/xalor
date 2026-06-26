@@ -33,7 +33,7 @@ export function validateCollisionBorders(
   const isWatch = executeMode === 'watch' || executeMode === 'studio';
 
   /* prettier-ignore */
-  const {  blacklistedKeys } = xalorCentralContext.context;
+  const { blacklistedKeys } = xalorCentralContext.context;
 
   // DELETION SHIELD INTERCEPTOR
   // short-circuit This completely blocks any multi-pass re-addition attempts.

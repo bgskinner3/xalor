@@ -1,9 +1,9 @@
-import { XalethorService } from '../../xalor-service';
-import { markAsSolid } from '../../utils';
-import { isRecord } from '../../../shared/utils/guards';
-import type { IXalorMergeContext } from '../../models/types/operations';
-import { BRAND_SYMBOL } from '../../../shared';
-import type { TSolidBranded } from '../../../shared';
+import { XalethorService } from '../../../xalor-service';
+import { markAsSolid } from '../../../utils';
+import { isRecord } from '../../../../shared/utils/guards';
+import type { TXalorMergeContext } from '../../../models/types';
+import { BRAND_SYMBOL } from '../../../../shared';
+import type { TSolidBranded } from '../../../../shared/types';
 
 /**
  * RUNTIME API: TRANSFORM XALOR MERGE
@@ -18,7 +18,7 @@ import type { TSolidBranded } from '../../../shared';
  */
 export function transformXalorMerge<K extends keyof ISolidRegistry>(
   injectedKey: K,
-  ctx: IXalorMergeContext<ISolidRegistry[K]>,
+  ctx: TXalorMergeContext<ISolidRegistry[K]>,
 ): TSolidBranded<K, ISolidRegistry[K]> {
   if (!injectedKey || !ctx) {
     throw new Error(

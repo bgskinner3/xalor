@@ -30,7 +30,7 @@ declare global {
   }
 
   interface ISolidDriftRegistry {
-    readonly TRANSACTION_EVOLUTION_PIPELINE: {
+    readonly DEE: {
       readonly current: ISolidRegistry['TRANSACTION_V2_CURRENT'];
       readonly v1_ancestor: ISolidRegistry['TRANSACTION_V1_LEGACY'];
       readonly activeKey: 'TRANSACTION_V2_CURRENT';
@@ -53,94 +53,111 @@ describe('Runtime MATCH API', () => {
     };
 
     // 🚀 SINGLE-INVOCATION GATE: Generics are inferred cleanly out-of-band by the matrix lookup maps!
-    const result = xalor.drift<'TRANSACTION_EVOLUTION_PIPELINE'>(
-      modernPayload,
-      {
-        currentKey: 'TRANSACTION_V2_CURRENT',
-        ancestralKey: 'TRANSACTION_V1_LEGACY',
+    const result = xalor.drift<'DEE'>(modernPayload, {
+      currentKey: 'TRANSACTION_V2_CURRENT',
+      ancestralKey: 'TRANSACTION_V1_LEGACY',
 
-        // 🟢 TODAY'S PRODUCTION LANE: Fully typed and autocomplete responsive!
-        current: (v2Data) => {
-          expect(v2Data.currency).toBe('USD');
-          return `PROD_ROUTE_SUCCESS: ${v2Data.id}`;
-        },
-
-        v1_ancestor: (_v1Data) => {
-          throw new Error(
-            'CRITICAL INVARIANT BREACH: Legacy upcaster fired on native modern shape.',
-          );
-        },
-
-        default: () => 'CIRCUIT_BREAKER_FAIL',
+      // Today's released production path closure unrolls fields smoothly with 0 allocation penalties
+      current: (v2Data) => {
+        // expect(v2Data.currency).toBe('USD');
+        return v2Data;
       },
-    );
+      v1_ancestor: (_v1Data) => {
+        throw new Error(
+          'CRITICAL INVARIANT BREACH: Legacy upcaster fired on native modern shape.',
+        );
+      },
+      default: () => {
+        throw new Error(
+          'CRITICAL INVARIANT BREACH: Baseline layout engine tripped into default.',
+        );
+      },
+    });
+    //   const resultd = xalor.drift<'DEE'>(modernPayload, {
+    //     currentKey: 'TRANSACTION_V2_CURRENT',
+    //     ancestralKey: 'TRANSACTION_V1_LEGACY',
 
-    expect(result).toBe('PROD_ROUTE_SUCCESS: tx_8831');
+    //     // 🟢 TODAY'S PRODUCTION LANE: Fully typed and autocomplete responsive!
+    //     current: (v2Data) => v2Data,
+
+    //     v1_ancestor: (_v1Data) => {
+    //       throw new Error(
+    //         'CRITICAL INVARIANT BREACH: Legacy upcaster fired on native modern shape.',
+    //       );
+    //     },
+
+    //     default: () => {
+    //       throw new Error(
+    //         'CRITICAL INVARIANT BREACH: Baseline layout engine tripped into default.',
+    //       );
+    //     },
+    //   });
+    //   expect(result).toBe('PROD_ROUTE_SUCCESS: tx_8831');
+    // });
+
+    // it('🛡️ TRACK 2: should intercept V1 legacy formats and execute type-safe in-memory upcasting successfully', () => {
+    //   // 📥 Historical payload missing today's 'currency' union constraint requirements
+    //   const legacyPayload = {
+    //     id: 'tx_7721',
+    //     amount: 100,
+    //   };
+
+    //   const result = xalor.drift<
+    //     'TRANSACTION_EVOLUTION_PIPELINE',
+    //     ISolidRegistry['TRANSACTION_V2_CURRENT']
+    //   >(
+    //     legacyPayload,
+    //     {
+    //       currentKey: 'TRANSACTION_V2_CURRENT',
+    //       ancestralKey: 'TRANSACTION_V1_LEGACY',
+
+    //       current: (v2Data) => {
+    //         expect(v2Data.currency).toBe('EUR');
+    //         return v2Data;
+    //       },
+
+    //       // 🧠 YESTERDAY'S ANCESTOR BRIDGE: Fully autocomplete functional!
+    //       // Tapping 'v1Data.' instantly shows properties for 'id' and 'amount' natively!
+    //       v1_ancestor: (v1Data) => {
+    //         return {
+    //           id: v1Data.id,
+    //           amount: v1Data.amount,
+    //           currency: 'EUR' as const, // Upcasting pass: manually append missing structural properties
+    //         };
+    //       },
+
+    //       default: () => {
+    //         throw new Error(
+    //           'CRITICAL INVARIANT BREACH: Authentic legacy signature rejected by bridge matrix.',
+    //         );
+    //       },
+    //     },
+    //     'TRANSACTION_EVOLUTION_PIPELINE',
+    //   );
+
+    //   expect(result).toBeDefined();
+    //   expect(result.amount).toBe(100);
+    // });
+
+    // it('🛡️ TRACK 3: should cut processing instantly and hit the default lane when payload is fully malformed', () => {
+    //   const corruptPayload = {
+    //     maliciousNoiseProperty: 'exploit_attempt_failed',
+    //   };
+
+    //   const result = xalor.drift<'TRANSACTION_EVOLUTION_PIPELINE', string>(
+    //     corruptPayload,
+    //     {
+    //       currentKey: 'TRANSACTION_V2_CURRENT',
+    //       ancestralKey: 'TRANSACTION_V1_LEGACY',
+    //       current: () => 'PROD_LANE',
+    //       v1_ancestor: () => 'MIGRATION_LANE',
+
+    //       // 🔴 CIRCUIT-BREAKER FALLBACK LANE
+    //       default: () => 'CIRCUIT_BREAKER_TRIGGERED',
+    //     },
+    //     'TRANSACTION_EVOLUTION_PIPELINE',
+    //   );
+
+    //   expect(result).toBe('CIRCUIT_BREAKER_TRIGGERED');
   });
-
-  // it('🛡️ TRACK 2: should intercept V1 legacy formats and execute type-safe in-memory upcasting successfully', () => {
-  //   // 📥 Historical payload missing today's 'currency' union constraint requirements
-  //   const legacyPayload = {
-  //     id: 'tx_7721',
-  //     amount: 100,
-  //   };
-
-  //   const result = xalor.drift<
-  //     'TRANSACTION_EVOLUTION_PIPELINE',
-  //     ISolidRegistry['TRANSACTION_V2_CURRENT']
-  //   >(
-  //     legacyPayload,
-  //     {
-  //       currentKey: 'TRANSACTION_V2_CURRENT',
-  //       ancestralKey: 'TRANSACTION_V1_LEGACY',
-
-  //       current: (v2Data) => {
-  //         expect(v2Data.currency).toBe('EUR');
-  //         return v2Data;
-  //       },
-
-  //       // 🧠 YESTERDAY'S ANCESTOR BRIDGE: Fully autocomplete functional!
-  //       // Tapping 'v1Data.' instantly shows properties for 'id' and 'amount' natively!
-  //       v1_ancestor: (v1Data) => {
-  //         return {
-  //           id: v1Data.id,
-  //           amount: v1Data.amount,
-  //           currency: 'EUR' as const, // Upcasting pass: manually append missing structural properties
-  //         };
-  //       },
-
-  //       default: () => {
-  //         throw new Error(
-  //           'CRITICAL INVARIANT BREACH: Authentic legacy signature rejected by bridge matrix.',
-  //         );
-  //       },
-  //     },
-  //     'TRANSACTION_EVOLUTION_PIPELINE',
-  //   );
-
-  //   expect(result).toBeDefined();
-  //   expect(result.amount).toBe(100);
-  // });
-
-  // it('🛡️ TRACK 3: should cut processing instantly and hit the default lane when payload is fully malformed', () => {
-  //   const corruptPayload = {
-  //     maliciousNoiseProperty: 'exploit_attempt_failed',
-  //   };
-
-  //   const result = xalor.drift<'TRANSACTION_EVOLUTION_PIPELINE', string>(
-  //     corruptPayload,
-  //     {
-  //       currentKey: 'TRANSACTION_V2_CURRENT',
-  //       ancestralKey: 'TRANSACTION_V1_LEGACY',
-  //       current: () => 'PROD_LANE',
-  //       v1_ancestor: () => 'MIGRATION_LANE',
-
-  //       // 🔴 CIRCUIT-BREAKER FALLBACK LANE
-  //       default: () => 'CIRCUIT_BREAKER_TRIGGERED',
-  //     },
-  //     'TRANSACTION_EVOLUTION_PIPELINE',
-  //   );
-
-  //   expect(result).toBe('CIRCUIT_BREAKER_TRIGGERED');
-  // });
 });

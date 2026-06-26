@@ -1,18 +1,16 @@
-import type {
-  TSolidMetadata,
-  TSolidError,
-  TSolidBranded,
-
-  // TSolidShape,
-} from '../../shared';
+import type { TSolidMetadata, TSolidError, TSolidBranded } from '../../shared';
 import { XalethorVaultKeeper } from './vault-keeper';
 import { XalethorVaultValidator } from './vault-validator';
 import { XalethorVaultAuditor } from './vault-auditor';
 import { XalethorVaultGenerator } from './vault-generator';
 import { XalethorVaultTransform } from './vault-transform';
-import type { IXalorMergeContext } from '../models/types/operations';
-// import { XalethorVaultTransformer } from './vault-transformer';
-
+import { XalethorVaultMatch } from './vault-match';
+import type {
+  IXalorDriftContext,
+  TApplyNominalBrand,
+  TXalorMergeContext,
+} from '../models/types';
+import { isRecord } from '../../shared/utils';
 export class XalethorService {
   // ============================================================
   // ============================================================
@@ -110,11 +108,52 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   // ============================================================
-
   public static executeMergeSanitizer<K extends keyof ISolidRegistry>(
-    ctx: IXalorMergeContext<ISolidRegistry[K]>,
+    ctx: TXalorMergeContext<ISolidRegistry[K]>,
   ): unknown {
     /* prettier-ignore */
     return XalethorVaultTransform.transformMerge<K>(ctx);
+  }
+  // ============================================================
+  // ============================================================
+  // ============================================================
+  // MATCH
+  // ============================================================
+  // ============================================================
+  // ============================================================
+  public static executeDriftMatcher<
+    K extends keyof ISolidDriftRegistry,
+    R extends ISolidDriftRegistry[K]['current'] =
+      ISolidDriftRegistry[K]['current'],
+  >(payload: unknown, ctx: IXalorDriftContext<K, R>): TApplyNominalBrand<R> {
+    const { default: defaultHandler } = ctx;
+
+    // Direct O(1) Perimeter Guard: Reject immediately if payload is not a record object
+    if (!isRecord(payload)) {
+      return XalethorVaultMatch.executeDefaultFallback<K, R>(
+        defaultHandler,
+        'MALFORMED_NON_RECORD_PAYLOAD',
+      );
+    }
+
+    // PATH 1: THE ACTIVE GENERATION CHANNEL (The Hot Path Pass)
+    const activeGenerationResult =
+      XalethorVaultMatch.executeActiveGenerationLane<K, R>(payload, ctx);
+    if (activeGenerationResult !== false) {
+      return activeGenerationResult;
+    }
+
+    // PATH 2: THE ANCESTRAL MIGRATION CHANNEL (The Upcast Pass)
+    const ancestralMigrationResult =
+      XalethorVaultMatch.executeAncestralMigrationLane<K, R>(payload, ctx);
+    if (ancestralMigrationResult !== false) {
+      return ancestralMigrationResult;
+    }
+
+    //  TOTAL CIRCUIT BREAKER (Fallback Lane)
+    return XalethorVaultMatch.executeDefaultFallback<K, R>(
+      defaultHandler,
+      'UNEXPECTED_STREAM_COLLAPSE',
+    );
   }
 }

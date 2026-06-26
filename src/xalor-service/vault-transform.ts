@@ -1,6 +1,6 @@
 import { mergeDeep } from '../../shared/utils/deep-operations';
 import { isRecord, isFunction } from '../../shared/utils/guards';
-import type { IXalorMergeContext } from '../models/types/operations';
+import type { TXalorMergeContext } from '../models/types';
 
 export class XalethorVaultTransform {
   private static executeRootPick(
@@ -49,7 +49,7 @@ export class XalethorVaultTransform {
   }
 
   public static transformMerge<K extends keyof ISolidRegistry>(
-    ctx: IXalorMergeContext<ISolidRegistry[K]>,
+    ctx: TXalorMergeContext<ISolidRegistry[K]>,
   ): unknown {
     // I. Refine loose incoming variables into mutable record tracking contexts safely
 
