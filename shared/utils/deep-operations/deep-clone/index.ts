@@ -1,5 +1,5 @@
-import { isObject } from '../guards';
-import { ObjectUtils } from '../object-utils';
+import { isObject } from '../../guards';
+import { ObjectUtils } from '../../object-utils';
 
 type TAnyObject = Record<PropertyKey, unknown>;
 function cloneDeepHelper<T>(val: T, seen: Map<unknown, unknown>): T;

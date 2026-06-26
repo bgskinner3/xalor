@@ -1,117 +1,117 @@
-import { XalethorService } from '../../xalor-service';
+// import { XalethorService } from '../../xalor-service';
 
-import { buildValidationTools, markAsSolid } from '../../utils';
-import type {
-  TTypeGuard,
-  TXalorAuditReport,
-  TSolidBranded,
-  TValidationXalorModes,
-} from '../../../shared';
-export type TValidateXalorResultMap<K extends keyof ISolidRegistry> = {
-  guard: TTypeGuard<ISolidRegistry[K]>;
-  assert: void;
-  parse: ISolidRegistry[K];
-  parseAsync: Promise<ISolidRegistry[K]>;
-  audit: TXalorAuditReport;
-};
-export type TValidateXalorReturn<
-  K extends keyof ISolidRegistry,
-  M extends TValidationXalorModes,
-> = TValidateXalorResultMap<K>[M];
+// import { buildValidationTools, markAsSolid } from '../../utils';
+// import type {
+//   TTypeGuard,
+//   TXalorAuditReport,
+//   TSolidBranded,
+//   TValidationXalorModes,
+// } from '../../../shared';
+// export type TValidateXalorResultMap<K extends keyof ISolidRegistry> = {
+//   guard: TTypeGuard<ISolidRegistry[K]>;
+//   assert: void;
+//   parse: ISolidRegistry[K];
+//   parseAsync: Promise<ISolidRegistry[K]>;
+//   audit: TXalorAuditReport;
+// };
+// export type TValidateXalorReturn<
+//   K extends keyof ISolidRegistry,
+//   M extends TValidationXalorModes,
+// > = TValidateXalorResultMap<K>[M];
 
-export type TTValidateStrategyEngine<K extends keyof ISolidRegistry> = {
-  readonly [Mode in TValidationXalorModes]: (
-    k: K,
-    d: unknown,
-  ) => TValidateXalorResultMap<K>[Mode];
-};
-/**
- * RUNTIME API: VALIDATE XALOR
- *
- * Generates automated validation closures to narrow incoming network data streams at runtime boundaries.
- * Verifies payload layouts against your content-addressable JSON vault with near-zero allocation footprints.
- * // guard, assert, parse, parseAsync, audit
- *
- * @example
- * ```ts
- *  validateXalor<"REGISTERED_KEY", 'mode'>(data: unknown)
- * //// MODES: 'guard', 'assert', 'parse', 'parseAsync', and 'audit'
- * ```
- *
- * @see {@link RuntimeApiDocs.validateXalor}
- */
-/* prettier-ignore */
-export function validateXalor<K extends keyof ISolidRegistry, _M extends 'guard',
->(injectedKey: K, mode: 'guard'): TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>>; // OVERLOAD 1: THE GUARD
-/* prettier-ignore */
-export function validateXalor<K extends keyof ISolidRegistry, _M extends 'assert',
->(injectedKey: K, mode: 'assert', data: unknown): asserts data is ISolidRegistry[K]; //  OVERLOAD 2: THE ASSERTION
-/* prettier-ignore */
-export function validateXalor<K extends keyof ISolidRegistry, _M extends 'parse',
->(injectedKey: K, mode: 'parse', data: unknown): TSolidBranded<K, ISolidRegistry[K]>;
-/* prettier-ignore */
-export function validateXalor<K extends keyof ISolidRegistry, _M extends 'parseAsync',
->(injectedKey: K, mode: 'parseAsync', data: unknown): TSolidBranded<K, Promise<ISolidRegistry[K]>>; // OVERLOAD 4: THE ASYNC PARSER
-/* prettier-ignore */
-export function validateXalor<K extends keyof ISolidRegistry, _M extends 'audit',
->(injectedKey: K, mode: 'audit', data: unknown): TXalorAuditReport; // OVERLOAD 5: THE AUDIT
-/* prettier-ignore */
-export function validateXalor<K extends keyof ISolidRegistry, M extends TValidationXalorModes,
->(injectedKey?: K, mode?: M, data?: unknown): TValidateXalorReturn<K, M> {
-  if (!injectedKey || !mode) {
-    throw new Error(
-      `[xalor] 🚨 GATEWAY BLOCK: 'validateXalor' executed without compiled metadata properties.\n` +
-        `Ensure your build-time transformer plugin is active.`,
-    );
-  }
+// export type TTValidateStrategyEngine<K extends keyof ISolidRegistry> = {
+//   readonly [Mode in TValidationXalorModes]: (
+//     k: K,
+//     d: unknown,
+//   ) => TValidateXalorResultMap<K>[Mode];
+// };
+// /**
+//  * RUNTIME API: VALIDATE XALOR
+//  *
+//  * Generates automated validation closures to narrow incoming network data streams at runtime boundaries.
+//  * Verifies payload layouts against your content-addressable JSON vault with near-zero allocation footprints.
+//  * // guard, assert, parse, parseAsync, audit
+//  *
+//  * @example
+//  * ```ts
+//  *  validateXalor<"REGISTERED_KEY", 'mode'>(data: unknown)
+//  * //// MODES: 'guard', 'assert', 'parse', 'parseAsync', and 'audit'
+//  * ```
+//  *
+//  * @see {@link RuntimeApiDocs.validateXalor}
+//  */
+// /* prettier-ignore */
+// export function validateXalor<K extends keyof ISolidRegistry, _M extends 'guard',
+// >(injectedKey: K, mode: 'guard'): TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>>; // OVERLOAD 1: THE GUARD
+// /* prettier-ignore */
+// export function validateXalor<K extends keyof ISolidRegistry, _M extends 'assert',
+// >(injectedKey: K, mode: 'assert', data: unknown): asserts data is ISolidRegistry[K]; //  OVERLOAD 2: THE ASSERTION
+// /* prettier-ignore */
+// export function validateXalor<K extends keyof ISolidRegistry, _M extends 'parse',
+// >(injectedKey: K, mode: 'parse', data: unknown): TSolidBranded<K, ISolidRegistry[K]>;
+// /* prettier-ignore */
+// export function validateXalor<K extends keyof ISolidRegistry, _M extends 'parseAsync',
+// >(injectedKey: K, mode: 'parseAsync', data: unknown): TSolidBranded<K, Promise<ISolidRegistry[K]>>; // OVERLOAD 4: THE ASYNC PARSER
+// /* prettier-ignore */
+// export function validateXalor<K extends keyof ISolidRegistry, _M extends 'audit',
+// >(injectedKey: K, mode: 'audit', data: unknown): TXalorAuditReport; // OVERLOAD 5: THE AUDIT
+// /* prettier-ignore */
+// export function validateXalor<K extends keyof ISolidRegistry, M extends TValidationXalorModes,
+// >(injectedKey?: K, mode?: M, data?: unknown): TValidateXalorReturn<K, M> {
+//   if (!injectedKey || !mode) {
+//     throw new Error(
+//       `[xalor] 🚨 GATEWAY BLOCK: 'validateXalor' executed without compiled metadata properties.\n` +
+//         `Ensure your build-time transformer plugin is active.`,
+//     );
+//   }
 
-  const VALIDATOR_MODES: TTValidateStrategyEngine<K> = {
-    guard: (key) => {
-      const { guard } = buildValidationTools(key);
+//   const VALIDATOR_MODES: TTValidateStrategyEngine<K> = {
+//     guard: (key) => {
+//       const { guard } = buildValidationTools(key);
 
-      const runtimeGuard: TTypeGuard<ISolidRegistry[K]> = (
-        v: unknown,
-      ): v is ISolidRegistry[K] => {
-        return guard(v) && markAsSolid<K, ISolidRegistry[K]>(v);
-      };
+//       const runtimeGuard: TTypeGuard<ISolidRegistry[K]> = (
+//         v: unknown,
+//       ): v is ISolidRegistry[K] => {
+//         return guard(v) && markAsSolid<K, ISolidRegistry[K]>(v);
+//       };
 
-      return runtimeGuard;
-    },
+//       return runtimeGuard;
+//     },
 
-    assert: (key, val) => {
-      const { assert } = buildValidationTools(key);
-      return assert(val);
-    },
+//     assert: (key, val) => {
+//       const { assert } = buildValidationTools(key);
+//       return assert(val);
+//     },
 
-    parse: (key, val) => {
-      if (XalethorService.validateShape(val, key)) {
-        if (markAsSolid<K, ISolidRegistry[K]>(val)) {
-          return val;
-        }
-      }
-      return XalethorService.panic(key);
-    },
+//     parse: (key, val) => {
+//       if (XalethorService.validateShape(val, key)) {
+//         if (markAsSolid<K, ISolidRegistry[K]>(val)) {
+//           return val;
+//         }
+//       }
+//       return XalethorService.panic(key);
+//     },
 
-    parseAsync: async (key, val) => {
-      return Promise.resolve(val).then((_val) => {
-        if (XalethorService.validateShape(_val, key)) {
-          if (markAsSolid<K, ISolidRegistry[K]>(_val)) return _val;
-        }
-        return Promise.reject(
-          new Error(
-            `[xalor] Async parser validation failed for blueprint key: ${key}`,
-          ),
-        );
-      });
-    },
+//     parseAsync: async (key, val) => {
+//       return Promise.resolve(val).then((_val) => {
+//         if (XalethorService.validateShape(_val, key)) {
+//           if (markAsSolid<K, ISolidRegistry[K]>(_val)) return _val;
+//         }
+//         return Promise.reject(
+//           new Error(
+//             `[xalor] Async parser validation failed for blueprint key: ${key}`,
+//           ),
+//         );
+//       });
+//     },
 
-    audit: (key, val) => {
-      const isValid = XalethorService.validateShape(val, key);
-      const rawErrors = XalethorService.getKeyErrors(key);
+//     audit: (key, val) => {
+//       const isValid = XalethorService.validateShape(val, key);
+//       const rawErrors = XalethorService.getKeyErrors(key);
 
-      return XalethorService.auditReport(key, isValid, rawErrors);
-    },
-  } satisfies TTValidateStrategyEngine<K>;
+//       return XalethorService.auditReport(key, isValid, rawErrors);
+//     },
+//   } satisfies TTValidateStrategyEngine<K>;
 
-  return VALIDATOR_MODES[mode](injectedKey, data);
-}
+//   return VALIDATOR_MODES[mode](injectedKey, data);
+// }

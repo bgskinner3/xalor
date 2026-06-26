@@ -38,11 +38,11 @@ export const PROCESSOR_REWRITE_MAPPER: TProcessorRewriteMap = {
   /* prettier-ignore */
   'xalor.default':    (raw, node, factory) => formatGenerationArgs('default', raw, node, factory),
   /* prettier-ignore */
-  'xalor.mock':       (raw, node, factory) => formatGenerationArgs('mock', raw, node, factory),
-  /* prettier-ignore */
-  'xalor.clone':      (raw, node, factory) => formatGenerationArgs('clone', raw, node, factory),
-  /* prettier-ignore */
-  'xalor.cast':       (raw, node, factory) => formatGenerationArgs('cast', raw, node, factory),
+  // 'xalor.mock':       (raw, node, factory) => formatGenerationArgs('mock', raw, node, factory),
+  // /* prettier-ignore */
+  // 'xalor.clone':      (raw, node, factory) => formatGenerationArgs('clone', raw, node, factory),
+  // /* prettier-ignore */
+  // 'xalor.cast':       (raw, node, factory) => formatGenerationArgs('cast', raw, node, factory),
 
   // ========================================================================
   // VALIDATION METHODS
@@ -50,27 +50,27 @@ export const PROCESSOR_REWRITE_MAPPER: TProcessorRewriteMap = {
   /* prettier-ignore */
   'xalor.guard':      (raw, node, factory) => formatValidationArgs('guard', raw, node, factory),
   /* prettier-ignore */
-  'xalor.assert':     (raw, node, factory) => formatValidationArgs('assert', raw, node, factory),
+  // 'xalor.assert':     (raw, node, factory) => formatValidationArgs('assert', raw, node, factory),
   /* prettier-ignore */
   'xalor.parse':      (raw, node, factory) => formatValidationArgs('parse', raw, node, factory),
-  /* prettier-ignore */
-  'xalor.parseAsync': (raw, node, factory) => formatValidationArgs('parseAsync', raw, node, factory),
-  /* prettier-ignore */
-  'xalor.audit':      (raw, node, factory) => formatValidationArgs('audit', raw, node, factory),
+  // /* prettier-ignore */
+  // 'xalor.parseAsync': (raw, node, factory) => formatValidationArgs('parseAsync', raw, node, factory),
+  // /* prettier-ignore */
+  // 'xalor.audit':      (raw, node, factory) => formatValidationArgs('audit', raw, node, factory),
 
   // ========================================================================
   // TRANSFORMATION METHODS
   // ========================================================================
   /* prettier-ignore */
-  'xalor.pick':       (raw, node, factory) => formatTransformationArgs('pick', raw, node, factory),
+  // 'xalor.pick':       (raw, node, factory) => formatTransformationArgs('pick', raw, node, factory),
   /* prettier-ignore */
-  'xalor.omit':       (raw, node, factory) => formatTransformationArgs('omit', raw, node, factory),
+  // 'xalor.omit':       (raw, node, factory) => formatTransformationArgs('omit', raw, node, factory),
   /* prettier-ignore */
 
   /* prettier-ignore */
   'xalor.merge':      (raw, node, factory) => formatTransformationArgs('merge', raw, node, factory),
   /* prettier-ignore */
-  'xalor.flatten':    (raw, node, factory) => formatTransformationArgs('flatten', raw, node, factory),
+  // 'xalor.flatten':    (raw, node, factory) => formatTransformationArgs('flatten', raw, node, factory),
 } satisfies TProcessorRewriteMap;
 
 /**

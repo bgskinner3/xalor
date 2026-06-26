@@ -10,12 +10,7 @@ import type { TUnique } from '../types';
  * MASTER GENERATOR MODES CONFIGURATION
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
-export const GENERATOR_MODE_TRIGGERS = [
-  'xalor.default',
-  'xalor.mock',
-  'xalor.clone',
-  'xalor.cast',
-] as const;
+export const GENERATOR_MODE_TRIGGERS = ['xalor.default'] as const;
 
 /**
  * MASTER REGISTER MODES CONFIGURATION
@@ -27,33 +22,15 @@ export const REGISTER_MODE_TRIGGERS = ['xalor.register'] as const;
  * MASTER TRANSFORM MODES CONFIGURATION
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
-export const TRANSFORM_MODE_TRIGGERS = [
-  'xalor.pick',
-  'xalor.omit',
-  'xalor.merge',
-  'xalor.flatten',
-] as const;
+export const TRANSFORM_MODE_TRIGGERS = ['xalor.merge'] as const;
 
 /**
  * MASTER VALIDATION MODES CONFIGURATION
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
-export const VALIDATION_MODE_TRIGGERS = [
-  'xalor.guard',
-  'xalor.assert',
-  'xalor.parse',
-  'xalor.parseAsync',
-  'xalor.audit',
-] as const;
+export const VALIDATION_MODE_TRIGGERS = ['xalor.guard', 'xalor.parse'] as const;
 
-// export const MATCH_MODE_TRIGGERS = [
-//   'xalor.composite',
-//   'xalor.reduce',
-//   'xalor.intent',
-//   'xalor.drift',
-// ] as const;
-
-/**xalor.composite,  xalor.MXreduce, xalor.intent, xalor.drift
+/**
  * SENTRY_TRIGGER_NAMES
  * Complete identifier matrix used by the compiler's static analysis layers.
  */
@@ -62,7 +39,6 @@ const RAW_SENTRY_TRIGGER_NAMES = [
   ...REGISTER_MODE_TRIGGERS,
   ...TRANSFORM_MODE_TRIGGERS,
   ...VALIDATION_MODE_TRIGGERS,
-  // ...MATCH_MODE_TRIGGERS,
 ] as const;
 
 export const SENTRY_TRIGGER_NAMES = RAW_SENTRY_TRIGGER_NAMES satisfies TUnique<
@@ -77,7 +53,6 @@ export const SENTRY_TRIGGER_MODES = {
   generatorXalor: GENERATOR_MODE_TRIGGERS,
   transformXalor: TRANSFORM_MODE_TRIGGERS,
   validationXalor: VALIDATION_MODE_TRIGGERS,
-  // matchXalor: MATCH_MODE_TRIGGERS,
 };
 
 export const RUNTIME_TRIGGER_NAMES = ObjectUtils.keys(SENTRY_TRIGGER_MODES);
@@ -86,7 +61,7 @@ export const RUNTIME_TRIGGER_NAMES = ObjectUtils.keys(SENTRY_TRIGGER_MODES);
  * RAW GENERATOR STRATEGY SPECIFICATION MODES
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
-export const GENERATOR_MODES = ['default', 'mock', 'clone', 'cast'] as const;
+export const GENERATOR_MODES = ['default'] as const;
 
 /**
  * RAW REGISTER STRATEGY SPECIFICATION MODES
@@ -98,18 +73,10 @@ export const REGISTER_MODES = ['register'] as const;
  * RAW TRANSFORM STRATEGY SPECIFICATION MODES
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
-export const TRANSFORM_MODES = ['pick', 'omit', 'merge', 'flatten'] as const;
+export const TRANSFORM_MODES = ['merge'] as const;
 
 /**
  * RAW VALIDATION STRATEGY SPECIFICATION MODES
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
-export const VALIDATION_MODES = [
-  'guard',
-  'assert',
-  'parse',
-  'parseAsync',
-  'audit',
-] as const;
-
-// export const MATCH_MODES = ['composite', 'reduce', 'intent', 'drift'] as const;
+export const VALIDATION_MODES = ['guard', 'parse'] as const;

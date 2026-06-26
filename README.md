@@ -42,10 +42,11 @@
 <br/>
 
 In modern high-scale TypeScript applications:
-* **Type Erasure:** Types only exist at compile time; runtime verification requires completely detached schema definitions (Zod, Yup, ArkType).
-* **Workspace Clutter:** Maintaining duplicated static types alongside manual validation schemas introduces immediate code drift.
-* **Bundle Inflation:** Traditional validation libraries force the client browser to download heavy runtime parsing engines, inflating bundle sizes by up to 50KB.
-* **Procedural Overkill:** Evaluating complex polymorphic network payloads results in massive, brittle `if/else` or `switch` type-guard matrices.
+
+- **Type Erasure:** Types only exist at compile time; runtime verification requires completely detached schema definitions (Zod, Yup, ArkType).
+- **Workspace Clutter:** Maintaining duplicated static types alongside manual validation schemas introduces immediate code drift.
+- **Bundle Inflation:** Traditional validation libraries force the client browser to download heavy runtime parsing engines, inflating bundle sizes by up to 50KB.
+- **Procedural Overkill:** Evaluating complex polymorphic network payloads results in massive, brittle `if/else` or `switch` type-guard matrices.
 
 **Xalor removes this separation entirely.** Your TypeScript types become your live runtime metadata.
 
@@ -76,13 +77,14 @@ Production JavaScript Output (0 KB Client Parser Overhead)
 npm install @bgskinner2/xalor
 ```
 
-*Note: To enable AOT type extraction, ensure your project compiler layer is configured with `ts-patch` or the corresponding Xalor plugin wrapper.*
+_Note: To enable AOT type extraction, ensure your project compiler layer is configured with `ts-patch` or the corresponding Xalor plugin wrapper._
 
 ---
 
 ## 🧩 Core Capabilities & API
 
 ### 1. Structural Validation & Data Generation
+
 Xalor exposes a clean, centralized instance interface. Native type parameters direct the underlying pre-compiled blueprints.
 
 ```ts
@@ -107,6 +109,7 @@ const mockData = xalor.mock<'TX'>();
 ```
 
 ### 2. Functional Pattern Matching (`xalor`)
+
 Execute pure, declarative structural pattern matching over unknown or polymorphic payloads. Xalor bypasses procedural condition loops, executing the closure handler of the first matching contract.
 
 ```ts
@@ -116,11 +119,10 @@ import { xalor } from '@bgskinner2/xalor';
 const eventPayload: unknown = fetchIncomingWebhookEvent();
 
 const response = xalor.match(eventPayload, {
-  USER_LOGOUT: (user) => handleUserLogout(user),   // 'user' is fully typed and narrowed via registry
+  USER_LOGOUT: (user) => handleUserLogout(user), // 'user' is fully typed and narrowed via registry
   STORE_ORDER: (order) => processCheckout(order), // 'order' is fully typed and narrowed via registry
-  default: () => handleFallbackFailure()          // Safe fall-through catch-all gate
+  default: () => handleFallbackFailure(), // Safe fall-through catch-all gate
 });
-
 ```
 
 ---
@@ -143,23 +145,23 @@ npx xalor audit
 ### 🛰️ Deep-Dive Intelligence
 
 Running `npx xalor audit` triggers our operational compiler profiler, outputting real-time ledger diagnostics directly to your terminal:
-* **Storage Compaction:** Visualizes Content-Addressable Storage (CAS) node deduplication ratios.
-* **Metadata Evaporation:** Tracks the exact volume of development footprint stripped away for bare-metal production builds.
-* **Dead-Code Shaking:** Statically scans call-sites to flag unused or orphaned contract keys instantly.
 
-👉 **Ready to explore the full suite?** View the [Full CLI Reference & Studio Guide](http://masterofsum.dev/xalor/docs) to learn about `build`, `clear`, and our local interactive orchestration dashboard.
----
+- **Storage Compaction:** Visualizes Content-Addressable Storage (CAS) node deduplication ratios.
+- **Metadata Evaporation:** Tracks the exact volume of development footprint stripped away for bare-metal production builds.
+- **Dead-Code Shaking:** Statically scans call-sites to flag unused or orphaned contract keys instantly.
+
+## 👉 **Ready to explore the full suite?** View the [Full CLI Reference & Studio Guide](http://masterofsum.dev/xalor/docs) to learn about `build`, `clear`, and our local interactive orchestration dashboard.
 
 ## 📊 Ecosystem Comparison
 
-| Feature | Zod / Valibot | Typia | **Xalor** |
-| :--- | :---: | :---: | :---: |
-| **Single Source of Truth** 🧭 | ❌ | ✔️ | **✔️** |
-| **Zero Client Bundle Inflation** 📦 | ❌ | ✔️ | **✔️** |
-| **Zero Workspace Setup Clutter** ✨ | ✔️ | ❌ | **✔️** |
-| **GPS Diagnostic Tracing** 📍 | ❌ | ❌ | **✔️** |
-| **Self-Healing Types** 🧬 | ❌ | ✔️ | **✔️** |
-| **Native Pattern Matching API** 🎛️ | ❌ | ❌ | **✔️** |
+| Feature                             | Zod / Valibot | Typia | **Xalor** |
+| :---------------------------------- | :-----------: | :---: | :-------: |
+| **Single Source of Truth** 🧭       |      ❌       |  ✔️   |  **✔️**   |
+| **Zero Client Bundle Inflation** 📦 |      ❌       |  ✔️   |  **✔️**   |
+| **Zero Workspace Setup Clutter** ✨ |      ✔️       |  ❌   |  **✔️**   |
+| **GPS Diagnostic Tracing** 📍       |      ❌       |  ❌   |  **✔️**   |
+| **Self-Healing Types** 🧬           |      ❌       |  ✔️   |  **✔️**   |
+| **Native Pattern Matching API** 🎛️  |      ❌       |  ❌   |  **✔️**   |
 
 ---
 

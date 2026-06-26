@@ -1,15 +1,12 @@
-import type { TTupleToIntersection } from '../../types';
-import { isObject, isArray, isRecord, hasOwnProperty } from '../guards';
-import { ObjectUtils } from '../object-utils';
-
-function assertValidMergeResult<T>(_val: unknown): _val is T {
-  return true; // Used natively to satisfy compiler tracking rules point-free
-}
-function assertIntersectionSafety<T extends Record<string, unknown>[]>(
-  _val: unknown,
-): _val is TTupleToIntersection<T> {
-  return true; // Always returns true, as structural integrity is proven by the merge loop execution
-}
+import { isObject, isArray, isRecord, isUndefined } from '../../guards';
+import type { TTupleToIntersection } from '../../../types';
+import {
+  assertValidMergeResult,
+  assertIntersectionSafety,
+  isPlatformInstance,
+  hasOwn,
+  EMPTY_RECORD,
+} from './helpers';
 
 function shallowCopyForMerge<T>(value: T, pastCopies: unknown[]): T {
   if (isObject(value) && !pastCopies.includes(value)) {
@@ -17,21 +14,16 @@ function shallowCopyForMerge<T>(value: T, pastCopies: unknown[]): T {
       const copy = [...value];
       pastCopies.push(copy);
 
-      // Satisfies COMMANDMENT IX by passing through our phantom narrower instead of a hard cast
-      if (assertValidMergeResult<T>(copy)) {
-        return copy;
-      }
+      if (assertValidMergeResult<T>(copy)) return copy;
     }
 
     const baseProto = Object.getPrototypeOf(value);
 
-    // Secure reflection clone replaces dangerous runtime "__proto__" string key assignments
     const cleanObject =
       baseProto && baseProto !== Object.prototype
         ? Object.create(baseProto)
         : {};
 
-    // Combine properties using your utility spread mechanics flatly
     const copy = Object.assign(cleanObject, value);
     pastCopies.push(copy);
 
@@ -41,6 +33,7 @@ function shallowCopyForMerge<T>(value: T, pastCopies: unknown[]): T {
   }
   return value;
 }
+
 function mergeHelper<T extends Record<string, unknown>>(
   target: T,
   source: Record<string, unknown>,
@@ -48,42 +41,102 @@ function mergeHelper<T extends Record<string, unknown>>(
   visited: Map<unknown, unknown>,
 ): T {
   let activeTarget: Record<string, unknown> = target;
-
   visited.set(source, activeTarget);
 
-  if (Object.isExtensible && !Object.isExtensible(activeTarget)) {
+  if (!Object.isExtensible(activeTarget)) {
     activeTarget = shallowCopyForMerge(activeTarget, pastCopies);
   }
 
-  ObjectUtils.keys(source).forEach((sourceKey) => {
-    const key = String(sourceKey);
+  for (const key in source) {
+    if (!hasOwn(source, key)) continue;
+
+    if (key === '__proto__' || key === 'constructor') continue;
+
     const sourceValue = source[key];
+    if (sourceValue === undefined) continue;
 
-    // IDENTITY CHECK: If we've seen this source before,
-    // link to the already-created target instead of recursing.
-    if (visited.has(sourceValue)) {
-      activeTarget[key] = visited.get(sourceValue);
-      return;
+    const previous = visited.get(sourceValue);
+    if (!isUndefined(previous)) {
+      activeTarget[key] = previous;
+      continue;
     }
 
-    if (hasOwnProperty(target, sourceKey)) {
-      const targetValue = activeTarget[key];
-
-      if (sourceValue !== targetValue) {
-        const nextTarget = shallowCopyForMerge(targetValue, pastCopies);
-
-        if (isRecord(nextTarget) && isRecord(sourceValue)) {
-          /* prettier-ignore */ activeTarget[key] = mergeHelper(nextTarget, sourceValue, pastCopies, visited);
-        } else {
-          /* prettier-ignore */ activeTarget[key] = sourceValue;
-        }
-      }
-    } else {
+    if (!hasOwn(activeTarget, key)) {
       activeTarget[key] = sourceValue;
+      continue;
     }
-  });
-  // TODO: FIX AS CASTING
-  return activeTarget as T;
+
+    const targetValue = activeTarget[key];
+    if (targetValue === sourceValue) continue;
+
+    // Preserve native platform objects
+    if (isPlatformInstance(sourceValue)) {
+      activeTarget[key] = sourceValue;
+      continue;
+    }
+
+    // Handle symmetrical collection array merging (Track 2 / Track 10)
+    if (isArray(sourceValue)) {
+      if (!isArray(targetValue)) {
+        activeTarget[key] = sourceValue;
+        continue;
+      }
+
+      const targetLen = targetValue.length;
+      const sourceLen = sourceValue.length;
+      const length = targetLen > sourceLen ? targetLen : sourceLen;
+      const merged = new Array<unknown>(length);
+
+      for (let i = 0; i < length; i++) {
+        const base = targetValue[i];
+        const patch = sourceValue[i];
+
+        if (patch === undefined) {
+          merged[i] = base;
+          continue;
+        }
+
+        const baseIsRecord = isRecord(base);
+        const patchIsRecord = isRecord(patch);
+
+        merged[i] =
+          baseIsRecord || patchIsRecord
+            ? mergeHelper(
+                baseIsRecord ? base : EMPTY_RECORD,
+                patchIsRecord ? patch : EMPTY_RECORD,
+                pastCopies,
+                visited,
+              )
+            : patch;
+      }
+      activeTarget[key] = merged;
+      continue;
+    }
+
+    // Handle deep nested object structures (Track 3)
+    if (isRecord(sourceValue)) {
+      if (!isRecord(targetValue)) {
+        activeTarget[key] = sourceValue;
+        continue;
+      }
+      activeTarget[key] = mergeHelper(
+        shallowCopyForMerge(targetValue, pastCopies),
+        sourceValue,
+        pastCopies,
+        visited,
+      );
+      continue;
+    }
+
+    // Default primitive scalar leaf updates (Track 1)
+    activeTarget[key] = sourceValue;
+  }
+
+  if (assertValidMergeResult<T>(activeTarget)) return activeTarget;
+
+  throw new Error(
+    `[axiom-kit] Critical Invariant: Failed to verify structural merge target integrity.`,
+  );
 }
 
 /**

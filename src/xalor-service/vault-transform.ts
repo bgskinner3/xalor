@@ -57,22 +57,28 @@ export class XalethorVaultTransform {
     /* prettier-ignore */ const patchRecord: Record<string, unknown> = isRecord(ctx.dataTwo) ? ctx.dataTwo : {};
 
     // II. Delegate straight to your variadic Axiom-Kit graph aggregator engine portal (Commandment VIII)
-    /* prettier-ignore */ const rawMergedResult: unknown = mergeDeep(baseRecord, patchRecord);
+    // II. Delegate straight to your variadic Axiom-Kit graph aggregator engine portal (Commandment VIII)
+    /* prettier-ignore */
+    const rawMergedResult: unknown = mergeDeep(baseRecord, patchRecord);
 
     // III. Handle root-level masking and mapping options sequentially inside a single processing boundary
-    if (isRecord(rawMergedResult)) {
-      const resultPayload: Record<string | symbol, unknown> = rawMergedResult;
+    // 🧠 FIXED PROTECTION BOUNDARY GATE (Commandment V Invariant Enforcement):
+    // If rawMergedResult yields undefined/null, fallback cleanly to your local baseRecord container!
+    const targetPayload = isRecord(rawMergedResult)
+      ? rawMergedResult
+      : baseRecord;
+    const resultPayload: Record<string | symbol, unknown> = targetPayload;
 
-      // HANDLE PICK AND OMITTING OF DATA OBJECT
-      /* prettier-ignore */ if (ctx.pick) this.executeRootPick(resultPayload, ctx.pick);
-      /* prettier-ignore */ if (ctx.omit) this.executeRootOmit(resultPayload, ctx.omit);
+    // HANDLE PICK AND OMITTING OF DATA OBJECT
+    /* prettier-ignore */
+    if (ctx.pick) this.executeRootPick(resultPayload, ctx.pick);
+    /* prettier-ignore */
+    if (ctx.omit) this.executeRootOmit(resultPayload, ctx.omit);
 
-      // incorpoate mapping
-      /* prettier-ignore */ if (ctx.map)  this.executeRootMap(resultPayload, ctx.map as Record<string, unknown>);
+    // incorporate mapping LAST to evaluate a fully-masked schema context frame
+    /* prettier-ignore */
+    if (ctx.map) this.executeRootMap(resultPayload, ctx.map as Record<string, unknown>);
 
-      return resultPayload;
-    }
-
-    return rawMergedResult;
+    return resultPayload;
   }
 }
