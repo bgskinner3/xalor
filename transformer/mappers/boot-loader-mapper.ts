@@ -58,10 +58,8 @@ export const BOOT_MODE_STRATEGY_MAPPER: TBootLoaderMapper = {
     }
   },
   clear: ({ runtimePaths: _ }: TBootStrategyParams) => {
-    // 🟢 FIXED: Added descriptive system trace metrics before resetting memory segments
     console.log('⚡ [Xalor Boot] Evacuating long-lived RAM allocation maps...');
 
-    // Hard reset transient variables, collision stores, and sequence counters in memory
     xalorCentralContext.hardResetAllMemoryStores();
 
     console.log(

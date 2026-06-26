@@ -37,31 +37,32 @@ export const MATCH_PROCESSOR_MAPPER: TMatchProcessorMapper = {
       let currentKey = '';
       let ancestralKey = '';
 
-      // Clean, zero-allocation pass over properties using our new compilation extraction utility
       for (const property of configObjectArg.properties) {
-        currentKey ||=
-          extractLiteralStringFromProperty(property, 'currentKey') ?? '';
-        ancestralKey ||=
-          extractLiteralStringFromProperty(property, 'ancestralKey') ?? '';
+        /* prettier-ignore */ currentKey ||= extractLiteralStringFromProperty(property, 'currentKey') ?? '';
+        /* prettier-ignore */ ancestralKey ||= extractLiteralStringFromProperty(property, 'ancestralKey') ?? '';
       }
+
+      // Hard AOT Compilation Block: Prevent accidental development self-migration loops
       if (currentKey && ancestralKey && currentKey === ancestralKey) {
         console.warn(
           `⚠️ [Xalor Compiler] Cross-Collision Blocked: Evolution token '${evolutionToken}' maps identical keys for current and ancestral lanes ('${currentKey}'). Falling back point-free.`,
         );
         return [...node.arguments];
       }
+
       if (currentKey && evolutionToken) {
         xalorCentralContext.addDriftLineage(evolutionToken, {
           currentKey,
           ancestorKey: ancestralKey,
         });
 
-        const liveKeyLiteral = factory.createStringLiteral(currentKey);
-        const oldKeyLiteral = factory.createStringLiteral(ancestralKey);
+        const tokenIdentifierLiteral =
+          factory.createStringLiteral(evolutionToken);
 
-        return [...node.arguments, liveKeyLiteral, oldKeyLiteral];
+        return [...node.arguments, tokenIdentifierLiteral];
       }
     }
+
     return [...node.arguments];
   },
 } satisfies TMatchProcessorMapper;

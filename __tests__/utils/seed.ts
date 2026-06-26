@@ -1,5 +1,9 @@
 import { XalethorService } from '../../src/xalor-service';
-import type { TVaultSyncPayload, TSolidShape } from '../../shared';
+import type {
+  TVaultSyncPayload,
+  TSolidShape,
+  TVaultDriftEntry,
+} from '../../shared';
 
 /**
  * 🧪 SEED TEST VAULT
@@ -26,8 +30,26 @@ export function seedTestVault(
     ...overrides,
   };
 
-  // 🚀 PHYSICALLY SOLIDIFY: This populates the Triple-KV Vault in RAM
   XalethorService.solidify(mockPayload);
 
   return mockPayload;
+}
+
+export function seedTestDriftVault(
+  tokenKey: string,
+  currentKey: string,
+  ancestorKey?: string,
+): TVaultDriftEntry {
+  const mockEntry: TVaultDriftEntry = {
+    currentKey,
+    ancestorKey,
+  };
+
+  const manualDriftSnapshotBlock: Record<string, TVaultDriftEntry> = {
+    [tokenKey]: mockEntry,
+  };
+
+  XalethorService.solidifyDrifts(manualDriftSnapshotBlock);
+
+  return mockEntry;
 }

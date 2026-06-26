@@ -1,4 +1,9 @@
-import type { TSolidMetadata, TSolidError, TSolidBranded } from '../../shared';
+import type {
+  TSolidMetadata,
+  TSolidError,
+  TSolidBranded,
+  TTripleKV,
+} from '../../shared';
 import { XalethorVaultKeeper } from './vault-keeper';
 import { XalethorVaultValidator } from './vault-validator';
 import { XalethorVaultAuditor } from './vault-auditor';
@@ -9,6 +14,7 @@ import type {
   IXalorDriftContext,
   TApplyNominalBrand,
   TXalorMergeContext,
+  TResolveDriftReturnConstraint,
 } from '../models/types';
 import { isRecord } from '../../shared/utils';
 export class XalethorService {
@@ -19,8 +25,11 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   // ============================================================
-  public static solidify(raw: TSolidMetadata): void {
+  /* prettier-ignore */ public static solidify(raw: TSolidMetadata): void {
     XalethorVaultKeeper.solidify(raw);
+  }
+  /* prettier-ignore */ public static solidifyDrifts(driftTracks: TTripleKV['driftTracking']): void {
+     XalethorVaultKeeper.solidifyDrifts(driftTracks);
   }
   public static blueprintVault(key: string) {
     return XalethorVaultKeeper.peek('blueprint', key);
@@ -121,10 +130,10 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   // ============================================================
+  /* prettier-ignore */
   public static executeDriftMatcher<
     K extends keyof ISolidDriftRegistry,
-    R extends ISolidDriftRegistry[K]['current'] =
-      ISolidDriftRegistry[K]['current'],
+    R extends TResolveDriftReturnConstraint<K> = TResolveDriftReturnConstraint<K>
   >(payload: unknown, ctx: IXalorDriftContext<K, R>): TApplyNominalBrand<R> {
     const { default: defaultHandler } = ctx;
 

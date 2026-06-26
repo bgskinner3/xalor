@@ -30,6 +30,46 @@ export const TEST_SHAPE_REGISTRY = {
       },
     },
   },
+  USER_TEST_V1_ANCESTOR: {
+    kind: 'object',
+    properties: {
+      id: {
+        name: 'id',
+        optional: false,
+        shape: { kind: 'primitive', type: 'number' },
+      },
+      username: {
+        name: 'username',
+        optional: false,
+        shape: { kind: 'primitive', type: 'string' },
+      },
+    },
+  },
+  STORE_ORDER_V1_ANCESTOR: {
+    kind: 'object',
+    properties: {
+      orderId: {
+        name: 'orderId',
+        optional: false,
+        shape: { kind: 'primitive', type: 'string' },
+      },
+      legacySKU: {
+        name: 'legacySKU',
+        optional: false,
+        shape: { kind: 'primitive', type: 'string' },
+      },
+      legacyQty: {
+        name: 'legacyQty',
+        optional: false,
+        shape: { kind: 'primitive', type: 'number' },
+      },
+      deprecatedTelemetryId: {
+        name: 'deprecatedTelemetryId',
+        optional: true,
+        shape: { kind: 'primitive', type: 'string' },
+      },
+    },
+  },
   TRANSACTION: {
     kind: 'object',
     properties: {
@@ -526,6 +566,22 @@ export const TEST_SHAPE_REGISTRY = {
             name: 'Promise',
           },
         },
+      },
+    },
+  },
+
+  ADVANCED_COMPLEXITY_V1_ANCESTOR: {
+    kind: 'object',
+    properties: {
+      legacyRoleString: {
+        name: 'legacyRoleString',
+        optional: false,
+        shape: { kind: 'primitive', type: 'string' },
+      },
+      transformStreamVal: {
+        name: 'transformStreamVal',
+        optional: false,
+        shape: { kind: 'instanceof', name: 'TransformStream' },
       },
     },
   },

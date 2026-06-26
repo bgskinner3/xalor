@@ -60,3 +60,23 @@ export type TExtractRegistryKeyName<T> = {
       : never
     : never;
 }[keyof ISolidRegistry];
+/**
+ * 🧬 TYPE REIFICATION GRAPH REALIGNMENT ENGINE
+ *
+ * Performance Profile: Erased completely at compile-time.
+ * Strategy: Recursively converts system constructor tracking nodes into active
+ * runtime execution instance formats, satisfying strict closure expectations.
+ */
+export type TResolveInstanceGraph<T> = T extends (...args: unknown[]) => unknown
+  ? T // Preserve closures exactly as declared
+  : T extends { readonly [key: string]: unknown }
+    ? {
+        -readonly [K in keyof T]: T[K] extends { prototype: infer P }
+          ? P // Extract instance layout straight out of constructor signatures
+          : T[K] extends readonly (infer U)[]
+            ? TResolveInstanceGraph<U>[] // Flatten readonly arrays to mutable arrays for return blocks
+            : T[K] extends object
+              ? TResolveInstanceGraph<T[K]> // Recursively process child object structures
+              : T[K];
+      }
+    : T;

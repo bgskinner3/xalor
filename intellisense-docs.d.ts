@@ -922,7 +922,8 @@ declare global {
     static example(): void;
     static example(): void;
     static example(): void;
-
+    static example(): void;
+    static example(): void;
     // ========================================================================
     // ========================================================================
     // ========================================================================
@@ -1168,6 +1169,159 @@ declare global {
      * @returns {TSolidBranded<K, ISolidRegistry[K]>} An ironclad, nominally-branded, mutated data asset fulfilling the type contract.
      */
     static transformXalorMerge(): void;
+
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    // !! CATEGORY 5: THE MATCHER PILLAR (ADVANCED METADATA MANIPULATION)
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    /**
+     * @api match
+     * @mode drift
+     * @description
+     * Public Category 5 Ingress Gate executing high-velocity, single-pass backward-compatible type migrations.
+     * Resolves structural version desynchronization across distributed networks by analyzing raw, unverified
+     * payload data formats, identifying matching timeline snapshots, and upcasting them to active contracts.
+     *
+     * Enforces a strict multi-lane fallback circuit breaker that isolates out-of-sync schemas,
+     * hydrates runtime cryptographic tokens onto conforming structures, and drops type anomalies.
+     *
+     * CONTROL STREAM ROUTING PATHWAY MATRIX:
+     * - Lane 1: Active Generation Pass (Hot Path) — Evaluates incoming assets against today's released schema contract.
+     *           If structural alignment matches, the pipeline brands the payload and dispatches it immediately.
+     * - Lane 2: Ancestral Migration Pass (Upcast Pass) — Intercepts payloads failing today's schema but matching
+     *           yesterday's baseline blueprint format. Fires user transformation closures to evolve the fields on the fly.
+     * - Lane 3: Total Circuit Breaker (Recovery Lane) — Activated under absolute fallback conditions if a data asset
+     *           violates both contemporary and historical blueprint signatures, routing control cleanly to recovery streams.
+     *
+     * GRAPH MANIPULATION ORDER OF OPERATIONS:
+     * - ➊ Perimeter Verification: Confirms raw incoming parameters conform to valid object reference profiles.
+     * - ➋ Hot Path Dispatch: Evaluates the asset against `currentKey` to discharge modern traffic under peak O(1) velocity.
+     * - ➌ Schema Lineage Lock: Validates historical contract registry alignment to block unmapped cross-collisions.
+     * - ➍ In-Memory Upcasting: Hands yesterday's data context into `v1_ancestor` to smoothly populate required modern fields.
+     * - ➎ In-Place Sanitation (`prune`): Shears obsolete, lingering legacy properties directly from RAM in-place.
+     * - ➏ Modern Hardening (`strict`): Runs direct structural keys length sizing validations over the fresh, upcasted frame.
+     *
+     * DESIGN INVARIANTS:
+     * - Satisfies COMMANDMENT I & III: Resolves evolution timelines exclusively via authoritative lineage registry links.
+     * - Satisfies COMMANDMENT IV: Performs a single, isolated semantic operation (Version-Matching / Migration).
+     * - Satisfies COMMANDMENT V & VI: Guarantees post-upcast structural integrity, throwing explicitly on corrupted mappers.
+     * - Satisfies COMMANDMENT VIII: Bare-metal vertical early returns eliminate dynamic allocations or closure layer bloat.
+     * - Satisfies COMMANDMENT IX: Zero 'any' variables, zero type-bleeding, and full auto-complete parameter disclosure.
+     * - Scope Ceiling Limitation: Strictly restricts backward drift tracking to maximum 1 generation back (v1_ancestor).
+     *
+     * @example * ```ts * const synchronizedUser = xalor.drift<'USER_ACCOUNT_EVOLUTION'>(legacyIncomingPayload, { *   currentKey: 'USER_TEST', *   ancestralKey: 'USER_TEST_V1_ANCESTOR', *   strict: true, *   prune: true, *   current: (v2Data) => v2Data, *   v1_ancestor: (v1Data) => { *     // v1Data exposes complete code completion reflecting yesterday's properties natively! *     return { *       id: v1Data.id, *       username: v1Data.username, *       active: true // Backfills mandatory field required by today's active production release contract *     }; *   }, *   default: () => ({ id: 0, username: 'anonymous_recovery', active: false }) * }); * ```
+     *
+     * @template K - Inferred centralized Evolution tracking namespace token literal key.
+     * @template R - Inferred custom return type boundary contract computing mutable, partial instance graphs.
+     * @param {unknown} payload - The raw, unverified data payload packet arriving from database or network streams.
+     * @param {IXalorDriftContext<K, R>} ctx - Structured parameters containing layout target identifiers, flags, and lane handlers.
+     * @param {K} [injectedKey] - The unique evolution tracking token positionally appended by the AOT compiler transformer.
+     * @returns {TApplyNominalBrand<R>} An ironclad, nominally-branded, modern data asset fulfilling current type specifications.
+     */
+    static matchXalorDrift(): void;
+    /**
+     * ========================================================================================
+     * 🎛️ XALOR DRIFT ARCHITECTURAL ARCHITECTURE MANUAL
+     * ========================================================================================
+     *
+     * @role
+     * The "Upstream Versioning Bridge & Migration Gate." Provides a backward-compatible
+     * runtime control-flow gate that allows distributed endpoints to safely process legacy
+     * or out-of-sync incoming payloads by validating them against historical blueprint
+     * ancestors and upcasting them to current structural specifications on the fly [Commandment IV, XII].
+     *
+     * @why
+     * In an enterprise production environment, matchDrift solves the single most painful
+     * problem in distributed software systems: Version Deployment Desynchronization.
+     * Microservices, databases, mobile apps, and third-party webhooks deploy asynchronously,
+     * causing structural contract mismatches that crash applications.
+     *
+     * 🏢 REAL-WORLD SCENARIO 1: THE MOBILE APP STORE UPDATE PROBLEM (The Slow User)
+     * - The Setup: You rename user_phone to nested profile.contactNumber and deploy to production.
+     * - The Crash: 40% of mobile users haven't updated yet, sending legacy payloads. Regular
+     *   parsers (like Zod) reject the data, throwing validation errors and blocking checkouts.
+     * - The Rescue: matchDrift catches these old requests, detects they conform to the v1_ancestor
+     *   schema, intercepts them, and maps fields cleanly to the modern layout in-memory.
+     *
+     * 🪙 REAL-WORLD SCENARIO 2: FINANCIAL EVENT LEDGER TRACKING (Immutable Event Streams)
+     * - The Setup: A permanent Kafka/RabbitMQ append-only ledger log holds old INVOICE_PAID events
+     *   using a flat taxRate. Today's code requires an expanded taxCalculations sub-object.
+     * - The Crash: You must re-process logs from 2 years ago for audit compliance. The old events
+     *   explicitly violate today's type structures and crash the modern processor.
+     * - The Rescue: matchDrift parses the stream. It instantly identifies historical events and
+     *   triggers the inline migration callback to upcast the flat taxRate into today's multi-tax
+     *   structure, allowing you to replay old financial ledgers across modern codebases natively.
+     *
+     * @features
+     * - Centralized Contract Governance: Bins all ad-hoc, inline string fallback mappings. Your
+     *   evolution timeline is governed entirely by an authoritative lineage registry schema,
+     *   forcing absolute system-wide de-duplication [Commandment I].
+     * - Zero-Overhead Static Execution: The compiler entirely eliminates the dynamic token at
+     *   build-time. Your live runtime executes via flat, un-nested conditional string routing
+     *   branches (if/else) with hard-zero memory cache allocations [Commandment VIII].
+     * - In-Memory Structural Upcasting: The absolute millisecond an ancestor match is confirmed,
+     *   the engine hands that legacy data into your migration closure block. Missing fields are
+     *   populated with manual transformation logic paired with system defaults [Commandment XII].
+     * - 100% Strongly-Typed Upcasting: Your migration closures are fully type-safe. The legacy
+     *   parameters expose complete code completion reflecting yesterday's exact properties
+     *   automatically without type-bleeding [Commandment IX].
+     *
+     * @limits
+     * - The Single-Generation Anchor (Scope Ceiling): To prevent architectural fragmentation,
+     *   the engine strictly restricts historical drift tracking to maximum 1 generation back
+     *   (v1_ancestor). Multi-generation chaining cascades are forbidden to protect the single-threaded
+     *   event loop from deep latency degradation.
+     * - Structural Lineage Lock (Identity Match): A legacy payload must pass 100% of the historical
+     *   blueprint shape it is being evaluated against to trigger the migration lane. If a payload
+     *   fails both today's schema and yesterday's ancestor schema, it drops straight to default.
+     * - Transient Memory Insulation (Zero Cache Retention): The upcasted object results and
+     *   intermediate transformation frames are treated as transient data entities. They exist inside
+     *   the executing block, yield the branded asset, and are garbage collected instantly upon function
+     *   exit to prevent memory bloat [Commandment VIII].
+     *
+     * @matrix
+     * COMPLETE ARCHITECTURE TRACE MATRIX (BUILD-TIME TO RUNTIME LIFECYCLE)
+     *
+     * 1. DEVELOPMENT TIME (User DX)
+     *    Developer writes clear, declarative, fully autocompleted code blocks:
+     *    xalor.drift<'TOKEN'>(payload, { currentKey: 'V2_KEY', ancestralKey: 'V1_KEY', ... })
+     *       │
+     *       ▼
+     * 2. COMPILATION TIME (AOT Transformer & persistenceGate)
+     *    A. MATCH_PROCESSOR_MAPPER intercepts call expression node.
+     *    B. extractLiteralStringFromProperty() unrolls keys point-free from local memory.
+     *    C. xalorCentralContext.addDriftLineage() logs token mappings in-flight.
+     *    D. formatMatchArgs appends 'TOKEN' string literal into the AST parameters.
+     *    E. persistenceGate sweeps file sessions, purging dead tokens upon codebase cuts.
+     *    F. buildSnapshotFromRegistry serializes clean, pre-filtered lines to vault-snapshot.json.
+     *       │
+     *       ▼
+     * 3. GENERATION TIME (The Ghost Bridge)
+     *    temporalManifest() unrolls clean registries point-free. Outputs rigid structural
+     *    lookup types directly into ambient file boundaries:
+     *    'TOKEN': { activeKey: 'V2_KEY'; historicalKey: 'V1_KEY'; current: V2; v1_ancestor: V1 }
+     *       │
+     *       ▼
+     * 4. RUNTIME OPERATIONS (The Ingress Gate Engine Execution)
+     *    JavaScript bundle runs point-free from runtime file lookups or heavy closure layer bloat:
+     *    matchXalorDrift(payload, ctx, "TOKEN")
+     *       │
+     *       ├── Lane 1: xalor.guard("V2_KEY") ──► True ──► Execute ctx.current() ──► Exit
+     *       │
+     *       └── Lane 2: xalor.guard("V1_KEY") ──► True ──► Execute ctx.v1_ancestor()
+     *              │
+     *              ▼
+     *       [ UPCAST LANE ]
+     *       Mutates fields to modern shape.
+     *       Reflect.set() stamps V2_KEY brand.
+     *       Returns clean branded object downstream.
+     */
+    static matchXalorDriftPlan(): void;
   }
 
   class RuntimeApiDocs {

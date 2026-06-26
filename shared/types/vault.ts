@@ -28,7 +28,7 @@ export type TVaultRegistryEntry = { symbolName: string; typeName: string };
  * @key hash - The content-addressed hash identifier pointing back into the blueprints pool
  *
  */
-type TVaultDriftEntry = {
+export type TVaultDriftEntry = {
   readonly currentKey: string;
   readonly ancestorKey?: string;
 };

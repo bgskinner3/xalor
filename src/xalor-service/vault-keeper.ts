@@ -6,6 +6,7 @@ import type {
   TStrictSolidMetaData,
   TVaultRegistryEntry,
   TVaultManifestEntry,
+  TTripleKV,
 } from '../../shared';
 import { preRegisterMetadata } from '../utils';
 import { IS_SOLID_CONFIG_ITEMS, logDev } from '../../shared';
@@ -48,7 +49,21 @@ export class XalethorVaultKeeper {
     this.vault.manifest.set(key, { area, filePath, anchor });
     this.vault.registry.set(key, { symbolName, typeName });
   }
+  public static solidifyDrifts(driftTracking: TTripleKV['driftTracking']) {
+    if (!driftTracking) return;
 
+    for (const [evolutionTokenKey, driftEntry] of Object.entries(
+      driftTracking,
+    )) {
+      if (!driftEntry) continue;
+
+      // Hydrate the in-memory Storage Map node instance directly with the compiled descriptor records
+      this.vault.driftTracking.set(evolutionTokenKey, {
+        currentKey: driftEntry.currentKey,
+        ancestorKey: driftEntry.ancestorKey,
+      });
+    }
+  }
   /**
    * RETRIEVAL: Reconstructs the ghost-identity for the public API
    */

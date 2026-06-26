@@ -120,16 +120,14 @@ export function formatMatchArgs<T extends IBasePayload>(
   node: CallExpression,
   factory: NodeFactory,
 ): Expression[] {
-  // 1. Fetch the authoritative bytecode handler point-free out of the routing table
   const targetedHandler = MATCH_PROCESSOR_MAPPER[mode];
-
   if (targetedHandler && raw.keyName) {
     return targetedHandler({ keyName: raw.keyName }, node, factory);
   }
 
-  const keyLiteral = factory.createStringLiteral(raw.keyName ?? 'unknown');
-  const modeLiteral = factory.createStringLiteral(mode);
+  const tokenLiteral = factory.createStringLiteral(raw.keyName ?? 'unknown');
+
   return node.arguments.length > 0
-    ? [...node.arguments, keyLiteral, modeLiteral]
-    : [keyLiteral, modeLiteral];
+    ? [...node.arguments, tokenLiteral]
+    : [tokenLiteral];
 }

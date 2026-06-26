@@ -2,6 +2,7 @@ import type {
   TDeepMerge,
   TRecursiveReadonly,
   TExtractRegistryKeyName,
+  TResolveInstanceGraph,
 } from '../../../../shared';
 import { BRAND_SYMBOL } from '../../../../shared';
 
@@ -38,6 +39,18 @@ export type TMax8CompositeKeys =
 // DRIFT TYPES
 // ====================================================================
 // ====================================================================
+/**
+ * 🧬 TITLE: DRIFT RETURN TYPE RESOLVER CONSTRAINT
+ *
+ * DESCRIPTION:
+ * Centrally isolates the complex generic type reification return calculation bounds.
+ * Maps your current production schema tokens down to their mutable, partial, and
+ * fully aligned instance graph footprints natively, satisfying Commandment IX.
+ *
+ * @template K - The authoritative evolution tracking namespace token literal key.
+ */
+export type TResolveDriftReturnConstraint<K extends keyof ISolidDriftRegistry> =
+  Partial<TResolveInstanceGraph<ISolidDriftRegistry[K]['current']>>;
 
 /**
  *  MATCH: AUTOMATED DRIFT INFRASTRUCTURE PARAMETERS CONTRACT
@@ -56,17 +69,22 @@ export type TMax8CompositeKeys =
  * @property default      - The absolute fallback catch-all circuit breaker lane handler.
  */
 export interface IXalorDriftContext<D extends keyof ISolidDriftRegistry, R> {
-  /* prettier-ignore */ readonly currentKey: TExtractRegistryKeyName<ISolidDriftRegistry[D]['current']>;
   /* prettier-ignore */
-  readonly ancestralKey?: TExtractRegistryKeyName<ISolidDriftRegistry[D]['v1_ancestor']> extends TExtractRegistryKeyName<ISolidDriftRegistry[D]['current']>
+  readonly currentKey: TExtractRegistryKeyName<ISolidDriftRegistry[D]['current']>;
+  /* prettier-ignore */
+  readonly ancestralKey?: TExtractRegistryKeyName<ISolidDriftRegistry[D]['v1_ancestor']> extends TExtractRegistryKeyName<ISolidDriftRegistry[D]['current']> 
     ? never 
     : TExtractRegistryKeyName<ISolidDriftRegistry[D]['v1_ancestor']>;
-
-  /* prettier-ignore */ readonly strict?: boolean;
-  /* prettier-ignore */ readonly prune?: boolean;
-  /* prettier-ignore */ readonly current: (value: ISolidDriftRegistry[D]['current']) => R;
-  /* prettier-ignore */ readonly v1_ancestor: (value: ISolidDriftRegistry[D]['v1_ancestor']) => R;
-  /* prettier-ignore */ readonly default: () => R;
+  /* prettier-ignore */
+  readonly strict?: boolean;
+  /* prettier-ignore */
+  readonly prune?: boolean;
+  /* prettier-ignore */
+  readonly current: (value: TResolveInstanceGraph<ISolidDriftRegistry[D]['current']>) => TResolveDriftReturnConstraint<D> & R;
+  /* prettier-ignore */
+  readonly v1_ancestor: (value: TResolveInstanceGraph<ISolidDriftRegistry[D]['v1_ancestor']>) => TResolveDriftReturnConstraint<D> & R;
+  /* prettier-ignore */
+  readonly default: () => TResolveDriftReturnConstraint<D> & R;
 }
 
 /**
@@ -87,6 +105,20 @@ export type TApplyNominalBrand<R> = R &
     : { readonly [BRAND_SYMBOL]: ['Solid', TExtractRegistryKeyName<R>] });
 
 /**
+ * MATCH: DRIFT EXECUTOR PARAMETERS TUPLE
+ *
+ * A rigid, positionally aligned parameter structure that defines the exact array frame data matrix.
+ * This type unifies the signature contract between the AOT compilation layer and the runtime ports.
+ *
+ * @index 0 payload     - The raw, unverified incoming runtime payload container instance.
+ * @index 1 ctx         - The developer-facing layout configuration matrix and handler closures.
+ * @index 2 injectedKey - The authoritative evolution token string tracking identifier hardcoded by the compiler.
+ */
+export type TXalorDriftArgs<
+  K extends keyof ISolidDriftRegistry,
+  R extends TResolveDriftReturnConstraint<K> = TResolveDriftReturnConstraint<K>,
+> = [payload: unknown, ctx: IXalorDriftContext<K, R>, injectedKey?: K];
+/**
  *  MATCH: CENTRALIZED DRIFT EXECUTOR
  *
  * ROLE:
@@ -99,11 +131,9 @@ export type TApplyNominalBrand<R> = R &
 /* prettier-ignore */
 export type TXalorDriftExecutor = <
   K extends keyof ISolidDriftRegistry,
-  R extends ISolidDriftRegistry[K]['current'] = ISolidDriftRegistry[K]['current'],
+  R extends TResolveDriftReturnConstraint<K> = TResolveDriftReturnConstraint<K>,
 >(
-  payload: unknown,
-  ctx: IXalorDriftContext<K, R>,
-  injectedKey: K,
+  ...args: TXalorDriftArgs<K, R>
 ) => TApplyNominalBrand<R>;
 /**
  * COMPILATION BOUNDARY GUARD

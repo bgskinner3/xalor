@@ -7,6 +7,7 @@ import type {
 } from '../../types';
 import { isObject, isKeyInObject, isRecord } from './objects';
 import { isNull, isString } from './primitives';
+import { XALOR_MATCH_ERROR_MESSAGES } from '../../../src/models';
 
 /**
  * @utilType Guard
@@ -213,14 +214,20 @@ export function assertRegistryKey<K extends keyof ISolidRegistry>(
   }
 }
 
+/**
+ * 🛡️ INFRASTRUCTURE TIMELINE BOUNDARY GUARD
+ *
+ * Performance Profile: O(1) direct assertion pass.
+ * Strategy: Validates that the AOT compiler transformer has successfully injected
+ * the required tracking token at runtime, throwing a centralized ledger exception if it drifts.
+ */
 export function assertDriftRegistryKey<K extends keyof ISolidDriftRegistry>(
   key: K | unknown,
 ): asserts key is K {
   if (!isDriftRegistryKey<K>(key)) {
     throw new Error(
-      `[Xalor Ingress Exception] Compilation Gateway Violation:\n` +
-        `The engine failed to locate a valid, hydrated structural blueprint token for key: "${String(key)}".\n` +
-        `Verify that your background AST transformer is active and your files are swept by ts-patch.`,
+      `[Xalor Ingress Exception] ${XALOR_MATCH_ERROR_MESSAGES.MISSING_COMPILED_INFRASTRUCTURE}\n` +
+        `Received key context value: "${String(key)}"`,
     );
   }
 }
