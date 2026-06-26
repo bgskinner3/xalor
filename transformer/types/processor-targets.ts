@@ -4,6 +4,7 @@ import type {
   TGenerateRawPayload,
   TValidateRawPayload,
   TTransformerRawPayload,
+  TMatchRawPayload,
 } from './guards';
 import type { TSolidShape } from '../../shared';
 import type {
@@ -11,6 +12,7 @@ import type {
   TGeneratorTriggers,
   TValidationTriggers,
   TTransformTriggers,
+  TMatchTriggers,
 } from '../../shared/auto';
 export type TRewriterFunction<TPayload, TShape = TSolidShape> = (
   raw: TPayload,
@@ -28,6 +30,8 @@ export type TProcessorRewriteMap = {
   readonly [K in TValidationTriggers]: TRewriterFunction<TValidateRawPayload>;
 } & {
   readonly [K in TTransformTriggers]: TRewriterFunction<TTransformerRawPayload>;
+} & {
+  readonly [K in TMatchTriggers]: TRewriterFunction<TMatchRawPayload>;
 };
 
 // ========================================================================
@@ -66,6 +70,14 @@ type TTransformerProcessorTarget = TBaseProcessorTargetParams & {
   /** 🎯 INDUSTRIAL CONTROLLERS REQ LOGIC: shape is strictly prohibited here */
   readonly shape?: undefined;
 };
+
+/** 🛡️ VALIDATE PASS CONFIGURATION (The Consumer Validation Lane - 🚀 Newly Incorporated!) */
+type TMatchProcessorTarget = TBaseProcessorTargetParams & {
+  readonly target: TMatchRawPayload;
+  /** 🎯 INDUSTRIAL CONTROLLERS REQ LOGIC: shape is strictly prohibited here */
+  readonly shape?: undefined;
+};
+
 /**
  * 🎛️ AUTHORITATIVE DISCRIMINATED PROCESSOR PARAMETERS UNION
  *
@@ -80,4 +92,5 @@ export type TProcessorTarget =
   | TRegisterProcessorTarget
   | TGenerateProcessorTarget
   | TValidateProcessorTarget
-  | TTransformerProcessorTarget;
+  | TTransformerProcessorTarget
+  | TMatchProcessorTarget;

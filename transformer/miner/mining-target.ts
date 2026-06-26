@@ -13,14 +13,9 @@ export function resolveMiningTarget(
   const apiName = getAPIName(node);
   if (!apiName) return null;
 
-  // Check if the extracted API token exists directly in our optimized mapper
-  if (
-    Object.prototype.hasOwnProperty.call(XALOR_MINING_ROUTER_MAPPER, apiName)
-  ) {
-    const targetMiner =
-      XALOR_MINING_ROUTER_MAPPER[
-        apiName as keyof typeof XALOR_MINING_ROUTER_MAPPER
-      ];
+  /* prettier-ignore */
+  if (Object.prototype.hasOwnProperty.call(XALOR_MINING_ROUTER_MAPPER, apiName)) {
+    const targetMiner = XALOR_MINING_ROUTER_MAPPER[apiName];
     return targetMiner(node, checker);
   }
 

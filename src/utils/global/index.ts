@@ -32,6 +32,7 @@ export function ensureGlobalVault(): TSolidVaultMap {
   // 1. Initialize the root with the new Triple-KV structure
   if (!globalThis.__SOLID_VAULT__) {
     globalThis.__SOLID_VAULT__ = {
+      driftTracking: new Map(),
       blueprints: new Map(),
       references: new Map(),
       manifest: new Map(),
@@ -42,8 +43,9 @@ export function ensureGlobalVault(): TSolidVaultMap {
 
   const vault = globalThis.__SOLID_VAULT__;
 
-  // 2. 🛡️ THE RESILIENCY FIX
+  //  THE RESILIENCY FIX
   // We ensure every specific Map is healthy to prevent runtime crashes.
+  if (!(vault.driftTracking instanceof Map)) vault.driftTracking = new Map();
   if (!(vault.blueprints instanceof Map)) vault.blueprints = new Map();
   if (!(vault.references instanceof Map)) vault.references = new Map();
   if (!(vault.manifest instanceof Map)) vault.manifest = new Map();

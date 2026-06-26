@@ -54,6 +54,7 @@ export type TSolidVaultMap = {
   references: Map<string, string>;
   manifest: Map<string, TVaultManifestEntry>;
   registry: Map<string, TVaultRegistryEntry>;
+  driftTracking: Map<string, TVaultDriftEntry>;
   errors: Map<string, TSolidError[]>;
   _isHydrated?: boolean;
 };

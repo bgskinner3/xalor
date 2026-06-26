@@ -20,7 +20,6 @@ export function transformXalorMerge<K extends keyof ISolidRegistry>(
   injectedKey: K,
   ctx: IXalorMergeContext<ISolidRegistry[K]>,
 ): TSolidBranded<K, ISolidRegistry[K]> {
-  // 1. Enforce strict parameter presence to protect system boundaries (Commandment V)
   if (!injectedKey || !ctx) {
     throw new Error(
       `[xalor] 🚨 GATEWAY BLOCK: 'transformXalorMerge' executed without compiled metadata properties.\n` +
@@ -34,15 +33,12 @@ export function transformXalorMerge<K extends keyof ISolidRegistry>(
     );
   }
 
-  // 🚀 THE CORRECTION: Point directly to your modernized class handler method!
   const resultPayload = XalethorService.executeMergeSanitizer<K>(ctx);
 
   if (isRecord(resultPayload)) {
     Reflect.set(resultPayload, BRAND_SYMBOL, ['Solid', injectedKey]);
 
-    if (markAsSolid<K, ISolidRegistry[K]>(resultPayload)) {
-      return resultPayload;
-    }
+    if (markAsSolid<K, ISolidRegistry[K]>(resultPayload)) return resultPayload;
   }
 
   throw new Error(

@@ -41,18 +41,22 @@ export type TGenerateXalorReturn<
 // ====================================================================
 // ====================================================================
 // ====================================================================
-
+/**
+ *
+ *
+ *
+ * @key dataOne - The baseline target object graph retrieved from memory, state, or database storage
+ * @key dataTwo - The incoming secondary partial delta payload patch containing property overrides
+ * @key pick - Optional: Explicit root-field extraction retention list (Zod-like pick)
+ * @key omit - Optional: Root property exclusion pruning list (Zod-like omit)
+ * @key map -
+ *
+ */
 export interface IXalorMergeContext<T> {
-  /** The baseline target object graph retrieved from memory, state, or database storage */
   readonly dataOne: unknown;
-  /** The incoming secondary partial delta payload patch containing property overrides */
   readonly dataTwo: unknown;
-  /** Optional: Explicit root-field extraction retention list (Zod-like pick) */
   readonly pick?: Array<keyof T | string>;
-
-  /** Optional: Root property exclusion pruning list (Zod-like omit) */
   readonly omit?: Array<keyof T | string>;
-
   readonly map?: Partial<{
     [K in keyof T]: (value: T[K], parentGraph: Readonly<Partial<T>>) => T[K];
   }>;
@@ -99,24 +103,39 @@ export type TMax8CompositeKeys =
 // MAIN MAPPER SETUP
 // ====================================================================
 // ====================================================================
-/* prettier-ignore */
-// export type TMatchXalorResultMap<SingleKey extends keyof ISolidRegistry, CompositeKeys extends TMax8CompositeKeys> = {
-//   readonly composite: ResolveCompositeIntersection<CompositeKeys>;
-//   readonly reduce: TDeepWriteable<ISolidRegistry[SingleKey]>;
-//   readonly intent: TPrettify<ISolidRegistry[SingleKey]>;
-//   readonly drift: TPrettify<TRecursivePartial<ISolidRegistry[SingleKey]>>;
-// };
-// /* prettier-ignore */
-// export type TMatchXalorReturn<
-//   K extends keyof ISolidRegistry,
-//   M extends TMatchXalorModes,
-//   CompositeKeys extends TMax8CompositeKeys = readonly [],
-// > = TMatchXalorResultMap<K,M extends 'composite' ? CompositeKeys : readonly []>[M];
 
-// /* prettier-ignore */
-// export type TMatchStrategyEngine<K extends keyof ISolidRegistry,CompositeKeys extends TMax8CompositeKeys = readonly []> = {
-//   readonly [Mode in TMatchXalorModes]: (
-//     key: Mode extends 'composite' ? CompositeKeys : K,
-//     payload: unknown,
-//   ) => TMatchXalorResultMap<Mode extends 'composite' ? never : K,Mode extends 'composite' ? CompositeKeys : readonly []>[Mode];
-// };
+/**
+ * 🎛️ CATEGORY 5 MATCH: AUTOMATED DRIFT INFRASTRUCTURE PARAMETERS CONTRACT
+ *
+ * Progressive disclosure matrix enabling backward-compatible version matching.
+ * Uses strict registry index lookups to guarantee 100% autocomplete safety.
+ *
+ * @template D - Inferred centralized Evolution tracking namespace token key.
+ * @template R - Inferred custom application return type computed by your closures.
+ * @key currentKey - Active Production Target Key. Checked by the compiler to ensure it matches the modern string token stored inside your registry!
+ * @key ancestralKey - Historical Target Key. Checked by the compiler to ensure it matches the legacy string token stored inside your registry!
+ * @key strict - Forces a strict validation pass, rejecting payloads that contain extra unmapped attributes.
+ * @key prune - Automatically purges legacy-only parameters from the final output frame after upcasting.
+ * @key current - Active Release Lane Handler. Takes your pristine, current production structure with full code completion!
+ * @key v1_ancestor - Ancestor Migration Bridge Handler. STRONGLY TYPED MATRIX MATCH: Pulls fields straight from yesterday's registered schema definition. Tapping 'value.' instantly opens full autocomplete!
+ * @key default - The absolute fallback catch-all circuit breaker lane handler
+ *
+ */
+export interface IXalorDriftContext<D extends keyof ISolidDriftRegistry, R> {
+  /* prettier-ignore */ readonly currentKey: ISolidDriftRegistry[D] extends { activeKey: infer CK } ? CK : keyof ISolidRegistry;
+  /* prettier-ignore */ readonly ancestralKey?: ISolidDriftRegistry[D] extends { historicalKey: infer AK; } ? AK : keyof ISolidRegistry;
+  /* prettier-ignore */ readonly strict?: boolean;
+  /* prettier-ignore */ readonly prune?: boolean;
+  /* prettier-ignore */ readonly current: (value: ISolidDriftRegistry[D]['current']) => R;
+  /* prettier-ignore */ readonly v1_ancestor: (value: ISolidDriftRegistry[D]['v1_ancestor']) => R;
+  /* prettier-ignore */ readonly default: () => R;
+}
+
+export type TXalorDriftExecutor = <
+  K extends keyof ISolidDriftRegistry,
+  R = unknown,
+>(
+  payload: unknown,
+  ctx: IXalorDriftContext<K, R>,
+  injectedKey?: K,
+) => R;

@@ -135,6 +135,7 @@ export class TelemetryService {
           generatorXalor: {},
           validationXalor: {},
           transformXalor: {},
+          matchXalor: {},
         });
       }
 
@@ -269,6 +270,7 @@ export class TelemetryService {
         generatorXalor: { ...modes.generatorXalor },
         validationXalor: { ...modes.validationXalor },
         transformXalor: { ...modes.transformXalor },
+        matchXalor: { ...modes.matchXalor },
       };
     }
     return apiUsageMap;

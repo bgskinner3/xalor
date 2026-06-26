@@ -1,11 +1,16 @@
 // /src/api/index.ts
 import type { TTypeGuard, TSolidBranded } from '../../shared';
-import { isRegistryKey, assertRegistryKey } from '../../shared';
-import type { IXalorMergeContext } from '../models/types';
+import {
+  isRegistryKey,
+  assertRegistryKey,
+  assertDriftRegistryKey,
+} from '../../shared';
+import type { IXalorMergeContext, IXalorDriftContext } from '../models/types';
 import { registerXalor } from './register';
 import { transformXalorMerge } from './transform';
 import { validateXalorGuard, validateXalorParse } from './validate';
 import { generateXalorDefault } from './generate';
+import { matchXalorDrift } from './match';
 class XalorCore {
   // ========================================================================
   // ========================================================================
@@ -93,6 +98,18 @@ class XalorCore {
   // ========================================================================
   // ========================================================================
   // ========================================================================
+  /** @Api match @mode drift */
+  /* prettier-ignore */
+  public drift<K extends keyof ISolidDriftRegistry, R = unknown>(
+    payload: unknown, 
+    ctx: IXalorDriftContext<K, R>, 
+    injectedKey?: K
+  ): TSolidBranded<ISolidDriftRegistry[K]['activeKey'], R> {
+    // 1. Hard control-flow control assertion gate to intercept typo vectors immediately (Commandment V)
+    assertDriftRegistryKey(injectedKey);
+    
+    return  matchXalorDrift<K, R>(payload, ctx);
+  }
 }
 
 export const xalor: XalorCore = new XalorCore();

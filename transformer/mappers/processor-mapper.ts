@@ -6,6 +6,7 @@ import {
   formatTransformationArgs,
   formatGenerationArgs,
   formatValidationArgs,
+  formatMatchArgs,
 } from '../utils/mapper-helpers';
 
 /**
@@ -37,12 +38,6 @@ export const PROCESSOR_REWRITE_MAPPER: TProcessorRewriteMap = {
   // ========================================================================
   /* prettier-ignore */
   'xalor.default':    (raw, node, factory) => formatGenerationArgs('default', raw, node, factory),
-  /* prettier-ignore */
-  // 'xalor.mock':       (raw, node, factory) => formatGenerationArgs('mock', raw, node, factory),
-  // /* prettier-ignore */
-  // 'xalor.clone':      (raw, node, factory) => formatGenerationArgs('clone', raw, node, factory),
-  // /* prettier-ignore */
-  // 'xalor.cast':       (raw, node, factory) => formatGenerationArgs('cast', raw, node, factory),
 
   // ========================================================================
   // VALIDATION METHODS
@@ -50,59 +45,17 @@ export const PROCESSOR_REWRITE_MAPPER: TProcessorRewriteMap = {
   /* prettier-ignore */
   'xalor.guard':      (raw, node, factory) => formatValidationArgs('guard', raw, node, factory),
   /* prettier-ignore */
-  // 'xalor.assert':     (raw, node, factory) => formatValidationArgs('assert', raw, node, factory),
-  /* prettier-ignore */
   'xalor.parse':      (raw, node, factory) => formatValidationArgs('parse', raw, node, factory),
-  // /* prettier-ignore */
-  // 'xalor.parseAsync': (raw, node, factory) => formatValidationArgs('parseAsync', raw, node, factory),
-  // /* prettier-ignore */
-  // 'xalor.audit':      (raw, node, factory) => formatValidationArgs('audit', raw, node, factory),
 
   // ========================================================================
   // TRANSFORMATION METHODS
   // ========================================================================
   /* prettier-ignore */
-  // 'xalor.pick':       (raw, node, factory) => formatTransformationArgs('pick', raw, node, factory),
-  /* prettier-ignore */
-  // 'xalor.omit':       (raw, node, factory) => formatTransformationArgs('omit', raw, node, factory),
-  /* prettier-ignore */
-
-  /* prettier-ignore */
   'xalor.merge':      (raw, node, factory) => formatTransformationArgs('merge', raw, node, factory),
+
+  // ========================================================================
+  // MATCH METHODS
+  // ========================================================================
   /* prettier-ignore */
-  // 'xalor.flatten':    (raw, node, factory) => formatTransformationArgs('flatten', raw, node, factory),
+  'xalor.drift':       (raw, node, factory) => formatMatchArgs('drift', raw, node, factory),
 } satisfies TProcessorRewriteMap;
-
-/**
- *
- *
- *
- * TODO: REVIEW
- */
-
-// 'xalor.register': (raw, node, factory, areaString, shape) => {
-//   if (!raw || !shape) return [...node.arguments];
-
-//   const metadataExpression = factory.createObjectLiteralExpression([
-//     /* prettier-ignore */
-//     factory.createPropertyAssignment('key', factory.createStringLiteral(raw.keyName)),
-//     /* prettier-ignore */
-//     factory.createPropertyAssignment('area', factory.createStringLiteral(areaString ?? '')),
-//     /* prettier-ignore */
-//     factory.createPropertyAssignment('version', factory.createStringLiteral(IS_SOLID_CONFIG_ITEMS.solidVersion)),
-//     /* prettier-ignore */
-//     factory.createPropertyAssignment('shape', generateShapeAST(factory, shape)),
-//   ]);
-
-//   // 🟢 FIXED: If a runtime argument exists, we replace it with a clean nominal string
-//   // key placeholder or flat primitive descriptor. This completely severs all ties
-//   // between the output file code and recursive standard library parameters!
-//   if (node.arguments.length > 0) {
-//     return [
-//       factory.createStringLiteral(`OpaqueRuntimePayload:${raw.keyName}`),
-//       metadataExpression,
-//     ];
-//   }
-
-//   return [metadataExpression];
-// },

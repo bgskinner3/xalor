@@ -165,6 +165,29 @@ export function isRegistryKey<K extends keyof ISolidRegistry>(
   );
 }
 /**
+ * 🎯 IS DRIFT REGISTRY KEY (THE HISTORICAL LINAGE RADAR INGRESS)
+ *
+ * ROLE:
+ * A universal type-narrowing predicate guard used to verify if a runtime string token
+ * matches an actively recorded multi-generational evolution contract lifecycle line.
+ *
+ * DESIGN INVARIANTS:
+ * - Satisfies COMMANDMENT I: Checks boundaries using the parallel drift tracking metadata schema index.
+ * - Satisfies COMMANDMENT VIII: Zero allocations; constant-time O(1) native map lookup speeds.
+ * - Satisfies COMMANDMENT IX: Statically sound narrowing path without type-bleeding workarounds.
+ */
+export function isDriftRegistryKey<K extends keyof ISolidDriftRegistry>(
+  key: unknown,
+): key is K {
+  const vault = globalThis.__SOLID_VAULT__;
+  return (
+    typeof key === 'string' &&
+    vault !== undefined &&
+    vault.driftTracking !== undefined &&
+    vault.driftTracking.has(key)
+  );
+}
+/**
  * 🎯 ASSERT INJECTED KEY (THE GATEHOUSE INGRESS EXCEPTION TERMINATOR)
  *
  * ROLE:
@@ -179,6 +202,18 @@ export function isRegistryKey<K extends keyof ISolidRegistry>(
  * traceable diagnostic exception to prevent silent data corruption loops.
  */
 export function assertRegistryKey<K extends keyof ISolidRegistry>(
+  key: K | unknown,
+): asserts key is K {
+  if (!isRegistryKey<K>(key)) {
+    throw new Error(
+      `[Xalor Ingress Exception] Compilation Gateway Violation:\n` +
+        `The engine failed to locate a valid, hydrated structural blueprint token for key: "${String(key)}".\n` +
+        `Verify that your background AST transformer is active and your files are swept by ts-patch.`,
+    );
+  }
+}
+
+export function assertDriftRegistryKey<K extends keyof ISolidDriftRegistry>(
   key: K | unknown,
 ): asserts key is K {
   if (!isRegistryKey<K>(key)) {

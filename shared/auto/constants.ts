@@ -13,6 +13,12 @@ import type { TUnique } from '../types';
 export const GENERATOR_MODE_TRIGGERS = ['xalor.default'] as const;
 
 /**
+ * MASTER MATCH MODES CONFIGURATION
+ * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
+ */
+export const MATCH_MODE_TRIGGERS = ['xalor.drift'] as const;
+
+/**
  * MASTER REGISTER MODES CONFIGURATION
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
@@ -36,6 +42,7 @@ export const VALIDATION_MODE_TRIGGERS = ['xalor.guard', 'xalor.parse'] as const;
  */
 const RAW_SENTRY_TRIGGER_NAMES = [
   ...GENERATOR_MODE_TRIGGERS,
+  ...MATCH_MODE_TRIGGERS,
   ...REGISTER_MODE_TRIGGERS,
   ...TRANSFORM_MODE_TRIGGERS,
   ...VALIDATION_MODE_TRIGGERS,
@@ -51,6 +58,7 @@ export const SENTRY_TRIGGER_NAMES = RAW_SENTRY_TRIGGER_NAMES satisfies TUnique<
  */
 export const SENTRY_TRIGGER_MODES = {
   generatorXalor: GENERATOR_MODE_TRIGGERS,
+  matchXalor: MATCH_MODE_TRIGGERS,
   transformXalor: TRANSFORM_MODE_TRIGGERS,
   validationXalor: VALIDATION_MODE_TRIGGERS,
 };
@@ -62,6 +70,12 @@ export const RUNTIME_TRIGGER_NAMES = ObjectUtils.keys(SENTRY_TRIGGER_MODES);
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
 export const GENERATOR_MODES = ['default'] as const;
+
+/**
+ * RAW MATCH STRATEGY SPECIFICATION MODES
+ * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
+ */
+export const MATCH_MODES = ['drift'] as const;
 
 /**
  * RAW REGISTER STRATEGY SPECIFICATION MODES

@@ -17,6 +17,17 @@ export type TGeneratorTriggers =
  */
 export type TGeneratorXalorModes = (typeof constants.GENERATOR_MODES)[number];
 
+export type TMatchTriggers = (typeof constants.MATCH_MODE_TRIGGERS)[number];
+
+/**
+ * TMatchXalorModes
+ *
+ * Match List Modes
+ *
+ * @see {@link FoundationalTypesDocs.TMatchXalorModes}
+ */
+export type TMatchXalorModes = (typeof constants.MATCH_MODES)[number];
+
 export type TRegisterTriggers =
   (typeof constants.REGISTER_MODE_TRIGGERS)[number];
 

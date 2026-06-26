@@ -5,7 +5,12 @@ import type {
   Expression,
 } from 'typescript';
 import type { InferPayloadByApiName } from '../types';
-
+import type {
+  TMatchXalorModes,
+  TGeneratorXalorModes,
+  TTransformXalorModes,
+  TValidationXalorModes,
+} from '../../shared';
 /**
  * Reusable utility to scrape out a single string-literal generic argument from index [0]
  * and dynamically compute the execution mode flavor directly from the fully qualified API name string.
@@ -57,7 +62,7 @@ interface IBasePayload {
  * ## formatGenerationArgs — Generation Node Argument Arranger
  */
 export function formatGenerationArgs<T extends IBasePayload>(
-  mode: string,
+  mode: TGeneratorXalorModes,
   raw: T,
   node: CallExpression,
   factory: NodeFactory,
@@ -75,7 +80,7 @@ export function formatGenerationArgs<T extends IBasePayload>(
  * ## formatValidationArgs — Validation Node Argument Arranger
  */
 export function formatValidationArgs<T extends IBasePayload>(
-  mode: string,
+  mode: TValidationXalorModes,
   raw: T,
   node: CallExpression,
   factory: NodeFactory,
@@ -93,7 +98,23 @@ export function formatValidationArgs<T extends IBasePayload>(
  * ## formatTransformationArgs — Transformation Node Argument Arranger
  */
 export function formatTransformationArgs<T extends IBasePayload>(
-  mode: string,
+  mode: TTransformXalorModes,
+  raw: T,
+  node: CallExpression,
+  factory: NodeFactory,
+): Expression[] {
+  const keyLiteral = factory.createStringLiteral(raw.keyName ?? 'unknown');
+  const modeLiteral = factory.createStringLiteral(mode);
+
+  return node.arguments.length > 0
+    ? [...node.arguments, keyLiteral, modeLiteral]
+    : [keyLiteral, modeLiteral];
+}
+/**
+ * ## formatTransformationArgs — Transformation Node Argument Arranger
+ */
+export function formatMatchArgs<T extends IBasePayload>(
+  mode: TMatchXalorModes,
   raw: T,
   node: CallExpression,
   factory: NodeFactory,
