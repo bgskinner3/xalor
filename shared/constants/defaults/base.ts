@@ -149,6 +149,7 @@ export const DEFAULT_VAULT_SHAPE_FALLBACK: TTripleKV = {
   references: {},
   manifest: {},
   registry: {},
+  driftTracking: {},
   version: '1.0.0',
 } satisfies TTripleKV;
 

@@ -21,6 +21,13 @@ export type TVaultManifestEntry = {
  */
 export type TVaultRegistryEntry = { symbolName: string; typeName: string };
 
+type TVaultDriftEntry = {
+  /** The ancestral generation token label constraint marker */
+  readonly version: 'v1_ancestor';
+  /** The content-addressed hash identifier pointing back into the blueprints pool */
+  readonly hash: string;
+};
+
 /**
  * TRIPLE-KV SNAPSHOT
  *
@@ -33,6 +40,7 @@ export type TTripleKV = {
   manifest: Record<string, TVaultManifestEntry>;
   registry: Record<string, TVaultRegistryEntry>;
   references: Record<string, string>;
+  driftTracking: Record<string, TVaultDriftEntry>;
   version: string;
 };
 

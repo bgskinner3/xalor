@@ -22,22 +22,17 @@ export function generateXalorClone<K extends keyof ISolidRegistry>(
   injectedKey: K,
   data: unknown,
 ): TSolidBranded<K, ISolidRegistry[K]> {
-  // 1. Enforce strict parameter presence to protect system boundaries (Commandment V)
   if (!injectedKey) {
     throw new Error(
       `[xalor] 🚨 GATEWAY BLOCK: 'generateXalorClone' executed without compiled metadata properties.`,
     );
   }
 
-  // 2. Delegate straight to your circular-safe service layer copy worker
   const clonePayload = XalethorService.produceClone(data, injectedKey);
 
-  // 3. Leverage strict native type guard to safely attach the nominal brand mapping (Commandment IX)
   if (isRecord(clonePayload)) {
-    // 4. Hydrate your unique runtime BRAND_SYMBOL directly onto the freshly minted object container
     Reflect.set(clonePayload, BRAND_SYMBOL, ['Solid', injectedKey]);
 
-    // 5. Pass through a safe phantom type narrower gate instead of an explicit cast to verify type layout
     if (markAsSolid<K, ISolidRegistry[K]>(clonePayload)) {
       return clonePayload;
     }

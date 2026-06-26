@@ -98,6 +98,15 @@ declare global {
   export interface ISolidRegistry {
     /* The auto-generated solid-env.d.ts will merge properties here natively */
   }
+
+  /**
+   * 🚀 THE AUTHORITATIVE DRIFT LIFECYCLE REGISTRY
+   * Centralizes multi-generational contract links into a single source of truth.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export interface ISolidDriftRegistry {
+    /* The auto-generated solid-env.d.ts will merge properties here natively */
+  }
 }
 
 // 🧠 THE COMPILER SHIELD:

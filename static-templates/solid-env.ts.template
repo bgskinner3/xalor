@@ -32,4 +32,22 @@ declare global {
   interface ISolidRegistry {
     [key: string]: any;
   }
+
+    /**
+   * 🚀 ISOLID DRIFT REGISTRY (COLD-START MATCH TIMELINE)
+   * 
+   * Centralized evolutionary lineage contract ledger container. This catch-all index 
+   * guarantees that your Category 5 version-bridge gates ('xalor.drift') remain fully 
+   * legal, compiled, and un-broken before your types generation loop populates.
+   * 
+   * DESIGN INVARIANTS:
+   * - Satisfies COMMANDMENT I: Declares structural lineage scopes at the global boundary root.
+   * - Satisfies COMMANDMENT IX: Prevents type bleeding into loose fallback shapes on cold-starts.
+   */
+  interface ISolidDriftRegistry {
+    [key: string]: {
+      readonly current: any;
+      readonly v1_ancestor: any;
+    };
+  }
 }

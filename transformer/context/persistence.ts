@@ -39,6 +39,7 @@ export function buildSnapshotFromRegistry(
     references: {},
     manifest: {},
     registry: {},
+    driftTracking: {},
     version: IS_SOLID_CONFIG_ITEMS.solidVersion,
   } satisfies TTripleKV;
 
