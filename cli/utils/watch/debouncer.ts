@@ -1,3 +1,11 @@
+/**
+ * WATCH CliDebouncer
+ *
+ * ROLE:
+ *
+ *
+ *
+ */
 export class CliDebouncer<Args extends unknown[]> {
   private timeoutId: NodeJS.Timeout | null = null;
   private wait: number;
@@ -12,10 +20,15 @@ export class CliDebouncer<Args extends unknown[]> {
     this.latestFunc = func;
   }
 
+  public setDelay(delayMs: number): void {
+    this.wait = delayMs;
+  }
+
   public trigger(...args: Args): void {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
     }
+
     this.timeoutId = setTimeout(() => {
       this.timeoutId = null;
       this.latestFunc(...args);

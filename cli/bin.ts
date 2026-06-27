@@ -28,10 +28,6 @@ const COMMAND_ROUTER: TCommandRouterMapper = {
     console.log(
       '🪐 [Xalor CLI] Auto-compiling workspace to synchronize telemetry registry maps...',
     );
-
-    // Synchronously run compilation first on the thread loop
-    // runCompileCommand(projectRoot);
-
     // Await your async audit data generation routines cleanly!
     await runAuditCommand(projectRoot, flags);
   },

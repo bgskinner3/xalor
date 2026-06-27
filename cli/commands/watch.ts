@@ -1,8 +1,11 @@
 // src/cli/commands/watch.ts
 import ts from 'typescript';
-import xalorTransformerPlugin from '../../transformer';
-import { XALOR_CLI_STATUS_MESSAGES, isKeyInObject } from '../../shared';
-import { CliDebouncer, bootstrapEnvContext } from '../utils';
+import {
+  CliDebouncer,
+  bootstrapEnvContext,
+  createXalorWatchHost,
+} from '../utils';
+import { WATCH_THROTTLE_CONFIG } from '../models';
 
 /**
  * RUN WATCH COMMAND
@@ -11,144 +14,79 @@ import { CliDebouncer, bootstrapEnvContext } from '../utils';
  * Programmatically overrides option sets and strips duplicate plugin parameters to block double-execution loops.
  */
 export function runWatchCommand(projectRootPath: string): void {
-  /* prettier-ignore */
-  const configPath = bootstrapEnvContext({ projectRootPath, cliMode: 'watch'});
+  const configPath = bootstrapEnvContext({ projectRootPath, cliMode: 'watch' });
+  const config = WATCH_THROTTLE_CONFIG['LAID_BACK'];
 
-  // ====================================================================================
-  // 🛡️ SELF-DESTRUCT TRACKING PRIMITIVES (GIT CHECKOUT BASELINE RULES)
-  // ====================================================================================
   let rapidSaveChainCount = 0;
   let lastTriggerTimestamp = Date.now();
 
-  // 🚀 INITIALIZE AUTO-SAVE BUFFER: Seed with a type-safe function shell matching our target hook signature
   const emitDebouncer = new CliDebouncer<
     [ts.EmitAndSemanticDiagnosticsBuilderProgram]
   >((program) => {
     program.emit();
-  }, 300);
+  }, config.INITIAL_SEED_DELAY_MS);
 
-  const customCreateProgram: ts.CreateProgram<
-    ts.EmitAndSemanticDiagnosticsBuilderProgram
-  > = (
-    rootNames,
-    options,
-    host,
-    oldProgram,
-    configFileParsingDiagnostics,
-    projectReferences,
-  ) => {
-    const cleanOptions = { ...options };
-    if (isKeyInObject('plugins')(cleanOptions)) {
-      delete cleanOptions.plugins;
-    }
-
-    const modifiedOptions = {
-      ...cleanOptions,
-      noEmit: false,
-      emitDeclarationOnly: false,
-      ignoreDeprecations: '6.0',
-    };
-
-    const builderProgram = ts.createEmitAndSemanticDiagnosticsBuilderProgram(
-      rootNames,
-      modifiedOptions,
-      host,
-      oldProgram,
-      configFileParsingDiagnostics,
-      projectReferences,
-    );
-
-    const underlyingProgram = builderProgram.getProgram();
-    const originalEmit = underlyingProgram.emit;
-
-    underlyingProgram.emit = (
-      targetSourceFile,
-      _writeFile,
-      cancellationToken,
-      emitOnlyDtsFiles,
-      _customTransformers,
-    ) => {
-      const silentWriteFile: ts.WriteFileCallback = () => {
-        // Black-hole swallow callback function to prevent physical .js disk pollution
-      };
-      return originalEmit(
-        targetSourceFile,
-        silentWriteFile,
-        cancellationToken,
-        emitOnlyDtsFiles,
-        {
-          before: [xalorTransformerPlugin(underlyingProgram)],
-        },
-      );
-    };
-
-    return builderProgram;
-  };
-
-  const watchCompilerHost = ts.createWatchCompilerHost(
-    configPath,
-    undefined,
-    ts.sys,
-    customCreateProgram,
-    (diagnostic) => {
-      console.log(
-        `⚠️ [TS Compiler Diagnostic]: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`,
-      );
-    },
-    (statusDiagnostic) => {
-      const mappedLog = XALOR_CLI_STATUS_MESSAGES[statusDiagnostic.code];
-      if (mappedLog) {
-        console.log(mappedLog);
-      }
-    },
-  );
-
-  const originalAfterProgramCreate = watchCompilerHost.afterProgramCreate;
-
-  // ====================================================================================
-  // 🛰️ DEBOUNCED PROGRAM LIFE CYCLE HOOK
-  // ====================================================================================
-  watchCompilerHost.afterProgramCreate = (builderProgram) => {
-    // 🛡️ COMPUTE MASS MUTATION DELTAS
+  // Define your execution hook strategy to handle incoming filesystem mutations
+  const handleProgramLifecycleMutation = (
+    builderProgram: ts.EmitAndSemanticDiagnosticsBuilderProgram,
+    originalDiagnosticReporter?: (
+      program: ts.EmitAndSemanticDiagnosticsBuilderProgram,
+    ) => void,
+  ): void => {
     const executionTime = Date.now();
     const cycleDeltaTime = executionTime - lastTriggerTimestamp;
     lastTriggerTimestamp = executionTime;
 
-    // Increment chain tracking metric on every micro-trigger pass
     rapidSaveChainCount += 1;
 
-    // EVALUATION: If more than 5 program builds fire back-to-back under 150ms apart,
-    // a git branch switch or automated tool is modifying multiple files concurrently.
-    if (rapidSaveChainCount > 5 && cycleDeltaTime < 150) {
-      /* prettier-ignore */
-      console.log('\n======================================================================');
-      /* prettier-ignore */
-      console.log('🚨 [Xalor Guard] ABNORMAL VOLATILE FILESYSTEM MUTATION CHAIN DETECTED!');
-      /* prettier-ignore */
-      console.log('👉 Context: Active Git branch checkout or upstream batch merge in progress.');
-      /* prettier-ignore */
-      console.log('🔒 Action: Safely freezing in-memory records and aborting watch daemon...');
-      /* prettier-ignore */
-      console.log('======================================================================\n');
-
-      // Terminate the watcher immediately to seal memory structures from corrupt half-baked entries
+    // 🛡️ Xalor Guard: Git Branch Checkout / Upstream Batch Merge Protection Gate
+    if (
+      rapidSaveChainCount > config.VOLATILE_CHAIN_HIGH_WATERMARK &&
+      cycleDeltaTime < config.VOLATILE_CYCLE_DELTA_FLOOR_MS
+    ) {
+      /* prettier-ignore */ console.log('\n======================================================================');
+      /* prettier-ignore */ console.log('🚨 [Xalor Guard] ABNORMAL VOLATILE FILESYSTEM MUTATION CHAIN DETECTED!');
+      /* prettier-ignore */ console.log('👉 Context: Active Git branch checkout or upstream batch merge in progress.');
+      /* prettier-ignore */ console.log('🔒 Action: Safely freezing in-memory records and aborting watch daemon...');
+      /* prettier-ignore */ console.log('======================================================================\n');
       process.exit(0);
     }
 
-    // 1. Update the execution closure with the freshest compiler program instance layout context
+    // ====================================================================================
+    // 🎯 THE ADAPTIVE CONDITIONS ENGINE (THE AUTO-SAVE DETECTOR)
+    // ====================================================================================
+    /* prettier-ignore */ const isAutoSaveIntervalActive = cycleDeltaTime < config.AUTO_SAVE_DETECTION_CEILING_MS;
+    /* prettier-ignore */ const optimizedWindowMs = isAutoSaveIntervalActive ? config.AUTO_SAVE_COOLDOWN_PADDING_MS : config.MANUAL_SAVE_COOLDOWN_PADDING_MS;
+
+    // Natively invoke our strongly typed delay update parameter point-free
+    emitDebouncer.setDelay(optimizedWindowMs);
+
+    // Update execution context with the latest active compiler program blueprint
     emitDebouncer.updateFunction((activeProgram) => {
       // Reset chain values back to initial baseline rules once edits safely settle down
       rapidSaveChainCount = 0;
 
+      // Execute the custom transformer compilation pass
       activeProgram.emit();
-      if (originalAfterProgramCreate) {
-        originalAfterProgramCreate(activeProgram);
+      if (originalDiagnosticReporter) {
+        originalDiagnosticReporter(activeProgram);
       }
     });
 
-    // 2. Trigger the debounced window counter passing our updated compile target argument
     emitDebouncer.trigger(builderProgram);
   };
+
+  // Instantiated the watch host cleanly via our decoupled factory function
+  const watchCompilerHost = createXalorWatchHost(configPath, (program) => {
+    // Extract the original compiler baseline logger function directly on the fly
+    const baselineDiagnosticReporter = ts.createWatchCompilerHost(
+      configPath,
+      undefined,
+      ts.sys,
+    ).afterProgramCreate;
+
+    handleProgramLifecycleMutation(program, baselineDiagnosticReporter);
+  });
 
   ts.createWatchProgram(watchCompilerHost);
 }
