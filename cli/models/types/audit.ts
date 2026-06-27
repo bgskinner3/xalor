@@ -261,61 +261,12 @@ export type TDefaultObjectKeys = keyof typeof DEFAULT_OBJECT_MAPPER;
 export type TDefaultReturnKeyMap<K extends keyof TDefaultReturnMap> =
   TDefaultReturnMap[K];
 
-/**
- * TSelfRecursion
- * ROLE: Decoupled functional type representing the engine's recursive self-referential jump loop.
- * STRATEGY: Implements an isolated parameter signature matching TCalculateDepthParams to allow point-free forward mapping.
- */
-export type TSelfRecursion = (params: TCalculateDepthParams) => number;
-
-/**
- * TDepthHandler
- * ROLE: Pure functional signature contract for structural shape depth processors.
- *
- * SCOPE BOUNDARY MANUAL:
- * - INTERNAL COMPILER EXCLUSIVITY: This signature and its matching strategy matrix are
- *   engineered strictly for the build-time analytical data engine layer.
- * - RUNTIME INSULATION: This type is never exported, imported, or invoked within your live
- *   production application code bundle (/src). It has zero footprint on runtime validation gates.
- * - CONTEXT SHARED PATHWAY: While isolated from production runtime logic, it is consumed switchlessly
- *   by both the terminal 'xalor audit' command profiler and the local 'xalor studio' GraphQL backend
- *   brokers to calculate structural metric models from a single source of truth.
- */
-export type TDepthHandler<S extends TSolidShape['kind']> = (
-  shape: Extract<TSolidShape, { kind: S }>,
-  blueprints: Record<string, TSolidShape>,
-  traversalStack: readonly string[],
-  self: TSelfRecursion,
-) => number;
-
-export type TAuditDepthMapper = {
-  [K in TSolidShape['kind']]: TDepthHandler<K>;
-};
-
 // ======================================================================================================
 // ======================================================================================================
 // METHOD TYPES
 // ======================================================================================================
 // ======================================================================================================
 
-/**
- * TCalculateDepthParams
- * ROLE: Unified data parameter context wrapping active recursive traversal boundaries.
- *
- * @param shape Targeted structural schema description block currently being evaluated
- * @param blueprints Authoritative content-addressed storage repository registry map
- * @param traversalStack Path sequence array tracking active parents to prevent infinite cyclic traps
- */
-export type TCalculateDepthParams = {
-  readonly shape: TSolidShape;
-  readonly blueprints: Record<string, TSolidShape>;
-  readonly traversalStack: readonly string[];
-};
-
-export type TDepthComplexityMapper = {
-  key: TTaxonomyTokenKeys;
-  test: (d: number) => boolean;
-}[];
 /**
  * TReferenceCollectorHandler
  * ROLE: Pure functional signature contract for structural shape reference tracers.
@@ -377,4 +328,50 @@ export type TCapturedAPICall = {
   readonly apiMode: string;
   readonly targetKey: string;
   readonly strategyToken: string;
+};
+
+// ================================================================
+// ================================================================
+// ================================================================
+// COMPLEXITY SERVICE TYPES
+// ================================================================
+// ================================================================
+// ================================================================
+
+export type TComplexityParams = {
+  readonly shape: TSolidShape;
+  readonly pool: Record<string, TSolidShape> | Map<string, TSolidShape>;
+  readonly currentDepth: number;
+  readonly visited: Set<string>;
+  readonly telemetry: { nodesCount: number };
+};
+export type TCalculatedMetricsResult = {
+  readonly depth: number;
+  readonly nodesCollapsed: number;
+  readonly rawComplexityScore: number;
+};
+
+export type TComplexityCrawlerMapper = {
+  readonly [K in TSolidShape['kind']]: (params: TComplexityParams) => number;
+};
+/**
+ * TMaxDepthParams
+ * ROLE: Local payload parameter box tracking context for depth calculations.
+ * STRATEGY: Enforces type narrowing via specific generic kind extractors point-free.
+ */
+export type TMaxDepthParams<K extends TSolidShape['kind']> = {
+  readonly shape: Extract<TSolidShape, { kind: K }>;
+  readonly pool: Record<string, TSolidShape> | Map<string, TSolidShape>;
+  readonly visited: Set<string>;
+};
+
+/**
+ * TMaxDepthCrawlerMapper
+ * ROLE: Exhaustive polymorphic strategy dictionary contract resolving physical layers.
+ * SPECIFICATIONS:
+ * - Maps every single TSolidShape['kind'] token to its exact narrowed depth evaluation function.
+ * - Guarantees hard strictness under Commandment IX: zero as-casts, zero any-mutes.
+ */
+export type TMaxDepthCrawlerMapper = {
+  readonly [K in TSolidShape['kind']]: (params: TMaxDepthParams<K>) => number;
 };

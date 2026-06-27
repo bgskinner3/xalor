@@ -1,4 +1,4 @@
-import type { TCLIBootStrapModes, TEnvStateMatrix } from '../types';
+import type { TCLIBootStrapModes, TEnvStateMatrix } from '../../types';
 
 /**
  * ============================================================================

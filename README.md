@@ -50,7 +50,8 @@ In modern high-scale TypeScript applications:
 
 **Xalor removes this separation entirely.** Your TypeScript types become your live runtime metadata.
 
----
+<br/>
+<br/>
 
 ## 🧠 The Architecture
 
@@ -58,18 +59,19 @@ Unlike standard runtime parsing engines, Xalor utilizes a two-phase ahead-of-tim
 
 ```text
 TypeScript Source File (.ts)
-       │
-       ▼  (Build Time / ts-patch sweep)
-Xalor AST Transformer  ──> Extracts structural metadata blueprints
-       │
-       ▼  (Injects optimized code-gen lookups)
+│
+▼ (Build Time / ts-patch sweep)
+Xalor AST Transformer ──> Extracts structural metadata blueprints
+│
+▼ (Injects optimized code-gen lookups)
 Production JavaScript Output (0 KB Client Parser Overhead)
 ```
 
 1. **Build-Time Compilation:** The Xalor AST transformer scans your source code call-sites during the compilation phase, parses complex generic or recursive structures, and embeds lightweight static lookup blueprints into the production JavaScript artifact.
 2. **Zero-Overhead Runtime:** The runtime library bypasses parsing or type reconstruction completely, evaluating incoming payloads directly against pre-compiled schema graphs.
 
----
+<br/>
+<br/>
 
 ## 📦 Installation
 
@@ -79,7 +81,8 @@ npm install @bgskinner2/xalor
 
 _Note: To enable AOT type extraction, ensure your project compiler layer is configured with `ts-patch` or the corresponding Xalor plugin wrapper._
 
----
+<br/>
+<br/>
 
 ## 🧩 Core Capabilities & API
 
@@ -104,8 +107,8 @@ xalor.register<'TX', Transaction>();
 const data: unknown = fetchIncomingPayload();
 const payload = xalor.parse<'TX'>(data); // Strongly-typed output!
 
-// 4. Instant data mocking for test suites
-const mockData = xalor.mock<'TX'>();
+// 4. Instant default data for test suites
+const defaultData = xalor.default<'TX'>();
 ```
 
 ### 2. Functional Pattern Matching (`xalor`)
@@ -125,7 +128,8 @@ const response = xalor.match(eventPayload, {
 });
 ```
 
----
+<br/>
+<br/>
 
 ## 🛠️ CLI Developer Tooling
 
@@ -142,6 +146,9 @@ npx xalor compile
 npx xalor audit
 ```
 
+<br/>
+<br/>
+
 ### 🛰️ Deep-Dive Intelligence
 
 Running `npx xalor audit` triggers our operational compiler profiler, outputting real-time ledger diagnostics directly to your terminal:
@@ -150,7 +157,7 @@ Running `npx xalor audit` triggers our operational compiler profiler, outputting
 - **Metadata Evaporation:** Tracks the exact volume of development footprint stripped away for bare-metal production builds.
 - **Dead-Code Shaking:** Statically scans call-sites to flag unused or orphaned contract keys instantly.
 
-## 👉 **Ready to explore the full suite?** View the [Full CLI Reference & Studio Guide](http://masterofsum.dev/xalor/docs) to learn about `build`, `clear`, and our local interactive orchestration dashboard.
+### 👉 **Ready to explore the full suite?** View the [Full CLI Reference & Studio Guide](http://masterofsum.dev/xalor/docs) to learn about `build`, `clear`, and our local interactive orchestration dashboard.
 
 ## 📊 Ecosystem Comparison
 
@@ -163,7 +170,8 @@ Running `npx xalor audit` triggers our operational compiler profiler, outputting
 | **Self-Healing Types** 🧬           |      ❌       |  ✔️   |  **✔️**   |
 | **Native Pattern Matching API** 🎛️  |      ❌       |  ❌   |  **✔️**   |
 
----
+<br/>
+<br/>
 
 ## 📄 License
 
