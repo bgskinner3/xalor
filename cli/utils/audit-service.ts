@@ -18,6 +18,7 @@ import {
   GENERATOR_MODE_TRIGGERS,
   VALIDATION_MODE_TRIGGERS,
   TRANSFORM_MODE_TRIGGERS,
+  MATCH_MODE_TRIGGERS,
 } from '../../shared/auto';
 
 /** @see {@link AuditServiceDocs.buildTopologyEdge} */
@@ -141,3 +142,4 @@ export function createDefaultAuditTemplate<T extends TDefaultObjectKeys>(
 export const isGeneratorTrigger = new Set<string>(GENERATOR_MODE_TRIGGERS);
 export const isValidationTrigger = new Set<string>(VALIDATION_MODE_TRIGGERS);
 export const isTransformerTrigger = new Set<string>(TRANSFORM_MODE_TRIGGERS);
+export const isMatchTrigger = new Set<string>(MATCH_MODE_TRIGGERS);

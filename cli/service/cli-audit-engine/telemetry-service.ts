@@ -22,11 +22,13 @@ import {
   isTransformerTrigger,
   isValidationTrigger,
   isGeneratorTrigger,
+  isMatchTrigger,
 } from '../../utils';
 import {
   GENERATOR_MODE_TRIGGERS,
   VALIDATION_MODE_TRIGGERS,
   TRANSFORM_MODE_TRIGGERS,
+  MATCH_MODE_TRIGGERS,
 } from '../../../shared';
 export class TelemetryService {
   // Track all possible sub-command strings as the valid matrix
@@ -34,6 +36,7 @@ export class TelemetryService {
     ...GENERATOR_MODE_TRIGGERS,
     ...VALIDATION_MODE_TRIGGERS,
     ...TRANSFORM_MODE_TRIGGERS,
+    ...MATCH_MODE_TRIGGERS,
   ];
 
   private triggerCheckRegEx = new RegExp(
@@ -251,6 +254,7 @@ export class TelemetryService {
         apiMode = 'transformXalor';
       else if (isValidationTrigger.has(strategyToken))
         apiMode = 'validationXalor';
+      else if (isMatchTrigger.has(strategyToken)) apiMode = 'matchXalor';
 
       matches.push({ apiMode, targetKey, strategyToken });
     }
