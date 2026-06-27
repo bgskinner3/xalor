@@ -30,8 +30,9 @@ export function validateCollisionBorders(
   const { keyName, activeAreaString, activeAnchorString, currentActiveAbsoluteFile } = params;
 
   const executeMode = XalorRoutesService.xalorCLIMode();
-  const isWatch = executeMode === 'watch' || executeMode === 'studio';
 
+  const isIncrementalBuild =
+    XalorRoutesService.resolveXalorLifecycle().isIncrementalBuild;
   /* prettier-ignore */
   const { blacklistedKeys } = xalorCentralContext.context;
 
@@ -46,7 +47,7 @@ export function validateCollisionBorders(
   const PATH_PARAMS: TFilePathParams = {
     relativeProjectKey,
     keyName,
-    isWatch,
+    isWatch: isIncrementalBuild,
     currentActiveAbsoluteFile,
     executeMode,
     activeAreaString,

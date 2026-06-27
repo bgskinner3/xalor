@@ -61,12 +61,13 @@ export default function xalorTransformerPlugin(
   if (activeBootRoutine) {
     activeBootRoutine({ sampleFile, runtimePaths });
   }
-  const { isClearMode, isIncrementalBuild } = lifecycle;
+  const { isClearMode } = lifecycle;
   if (isClearMode) {
     return (_context: ts.TransformationContext) => {
       return (sourceFile: ts.SourceFile): ts.SourceFile => sourceFile;
     };
   }
+
   return (context: ts.TransformationContext) => {
     return (sourceFile: ts.SourceFile): ts.SourceFile => {
       const { bridgeDir } = XalorRoutesService.resolveXalorPaths(
@@ -79,24 +80,7 @@ export default function xalorTransformerPlugin(
       // inside THIS single file during THIS specific save-triggered compilation frame run.
       // ====================================================================================
       xalorCentralContext.resetActivePassKeys();
-      xalorCentralContext.resetFileCounters(sourceFile.fileName);
       xalorCentralContext.resetBlacklist();
-      // xalorCentralContext.resetExportedTypes();
-
-      /**
-       *  INCREMENTAL BUILD INSULATION GATE
-       *
-       * INCREMENTAL LIFE-CYCLE PERIMETER SHIELD ('watch' & 'studio' ONLY)
-       * Evicts stale cache entries on file ingress to prevent "Anchor Drift" (#call line shifts)
-       * from triggering false-positive SAME-FILE TERMINAL CONTRADICTION alarms during saves.
-       * Explicitly bypassed in 'compile'/'vacuum' modes to preserve cross-file relational paths.
-       */
-      if (isIncrementalBuild) {
-        /* prettier-ignore */
-        const relativeProjectKey = XalorRoutesService.getProjectRelativeKey(sourceFile.fileName);
-
-        xalorCentralContext.clearFileSessionRegistrySlice(relativeProjectKey);
-      }
 
       const program = isGetProgram(context)
         ? context.getProgram()

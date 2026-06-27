@@ -8,11 +8,11 @@ import {
   isClearMode,
   CLI_MODE_FLAGS_MAPPER,
   ALL_CLI_FLAGS,
-} from '../../shared';
-import { yieldItems, isKeyOfArray, ObjectUtils } from '../../shared/utils';
+  isValidCLIFlagGuard,
+} from '../../shared/cli-domain';
+import { yieldItems, ObjectUtils } from '../../shared/utils';
 import type { ICLIConfig, TCLICommandsControl } from '../models';
-import { MODE_SYSTEM_EVALUATORS } from '../models';
-import type { TTypeGuard } from '../../shared/types';
+import { MODE_SYSTEM_EVALUATORS } from '../models/constants';
 
 /**
  * buildInitialFlagsLedger
@@ -156,13 +156,3 @@ export function determineCLIConfig(argv: readonly string[]): ICLIConfig {
     flags: Object.freeze(secureFlagsLedger),
   };
 }
-
-/**
- * IS_VALID_CLI_FLAG_GUARD
- * ROLE: High-velocity primitive type guard validating terminal switch string parameters on boot.
- * STRATEGY: Statically derived from your curry factory configuration matrix to enforce
- * 100% type-narrowing safety across your TCLIFlags union contract boundaries.
- */
-export const isValidCLIFlagGuard: TTypeGuard<TCLIFlags> = (
-  value: unknown,
-): value is TCLIFlags => isKeyOfArray(ALL_CLI_FLAGS)(value);

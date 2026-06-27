@@ -1,7 +1,7 @@
 import type { TSpatialIdentity, TInterfaceOrType } from '../../types';
 import { printGhostStructure } from './ghost-structure';
 import { resolveSpatialAndExportMeta } from './spatial-meta-resolver';
-import { xalorCentralContext } from '../../service';
+
 /**
  * getSpatialIdentity
  * 🛰️ GET SPATIAL IDENTITY (The GPS Engine)
@@ -20,10 +20,7 @@ export function getSpatialIdentity(params: TInterfaceOrType): TSpatialIdentity {
   const { shapeType, checker, node, sourceFile } = params;
 
   // 1. Extract location coordinates and symbolName cleanly point-free
-  const { symbolName, area } = resolveSpatialAndExportMeta(params);
-
-  // 2. Generate the unique sequence anchor string tracking ID
-  const anchor = xalorCentralContext.getNextSequenceAnchor(sourceFile.fileName);
+  const { symbolName, area, anchor } = resolveSpatialAndExportMeta(params);
 
   const typeName = printGhostStructure({ type: shapeType, checker, node });
 

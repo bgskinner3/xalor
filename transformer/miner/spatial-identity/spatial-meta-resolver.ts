@@ -52,6 +52,13 @@ export function extractRegistrationTypeArgs(callExpression: ts.CallExpression) {
     secondSlotName,
   };
 }
+
+function generateStaticSyntaxAnchor(node: ts.Node): string {
+  const absoluteCharacterOffset = node.getStart();
+
+  return `#call:${absoluteCharacterOffset}`;
+}
+
 /**
  *
  * @see {@link TransformerDocs.resolveSpatialAndExportMeta}
@@ -85,9 +92,10 @@ export function resolveSpatialAndExportMeta({
       symbolName = secondSlotName;
     }
   }
-
+  const anchor = generateStaticSyntaxAnchor(node);
   return {
     area,
     symbolName,
+    anchor,
   };
 }

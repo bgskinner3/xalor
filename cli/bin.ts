@@ -32,7 +32,6 @@ const COMMAND_ROUTER: TCommandRouterMapper = {
     await runAuditCommand(projectRoot, flags);
   },
   studio: (projectRoot) => {
-    // B. Launch the loopback telemetry daemon server views
     console.log(`📊 [Xalor CLI] Launching Studio Telemetry Server Core...`);
     runStudioCommand(projectRoot);
     console.log(`📂 Target Workspace Anchor: ${projectRoot}`);

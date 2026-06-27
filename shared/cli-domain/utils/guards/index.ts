@@ -1,5 +1,7 @@
 import type { TTypeGuard } from '../../../types';
-import type { TXalorCLIModesMap } from '../../types';
+import type { TXalorCLIModesMap, TCLIFlags } from '../../types';
+import { ALL_CLI_FLAGS } from '../../constants';
+import { isKeyOfArray } from '../../../utils/guards';
 
 /**
  * @utilType Guard
@@ -68,3 +70,14 @@ export const isClearMode: TTypeGuard<TXalorCLIModesMap['clear']> = (
 ): value is TXalorCLIModesMap['clear'] => {
   return value === 'clear' || value === '--clear';
 };
+
+/**
+ * IS_VALID_CLI_FLAG_GUARD
+ *
+ * ROLE: High-velocity primitive type guard validating terminal switch string parameters on boot.
+ * STRATEGY: Statically derived from your curry factory configuration matrix to enforce
+ * 100% type-narrowing safety across your TCLIFlags union contract boundaries.
+ */
+export const isValidCLIFlagGuard: TTypeGuard<TCLIFlags> = (
+  value: unknown,
+): value is TCLIFlags => isKeyOfArray(ALL_CLI_FLAGS)(value);

@@ -31,8 +31,6 @@ class XalorContextService {
     /* prettier-ignore */
     globalThis.__XALOR_BOOT_HYDRATED__ ||= false
     /* prettier-ignore */
-    globalThis.__XALOR_SEQUENCE_COUNTERS__ ||= new Map<string, number>();
-    /* prettier-ignore */
     globalThis.__XALOR_TARGETED_RUNTIME_FILES_SET__ ||= new Set<string>();
     /* prettier-ignore */
     globalThis.__XALOR_DRIFT_REGISTRY__ ||= new Map<string, TDriftLineageEntry>();
@@ -51,9 +49,6 @@ class XalorContextService {
   }
   get isHydrated() {
     return globalThis.__XALOR_BOOT_HYDRATED__!;
-  }
-  get sequenceCounters() {
-    return globalThis.__XALOR_SEQUENCE_COUNTERS__!;
   }
   get driftRegistry() {
     return globalThis.__XALOR_DRIFT_REGISTRY__!;
@@ -228,28 +223,11 @@ class XalorContextService {
   }
 
   // ============================================================================================
-  // 🛰️ SEQUENCE SEQUENCE COUNTERS (THE GPS ANCHOR GENERATOR)
-  // ============================================================================================
-  public resetFileCounters(filePath: string): void {
-    this.sequenceCounters.delete(filePath);
-  }
-  /**
-   * INCREMENT AND GET SEQUENCE INDEX
-   * Increments the sequential match value for a specific file and returns the anchor.
-   */
-  public getNextSequenceAnchor(filePath: string): string {
-    const currentCount = this.sequenceCounters.get(filePath) || 0;
-    const nextCount = currentCount + 1;
-    this.sequenceCounters.set(filePath, nextCount);
-    return `#call:${nextCount}`;
-  }
-  // ============================================================================================
   // RESET HARD
   // ============================================================================================
   public hardResetAllMemoryStores(): void {
     // 1. Clear ambient Map registry allocations cleanly point-free
     this.globalKeyRegistry.clear();
-    this.sequenceCounters.clear();
     this.driftRegistry.clear();
 
     // 2. Clear  transient tracking sets
@@ -263,36 +241,6 @@ class XalorContextService {
 
     // Reset root path safely to execute smooth clean slate recovery steps
     globalThis.__XALOR_ROOT_DIR__ = process.cwd();
-  }
-  // ============================================================================================
-  // CLI SPECIFIC METHODS
-  // ============================================================================================
-  /**
-   * clearFileSessionRegistrySlice
-   * ROLE: Completely evicts historical cache records for a single file on incremental watch ingress.
-   * STRATEGY: Clears the local session drawer and flushes corresponding global key registry map links.
-   * INVARIANT: Cleans memory point-free in pure constant/linear paths without touching external files.
-   *
-   * #######
-   *  - Clear out the isolated file data slice drawer inside your Session Registry
-   *  - Loop through all keys currently registered inside this file before we delete the drawer
-   *
-   *  FLUSH GLOBAL MAP REFERENCE: Remove this key from your flat global registry
-   *  to prevent crossFileProtection from mistaking it for a collision ghost on re-run!
-   *
-   */
-  public clearFileSessionRegistrySlice(relativeProjectKey: string): void {
-    this.sequenceCounters.delete(relativeProjectKey);
-    const session = this.sessionRegistry[relativeProjectKey];
-    if (session !== undefined) {
-      for (const keyName in session.keys) {
-        if (Reflect.has(session.keys, keyName)) {
-          this.globalKeyRegistry.delete(keyName);
-        }
-      }
-
-      delete this.sessionRegistry[relativeProjectKey];
-    }
   }
 }
 

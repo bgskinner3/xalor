@@ -72,7 +72,6 @@ export function createXalorWatchHost(
 
     return builderProgram;
   };
-
   const host = ts.createWatchCompilerHost(
     configPath,
     undefined,

@@ -16,9 +16,5 @@ declare global {
   // ======================================================================
   var __XALOR_BOOT_HYDRATED__: boolean | undefined;
   var __XALOR_ROOT_DIR__: string | undefined;
-  // ======================================================================
-  // TEMP MINER
-  // ======================================================================
-  var __XALOR_SEQUENCE_COUNTERS__: Map<string, number> | undefined;
 }
 export {};

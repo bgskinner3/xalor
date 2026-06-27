@@ -20,34 +20,38 @@ import type { TFilePathParams } from '../../types';
 
 export function sameFileDetection(params: TFilePathParams) {
   /* prettier-ignore */
-  const { keyName, activeAreaString, activeAnchorString, relativeProjectKey, isWatch, currentActiveAbsoluteFile, executeMode } = params;
-
+  const { keyName, relativeProjectKey, isWatch, currentActiveAbsoluteFile, executeMode } = params;
   /* prettier-ignore */
   const { sessionRegistry } = xalorCentralContext.context;
 
   const currentFileSlice = sessionRegistry[relativeProjectKey];
-  if (currentFileSlice === undefined) {
-    return false;
-  }
+  if (currentFileSlice === undefined) return false;
 
   const historicalKeyMatch = currentFileSlice.keys[keyName];
-
   if (historicalKeyMatch !== undefined) {
-    if (historicalKeyMatch.anchor !== activeAnchorString) {
-      const mapper = COLLISION_BORDER_FAILURE_MAPPER.SAME_FILE;
+    if (isWatch && historicalKeyMatch.anchor !== params.activeAnchorString) {
+      xalorCentralContext.deleteFromSessionRegistry({
+        keyName,
+        filePath: currentActiveAbsoluteFile,
+      });
 
+      return false; // Clear entrance bypass: Proceed switchlessly without throwing alerts!
+    }
+    if (historicalKeyMatch.anchor !== params.activeAnchorString) {
+      const mapper = COLLISION_BORDER_FAILURE_MAPPER.SAME_FILE;
       const finalizedMessageText = mapper.message({
         keyName,
         historicalArea: historicalKeyMatch.area,
         historicalAnchor: historicalKeyMatch.anchor,
-        activeArea: activeAreaString,
-        activeAnchor: activeAnchorString,
+        activeArea: params.activeAreaString,
+        activeAnchor: params.activeAnchorString,
       });
+
       const sameFileFailure = {
         rule: mapper.rule,
         message: finalizedMessageText,
       };
-      // 🪐 THE WATCH-MODE SELF-CLEANING Handshake:
+
       if (isWatch) {
         const coloredAnsiPanelText =
           TransformerReportService.generateTerminalPanel({
@@ -57,16 +61,12 @@ export function sameFileDetection(params: TFilePathParams) {
             rule: mapper.rule,
             mode: executeMode,
           });
-
         console.warn(coloredAnsiPanelText);
-
         xalorCentralContext.addBlacklistKey(keyName);
-
         xalorCentralContext.deleteGlobalAndSession({
           keyName,
           filePath: currentActiveAbsoluteFile,
         });
-
         return true;
       }
 
@@ -78,5 +78,81 @@ export function sameFileDetection(params: TFilePathParams) {
       );
     }
   }
+
   return false;
 }
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+// export function sameFileDetection(params: TFilePathParams) {
+//   /* prettier-ignore */
+//   const { keyName, activeAreaString, activeAnchorString, relativeProjectKey, isWatch, currentActiveAbsoluteFile, executeMode } = params;
+
+//   /* prettier-ignore */
+//   const { sessionRegistry } = xalorCentralContext.context;
+
+//   const currentFileSlice = sessionRegistry[relativeProjectKey];
+//   if (currentFileSlice === undefined) {
+//     return false;
+//   }
+
+//   const historicalKeyMatch = currentFileSlice.keys[keyName];
+
+//   if (historicalKeyMatch !== undefined) {
+//     if (historicalKeyMatch.anchor !== activeAnchorString) {
+//       const mapper = COLLISION_BORDER_FAILURE_MAPPER.SAME_FILE;
+
+//       const finalizedMessageText = mapper.message({
+//         keyName,
+//         historicalArea: historicalKeyMatch.area,
+//         historicalAnchor: historicalKeyMatch.anchor,
+//         activeArea: activeAreaString,
+//         activeAnchor: activeAnchorString,
+//       });
+//       const sameFileFailure = {
+//         rule: mapper.rule,
+//         message: finalizedMessageText,
+//       };
+//       // 🪐 THE WATCH-MODE SELF-CLEANING Handshake:
+//       if (isWatch) {
+//         const coloredAnsiPanelText =
+//           TransformerReportService.generateTerminalPanel({
+//             keyName,
+//             fileLocation: currentActiveAbsoluteFile,
+//             message: finalizedMessageText,
+//             rule: mapper.rule,
+//             mode: executeMode,
+//           });
+
+//         console.warn(coloredAnsiPanelText);
+
+//         xalorCentralContext.addBlacklistKey(keyName);
+
+//         xalorCentralContext.deleteGlobalAndSession({
+//           keyName,
+//           filePath: currentActiveAbsoluteFile,
+//         });
+
+//         return true;
+//       }
+
+//       throw new XalorInvalidTypeError(
+//         keyName,
+//         currentActiveAbsoluteFile,
+//         sameFileFailure,
+//         executeMode,
+//       );
+//     }
+//   }
+//   return false;
+// }
