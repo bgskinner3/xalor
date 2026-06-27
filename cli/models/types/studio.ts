@@ -109,9 +109,10 @@ type TNodeItemLocation = {
  * @param nodesCollapsed Count of duplicate source code structures absorbed by this hash
  */
 type TNodeItemMetrics = {
-  readonly depth: number;
-  readonly complexityScore: TTaxonomyTokenKeys;
-  readonly nodesCollapsed: number;
+  depth: number;
+  complexityScore: TTaxonomyTokenKeys;
+  rawComplexityScore: number;
+  nodesCollapsed: number;
 };
 
 /**

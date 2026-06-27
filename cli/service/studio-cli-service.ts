@@ -15,6 +15,7 @@ import {
   measurePayloadSizeMB,
   buildAbsolutePathTypeLink,
   computeStringHash,
+  isUndefined,
 } from '../../shared';
 import { fsContext } from '../../shared/service';
 import { auditEngineService } from './cli-audit-engine';
@@ -22,6 +23,7 @@ import {
   DEFAULT_OBJECT_MAPPER,
   STUDIO_COMMAND_CONFIG,
 } from '../models/constants';
+import { complexityService } from './complexity-service';
 
 export class StudioCLIEngineService {
   private cliConfigOptions = IS_SOLID_CONFIG_ITEMS.cliConfig;
@@ -78,7 +80,9 @@ export class StudioCLIEngineService {
   private formatNodes(
     params: TFormatNodes,
     references: TTripleKV['references'],
+    blueprints: TTripleKV['blueprints'],
   ) {
+    let absoluteWorkspaceMaxScore = 0;
     const { studioPayload, rawVaultData, sharedData } = params;
     const nodes = sharedData.nodes;
     const { studioAPIMapper, orphanedKeys } = sharedData.telemetry;
@@ -118,22 +122,46 @@ export class StudioCLIEngineService {
         ? references[uuidName]
         : 'unknown';
       template.dataShape = 'REBUILD IN BROWSER';
-      // template.dataShape = blueprintService.generateSolidTypeScriptString(
-      //   blueprintShape,
-      //   rawVaultData.blueprints,
-      // );
 
-      template.metrics = {
-        depth: node.metrics.depth,
-        complexityScore: node.metrics.complexityScore,
-        nodesCollapsed: node.metrics.nodesCollapsed,
-      };
+      const { depth, rawComplexityScore, nodesCollapsed } =
+        complexityService.harvestBlueprintMetrics(blueprintShape, blueprints);
+
+      if (rawComplexityScore > absoluteWorkspaceMaxScore) {
+        absoluteWorkspaceMaxScore = rawComplexityScore;
+      }
+
+      template.metrics.depth = depth;
+      template.metrics.rawComplexityScore = rawComplexityScore;
+      template.metrics.nodesCollapsed = nodesCollapsed;
 
       if (isKeyInObject(uuidName)(studioAPIMapper)) {
         template.apisUsed = studioAPIMapper[uuidName];
       }
       studioPayload.registryItems[uuidName] = template;
     }
+
+    nodes.forEach((node) => {
+      if (!node) return;
+
+      const uuidName = node.identity.typeKey;
+      const template = studioPayload.registryItems[uuidName];
+
+      // 🎯 THE PERIMETER GUARD: If this node was filtered out during Pass 1,
+      // skip it cleanly to prevent undefined reference crashes.
+      if (isUndefined(template)) return;
+
+      const rawComplexityScore = template.metrics.rawComplexityScore;
+
+      // 🎯 THE GRADATION: Calculate the relative percentage bracket token switchlessly
+      const complexityScore = complexityService.mapScoreToExtendedTaxonomy(
+        rawComplexityScore,
+        absoluteWorkspaceMaxScore,
+      );
+
+      // Commit the finalized Big-O taxonomy classification to both mirrors instantly!
+      template.metrics.complexityScore = complexityScore;
+      node.metrics.complexityScore = complexityScore; // 👈 Keeps sharedData perfectly synchronized in O(1) constant time
+    });
   }
 
   // !!! ================================================================================
@@ -169,10 +197,13 @@ export class StudioCLIEngineService {
     // =========================================================================
     // GLOBAL SUMMARY FOOTPRINT HYDRATION
     // =========================================================================
-    studioPayload.globalSummary = {
-      ...sharedData.globalSummary,
-      globalCompactionRatio: sharedData.globalSummary.casCompressionRatio,
-    };
+    /* prettier-ignore */ studioPayload.globalSummary.globalCompactionRatio = sharedData.globalSummary.casCompressionRatio
+    /* prettier-ignore */ studioPayload.globalSummary.highestGraphDepthRecorded = sharedData.globalSummary.highestGraphDepthRecorded
+    /* prettier-ignore */ studioPayload.globalSummary.totalDatabaseDiskBytes = sharedData.globalSummary.totalDatabaseDiskBytes
+    /* prettier-ignore */ studioPayload.globalSummary.totalRegisteredKeys = sharedData.globalSummary.totalRegisteredKeys
+    /* prettier-ignore */ studioPayload.globalSummary.totalUniqueFingerprints = sharedData.globalSummary.totalUniqueFingerprints
+    /* prettier-ignore */ studioPayload.globalSummary.compileTimeOverheadMs = sharedData.globalSummary.compileTimeOverheadMs
+
     // =========================================================================
     // SYSTEM HYGIENE FOOTPRINT HYDRATION
     // =========================================================================
@@ -194,6 +225,7 @@ export class StudioCLIEngineService {
     this.formatNodes(
       { studioPayload, sharedData, rawVaultData },
       rawVaultData.references,
+      rawVaultData.blueprints,
     );
 
     /* prettier-ignore */ studioPayload.blueprints = rawVaultData.blueprints;

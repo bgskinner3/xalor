@@ -142,6 +142,7 @@ export const BASE_AUDIT_NODE_RECORD: TDeepWriteable<TXalorAuditNode> = {
   metrics: {
     depth: 0,
     complexityScore: 'FLAT_O1',
+    rawComplexityScore: 0,
     nodesCollapsed: 1,
   },
 } satisfies TDeepWriteable<TXalorAuditNode>;
@@ -206,6 +207,7 @@ export const STUDIO_NODE_TEMPLATE: TDeepWriteable<TStudioNodeItem> = {
   metrics: {
     depth: 0,
     complexityScore: 'FLAT_O1',
+    rawComplexityScore: 0,
     nodesCollapsed: 0,
   },
   apisUsed: {

@@ -219,6 +219,7 @@ class ComplexityService {
     const handler = DISPATCHER[shape.kind];
     return handler(shape as never);
   }
+
   private calculateMaxArrayDepth(
     shapes: readonly TSolidShape[],
     pool: Record<string, TSolidShape> | Map<string, TSolidShape>,

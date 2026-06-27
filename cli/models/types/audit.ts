@@ -8,6 +8,7 @@ import type {
   TSolidObjectRawShape,
   TDeepWriteable,
   TRuntimeTriggerName,
+  TTripleKV,
 } from '../../../shared';
 import type {
   TTelemetryTokenNames,
@@ -63,10 +64,11 @@ export type TXalorAuditNode = {
     readonly casFingerprint: string;
   };
   readonly location: TParsedLocation;
-  readonly metrics: {
-    readonly depth: number;
-    readonly complexityScore: TTaxonomyTokenKeys;
-    readonly nodesCollapsed: number;
+  metrics: {
+    depth: number;
+    complexityScore: TTaxonomyTokenKeys;
+    rawComplexityScore: number;
+    nodesCollapsed: number;
   };
 };
 
@@ -266,7 +268,17 @@ export type TDefaultReturnKeyMap<K extends keyof TDefaultReturnMap> =
 // METHOD TYPES
 // ======================================================================================================
 // ======================================================================================================
+export type TUnrolledCountParams<K extends TSolidShape['kind']> = {
+  readonly shape: Extract<TSolidShape, { kind: K }>;
+  readonly blueprints: TTripleKV['blueprints'];
+  readonly visited: Set<string>;
+};
 
+export type TUnrolledCountCrawlerMapper = {
+  readonly [K in TSolidShape['kind']]: (
+    params: TUnrolledCountParams<K>,
+  ) => number;
+};
 /**
  * TReferenceCollectorHandler
  * ROLE: Pure functional signature contract for structural shape reference tracers.

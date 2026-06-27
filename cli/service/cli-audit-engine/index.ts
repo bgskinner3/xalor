@@ -83,17 +83,19 @@ export class AuditEngineService extends AuditPresenterService {
 
     // A. EXTRACT AND FORMAT REGISTRY NODES
     const nodes = auditRegistryService.extractNodeCoreDataLayout(rawVaultData);
-    const mutableNodesCopy = cloneDeep(nodes);
+    // const mutableNodesCopy = cloneDeep(nodes);
+
+
+    // C. GENERATE HYGINE METRICS
+    const hygiene = hygieneService.evaluateSystemHygieneAndDepthAlarms(
+      rawVaultData,
+      nodes,
+    );
 
     // B. COMPUTE AND COMPILE CORE SUMMARY
     /* prettier-ignore */
     const summary = await auditSummaryService.calculateCasStorageSavings(rawVaultData, nodes);
 
-    // C. GENERATE HYGINE METRICS
-    const hygiene = hygieneService.evaluateSystemHygieneAndDepthAlarms(
-      rawVaultData,
-      mutableNodesCopy,
-    );
     /* prettier-ignore */
     const telemetry = await telemetryService.profileRuntimeFootprintAndOrphans(rawVaultData, 'audit');
 
@@ -140,16 +142,14 @@ export class AuditEngineService extends AuditPresenterService {
     }
 
     const nodes = auditRegistryService.extractNodeCoreDataLayout(rawVaultData);
-    const mutableNodesCopy = cloneDeep(nodes);
-
-    // B. COMPUTE AND COMPILE CORE SUMMARY
-    /* prettier-ignore */
-    const globalSummary = await auditSummaryService.calculateCasStorageSavings(rawVaultData, nodes);
 
     const systemHygiene = hygieneService.evaluateSystemHygieneAndDepthAlarms(
       rawVaultData,
-      mutableNodesCopy,
+      nodes,
     );
+    // B. COMPUTE AND COMPILE CORE SUMMARY
+    /* prettier-ignore */
+    const globalSummary = await auditSummaryService.calculateCasStorageSavings(rawVaultData, nodes);
 
     const telemetry = await telemetryService.profileRuntimeFootprintAndOrphans(
       rawVaultData,
