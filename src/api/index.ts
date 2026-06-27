@@ -86,9 +86,8 @@ class XalorCore {
   // ========================================================================
   /** @Api transform  @mode merge */
   /* prettier-ignore */ public merge<K extends keyof ISolidRegistry>(ctx: TXalorMergeContext<ISolidRegistry[K]>, _compiledKeyReference?: K): TSolidBranded<K, ISolidRegistry[K]> {
-    assertRegistryKey(_compiledKeyReference);
 
-    return transformXalorMerge<K>(_compiledKeyReference, ctx);
+    return transformXalorMerge<K>(ctx, _compiledKeyReference);
   }
 
   // ========================================================================
@@ -106,8 +105,6 @@ class XalorCore {
     ctx: IXalorDriftContext<K, R>,
     injectedKey?: K,
   ): TApplyNominalBrand<R> {
-
-
     return matchXalorDrift<K, R>(payload, ctx, injectedKey);
   }
 }

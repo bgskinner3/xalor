@@ -6,7 +6,7 @@ import { validateShape, createInitialContext } from '../../validation';
 
 /**
  * ============================================================================
- * 🧼 DESIGN SYSTEM MAPPER: CLONE SHAPE SANITIZER
+ * DESIGN SYSTEM MAPPER: CLONE SHAPE SANITIZER
  * ============================================================================
  *
  * ROLE:

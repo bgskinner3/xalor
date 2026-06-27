@@ -1,4 +1,5 @@
 export * from './merge';
+export * from './clone';
 /**
  * NOTES: COMPREHENSIVE ROADMAP METRICS (V3/V4 Moonshot Transformation Engines)
  *

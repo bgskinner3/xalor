@@ -1,6 +1,6 @@
 import { XalethorService } from '../../../xalor-service';
 import { markAsSolid } from '../../../utils';
-import { isRecord } from '../../../../shared/utils/guards';
+import { isRecord, assertRegistryKey } from '../../../../shared/utils/guards';
 import type { TXalorMergeContext } from '../../../models/types';
 import { BRAND_SYMBOL } from '../../../../shared';
 import type { TSolidBranded } from '../../../../shared/types';
@@ -17,15 +17,18 @@ import type { TSolidBranded } from '../../../../shared/types';
  *
  */
 export function transformXalorMerge<K extends keyof ISolidRegistry>(
-  injectedKey: K,
   ctx: TXalorMergeContext<ISolidRegistry[K]>,
+  injectedKey?: K,
 ): TSolidBranded<K, ISolidRegistry[K]> {
-  if (!injectedKey || !ctx) {
+  assertRegistryKey(injectedKey);
+
+  if (!ctx) {
     throw new Error(
       `[xalor] 🚨 GATEWAY BLOCK: 'transformXalorMerge' executed without compiled metadata properties.\n` +
         `Ensure your build-time transformer plugin is active.`,
     );
   }
+
   const activeShape = XalethorService.blueprintVault(injectedKey);
   if (!activeShape) {
     throw new Error(

@@ -98,12 +98,7 @@ export class XalethorService {
   ): TSolidBranded<K, ISolidRegistry[K]> {
     return XalethorVaultGenerator.getMock(key);
   }
-  public static produceClone<K extends keyof ISolidRegistry>(
-    data: unknown,
-    key: K,
-  ): TSolidBranded<K, ISolidRegistry[K]> {
-    return XalethorVaultGenerator.getClone(data, key);
-  }
+
   public static produceCast<K extends keyof ISolidRegistry>(
     data: unknown,
     key: K,
@@ -122,6 +117,12 @@ export class XalethorService {
   ): unknown {
     /* prettier-ignore */
     return XalethorVaultTransform.transformMerge<K>(ctx);
+  }
+  public static produceClone<K extends keyof ISolidRegistry>(
+    data: unknown,
+    key: K,
+  ): TSolidBranded<K, ISolidRegistry[K]> {
+    return XalethorVaultTransform.getClone(data, key);
   }
   // ============================================================
   // ============================================================

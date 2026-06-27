@@ -1,8 +1,8 @@
-import { XalethorService } from '../../xalor-service';
-import { markAsSolid } from '../../utils';
-import { isRecord } from '../../../shared/utils/guards';
-import { BRAND_SYMBOL } from '../../../shared';
-import type { TSolidBranded } from '../../../shared';
+import { XalethorService } from '../../../xalor-service';
+import { markAsSolid } from '../../../utils';
+import { isRecord, assertRegistryKey } from '../../../../shared/utils/guards';
+import { BRAND_SYMBOL } from '../../../../shared';
+import type { TSolidBranded } from '../../../../shared';
 
 /**
  * RUNTIME API: GENERATE XALOR CLONE
@@ -22,11 +22,7 @@ export function generateXalorClone<K extends keyof ISolidRegistry>(
   injectedKey: K,
   data: unknown,
 ): TSolidBranded<K, ISolidRegistry[K]> {
-  if (!injectedKey) {
-    throw new Error(
-      `[xalor] 🚨 GATEWAY BLOCK: 'generateXalorClone' executed without compiled metadata properties.`,
-    );
-  }
+  assertRegistryKey(injectedKey);
 
   const clonePayload = XalethorService.produceClone(data, injectedKey);
 

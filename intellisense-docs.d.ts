@@ -921,9 +921,7 @@ declare global {
   class RuntimeApiCoreDocs {
     static example(): void;
     static example(): void;
-    static example(): void;
-    static example(): void;
-    static example(): void;
+
     // ========================================================================
     // ========================================================================
     // ========================================================================
@@ -1224,6 +1222,16 @@ declare global {
      * @returns {TApplyNominalBrand<R>} An ironclad, nominally-branded, modern data asset fulfilling current type specifications.
      */
     static matchXalorDrift(): void;
+
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    // !! MATCH API OUTLINES / GRAPHS  IN DETAIL
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
+    // ========================================================================
     /**
      * ========================================================================================
      * 🎛️ XALOR DRIFT ARCHITECTURAL ARCHITECTURE MANUAL
@@ -1322,6 +1330,289 @@ declare global {
      *       Returns clean branded object downstream.
      */
     static matchXalorDriftPlan(): void;
+    /**
+     * ========================================================================================
+     * 🎛️ XALOR INTENT ARCHITECTURAL ARCHITECTURE MANUAL
+     * ========================================================================================
+     *
+     * @role
+     * The "Behavioral Semantic Matcher & Alignment Switchboard." Acts as an ambient data
+     * ingestion gateway that evaluates un-mapped, non-deterministic external payloads based on
+     * structural key density and character proximity [Commandment IV]. It automatically infers
+     * payload identity and maps alternate property coordinates back into your native, pre-compiled
+     * master blueprints without human configuration [Commandment XII].
+     *
+     * @why
+     * Instead of forcing engineers to write brittle, hardcoded translation dictionaries line-by-line
+     * (such as manually declaring mappings: `{ legacy_id: 'id', user_mail: 'email' }`), this gateway
+     * completely automates data alignment [Commandment I].
+     *
+     * @idea
+     * By exploiting the fact that the background compiler watcher possesses the project’s raw AST
+     * character layouts, variable tokens, and field structures before type erasure, the system
+     * calculates a Semantic Fingerprint Map at build-time [Commandment II]. At runtime, the engine
+     * weighs and balances the arrived keys against this map to find the closest matching blueprint.
+     * It performs structural synonym remapping directly in volatile RAM, hydrates missing properties
+     * with primitive defaults, and hands a pristine, strongly-typed asset straight to your application
+     * closure [Commandment III, VIII].
+     *
+     * @features
+     * - Automatic Cardinality & Distance Balancing: The runtime engine uses a dual-axis calculation
+     *   pattern. It balances Key Cardinality (counting how many fields exist) alongside Levenshtein
+     *   Distance weight parameters. The registry schema node yielding the highest cumulative percentage
+     *   score wins the routing track [Commandment VI].
+     * - Self-Healing Structural Normalization: The absolute millisecond a winning blueprint is
+     *   isolated, the dispatcher performs a single-pass nominal property swap inside a local function
+     *   envelope. Any missing structural branches are pre-hydrated with safe primitive fallback
+     *   defaults ("", 0, false) before execution continues [Commandment VIII, XII].
+     *
+     * @limits
+     * - The Core Key Floor (Ingress Minimum Threshold): An incoming payload must yield a cumulative
+     *   semantic intersection density score of at least 60% similarity to cross the validation gate.
+     *   Dropping below 60% causes the engine to instantly terminate processing in under 1 microsecond
+     *   and jump to the default lane, shielding CPU cycles from unstructured junk data streams.
+     * - The Ambiguity Brake (Tie-Breaker Boundary): If a highly sparse incoming payload yields
+     *   identical weight metrics across two distinct blueprints simultaneously, the engine refuses to
+     *   guess blindly. It halts execution, routes directly to the default fallback callback, and
+     *   The Auditor outputs a clickable terminal diagnostic link detailing the structural ambiguity collision.
+     * - Transient Memory Insulation (Zero Cache Retention): The calculated weight matrices and
+     *   intermediate remapped object wrappers exist strictly as transient data entities. They are
+     *   garbage collected instantly upon function exit to prevent dynamic string evaluations from leaking
+     *   V8 heap RAM [Commandment VIII].
+     *
+     * @example
+     * ```ts
+     * // 📥 Uncleaned External Payload Instance (Before matchIntent Processing)
+     * const externalInstance: unknown = {
+     *   legacy_id: 9942,    // Mapped automatically to 'id'
+     *   screen_name: 'cat', // Mapped automatically to 'username'
+     *   mail_token: 'cat@org.com',  // Mapped automatically to 'email'
+     * };
+     *
+     * const executionRoute = matchXalor.intent(externalInstance, {
+     *   USER_ACCOUNT: (cleanAccount) => {
+     *     // 🚀 The engine automatically executed the weights-and-balances pass!
+     *     // Inside this block, keys are perfectly aligned to your native TS type.
+     *     return cleanAccount;
+     *   },
+     *   USER_PROFILE: (profile) => handlePublicProfile(profile),
+     *   default: () => 'Failed to identify behavioral intent of data instance',
+     * });
+     *
+     * // ============================================================================
+     * // executionRoute now becomes a fully cast, safe, and normalized object:
+     * // ============================================================================
+     * // executionRoute === {
+     * //   id: 9942,                 // Safely aligned from legacy_id
+     * //   username: "cat",          // Safely aligned from screen_name
+     * //   email: "cat@org.com",     // Safely aligned from mail_token
+     * //   displayName: "",          // Pre-hydrated system fallback default leaf
+     * //   avatarUrl: "",            // Pre-hydrated system fallback default leaf
+     * //   active: false,            // Pre-hydrated system fallback default union choice
+     * //   role: "user"              // Pre-hydrated system fallback default union choice
+     * // }
+     * ```
+     */
+    static matchXalorIntentPlan(): void;
+    /**
+     * ========================================================================================
+     * 🎛️ XALOR REDUCE ARCHITECTURAL ARCHITECTURE MANUAL
+     * ========================================================================================
+     *
+     * @role
+     * The "Declarative Structural Aggregator Engine." Executes a stateless, single-pass fold
+     * operation over a collection of un-typed data fragments, progressively matching their
+     * properties against a single target blueprint contract, and condensing them into one
+     * consolidated, pristine master object using custom property rules [Commandment IV].
+     *
+     * @why
+     * Instead of requiring developers to write complex, fragile, manual array.reduce loops filled
+     * with messy null-pointer fallbacks, they target a single authoritative type signature. This
+     * eliminates ad-hoc data-stitching boilerplate across state management layers [Commandment I].
+     *
+     * @idea
+     * The engine automatically pre-hydrates a transient master object using blueprint primitive
+     * defaults extracted straight from your blueprint cache [Commandment III]. It runs the mathematical,
+     * directional selection, or custom closure filters over the incoming array inline in RAM and casts
+     * the completed contract out of the loop with maximum velocity [Commandment VIII].
+     *
+     * @features
+     * - Type-Locked Operation Mapping: Because the engine maps directly to the precompiled registry,
+     *   your configuration pattern parameter is strictly typed by the compiler. If a developer attempts
+     *   to attach a numerical accumulation operator to a field that your blueprint marks as a string
+     *   or an object, the editor throws a red IntelliSense error box immediately [Commandment IX].
+     * - Automatic Blueprint Hydration: The internal accumulator is pre-filled on step zero with the
+     *   safe primitive fallback defaults ("", 0, false) extracted from the registry. This completely
+     *   shields downstream production code frames from unexpected undefined property crashes [Commandment XII].
+     * - Clickable Spatial Audit Trailing: If a corrupted data node introduces a structural contradiction
+     *   that violates layout types, The Auditor catches the failure and injects full GPS coordinates. It
+     *   outputs a clickable ANSI terminal link pointing straight back to the native TypeScript interface
+     *   file where the breaking contract constraint was declared [Commandment VI].
+     *
+     * @limits
+     * - The Ingestion Volume Cap: The incoming array stream size is hard-bounded at a maximum threshold
+     *   of max 150 data fragments per execution pass. This prevents dynamic loop expansion from causing
+     *   long garbage-collection pauses and protects the single-threaded event loop from latency spikes.
+     * - Transient Memory Insulation (Zero-Cache Core): The intermediate accumulator values and math matrices
+     *   remain strictly transient data entities. They exist inside the executing block, hand you the final
+     *   computed asset, and are completely garbage collected upon function exit to prevent dynamic heap
+     *   RAM bleeding [Commandment VIII].
+     *
+     * @example
+     * ```ts
+     * // 📥 Un-aggregated External Data Fragments Array
+     * const transactionChunks: unknown[] = [
+     *   { id: 'tx_99812', amount: 100, currency: 'usd', breakdown: { subtotal: 90, fee: 5, tax: 5 } },
+     *   { amount: 50, breakdown: { subtotal: 45, fee: 3, tax: 2 } }, // Line-item charge delta
+     *   { currency: 'usd', someRogueKey: 'malicious_noise' }          // Meta tracking chunk
+     * ];
+     *
+     * // 🚀 STYLE 1: STANDARD DECLARATIVE MAP
+     * const summary = matchReduce<'TRANSACTION_EVENT'>(transactionChunks, {
+     *   id: 'retain',       // Rule: Retain the first explicit ID found from the stream
+     *   currency: 'retain', // Rule: Retain the currency symbol from the stream
+     *   amount: { operator: 'add' }, // Rule: Accumulate this numeric field!
+     *   breakdown: {
+     *     subtotal: { operator: 'add' },
+     *     fee: { operator: 'add' },
+     *     tax: { operator: 'add' }
+     *   }
+     * }, {
+     *   success: (aggregatedData) => aggregatedData,
+     *   default: (auditLedger) => { throw new Error(`Batch collapsed: ${auditLedger.targetSymbolName}`); }
+     * });
+     * // summary === { id: "tx_99812", currency: "usd", amount: 150, breakdown: { subtotal: 135, fee: 8, tax: 7 } }
+     *
+     * // 🚀 STYLE 2: VALIBOT MODULAR FUNCTIONAL PIPING
+     * // Standalone tree-shakable functional operators drop unused methods from your production bundle entirely.
+     * import { latest, sum, append } from '@bgskinner2/xalor/operators';
+     * const result2 = matchReduce<'TRANSACTION_EVENT'>(transactionChunks, {
+     *   id: latest(),       // Keeps the absolute latest non-null ID found in the stream
+     *   currency: latest(), // Keeps the latest currency token
+     *   amount: sum(),      // Mathematically totals numeric values
+     *   tags: append()      // Merges collection arrays together into a single flat list
+     * });
+     *
+     * // 🚀 STYLE 3: ZOD CUSTOM CLOSURE TRANSFORMATION
+     * // High-flexibility layer passing type-safe callback functions into specific property slots
+     * // to handle, transform, or coerce broken data on the fly within the running execution loop.
+     * const result3 = matchReduce<'TRANSACTION_EVENT'>(transactionChunks, {
+     *   id: 'retain',
+     *   currency: 'retain',
+     *   amount: (currentVal, accumulatorVal) => {
+     *     if (typeof currentVal === 'number') return accumulatorVal + currentVal;
+     *     if (typeof currentVal === 'string') {
+     *       const cleanNum = parseFloat(currentVal.replace('\$', '')); // Intercepts and parses "\$10.50"
+     *       return accumulatorVal + cleanNum;
+     *     }
+     *     return accumulatorVal;
+     *   }
+     * });
+     * ```
+     */
+    static matchXalorReducePlan(): void;
+    /**
+     * ========================================================================================
+     * 🎛️ XALOR COMPOSITE ARCHITECTURAL ARCHITECTURE MANUAL
+     * ========================================================================================
+     *
+     * @role
+     * The "Dynamic Structural Intersection Switchboard." Provides a runtime control-flow gate
+     * that allows a developer to evaluate un-typed payloads against an ad-hoc, on-the-fly
+     * combination of multiple discrete blueprint hashes (`sh_xxxxxx`) or token keys. It treats the
+     * precompiled registry not as a static collection of single types, but as a fluid library of
+     * reusable structural components [Commandment IV].
+     *
+     * @why
+     * Instead of requiring developers to manually build endless intersection structural boilerplate
+     * in their source code (e.g., `interface AdminWithAuditAndOrg extends User, Org, Audit`), they
+     * pass an arbitrary array of content-addressed hashes or type tokens straight to the dispatcher,
+     * enforcing absolute system-wide de-duplication [Commandment I].
+     *
+     * @idea
+     * The engine evaluates the inbound payload against the combined surface area of all requested
+     * blueprints. Crucially, the resulting intersection model is calculated transiently in volatile
+     * heap memory—it is never written back to your immutable registry database, completely preserving
+     * the Build-Time Construction Rule [Commandment II] and preventing local cache pollution.
+     *
+     * @features
+     * - Sequential Layered Assign (Override Law): When resolving property name collisions between combined
+     *   blueprints, the engine operates on an explicit Order-of-Precedence Rule. Blueprints are evaluated
+     *   from left to right inside the requested array. If Hash A declares `id: number` and Hash B declares
+     *   `id: string`, the blueprint positioned later in the array takes absolute structural precedence
+     *   and overwrites the previous constraint definition [Commandment I, VI].
+     * - Cascading Strictness Rule: If an overlapping property is marked as `optional: false` (strictly required)
+     *   in one blueprint, but marked as `optional: true` in another, the engine forces the composite
+     *   property to adopt the strictest possible variant. The property must be present on the payload to
+     *   pass verification [Commandment V].
+     * - Shallow Object Deflation Bypass: To maintain microsecond execution velocities, matchComposite only
+     *   flattens and validates the top-level property keys of the merged blueprints during dynamic
+     *   compilation. If a merged property points to a deeply interned nested reference pointer (like
+     *   `{ "kind": "reference", "name": "sh_mrcfry" }`), the engine passes that specific child structure
+     *   directly to the standalone validator core rather than recursively flattening it into the parent
+     *   matrix [Commandment VIII].
+     *
+     * @limits
+     * - The Breadth Bomb (Array Allocation Cap): The input token array size must be capped at a defensive
+     *   maximum threshold of max 8 structural keys per composite call. If an array crosses this boundary,
+     *   the engine drops processing immediately and jumps straight to the default fallback block, while the
+     *   Auditor logs a metric overflow alert. This prevents massive memory layout evaluation loops from blocking
+     *   the single-threaded execution thread [Commandment VIII].
+     * - Structural Type Inversion Overrides (Collision Logic): Property collisions between combined blueprints
+     *   must resolve systematically without causing structural invalidation. The engine adopts a Sequential
+     *   Object Assign Override (Left-to-Right Priority) model, leveraging standard deep-merging engineering
+     *   patterns. If a later hash listed in your array conflicts with an earlier hash, the later blueprint takes
+     *   absolute structural precedence and overwrites the previous constraint definition [Commandment VI].
+     * - Inline IDE Configuration Warnings (IntelliSense Bounds): Malformed combinations or structural type
+     *   contradictions must be flagged immediately in the code editor rather than waiting for runtime failures.
+     *   The background macro layer intercepts invalid blueprint arrays (such as keys that do not exist in the
+     *   registry or direct primitive type crashes like string & number) and bubbles them straight up to
+     *   IntelliSense. The editor will display a visible red module validation error directly over the
+     *   matchComposite call-site, preserving developer telemetry before compilation finishes [Commandment IX].
+     * - Transient Memory Insulation (RAM Isolation): Dynamic combinations processed at runtime have a Zero Cache
+     *   Retention policy. The structural tracking map and default object template remain strictly transient data
+     *   entities. They are generated inline inside the executing block, handed to your closure function, and
+     *   completely discarded. This isolates the host memory budget and prevents dynamic cache loops from
+     *   causing V8 RAM bleed [Commandment VIII].
+     *
+     * @example
+     * ```ts
+     * // 📥 Arriving Untyped Network Payload
+     * const mixedIncomingPayload = {
+     *   id: "user_007",
+     *   profile: { name: "Bruce Wayne", isVerified: true },
+     *   posts: 42,
+     *   followers: 9001,
+     *   following: 12
+     * };
+     *
+     * // 🚀 DYNAMIC STRUCTURAL INTERSECTION VERIFICATION PASS
+     * const executionRoute = matchComposite(['USER_PROFILE', 'sh_14rk84m'], mixedIncomingPayload, {
+     *   success: (enrichedData) => {
+     *     // Both data shapes are cleanly unified and fully typed within this closure block!
+     *     return `Account Verified: ${enrichedData.profile.name} | Total Posts: ${enrichedData.posts}`;
+     *   },
+     *   default: () => 'SECURITY ALERT: Payload fails compound structural trait criteria',
+     * });
+     *
+     * // ============================================================================
+     * // 🔍 WHAT INTELLISENSE SEES WHEN YOU HOVER OVER THIS VIRTUAL CONTRACT:
+     * // ============================================================================
+     * // type TEnrichedRoute = xalor.composite<['USER_PROFILE', 'sh_14rk84m']>;
+     * //
+     * // type TEnrichedRoute = {
+     * //   id: string;               // Derived from USER_PROFILE
+     * //   profile: {                // Derived from USER_PROFILE
+     * //     name: string;
+     * //     isVerified: boolean;
+     * //   };
+     * //   posts: number;            // Derived from sh_14rk84m
+     * //   followers: number;        // Derived from sh_14rk84m
+     * //   following: number;        // Derived from sh_14rk84m
+     * // }
+     * ```
+     */
+    static matchXalorCompositePlan(): void;
   }
 
   class RuntimeApiDocs {
