@@ -1,4 +1,5 @@
 import type { TCLIBootStrapModes, TEnvStateMatrix } from '../../types';
+import { xalorLog } from '../../../../shared/service';
 
 /**
  * ============================================================================
@@ -31,23 +32,7 @@ export const CLI_LOGGER_MAPPER: Record<TCLIBootStrapModes | 'help', (projectRoot
 📂 Project Root Anchor: ${projectRootPath}
 ====================================================`,
 
-  help: () => `
-======================================================================
-🪐 XALOR CLI ENVIRONMENT GATEWAY MANUAL
-======================================================================
-
-Usage: xalor <command>
-
-Commands:
-  watch    🔭 Start real-time reflection watcher daemon (HMR)
-  compile  ⚡ Execute single-pass sync graph AST builder
-  audit    📊 Profile macro operational health and validation density
-  studio   🛰️ Launch secure Cross-Origin localhost workspace UI
-  vacuum   🧹 Purge stale un-referenced CAS cache leaf pointers
-  clear    🔥 Hard flash-purge node_modules cache back to zero
-
-======================================================================
-    `,
+  help: () => xalorLog.help(),
   audit: (projectRootPath) => `
     ==================================================== 
     📊 [Xalor CLI] STARTING FULL SYSTEM AUDIT MATRIX... 

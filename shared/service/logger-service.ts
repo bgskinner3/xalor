@@ -236,7 +236,59 @@ export class LoggerServiceCore {
 
     return buffer.join('\n');
   }
+  /**
+   * CLI help: ` npx xalor:help`
+   *
+   * ROLE: Formats and compiles an exhaustive command directory sheet into a raw string block.
+   * STRATEGY: Leverages internal paintLine tracks to maintain visual alignment across your 76-column grid.
+   * INVARIANT: Returns a pure string point-free with hard-zero side-effects or inline console dumps.
+   */
+  public help(): string {
+    const c = this.colors;
+    const e = this.emojis;
+    const l = this.layout;
 
+    const totalWidth = l.canvasWidth;
+    const innerWidth = totalWidth - 2;
+
+    // Helper closure to handle perfect text column stretching across your dark slate contrast blocks
+    const padText = (text: string, size: number): string => {
+      if (text.length >= size) return text.slice(0, size);
+      return text + ' '.repeat(size - text.length);
+    };
+
+    // 1. Render the Premium High-Contrast Header Block using paintLine point-free
+    /* prettier-ignore */ const headerTitleRaw = `${e.anchor}  XALOR ENVIRONMENT GATEWAY MANUAL  ${e.anchor}`;
+    /* prettier-ignore */ const paddingLeftSize = Math.max(0, Math.floor((innerWidth - headerTitleRaw.length) / 2));
+    /* prettier-ignore */ const paddedHeaderString = ' '.repeat(paddingLeftSize) + headerTitleRaw;
+
+    // Build the structural string array buffer
+    const outputBuffer: string[] = [
+      /* prettier-ignore */ this.paintLine(padText(paddedHeaderString, innerWidth), 'contrast', true),
+      /* prettier-ignore */ this.paintLine(`${c.cyan}╔${this.fillCharacters('═', innerWidth - 2)}╗${c.reset}`, 'naked'),
+      /* prettier-ignore */ this.paintLine(`${c.cyan}║${c.reset}${c.textLightCyan}${padText(' '.repeat(Math.max(0, Math.floor((innerWidth - 30) / 2))) + 'XALOR COMMAND CORE DIRECTORY', innerWidth - 2)}${c.reset}${c.cyan}║${c.reset}`, 'naked', true),
+      /* prettier-ignore */ this.paintLine(`${c.cyan}╚${this.fillCharacters('═', innerWidth - 2)}╝${c.reset}`, 'naked'),
+      /* prettier-ignore */ this.paintLine(` ${c.bold}Usage:${c.reset} xalor <command> [flags]`, 'naked'),
+      /* prettier-ignore */ this.paintLine('', 'naked'),
+      /* prettier-ignore */ this.paintLine(` ${c.bold}Core Execution Engines:${c.reset}`, 'naked'),
+      /* prettier-ignore */ this.paintLine(`   ${c.textLightGreen}watch${c.reset}      ${e.anchor}  Start real-time hot-reloading reflection watcher daemon (HMR).`, 'naked'),
+      /* prettier-ignore */ this.paintLine(`   ${c.textLightGreen}compile${c.reset}    ${e.lightning}  Execute single-pass synchronized type graph AST builder.`, 'naked'),
+      /* prettier-ignore */ this.paintLine(`   ${c.textLightGreen}audit${c.reset}      ${e.package}  Profile macro operational health, depth apex, and density.`, 'naked'),
+      /* prettier-ignore */ this.paintLine(`   ${c.textLightGreen}studio${c.reset}     ${e.link}  Launch secure Cross-Origin localhost interactive UI.`, 'naked'),
+      /* prettier-ignore */ this.paintLine(`   ${c.textLightGreen}vacuum${c.reset}     ${e.bullet}  Purge stale, unreferenced CAS database cache leaf pointers.`, 'naked'),
+      /* prettier-ignore */ this.paintLine(`   ${c.textLightGreen}clear${c.reset}      ${e.fire}  Hard flash-purge target node_modules cache back to zero.`, 'naked'),
+      /* prettier-ignore */ this.paintLine('', 'naked'),
+      /* prettier-ignore */ this.paintLine(` ${c.bold}Global Navigation Flags:${c.reset}`, 'naked'),
+      /* prettier-ignore */ this.paintLine(`   ${c.textLightYellow}--profile=${c.reset}<key>  ${e.diamond}  Set watcher pacing intervals (${c.gray}AVERAGE${c.reset}, ${c.bold}${c.textLightYellow}LAID_BACK${c.reset}, etc.).`, 'naked'),
+      /* prettier-ignore */ this.paintLine(`   ${c.textLightYellow}--fix${c.reset}             ${e.success}  Automatically purge stale orphaned keys during metrics sweeps.`, 'naked'),
+      /* prettier-ignore */ this.paintLine(`   ${c.textLightYellow}--debug${c.reset}           ${e.info}  Stream raw high-utility structural trace logs to shell.`, 'naked'),
+      /* prettier-ignore */ this.paintLine(`   ${c.textLightYellow}--help, -h${c.reset}        ${e.bullet}  Display this exhaustive architectural usage manual summary sheet.`, 'naked'),
+      /* prettier-ignore */ this.paintLine(`${c.gray}${this.fillCharacters('-', totalWidth)}${c.reset}`, 'naked'),
+      /* prettier-ignore */ this.paintLine(' '.repeat(innerWidth), 'contrast'), // Seals the bottom dark slate contrast panel matrix
+    ];
+
+    return outputBuffer.join('\n');
+  }
   /* prettier-ignore */
   public standardErrorTemplate(subSystemLabel: string, error: unknown, mode?: 'log'): void;
   /* prettier-ignore */
