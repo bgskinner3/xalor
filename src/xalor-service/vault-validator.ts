@@ -32,6 +32,7 @@ export class XalethorVaultValidator {
   }
   public static validateShape(data: unknown, key: string): boolean {
     const shape = this.vault.blueprints.get(key);
+
     if (!shape) return false;
 
     this.vault.errors.delete(key);

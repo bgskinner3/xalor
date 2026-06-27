@@ -6,13 +6,15 @@ import type {
   TInstanceConstructorRegistry,
   TResolveInstanceGraph,
 } from '../../shared';
-
+import { TResolveDriftReturnConstraint } from '../../src/models/types';
 // import type { TDetermineInstance } from '../../shared';
 /**
  * TEST CONTROL
  *
   * TO RUN
  pnpm run test -- __tests__/match/drift-mode.test.ts
+
+ (property) IXalorDriftContext<"COMPLEX_TRACK_FOUR_TOKEN", Partial<{ userRole: { SKU: string; quantity: number; logistics: { warehouseCode: string; }; }[]; transformStreamVal: TransformStream<any, any>; executePipeline: any; }>>.currentKey: "ADVANCED_COMPLEXITY_SHAPE" | "USER_TEST" | "API_RESPONSE" | "STORE_ORDER" | "DEEPLY_NESTED_STORE" | "OPTIONAL_FIELDS_TEST" | "COMPLEX_UNION_TEST" | "BRANDED_TYPE_TEST" | "REFERENCE_LINK_TEST" | "CIRCULAR_DEPTH_TEST" | "ALL_PLATFORM_INSTANCES_SHAPE" | "USER_TEST_V1_ANCESTOR" | "STORE_ORDER_V1_ANCESTOR" | "ADVANCED_COMPLEXITY_V1_ANCESTOR" | "USER_TEST_WITH_PROTO"
  */
 
 declare global {
@@ -88,6 +90,29 @@ declare global {
       readonly current: ISolidRegistry['ADVANCED_COMPLEXITY_SHAPE'];
       readonly v1_ancestor: ISolidRegistry['ADVANCED_COMPLEXITY_V1_ANCESTOR'];
     };
+
+    COMPLEX_TRACK_ONE_TOKEN: {
+      readonly current: ISolidRegistry['ADVANCED_COMPLEXITY_SHAPE'];
+      readonly v1_ancestor: ISolidRegistry['ADVANCED_COMPLEXITY_V1_ANCESTOR'];
+    };
+
+    /** Token for Complex Track 2: Symmetrical multi-layered upcast structural inflation */
+    COMPLEX_TRACK_TWO_TOKEN: {
+      readonly current: ISolidRegistry['ADVANCED_COMPLEXITY_SHAPE'];
+      readonly v1_ancestor: ISolidRegistry['ADVANCED_COMPLEXITY_V1_ANCESTOR'];
+    };
+
+    /** Token for Complex Track 3: Omitted property mutation validation drops */
+    COMPLEX_TRACK_THREE_TOKEN: {
+      readonly current: ISolidRegistry['ADVANCED_COMPLEXITY_SHAPE'];
+      readonly v1_ancestor: ISolidRegistry['ADVANCED_COMPLEXITY_V1_ANCESTOR'];
+    };
+
+    /** Token for Complex Track 4: Over-allocated rogue attribute perimeter blocks */
+    COMPLEX_TRACK_FOUR_TOKEN: {
+      readonly current: ISolidRegistry['ADVANCED_COMPLEXITY_SHAPE'];
+      readonly v1_ancestor: ISolidRegistry['ADVANCED_COMPLEXITY_V1_ANCESTOR'];
+    };
   }
 }
 
@@ -114,6 +139,12 @@ describe('Runtime MATCH API', () => {
     /* prettier-ignore */ seedTestDriftVault('USER_ACCOUNT_EVOLUTION', 'USER_TEST', 'USER_TEST_V1_ANCESTOR');
     /* prettier-ignore */ seedTestDriftVault('STORE_LEDGER_EVOLUTION', 'STORE_ORDER', 'STORE_ORDER_V1_ANCESTOR');
     /* prettier-ignore */ seedTestDriftVault('ADVANCED_PIPELINE_EVOLUTION', 'ADVANCED_COMPLEXITY_SHAPE', 'ADVANCED_COMPLEXITY_V1_ANCESTOR');
+
+    // MATCH DRIFT ADVANCED TYPE REIFICATION NODE
+    /* prettier-ignore */ seedTestDriftVault('COMPLEX_TRACK_ONE_TOKEN', 'ADVANCED_COMPLEXITY_SHAPE', 'ADVANCED_COMPLEXITY_V1_ANCESTOR');
+    /* prettier-ignore */ seedTestDriftVault('COMPLEX_TRACK_TWO_TOKEN', 'ADVANCED_COMPLEXITY_SHAPE', 'ADVANCED_COMPLEXITY_V1_ANCESTOR');
+    /* prettier-ignore */ seedTestDriftVault('COMPLEX_TRACK_THREE_TOKEN', 'ADVANCED_COMPLEXITY_SHAPE', 'ADVANCED_COMPLEXITY_V1_ANCESTOR');
+    /* prettier-ignore */ seedTestDriftVault('COMPLEX_TRACK_FOUR_TOKEN', 'ADVANCED_COMPLEXITY_SHAPE', 'ADVANCED_COMPLEXITY_V1_ANCESTOR');
   });
 
   describe('MATCH DRIFT BASE TESTS', () => {
@@ -244,7 +275,7 @@ describe('Runtime MATCH API', () => {
   });
   describe('MATCH DRIFT MULTI-GENERATIONAL STRESS SCENARIOS', () => {
     it('🛡️ COMPLEX TRACK 1: should successfully validate and route native web-platform interface instances', () => {
-      // Arrange: Construct a pristine active model containing native TransformStream and active Pipeline functions
+      // 1. Arrange: Construct a pristine active model containing native platform interfaces and closures
       const mockTransformStream = new TransformStream();
       const mockPipelineFunction = (input: string) => Promise.resolve(input);
 
@@ -260,33 +291,31 @@ describe('Runtime MATCH API', () => {
         executePipeline: mockPipelineFunction,
       };
 
-      // Act: Route the nested web instance container straight through Lane 1
+      // The AOT transformer will inject 'ADVANCED_PIPELINE_EVOLUTION' trailing tokens positionally!
       const result = xalor.drift<'ADVANCED_PIPELINE_EVOLUTION'>(
         complexPayload,
         {
           currentKey: 'ADVANCED_COMPLEXITY_SHAPE',
           ancestralKey: 'ADVANCED_COMPLEXITY_V1_ANCESTOR',
           strict: true,
-          current: (v2Data) => {
-            expect(v2Data.transformStreamVal).toBeInstanceOf(TransformStream);
-            expect(typeof v2Data.executePipeline).toBe('function');
-            return v2Data;
-          },
+          current: (v2Data) => v2Data,
           v1_ancestor: () => {
             throw new Error(
               'CRITICAL INVARIANT BREACH: Target hit incorrect historical lane.',
             );
           },
           default: () => {
-            throw new Error(
-              'CRITICAL INVARIANT BREACH: Target collapsed into recovery default.',
-            );
+            return { __FALLBACK_TRIGGERED__: true } as any;
           },
         },
       );
 
-      // Assert: Verify structural layout metadata integrity is perfectly preserved
       expect(result).toBeDefined();
+      expect(result).not.toHaveProperty('__FALLBACK_TRIGGERED__');
+      expect(result).toHaveProperty('executePipeline');
+      expect(result.userRole![0].SKU).toBe('SKU-NEST-99');
+      expect(result.transformStreamVal).toBeInstanceOf(TransformStream);
+      expect(typeof result.executePipeline).toBe('function');
       expect(xalor.guard<'ADVANCED_COMPLEXITY_SHAPE'>(result)).toBe(true);
     });
 
@@ -344,47 +373,256 @@ describe('Runtime MATCH API', () => {
       expect(xalor.guard<'ADVANCED_COMPLEXITY_SHAPE'>(result)).toBe(true);
     });
 
-    // it('🛡️ COMPLEX TRACK 3: should catch incomplete custom migrations and safely route to circuit breaker recovery lanes', () => {
-    //   // Arrange: Assemble a valid legacy payload
-    //   const legacyPayload: Record<string, unknown> = {
-    //     legacyRoleString: 'SKU-NEST-99:1:WH-EAST',
-    //     transformStreamVal: new TransformStream(),
+    it('🛡️ COMPLEX TRACK 3: should catch incomplete custom migrations and safely route to circuit breaker recovery lanes', () => {
+      // Arrange: Assemble a valid legacy payload
+      const legacyPayload: Record<string, unknown> = {
+        legacyRoleString: 'SKU-NEST-99:1:WH-EAST',
+        transformStreamVal: new TransformStream(),
+      };
+
+      let circuitBreakerActivated = false;
+
+      // Act: Execute where the migration closure is intentionally written to omit a mandatory field
+      const result = xalor.drift<'ADVANCED_PIPELINE_EVOLUTION'>(legacyPayload, {
+        currentKey: 'ADVANCED_COMPLEXITY_SHAPE',
+        ancestralKey: 'ADVANCED_COMPLEXITY_V1_ANCESTOR',
+        strict: true,
+        current: (v2Data) => v2Data,
+        v1_ancestor: (v1Data) => {
+          return {
+            userRole: [],
+            transformStreamVal: v1Data.transformStreamVal,
+            executePipeline: undefined as any, // 🚨 INTENTIONAL BUG: Missing required functional closure!
+          };
+        },
+        default: () => {
+          circuitBreakerActivated = true;
+          return {
+            userRole: [],
+            transformStreamVal: new TransformStream(),
+            executePipeline: (str: string) => Promise.resolve(str),
+          };
+        },
+      });
+
+      // Assert: Prove that the post-upcast shape gate intercepted the broken mapping and fell through cleanly
+      expect(circuitBreakerActivated).toBe(true);
+      expect(result).toBeDefined();
+      expect(typeof result.executePipeline).toBe('function');
+      expect(xalor.guard<'ADVANCED_COMPLEXITY_SHAPE'>(result)).toBe(true);
+    });
+  });
+
+  // !!! ============================================================================================================
+  // !!! ============================================================================================================
+  // !!! ============================================================================================================
+  // !!! MATCH DRIFT ADVANCED TYPE REIFICATION NODE
+  // !!! ============================================================================================================
+  // !!! ============================================================================================================
+  // !!! ============================================================================================================
+
+  describe('MATCH DRIFT ADVANCED TYPE REIFICATION NODES', () => {
+    it('🛡️ COMPLEX TRACK 1: should successfully validate and route native web-platform interface instances', () => {
+      const mockTransformStream = new TransformStream();
+      const mockPipelineFunction = (input: string) => Promise.resolve(input);
+
+      const complexPayload: Record<string, unknown> = {
+        userRole: [
+          {
+            SKU: 'SKU-NEST-99',
+            quantity: 1,
+            logistics: { warehouseCode: 'WH-EAST' },
+          },
+        ],
+        transformStreamVal: mockTransformStream,
+        executePipeline: mockPipelineFunction,
+      };
+
+      const result = xalor.drift<'COMPLEX_TRACK_ONE_TOKEN'>(complexPayload, {
+        currentKey: 'ADVANCED_COMPLEXITY_SHAPE',
+        ancestralKey: 'ADVANCED_COMPLEXITY_V1_ANCESTOR',
+        strict: true,
+        current: (v2Data) => v2Data,
+        v1_ancestor: () => {
+          throw new Error(
+            'CRITICAL INVARIANT BREACH: Target hit incorrect historical lane.',
+          );
+        },
+        default: () => {
+          return {
+            __FALLBACK_TRIGGERED__: true,
+          } as unknown as TResolveDriftReturnConstraint<'COMPLEX_TRACK_ONE_TOKEN'>;
+        },
+      });
+
+      expect(result).toBeDefined();
+      expect(result).not.toHaveProperty('__FALLBACK_TRIGGERED__');
+      expect(result).toHaveProperty('executePipeline');
+      expect(result.userRole![0].SKU).toBe('SKU-NEST-99');
+      expect(result.transformStreamVal).toBeInstanceOf(TransformStream);
+      expect(typeof result.executePipeline).toBe('function');
+      expect(xalor.guard<'ADVANCED_COMPLEXITY_SHAPE'>(result)).toBe(true);
+    });
+
+    it('🛡️ COMPLEX TRACK 2: should orchestrate multi-layered structure expansion inside ancestral upcasters while verifying function attachments', () => {
+      const mockTransformStream = new TransformStream();
+      const legacyPayload: Record<string, unknown> = {
+        legacyRoleString: 'SKU-NEST-99:1:WH-EAST',
+        transformStreamVal: mockTransformStream,
+      };
+
+      const result = xalor.drift<'COMPLEX_TRACK_TWO_TOKEN'>(legacyPayload, {
+        currentKey: 'ADVANCED_COMPLEXITY_SHAPE',
+        ancestralKey: 'ADVANCED_COMPLEXITY_V1_ANCESTOR',
+        strict: true,
+        prune: true,
+        current: () => {
+          throw new Error(
+            'CRITICAL INVARIANT BREACH: Active path processed corrupted data.',
+          );
+        },
+        v1_ancestor: (
+          v1Data,
+        ): TResolveInstanceGraph<
+          ISolidRegistry['ADVANCED_COMPLEXITY_SHAPE']
+        > => {
+          const [sku, qtyStr, whCode] = v1Data.legacyRoleString.split(':');
+          return {
+            userRole: [
+              {
+                SKU: sku,
+                quantity: Number(qtyStr),
+                logistics: { warehouseCode: whCode },
+              },
+            ],
+            transformStreamVal: v1Data.transformStreamVal,
+            executePipeline: (input: string) => Promise.resolve(input),
+          };
+        },
+        default: () => {
+          throw new Error(
+            'CRITICAL INVARIANT BREACH: Complex upcaster tripped fallback circuit.',
+          );
+        },
+      });
+
+      expect(result).toBeDefined();
+      expect(result.userRole![0].SKU).toBe('SKU-NEST-99');
+      expect(result.userRole![0].logistics.warehouseCode).toBe('WH-EAST');
+      expect(typeof result.executePipeline).toBe('function');
+      expect(
+        Object.prototype.hasOwnProperty.call(result, 'legacyRoleString'),
+      ).toBe(false);
+      expect(xalor.guard<'ADVANCED_COMPLEXITY_SHAPE'>(result)).toBe(true);
+    });
+
+    it('🛡️ COMPLEX TRACK 3: should catch incomplete custom migrations and safely route to circuit breaker recovery lanes', () => {
+      const legacyPayload: Record<string, unknown> = {
+        legacyRoleString: 'SKU-NEST-99:1:WH-EAST',
+        transformStreamVal: new TransformStream(),
+      };
+      let circuitBreakerActivated = false;
+
+      const result = xalor.drift<'COMPLEX_TRACK_THREE_TOKEN'>(legacyPayload, {
+        currentKey: 'ADVANCED_COMPLEXITY_SHAPE',
+        ancestralKey: 'ADVANCED_COMPLEXITY_V1_ANCESTOR',
+        strict: true,
+        current: (v2Data) => v2Data,
+        v1_ancestor: (v1Data) => {
+          return {
+            userRole: [],
+            transformStreamVal: v1Data.transformStreamVal,
+            executePipeline: undefined as unknown as (
+              inputData: string,
+              retryCount?: number,
+            ) => Promise<string>, // 🚨 Omitted mandatory closure structure pass safely without using any
+          };
+        },
+        default: () => {
+          circuitBreakerActivated = true;
+          return {
+            userRole: [],
+            transformStreamVal: new TransformStream(),
+            executePipeline: (str: string) => Promise.resolve(str),
+          };
+        },
+      });
+
+      expect(circuitBreakerActivated).toBe(true);
+      expect(result).toBeDefined();
+      expect(typeof result.executePipeline).toBe('function');
+      expect(xalor.guard<'ADVANCED_COMPLEXITY_SHAPE'>(result)).toBe(true);
+    });
+    it('🛡️ COMPLEX TRACK 4 (EDGE CASE): should isolate and reject upcasted frames that violate strict property count ceilings', () => {
+      const legacyPayload: Record<string, unknown> = {
+        legacyRoleString: 'SKU-NEST-99:1:WH-EAST',
+        transformStreamVal: new TransformStream(),
+      };
+      let strictBreakerActivated = false;
+
+      const result = xalor.drift<'COMPLEX_TRACK_FOUR_TOKEN'>(legacyPayload, {
+        currentKey: 'ADVANCED_COMPLEXITY_SHAPE',
+        ancestralKey: 'ADVANCED_COMPLEXITY_V1_ANCESTOR',
+        strict: true,
+        prune: false, // Turn off pruning to force structural over-allocation detection
+        current: (v2Data) => v2Data,
+        v1_ancestor: (v1Data) => {
+          const [sku, qtyStr, whCode] = v1Data.legacyRoleString.split(':');
+          return {
+            userRole: [
+              {
+                SKU: sku,
+                quantity: Number(qtyStr),
+                logistics: { warehouseCode: whCode },
+              },
+            ],
+            transformStreamVal: v1Data.transformStreamVal,
+            executePipeline: (input: string) => Promise.resolve(input),
+            // 🚨 Over-allocation anomaly payload fields pass
+            strayContaminationField: 'MALICIOUS_PROPERTY_OVERFLOW_ATTACK',
+          } as unknown as TResolveInstanceGraph<
+            ISolidRegistry['ADVANCED_COMPLEXITY_SHAPE']
+          >;
+        },
+        default: () => {
+          strictBreakerActivated = true;
+          return {
+            userRole: [],
+            transformStreamVal: new TransformStream(),
+            executePipeline: (str: string) => Promise.resolve(str),
+          };
+        },
+      });
+
+      expect(strictBreakerActivated).toBe(true);
+      expect(result).toBeDefined();
+      expect(result).not.toHaveProperty('strayContaminationField');
+    });
+
+    // it('🛡️ COMPLEX TRACK 5 (EDGE CASE): should immediately throw an explicit Ingress Exception if executed with an unregistered token key', () => {
+    //   const standardPayload: Record<string, unknown> = {
+    //     id: 100,
+    //     username: 'ghost_user',
     //   };
 
-    //   let circuitBreakerActivated = false;
-
-    //   // Act: Execute where the migration closure is intentionally written to omit a mandatory field
-    //   const result = xalor.drift<'ADVANCED_PIPELINE_EVOLUTION'>(
-    //     legacyPayload,
+    //   // const executeUnregisteredCall = (() =>
+    //   //   xalor.drift<keyof ISolidDriftRegistry>(standardPayload, {
+    //   //     currentKey: 'USER_TEST',
+    //   //     ancestralKey: 'USER_TEST_V1_ANCESTOR',
+    //   //     current: (data) => data as any,
+    //   //     v1_ancestor: (data) => data as any,
+    //   //     default: () => ({}) as any,
+    //   //   }))();
+    //   const executeUnregisteredCall = xalor.drift<keyof ISolidDriftRegistry>(
+    //     standardPayload,
     //     {
     //       currentKey: 'ADVANCED_COMPLEXITY_SHAPE',
-    //       ancestralKey: 'ADVANCED_COMPLEXITY_V1_ANCESTOR',
-    //       strict: true,
-    //       current: (v2Data) => v2Data,
-    //       v1_ancestor: (v1Data) => {
-    //         return {
-    //           userRole: [],
-    //           transformStreamVal: v1Data.transformStreamVal,
-    //           executePipeline: undefined as any, // 🚨 INTENTIONAL BUG: Missing required functional closure!
-    //         };
-    //       },
-    //       default: () => {
-    //         circuitBreakerActivated = true;
-    //         return {
-    //           userRole: [],
-    //           transformStreamVal: new TransformStream(),
-    //           executePipeline: (str: string) => Promise.resolve(str),
-    //         };
-    //       },
+    //       current: (data) => data as any,
+    //       v1_ancestor: (data) => data as any,
+    //       default: () => ({}) as any,
     //     },
-    //     'ADVANCED_PIPELINE_EVOLUTION',
     //   );
-
-    //   // Assert: Prove that the post-upcast shape gate intercepted the broken mapping and fell through cleanly
-    //   expect(circuitBreakerActivated).toBe(true);
-    //   expect(result).toBeDefined();
-    //   expect(typeof result.executePipeline).toBe('function');
-    //   expect(xalor.guard<'ADVANCED_COMPLEXITY_SHAPE'>(result)).toBe(true);
+    //   expect(executeUnregisteredCall).toThrow();
     // });
   });
 });

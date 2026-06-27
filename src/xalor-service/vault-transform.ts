@@ -91,7 +91,7 @@ export class XalethorVaultTransform {
     const shape = XalethorVaultKeeper.peek('blueprint', key);
 
     if (!shape) XalethorVaultAuditor.panic(key, msg);
-    
+
     return shape;
   }
   /**

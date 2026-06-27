@@ -110,3 +110,33 @@
  * !!! FOR in depth notes on how we designed Drift
  * @see {@link RuntimeApiCoreDocs.matchXalorCompositePlan}
  */
+/**
+ # Name:
+
+ ## ROLE: 
+
+ - main role in th eoverall system of XALOR
+
+ ## IDEA:
+
+ - overall idea
+
+ ## FEATURES:
+
+  - core features of method
+
+
+## WHY?: why woudl a. dev use this what benefits ?
+
+ ## LIMIT CONSIDERATIONS
+   
+   - items to considere when building this out ... that is what limits it ... what potentail blockers coudl there be ?
+
+ ## EXAMPLE: 
+  
+ ```ts
+
+provide a rough example using as any etc is ok... just for visual reference for DX
+
+ ```
+ */

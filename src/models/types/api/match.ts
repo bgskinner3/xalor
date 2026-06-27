@@ -40,7 +40,7 @@ export type TMax8CompositeKeys =
 // ====================================================================
 // ====================================================================
 /**
- * 🧬 TITLE: DRIFT RETURN TYPE RESOLVER CONSTRAINT
+ * TITLE: DRIFT RETURN TYPE RESOLVER CONSTRAINT
  *
  * DESCRIPTION:
  * Centrally isolates the complex generic type reification return calculation bounds.

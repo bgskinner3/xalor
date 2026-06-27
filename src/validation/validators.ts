@@ -241,15 +241,39 @@ export function validateFunction(
   shape: TSolidFunctionShape,
   ctx: TValidationContext,
 ): boolean {
-  if (!isFunction(data)) return reportError(ctx, shape, data);
-  const expectedParams = shape.parameters.length;
-  if (data.length < expectedParams) {
+  if (!isFunction(data)) {
+    return reportError(ctx, shape, data);
+  }
+
+  let mandatoryParamsCount = 0;
+  const totalBlueprintParams = shape.parameters.length;
+
+  for (let i = 0; i < totalBlueprintParams; i++) {
+    const paramNode = shape.parameters[i];
+    if (paramNode && !paramNode.optional) {
+      mandatoryParamsCount++;
+    }
+  }
+
+  if (data.length < mandatoryParamsCount) {
     return reportError(ctx, shape, data);
   }
 
   return true;
 }
+// export function validateFunction(
+//   data: unknown,
+//   shape: TSolidFunctionShape,
+//   ctx: TValidationContext,
+// ): boolean {
+//   if (!isFunction(data)) return reportError(ctx, shape, data);
+//   const expectedParams = shape.parameters.length;
+//   if (data.length < expectedParams) {
+//     return reportError(ctx, shape, data);
+//   }
 
+//   return true;
+// }
 export function validateInstanceOf(
   data: unknown,
   shape: TSolidInstanceOfShape,
