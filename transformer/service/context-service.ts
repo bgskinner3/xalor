@@ -264,6 +264,36 @@ class XalorContextService {
     // Reset root path safely to execute smooth clean slate recovery steps
     globalThis.__XALOR_ROOT_DIR__ = process.cwd();
   }
+  // ============================================================================================
+  // CLI SPECIFIC METHODS
+  // ============================================================================================
+  /**
+   * clearFileSessionRegistrySlice
+   * ROLE: Completely evicts historical cache records for a single file on incremental watch ingress.
+   * STRATEGY: Clears the local session drawer and flushes corresponding global key registry map links.
+   * INVARIANT: Cleans memory point-free in pure constant/linear paths without touching external files.
+   *
+   * #######
+   *  - Clear out the isolated file data slice drawer inside your Session Registry
+   *  - Loop through all keys currently registered inside this file before we delete the drawer
+   *
+   *  FLUSH GLOBAL MAP REFERENCE: Remove this key from your flat global registry
+   *  to prevent crossFileProtection from mistaking it for a collision ghost on re-run!
+   *
+   */
+  public clearFileSessionRegistrySlice(relativeProjectKey: string): void {
+    this.sequenceCounters.delete(relativeProjectKey);
+    const session = this.sessionRegistry[relativeProjectKey];
+    if (session !== undefined) {
+      for (const keyName in session.keys) {
+        if (Reflect.has(session.keys, keyName)) {
+          this.globalKeyRegistry.delete(keyName);
+        }
+      }
+
+      delete this.sessionRegistry[relativeProjectKey];
+    }
+  }
 }
 
 export const xalorCentralContext = XalorContextService.getInstance();

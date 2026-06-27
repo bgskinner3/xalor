@@ -829,11 +829,8 @@ declare global {
     /**
      * TXalorCLIModes
      *
-     * ROLE:
-     * Unified literal string union type defining every valid CLI execution path.
-     *
-     * STRATEGY:
-     * Derived directly from the frozen runtime array to prevent type-to-code drift.
+     * ROLE: Unified literal string union type defining every valid CLI execution path.
+     * STRATEGY: Derived directly from the frozen runtime array to prevent type-to-code drift.
      */
     static TXalorCLIModes(): void;
     /**

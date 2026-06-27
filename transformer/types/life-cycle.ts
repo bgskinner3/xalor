@@ -18,6 +18,7 @@ export type TXalorLifecycleContext = {
   readonly isStudioMode: boolean;
   readonly isClearMode: boolean;
   readonly isTestEnvironment: boolean;
+  readonly isIncrementalBuild: boolean;
   /** High-level operational flag uniting watch and compile as dev-active cycles */
   readonly isDevelopmentPass: boolean;
 

@@ -1,4 +1,10 @@
-export type TCLIBootStrapModes = 'clear' | 'compile' | 'watch';
+export type TCLIBootStrapModes =
+  | 'clear'
+  | 'compile'
+  | 'watch'
+  | 'audit'
+  | 'studio'
+  | 'vacuum';
 
 export type TBootStrapEnvContext = {
   readonly projectRootPath: string;
@@ -12,7 +18,10 @@ export type TBootStrapEnvContext = {
 export type TXalorEnvTokens =
   | 'XALOR_CLI_CLEAR'
   | 'XALOR_CLI_WATCH'
-  | 'XALOR_CLI_COMPILE';
+  | 'XALOR_CLI_COMPILE'
+  | 'XALOR_CLI_VACUUM'
+  | 'XALOR_CLI_STUDIO'
+  | 'XALOR_CLI_AUDIT';
 
 /**
  * TEnvStateMatrix

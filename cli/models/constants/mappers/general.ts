@@ -47,7 +47,31 @@ Commands:
   clear    🔥 Hard flash-purge node_modules cache back to zero
 
 ======================================================================
-    `
+    `,
+  audit: (projectRootPath) => `
+    ==================================================== 
+    📊 [Xalor CLI] STARTING FULL SYSTEM AUDIT MATRIX... 
+    📂 Project Root Anchor: ${projectRootPath} 
+    🧠 Inspecting Registry Graph Integrity... 
+    📈 Profiling Compiler Health & Validation Density... 
+    ====================================================
+    `,
+  vacuum: (projectRootPath) => `
+      ==================================================== 
+   🧹 [Xalor CLI] STARTING PRODUCTION VACUUM SEQUENCE...
+    📂 Project Root Anchor: ${projectRootPath}
+    📦 Finalizing Optimized Distribution Graph...
+    🚀 Emitting Production Build Artifacts...
+    ====================================================
+  `,
+    studio: (projectRootPath) => `
+      ==================================================== 
+   🛰️ [Xalor CLI] BOOTING INTERACTIVE STUDIO WORKSPACE...
+    📂 Project Root Anchor: ${projectRootPath}
+    🌐 Initializing Local Inspection Gateway...
+    🔐 Establishing Secure Cross-Origin Session...
+    ====================================================
+  `,
 } satisfies Record<TCLIBootStrapModes | 'help', (projectRootPath: string) => string>;
 
 /* prettier-ignore */
@@ -56,15 +80,48 @@ export const MODE_ENV_MUTATION_MAPPER: Record<TCLIBootStrapModes, TEnvStateMatri
     XALOR_CLI_CLEAR: 'true',
     XALOR_CLI_WATCH: 'false',
     XALOR_CLI_COMPILE: 'false',
+    XALOR_CLI_VACUUM: 'false',
+    XALOR_CLI_STUDIO: 'false',
+    XALOR_CLI_AUDIT: 'false',
   },
   watch: {
     XALOR_CLI_CLEAR: 'false',
     XALOR_CLI_WATCH: 'true',
     XALOR_CLI_COMPILE: 'false',
+    XALOR_CLI_VACUUM: 'false',
+    XALOR_CLI_STUDIO: 'false',
+    XALOR_CLI_AUDIT: 'false',
   },
-  compile: {
+ compile: {
     XALOR_CLI_CLEAR: 'false',
     XALOR_CLI_WATCH: 'false',
     XALOR_CLI_COMPILE: 'true',
+    XALOR_CLI_VACUUM: 'false',
+    XALOR_CLI_STUDIO: 'false',
+    XALOR_CLI_AUDIT: 'false',
+  },
+  audit: {
+    XALOR_CLI_CLEAR: 'false',
+    XALOR_CLI_WATCH: 'false',
+    XALOR_CLI_COMPILE: 'false',
+    XALOR_CLI_VACUUM: 'false',
+    XALOR_CLI_STUDIO: 'false',
+    XALOR_CLI_AUDIT: 'true',
+  },
+  studio: {
+    XALOR_CLI_CLEAR: 'false',
+    XALOR_CLI_WATCH: 'false',
+    XALOR_CLI_COMPILE: 'false',
+    XALOR_CLI_VACUUM: 'false',
+    XALOR_CLI_STUDIO: 'true',
+    XALOR_CLI_AUDIT: 'false',
+  },
+  vacuum: {
+    XALOR_CLI_CLEAR: 'false',
+    XALOR_CLI_WATCH: 'false',
+    XALOR_CLI_COMPILE: 'false',
+    XALOR_CLI_VACUUM: 'true',
+    XALOR_CLI_STUDIO: 'false',
+    XALOR_CLI_AUDIT: 'false',
   },
 } satisfies Record<TCLIBootStrapModes, TEnvStateMatrix>;

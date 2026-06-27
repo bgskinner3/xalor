@@ -5,3 +5,4 @@ export * from './service';
 export * from './error';
 export * from './auto';
 export * from './shape-domain';
+export * from './cli-domain';

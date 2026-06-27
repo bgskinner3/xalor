@@ -1,10 +1,6 @@
 import { ObjectUtils } from '../../utils';
-
-// ======================================================================================================
-// ======================================================================================================
-// BASE CLI COMMANDS AND FLAGS
-// ======================================================================================================
-// ======================================================================================================
+import { toConfigVariation } from '../utils';
+import { CLI_MAIN_CONFIG_OBJECT } from './config';
 
 /**
  * CLI_COMMAND_MODES CONFIGURATION
@@ -17,28 +13,31 @@ import { ObjectUtils } from '../../utils';
  * instantly using Set lookups (NO switch statements), while your type
  * engine uses it to lock down auto-complete in the IDE.
  */
-export const CLI_COMMAND_MODES = Object.freeze({
-  watch: 'watch',
-  compile: 'compile',
-  vacuum: 'vacuum',
-  audit: 'audit',
-  studio: 'studio',
-  clear: 'clear',
-} as const);
+export const CLI_COMMAND_MODES = Object.freeze(
+  toConfigVariation(
+    ObjectUtils.fromEntries(
+      ObjectUtils.keys(CLI_MAIN_CONFIG_OBJECT).map((key) => [key, key]),
+    ),
+    'key',
+  ),
+);
 
 /**
  * CLI_MODE_FLAGS_MAPPER
  * ROLE: Primary matrix mapping valid feature flags to their allowed CLI mode scopes.
  * STRATEGY: Enforces strict encapsulation, ensuring flags only parse inside verified command contexts.
  */
-export const CLI_MODE_FLAGS_MAPPER = Object.freeze({
-  clear: [],
-  compile: [],
-  watch: [],
-  vacuum: [],
-  audit: ['fix', 'json', 'verbose', 'debug'] as const,
-  studio: [],
-} as const);
+export const CLI_MODE_FLAGS_MAPPER = Object.freeze(
+  toConfigVariation(
+    ObjectUtils.fromEntries(
+      ObjectUtils.entries(CLI_MAIN_CONFIG_OBJECT).map(([key, value]) => [
+        key,
+        value.flags,
+      ]),
+    ),
+    'flags',
+  ),
+);
 
 /**
  * ALL_CLI_FLAGS
@@ -46,9 +45,15 @@ export const CLI_MODE_FLAGS_MAPPER = Object.freeze({
  * STRATEGY: Flattens allowed parameters point-free on boot to build a single fast reference index.
  */
 export const ALL_CLI_FLAGS = Object.freeze(
-  ObjectUtils.keys(CLI_MODE_FLAGS_MAPPER).flatMap(
-    (key) => CLI_MODE_FLAGS_MAPPER[key],
-  ),
+  ObjectUtils.values(CLI_MAIN_CONFIG_OBJECT).flatMap((cmd) => cmd.flags),
+);
+
+export const ALL_XALOR_ENV_KEYS = Object.freeze(
+  ObjectUtils.values(CLI_MAIN_CONFIG_OBJECT).flatMap((cmd) => cmd.envKey),
+);
+
+export const ALL_CLI_COMMANDS = Object.freeze(
+  ObjectUtils.values(CLI_MAIN_CONFIG_OBJECT).flatMap((cmd) => cmd.key),
 );
 
 /**
@@ -57,33 +62,33 @@ export const ALL_CLI_FLAGS = Object.freeze(
  * ROLE:
  * The single source of truth for internal cross-process environment flags.
  */
-export const XALOR_ENV_KEYS = Object.freeze({
-  /** Rolling local development watch loops thread (Stage 1B) */
-  watch: 'XALOR_CLI_WATCH',
-  /** One-shot local development compilation sync pass */
-  compile: 'XALOR_CLI_COMPILE',
-  /** Terminal production minification and flat JS baking (Stage 2) */
-  vacuum: 'XALOR_CLI_VACUUM',
+export const XALOR_ENV_KEYS = Object.freeze(
+  toConfigVariation(
+    ObjectUtils.fromEntries(
+      ObjectUtils.entries(CLI_MAIN_CONFIG_OBJECT).map(([key, value]) => [
+        key,
+        value.envKey,
+      ]),
+    ),
+    'envKey',
+  ),
+);
 
-  studio: 'XALOR_CLI_STUDIO',
-
-  clear: 'XALOR_CLI_CLEAR',
-});
-
-// ======================================================================================================
-// ======================================================================================================
-// TRANSFORMER VERSION
-// ======================================================================================================
-// ======================================================================================================
-
-export const TRANSFORMER_EXECUTE_MODES = Object.freeze({
-  watch: 'watch',
-  compile: 'compile',
-  vacuum: 'vacuum',
-  studio: 'studio',
-  clear: 'clear',
-} as const);
-
+/**
+ * TRANSFORMER_EXECUTE_MODES
+ * ROLE: Dynamically isolates modes explicitly designated for the transformer pipeline.
+ * STRATEGY: Feeds a runtime-filtered entries array directly through our malleable config guard.
+ */
+export const TRANSFORMER_EXECUTE_MODES = Object.freeze(
+  toConfigVariation(
+    ObjectUtils.fromEntries(
+      ObjectUtils.entries(CLI_MAIN_CONFIG_OBJECT)
+        .filter(([_, value]) => value.transformerMode)
+        .map(([key]) => [key, key]),
+    ),
+    'transformerMode',
+  ),
+);
 /**
  * XALOR_CLI_STATUS_MESSAGES
  *
@@ -113,5 +118,3 @@ export const XALOR_CLI_STATUS_MESSAGES: Readonly<Record<number, string>> =
     6194: '✅ [Xalor CLI] Code synchronization complete. Memory registries locked.',
     6193: '⚠️ [Xalor CLI] Pass completed with compilation errors. Registries isolated.',
   });
-
-export const CLI_CONFIG_OBJECT = {};

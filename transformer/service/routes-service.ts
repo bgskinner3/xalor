@@ -33,6 +33,7 @@ export class XalorRoutesService {
 
     const isDevelopmentPass = isWatchMode || isOneShotCompileMode;
 
+    const isIncrementalBuild = isWatchMode || studioFlag;
     // ===============================================================
     // COMPILE PHASE MODES
     // ===============================================================
@@ -54,6 +55,7 @@ export class XalorRoutesService {
       isIngestRegistryMode,
       isReifyRuntimeMode,
       isStandardInlineMode,
+      isIncrementalBuild,
     };
   }
 

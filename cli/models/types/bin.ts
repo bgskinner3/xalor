@@ -1,7 +1,4 @@
-import type {
-  TXalorCLIModes,
-  TCLIFlags,
-} from '../../../shared/types/const-types';
+import type { TXalorCLIModes, TCLIFlags } from '../../../shared/cli-domain';
 
 /**
  * TCLICommandsControl

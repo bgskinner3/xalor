@@ -1,11 +1,5 @@
 import { XALOR_MESSAGE_HANDLER } from '../error/messages';
-import {
-  AUDITOR_KEYWORDS,
-  CLI_COMMAND_MODES,
-  TRANSFORMER_EXECUTE_MODES,
-  ALL_CLI_FLAGS,
-  IS_SOLID_CONFIG_ITEMS,
-} from '../constants';
+import { AUDITOR_KEYWORDS, IS_SOLID_CONFIG_ITEMS } from '../constants';
 
 /**
  * TAuditorKeywords
@@ -24,39 +18,6 @@ export type TXalorWarningKey = keyof typeof XALOR_MESSAGE_HANDLER.WARNING;
 // ====================================================================================================
 // ====================================================================================================
 
-/**
- * TXalorCLIModes
- *
- * Transformer List Modes
- *
- * @see {@link FoundationalTypesDocs.TXalorCLIModes}
- */
-export type TXalorCLIModes = keyof typeof CLI_COMMAND_MODES;
-/**
- * TXalorCLIModesMap
- *
- * PURPOSE:
- * A strongly-typed mapped utility structure.
- *
- * ROLE:
- * Enables referencing explicit single compiler keys using lookup notation.
- */
-export type TXalorCLIModesMap = {
-  readonly [K in TXalorCLIModes]: K;
-};
-
-/**
- * TCLIFlags
- * ROLE: Strict union type derived from the master allowed flag array index.
- * STRATEGY: Enforces strict type-safety, blocking unknown terminal parameter strings at compile time.
- */
-export type TCLIFlags = (typeof ALL_CLI_FLAGS)[number];
-/**
- * TTransformerExecuteMode
- *
- * Strict union type matching only: 'watch' | 'compile' | 'vacuum' | 'sudto | 'clear
- */
-export type TTransformerExecuteMode = keyof typeof TRANSFORMER_EXECUTE_MODES;
 /**
  * TSearchFileNames
  * ROLE: Type-safe contract for the workspace configuration file-name map.
