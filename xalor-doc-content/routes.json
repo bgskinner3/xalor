@@ -21,17 +21,12 @@
       "href": "/xalor/docs/whatIsXalor",
       "active": false,
       "sectionLinks": [
-        { "id": "compilation-timeline", "text": "Compilation Lifecycle" },
-        { "id": "type-reification", "text": "Type Reification" },
-        { "id": "twin-map-geometry", "text": "Bidirectional Geometry" },
-        { "id": "transformation-analysis", "text": "Transformation Analysis" },
-        { "id": "bundle-comparison", "text": "Bundle Comparison" },
-        { "id": "ghost-emitter-type-injection", "text": "Ghost Emitter" },
-        { "id": "multiprocessor-file-lock", "text": "Multiprocessor" },
-        { "id": "vault-specification", "text": "Namespace Specification" },
-        { "id": "leadership-guarantees", "text": "Leadership Guarantees" },
-        { "id": "dual-source-tax", "text": "Dual Source Tax" },
-        { "id": "ambient-bootstrap", "text": "Ambient Environment Bootstrap" }
+        { "id": "intro", "text": "Core Concept" },
+        { "id": "single-source-truth", "text": "Source Of Truth" },
+        { "id": "phantom-build-clean", "text": "Structural Eradication" },
+        { "id": "cache-stability", "text": "Ghost Emitter" },
+        { "id": "type-graph-telemetry", "text": "Type-Graph Telemetry" },
+        { "id": "empirical-benchmarks", "text": "Benchmarks" }
       ]
     },
     {
@@ -42,8 +37,9 @@
       "active": false,
       "sectionLinks": [
         { "id": "installation", "text": "Installation" },
-        { "id": "initialization", "text": "Initialization" },
-        { "id": "toolchain-integration", "text": "Toolchain Integration" }
+        { "id": "typeRegistration", "text": "Register Your Type" },
+        { "id": "dataValidation", "text": "Validate Data" },
+        { "id": "exploreMore", "text": "Do More With Types" }
       ]
     },
     {
@@ -52,7 +48,13 @@
       "iconName": "cpu-duotone",
       "href": "/xalor/docs/api",
       "active": false,
-      "sectionLinks": []
+      "sectionLinks": [
+        { "id": "register", "text": "Register Types" },
+        { "id": "validate", "text": "Validate Data" },
+        { "id": "generate", "text": "Generate With Types" },
+        { "id": "transform", "text": "Transform Data" },
+        { "id": "match", "text": "Advanced Runtime APIs" }
+      ]
     },
     {
       "id": "d8a1c3f9-4e21-4b77-9c88-2f1a6b3d9e55",
