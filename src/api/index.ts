@@ -1,6 +1,6 @@
 // /src/api/index.ts
 import type { TTypeGuard, TSolidBranded } from '../../shared';
-import { isRegistryKey, assertRegistryKey } from '../../shared';
+import { isRegistryKey } from '../../shared';
 import type {
   IXalorDriftContext,
   TApplyNominalBrand,
@@ -8,7 +8,7 @@ import type {
   TResolveDriftReturnConstraint,
 } from '../models/types';
 import { registerXalor } from './register';
-import { transformXalorMerge } from './transform';
+import { transformXalorMerge, generateXalorClone } from './transform';
 import { validateXalorGuard, validateXalorParse } from './validate';
 import { generateXalorDefault } from './generate';
 import { matchXalorDrift } from './match';
@@ -40,11 +40,12 @@ class XalorCore {
   /** @Api validation  @mode guard */
   /* prettier-ignore */ public guard<K extends keyof ISolidRegistry>(): TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>>;
   /* prettier-ignore */ public guard<K extends keyof ISolidRegistry>( data: unknown): data is ISolidRegistry[K]
-  /* prettier-ignore */ public guard<K extends keyof ISolidRegistry>( keyOrPayload?: K | unknown, dataKey?: K): boolean | TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>> {
+  public guard<K extends keyof ISolidRegistry>(
+    keyOrPayload?: K | unknown,
+    dataKey?: K,
+  ): boolean | TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>> {
     const isProperKey = isRegistryKey<K>(keyOrPayload);
     const finalKey = isProperKey ? keyOrPayload : dataKey;
-
-    assertRegistryKey(finalKey);
 
     const activeGuard = validateXalorGuard<K>(finalKey);
 
@@ -53,10 +54,11 @@ class XalorCore {
     return activeGuard;
   }
   /** @Api validation  @mode parse */
-  /* prettier-ignore */ public parse<K extends keyof ISolidRegistry>(data: unknown, _compiledKeyReference?: K): TSolidBranded<K, ISolidRegistry[K]> {
-    assertRegistryKey(_compiledKeyReference);
-
-    return validateXalorParse<K>(_compiledKeyReference, data);
+  public parse<K extends keyof ISolidRegistry>(
+    data: unknown,
+    _compiledKeyReference?: K,
+  ): TSolidBranded<K, ISolidRegistry[K]> {
+    return validateXalorParse<K>(data, _compiledKeyReference);
   }
   // ========================================================================
   // ========================================================================
@@ -69,10 +71,10 @@ class XalorCore {
   // ========================================================================
 
   /** @Api generator  @mode default */
-  /* prettier-ignore */
-  public default<K extends keyof ISolidRegistry>(_compiledKeyReference?: K): TSolidBranded<K, ISolidRegistry[K]> {
-    assertRegistryKey(_compiledKeyReference);
 
+  public default<K extends keyof ISolidRegistry>(
+    _compiledKeyReference?: K,
+  ): TSolidBranded<K, ISolidRegistry[K]> {
     return generateXalorDefault<K>(_compiledKeyReference);
   }
   // ========================================================================
@@ -85,9 +87,18 @@ class XalorCore {
   // ========================================================================
   // ========================================================================
   /** @Api transform  @mode merge */
-  /* prettier-ignore */ public merge<K extends keyof ISolidRegistry>(ctx: TXalorMergeContext<ISolidRegistry[K]>, _compiledKeyReference?: K): TSolidBranded<K, ISolidRegistry[K]> {
-
+  public merge<K extends keyof ISolidRegistry>(
+    ctx: TXalorMergeContext<ISolidRegistry[K]>,
+    _compiledKeyReference?: K,
+  ): TSolidBranded<K, ISolidRegistry[K]> {
     return transformXalorMerge<K>(ctx, _compiledKeyReference);
+  }
+  /** @Api transform  @mode clone */
+  public clone<K extends keyof ISolidRegistry>(
+    data: unknown,
+    injectedKey?: K,
+  ): TSolidBranded<K, ISolidRegistry[K]> {
+    return generateXalorClone<K>(data, injectedKey);
   }
 
   // ========================================================================
@@ -100,7 +111,10 @@ class XalorCore {
   // ========================================================================
   // ========================================================================
   /** @Api match @mode drift */
-  /* prettier-ignore */ public drift<K extends keyof ISolidDriftRegistry, R extends TResolveDriftReturnConstraint<K> = TResolveDriftReturnConstraint<K>>(
+  public drift<
+    /* prettier-ignore */ K extends keyof ISolidDriftRegistry,
+    /* prettier-ignore */ R extends TResolveDriftReturnConstraint<K> = TResolveDriftReturnConstraint<K>,
+  >(
     payload: unknown,
     ctx: IXalorDriftContext<K, R>,
     injectedKey?: K,
@@ -109,4 +123,18 @@ class XalorCore {
   }
 }
 
+/**
+ * XALOR FRAMEWORK RUNTIME ANCHOR
+ *
+ * Central engine instance exposing the un-curried public API gateway matrix.
+ *
+ * CURRENT PERIMETER PORTS:
+ * 1. register   - Blueprint Manifestation Ingress [Generation]
+ * 2. guard      - Nominal Cryptographic Trait Examiner [Match]
+ * 3. parse      - Structural Shape Validation Enforcement [Match]
+ * 4. default    - Primitive Safe Layout Initializer [Generation]
+ * 5. merge      - High-Velocity Deep Object Mutation [Transform]
+ * 6. clone      - Circular-Safe Structural Sanitation [Transform]
+ * 7. drift      - Multi-Generation Upcast Migration Channel [Match]
+ */
 export const xalor: XalorCore = new XalorCore();

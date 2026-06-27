@@ -1,6 +1,6 @@
 import { XalethorService } from '../../xalor-service';
 import { markAsSolid } from '../../utils';
-import { isRecord } from '../../../shared/utils/guards';
+import { isRecord, assertRegistryKey } from '../../../shared/utils/guards';
 import { BRAND_SYMBOL } from '../../../shared';
 import type { TSolidBranded } from '../../../shared';
 
@@ -25,23 +25,18 @@ import type { TSolidBranded } from '../../../shared';
  * ```
  * @see {@link RuntimeApiCoreDocs.generateXalorDefault}
  */
-/* prettier-ignore */
-export function generateXalorDefault<K extends keyof ISolidRegistry>(injectedKey: K): TSolidBranded<K, ISolidRegistry[K]> {
-
-  if (!injectedKey) {
-    throw new Error(
-      `[xalor] 🚨 GATEWAY BLOCK: 'generateXalorDefault' executed without compiled metadata properties.\n` +
-        `Ensure your build-time transformer plugin is active.`,
-    );
-  }
+export function generateXalorDefault<K extends keyof ISolidRegistry>(
+  injectedKey?: K,
+): TSolidBranded<K, ISolidRegistry[K]> {
+  assertRegistryKey(injectedKey);
 
   const defaultTemplate = XalethorService.produceDefault(injectedKey);
 
   if (isRecord(defaultTemplate)) {
-
     Reflect.set(defaultTemplate, BRAND_SYMBOL, ['Solid', injectedKey]);
 
-    if (markAsSolid<K, ISolidRegistry[K]>(defaultTemplate)) return defaultTemplate;
+    if (markAsSolid<K, ISolidRegistry[K]>(defaultTemplate))
+      return defaultTemplate;
   }
 
   throw new Error(

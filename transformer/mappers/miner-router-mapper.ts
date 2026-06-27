@@ -62,7 +62,7 @@ export const XALOR_MINING_ROUTER_MAPPER: TXalorMinerRouterMap = {
   // TRANSFORMATION METHODS
   // ========================================================================
   /* prettier-ignore */ 'xalor.merge':      (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.merge'),
-
+  /* prettier-ignore */ 'xalor.clone':      (node, checker) => extractSingleKeyPayload(node, checker, 'xalor.clone'),
   // ========================================================================
   // MATCH METHODS
   // ========================================================================

@@ -52,7 +52,8 @@ export const PROCESSOR_REWRITE_MAPPER: TProcessorRewriteMap = {
   // ========================================================================
   /* prettier-ignore */
   'xalor.merge':      (raw, node, factory) => formatTransformationArgs('merge', raw, node, factory),
-
+  /* prettier-ignore */
+  'xalor.clone':      (raw, node, factory) => formatTransformationArgs('clone', raw, node, factory),
   // ========================================================================
   // MATCH METHODS
   // ========================================================================

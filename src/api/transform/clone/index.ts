@@ -19,19 +19,22 @@ import type { TSolidBranded } from '../../../../shared';
  * @see {@link RuntimeApiCoreDocs.generateXalorClone}
  */
 export function generateXalorClone<K extends keyof ISolidRegistry>(
-  injectedKey: K,
   data: unknown,
+  injectedKey?: K,
 ): TSolidBranded<K, ISolidRegistry[K]> {
   assertRegistryKey(injectedKey);
 
-  const clonePayload = XalethorService.produceClone(data, injectedKey);
-
-  if (isRecord(clonePayload)) {
-    Reflect.set(clonePayload, BRAND_SYMBOL, ['Solid', injectedKey]);
-
+  const clonePayload = XalethorService.produceClone(data, injectedKey!);
+  if (!isRecord(clonePayload)) {
     if (markAsSolid<K, ISolidRegistry[K]>(clonePayload)) {
       return clonePayload;
     }
+  }
+
+  Reflect.set(clonePayload, BRAND_SYMBOL, ['Solid', injectedKey]);
+
+  if (markAsSolid<K, ISolidRegistry[K]>(clonePayload)) {
+    return clonePayload;
   }
 
   throw new Error(

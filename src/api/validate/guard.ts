@@ -1,7 +1,7 @@
 import { buildValidationTools, markAsSolid } from '../../utils';
 import type { TTypeGuard, TSolidBranded } from '../../../shared';
 import { BRAND_SYMBOL } from '../../../shared';
-
+import { assertRegistryKey } from '../../../shared/utils/guards';
 /**
  * RUNTIME API: VALIDATE XALOR GUARD
  *
@@ -25,15 +25,9 @@ import { BRAND_SYMBOL } from '../../../shared';
  * @see {@link RuntimeApiCoreDocs.validateXalorGuard}
  */
 export function validateXalorGuard<K extends keyof ISolidRegistry>(
-  injectedKey: K,
+  injectedKey?: K,
 ): TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>> {
-  // 1. Enforce strict parameter presence to maintain graph boundaries
-  if (!injectedKey) {
-    throw new Error(
-      `[xalor] 🚨 GATEWAY BLOCK: 'validateXalorGuard' executed without compiled metadata properties.\n` +
-        `Ensure your build-time transformer plugin is active.`,
-    );
-  }
+  assertRegistryKey(injectedKey);
 
   const { guard } = buildValidationTools(injectedKey);
 

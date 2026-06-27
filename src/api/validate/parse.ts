@@ -2,7 +2,11 @@ import { XalethorService } from '../../xalor-service';
 import { markAsSolid } from '../../utils';
 import { BRAND_SYMBOL } from '../../../shared';
 import type { TSolidBranded } from '../../../shared';
-import { isDefined, isRecord } from '../../../shared/utils/guards';
+import {
+  isDefined,
+  isRecord,
+  assertRegistryKey,
+} from '../../../shared/utils/guards';
 
 /**
  * RUNTIME API: VALIDATE XALOR PARSE
@@ -25,11 +29,12 @@ import { isDefined, isRecord } from '../../../shared/utils/guards';
  * @see {@link RuntimeApiCoreDocs.validateXalorParse}
  */
 export function validateXalorParse<K extends keyof ISolidRegistry>(
-  injectedKey: K,
   data: unknown,
+  injectedKey?: K,
 ): TSolidBranded<K, ISolidRegistry[K]> {
-  // 1. Enforce strict parameter presence using native guards to maintain graph boundaries (Commandment V)
-  if (!injectedKey || !isDefined(data)) {
+  assertRegistryKey(injectedKey);
+
+  if (!isDefined(data)) {
     return XalethorService.panic(injectedKey);
   }
 

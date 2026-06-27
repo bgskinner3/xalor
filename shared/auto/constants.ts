@@ -28,7 +28,7 @@ export const REGISTER_MODE_TRIGGERS = ['xalor.register'] as const;
  * MASTER TRANSFORM MODES CONFIGURATION
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
-export const TRANSFORM_MODE_TRIGGERS = ['xalor.merge'] as const;
+export const TRANSFORM_MODE_TRIGGERS = ['xalor.merge', 'xalor.clone'] as const;
 
 /**
  * MASTER VALIDATION MODES CONFIGURATION
@@ -87,7 +87,7 @@ export const REGISTER_MODES = ['register'] as const;
  * RAW TRANSFORM STRATEGY SPECIFICATION MODES
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
-export const TRANSFORM_MODES = ['merge'] as const;
+export const TRANSFORM_MODES = ['merge', 'clone'] as const;
 
 /**
  * RAW VALIDATION STRATEGY SPECIFICATION MODES
