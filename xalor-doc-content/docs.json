@@ -184,100 +184,98 @@
       "description": "We don't ask you to take our word for it. When evaluated down to **execution velocity** and **bundle impact**, Xalor strips away the performance penalties of traditional validation libraries to deliver true **bare-metal efficiency**.",
       "subDescription": "By executing type unrolling entirely at _compilation phase_ rather than evaluating properties dynamically at runtime, data processing checks bypass overhead completely. Contrast your project specs directly against industry baselines across bundle sizes and validation speeds to see the architectural **performance deltas** live.",
       "benchMarkData": {
-        "tracks": [
-          {
-            "id": "bundle-weight-scale",
-            "metricName": "Production Bundle Weight Sizing",
-            "unit": "KB",
-            "lowerIsBetter": true,
-            "isolationScope": "Client-side network payload weight as application scales from initial deployment up to 200 data models.",
-            "datasets": {
-              "zod": {
-                "baseline1Model": 54.2,
-                "scaled200Models": 9140.0,
-                "isLinear": true
-              },
-              "typia": {
-                "baseline1Model": 42.0,
-                "scaled200Models": 8400.0,
-                "isLinear": true
-              },
-              "xalor": {
-                "baseline1Model": 11.6,
-                "scaled200Models": 11.6,
-                "isLinear": false
-              }
-            }
-          },
-          {
-            "id": "execution-velocity-throughput",
-            "metricName": "Validation Processing Velocity",
-            "unit": "ops/sec",
-            "lowerIsBetter": false,
-            "isolationScope": "High-throughput execution loops processing deeply nested financial payloads under persistent request loads.",
-            "datasets": {
-              "zod": {
-                "value": 840000,
-                "label": "840K ops/sec",
-                "bottleneck": "Dynamic graph traversal & runtime closures"
-              },
-              "typia": {
-                "value": 24500000,
-                "label": "24.5M ops/sec",
-                "bottleneck": "Pre-compiled inline function CPU limitations"
-              },
-              "xalor": {
-                "value": 84000000,
-                "label": "84.0M ops/sec",
-                "bottleneck": "Zero dynamic lookups via flat memory pointers"
-              }
-            }
-          },
-          {
-            "id": "boot-hydration-speed",
-            "metricName": "Runtime Cold-Start Boot Hydration",
-            "unit": "ms",
-            "lowerIsBetter": true,
-            "isolationScope": "Initialization timeframe required to evaluate code frameworks before processing the first boundary payload.",
-            "datasets": {
-              "zod": {
-                "delayMs": 142.0,
-                "allocationTax": "High (Schema graph parsing & execution initialization loops)"
-              },
-              "typia": {
-                "delayMs": 48.0,
-                "allocationTax": "Moderate (Reading extensive auto-generated source file arrays)"
-              },
-              "xalor": {
-                "delayMs": 0.1,
-                "allocationTax": "Hard-Zero (Instantaneous O(1) memory pointer assignment)"
-              }
-            }
-          },
-          {
-            "id": "heap-memory-pressure",
-            "metricName": "Heap Allocation / GC Pressure",
-            "unit": "MB / 100K cycles",
-            "lowerIsBetter": true,
-            "isolationScope": "Total allocated RAM blocks and active Garbage Collection invocations triggered during continuous validation cycles.",
-            "datasets": {
-              "zod": {
-                "ramAllocated": 182.4,
-                "gCyclesTriggered": "Aggressive (Dynamic intermediate object generation)"
-              },
-              "typia": {
-                "ramAllocated": 34.1,
-                "gCyclesTriggered": "Moderate (Object allocation per nested property depth)"
-              },
-              "xalor": {
-                "ramAllocated": 0.02,
-                "gCyclesTriggered": "Near-Zero (Flat array matching bypasses reference inflation)"
-              }
+        "bundleWeight": {
+          "id": "bundle-weight-scale",
+          "metricName": "Production Bundle Weight Sizing",
+          "unit": "KB",
+          "lowerIsBetter": true,
+          "isolationScope": "Client-side network payload weight as application scales from initial deployment up to 200 data models.",
+          "datasets": {
+            "zod": {
+              "baseline1Model": 54.2,
+              "scaled200Models": 9140.0,
+              "isLinear": true
+            },
+            "typia": {
+              "baseline1Model": 42.0,
+              "scaled200Models": 8400.0,
+              "isLinear": true
+            },
+            "xalor": {
+              "baseline1Model": 11.6,
+              "scaled200Models": 11.6,
+              "isLinear": false
             }
           }
-        ]
+        },
+        "throughput": {
+          "id": "execution-velocity-throughput",
+          "metricName": "Validation Processing Velocity",
+          "unit": "ops/sec",
+          "lowerIsBetter": false,
+          "isolationScope": "High-throughput execution loops processing deeply nested financial payloads under persistent request loads.",
+          "datasets": {
+            "zod": {
+              "value": 840000,
+              "label": "840K ops/sec",
+              "bottleneck": "Dynamic graph traversal & runtime closures"
+            },
+            "typia": {
+              "value": 24500000,
+              "label": "24.5M ops/sec",
+              "bottleneck": "Pre-compiled inline function CPU limitations"
+            },
+            "xalor": {
+              "value": 84000000,
+              "label": "84.0M ops/sec",
+              "bottleneck": "Zero dynamic lookups via flat memory pointers"
+            }
+          }
+        },
+        "hydration": {
+          "id": "boot-hydration-speed",
+          "metricName": "Runtime Cold-Start Boot Hydration",
+          "unit": "ms",
+          "lowerIsBetter": true,
+          "isolationScope": "Initialization timeframe required to evaluate code frameworks before processing the first boundary payload.",
+          "datasets": {
+            "zod": {
+              "delayMs": 142.0,
+              "allocationTax": "High (Schema graph parsing & execution initialization loops)"
+            },
+            "typia": {
+              "delayMs": 48.0,
+              "allocationTax": "Moderate (Reading extensive auto-generated source file arrays)"
+            },
+            "xalor": {
+              "delayMs": 0.1,
+              "allocationTax": "Hard-Zero (Instantaneous O(1) memory pointer assignment)"
+            }
+          }
+        },
+        "heapMemory": {
+          "id": "heap-memory-pressure",
+          "metricName": "Heap Allocation / GC Pressure",
+          "unit": "MB / 100K cycles",
+          "lowerIsBetter": true,
+          "isolationScope": "Total allocated RAM blocks and active Garbage Collection invocations triggered during continuous validation cycles.",
+          "datasets": {
+            "zod": {
+              "ramAllocated": 182.4,
+              "gCyclesTriggered": "Aggressive (Dynamic intermediate object generation)"
+            },
+            "typia": {
+              "ramAllocated": 34.1,
+              "gCyclesTriggered": "Moderate (Object allocation per nested property depth)"
+            },
+            "xalor": {
+              "ramAllocated": 0.02,
+              "gCyclesTriggered": "Near-Zero (Flat array matching bypasses reference inflation)"
+            }
+          }
+        }
       },
-      "links": {
+      "link": {
         "text": "Get a closer look",
         "href": "/xalor/studio",
         "active": false
