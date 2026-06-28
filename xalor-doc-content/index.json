@@ -65,29 +65,31 @@
       "iconName": "brain-bulb",
       "description": "Xalor shifts heavy type parsing from the browser directly to your build toolchain. It compiles your native, pristine TypeScript types into lightweight, hidden blueprints—completely **eliminating production runtime overhead** and dual-source schema maintenance code loops.",
       "subDescription": "Instead of parsing graphs or reconstructing types at runtime, Xalor executes against precompiled, content-addressed structures created entirely during the build process, yielding a flat _0.8KB client bundle footprint_.",
-      "stepOne": {
-        "iconName": "typescript",
-        "overline": "Phase 01: Type-Time",
-        "header": "Define Your Types",
-        "description": "Write standard TypeScript interfaces. No DSLs or setup—your types become the source of truth.",
-        "imageVariant": "one",
-        "variant": "violetGlow"
-      },
-      "stepTwo": {
-        "iconName": "tools-solid",
-        "overline": "Phase 02: Build-Time",
-        "header": "Compile in the Background",
-        "description": "A background compiler indexes your code and builds optimized type snapshots for instant reuse.",
-        "imageVariant": "two",
-        "variant": "blueprintGlow"
-      },
-      "stepThree": {
-        "iconName": "flash-bolt",
-        "overline": "Phase 03: Run-Time",
-        "header": "Instant Execution",
-        "description": "At runtime, Xalor uses precompiled structures for fast validation and transformation with zero overhead.",
-        "imageVariant": "three",
-        "variant": "runtimeGlow"
+      "steps": {
+        "stepOne": {
+          "iconName": "typescript",
+          "overline": "Phase 01: Type-Time",
+          "header": "Define Your Types",
+          "description": "Write standard TypeScript interfaces. No DSLs or setup—your types become the source of truth.",
+          "imageVariant": "one",
+          "variant": "violetGlow"
+        },
+        "stepTwo": {
+          "iconName": "tools-solid",
+          "overline": "Phase 02: Build-Time",
+          "header": "Compile in the Background",
+          "description": "A background compiler indexes your code and builds optimized type snapshots for instant reuse.",
+          "imageVariant": "two",
+          "variant": "blueprintGlow"
+        },
+        "stepThree": {
+          "iconName": "flash-bolt",
+          "overline": "Phase 03: Run-Time",
+          "header": "Instant Execution",
+          "description": "At runtime, Xalor uses precompiled structures for fast validation and transformation with zero overhead.",
+          "imageVariant": "three",
+          "variant": "runtimeGlow"
+        }
       }
     },
 
