@@ -65,43 +65,29 @@
       "iconName": "brain-bulb",
       "description": "Xalor shifts heavy type parsing from the browser directly to your build toolchain. It compiles your native, pristine TypeScript types into lightweight, hidden blueprints—completely **eliminating production runtime overhead** and dual-source schema maintenance code loops.",
       "subDescription": "Instead of parsing graphs or reconstructing types at runtime, Xalor executes against precompiled, content-addressed structures created entirely during the build process, yielding a flat _0.8KB client bundle footprint_.",
-      "steps": {
-        "stepOne": {
-          "iconName": "typescript",
-          "overline": "Phase 01: Type-Time",
-          "header": "Write Native Types",
-          "description": "Write standard TypeScript interfaces. No custom schema DSL, no generators, no setup. Your types define the system at compile time.",
-          "image": {
-            "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/blockedge/vadar.png",
-            "alt": "vader-one"
-          },
-          "imageVariant": "one",
-          "variant": "violetGlow"
-        },
-        "stepTwo": {
-          "iconName": "tools-solid",
-          "overline": "Phase 02: Build-Time",
-          "header": "Build-Time Compilation",
-          "description": "A background compiler scans your codebase and builds compact, indexed type snapshots for fast lookup and reuse. All processing happens in the background with no runtime cost.",
-          "image": {
-            "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/blockedge/mikey-girl.png",
-            "alt": "lady-two"
-          },
-          "imageVariant": "two",
-          "variant": "blueprintGlow"
-        },
-        "stepThree": {
-          "iconName": "flash-bolt",
-          "overline": "Phase 03: Run-Time",
-          "header": "Runtime Power",
-          "description": "At runtime, Xalor uses precompiled structures to validate, transform, and shape data instantly with near O(1) lookup performance and zero bundle overhead.",
-          "image": {
-            "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/Display%20Images/xalor-header-noe-fade.png",
-            "alt": "runtime-three"
-          },
-          "imageVariant": "three",
-          "variant": "runtimeGlow"
-        }
+      "stepOne": {
+        "iconName": "typescript",
+        "overline": "Phase 01: Type-Time",
+        "header": "Define Your Types",
+        "description": "Write standard TypeScript interfaces. No DSLs or setup—your types become the source of truth.",
+        "imageVariant": "one",
+        "variant": "violetGlow"
+      },
+      "stepTwo": {
+        "iconName": "tools-solid",
+        "overline": "Phase 02: Build-Time",
+        "header": "Compile in the Background",
+        "description": "A background compiler indexes your code and builds optimized type snapshots for instant reuse.",
+        "imageVariant": "two",
+        "variant": "blueprintGlow"
+      },
+      "stepThree": {
+        "iconName": "flash-bolt",
+        "overline": "Phase 03: Run-Time",
+        "header": "Instant Execution",
+        "description": "At runtime, Xalor uses precompiled structures for fast validation and transformation with zero overhead.",
+        "imageVariant": "three",
+        "variant": "runtimeGlow"
       }
     },
 
@@ -109,15 +95,16 @@
       "header": {
         "iconName": "cpu-duotone",
         "header": "Runtime API Engine",
-        "overline": "One Source. Infinite Capabilities.",
+        "overline": "Type-First Runtime Architecture",
         "description": "Stop maintaining separate verification engines and mock data setups. Xalor converts native types into high-speed runtime systems with zero bundle inflation.",
         "link": {
-          "text": "",
-          "href": ""
+          "text": "Explore Runtime Architecture Docs",
+          "href": "/xalor/docs/runtime-api/initialization"
         },
+
         "image": {
-          "href": "",
-          "alt": ""
+          "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/cropped-2/lrn-example.png",
+          "alt": "animated-core"
         }
       },
       "runtimeItems": {
