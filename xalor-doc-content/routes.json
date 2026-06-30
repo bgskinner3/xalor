@@ -36,6 +36,7 @@
       "href": "/xalor/docs/gettingStarted",
       "active": false,
       "sectionLinks": [
+        { "id": "intro", "text": "Get Started" },
         { "id": "installation", "text": "Installation" },
         { "id": "typeRegistration", "text": "Register Your Type" },
         { "id": "dataValidation", "text": "Validate Data" },
@@ -49,6 +50,7 @@
       "href": "/xalor/docs/api",
       "active": false,
       "sectionLinks": [
+        { "id": "intro", "text": "Our Runtime" },
         { "id": "register", "text": "Register Types" },
         { "id": "validate", "text": "Validate Data" },
         { "id": "generate", "text": "Generate With Types" },

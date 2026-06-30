@@ -107,6 +107,7 @@
   "whatIsXalor": {
     "header": {
       "id": "intro",
+      "active": true,
       "header": "About Xalor",
       "overline": "The Core Concept",
       "iconName": "layers-duotone",
@@ -114,6 +115,7 @@
     },
     "singleSourceOfTruth": {
       "id": "single-source-truth",
+      "active": true,
       "header": "Eliminating the Dual-Source Schema Tax",
       "description": "Every other validation framework forces you into a _double-maintenance tax_ You have to manually write a custom runtime validation schema language blocks (like a Zod schema) and then write a mirrored TypeScript interface right next to it just to get autocompletion.",
       "subDescription": "Xalor treats your standard, everyday TypeScript types as the absolute, **single source of truth**. You write a standard type, pass it to Xalor's proxy handle, and the engine takes over. If you modify or delete a type property, your workspace data layers adapt instantly with **hard-zero duplication overhead**.",
@@ -130,6 +132,7 @@
     },
     "phantomBuild": {
       "id": "phantom-build-clean",
+      "active": true,
       "header": "Structural Eradication & Tree-Shaking Purity",
       "description": "Legacy runtime validation frameworks bloat client-side distribution bundles by serializing rich schemas directly into your executable files. This compiles into massive, nested JavaScript object descriptors and heavy recursive validation graphs that travel straight to your user's browsers, degrading load metrics and Lighthouse scores.",
       "subDescription": "Xalor completely solves this by executing a Hybrid Architecture Split. A background CLI watcher intercepts your TypeScript Abstract Syntax Tree (AST) during compilation, extracting nested shapes and hashing them into a single-instance, Content-Addressable Storage (CAS) primitive map. It entirely erases the type telemetry from your final production build files. Because your executable paths are left with empty generic parameter tokens, bundlers like Vite and Rollup achieve 100% tree-shaking purity. Your client inherits an exceptionally lean, bare-metal runtime execution footprint that evaluates payloads via flat, fast O(1) memory pointer lookups, while completely insulating your private API structures from malicious reverse-engineering.",
@@ -144,9 +147,9 @@
         }
       }
     },
-
     "cacheStability": {
       "id": "cache-stability",
+      "active": true,
       "header": "The Atomic Shield & Ghost Emitter",
       "description": "When multiple processes or code editors compile your code simultaneously, they introduce severe **write contentions** that can cause silent database file truncation, split-second file corruption, or lose your editor's autocomplete intellisense.",
       "subDescription": "Xalor guards your cache data using _The Atomic Shield_—an automated write barrier that flushes database snapshots into a temporary handle before executing a single native **atomic rename operation** to prevent split-second file truncation. Simultaneously, _The Ghost Emitter_ dynamically injects updated string keys straight into your editor's autocomplete maps behind the scenes with **absolute zero source folder pollution**.",
@@ -164,6 +167,7 @@
     },
     "typeGraphTelemetry": {
       "id": "type-graph-telemetry",
+      "active": true,
       "header": "Isomorphic Type-Graph Telemetry (Beyond Validation)",
       "description": "Validation is just a side-effect. By extracting deep compile-time metadata, Xalor answers the ultimate question: 'What else can you do with types?' It unlocks an entire ecosystem of **live code tracking**, **automatic mock simulations**, and **visual architecture analytics**.",
       "subDescription": "Launch our secure Cross-Origin UI (`npx xalor studio`) to view an interactive 3D map of your application's data models. Monitor schema evolution lineage, track _validation health density metrics_, and instantly generate full-fidelity mock data pools or automated clients straight from your static code definitions in real-time.",
@@ -180,6 +184,7 @@
     },
     "empiricalBenchmarks": {
       "id": "empirical-benchmarks",
+      "active": true,
       "header": "Empirical Benchmark Matrix (The Hard Proof)",
       "description": "We don't ask you to take our word for it. When evaluated down to **execution velocity** and **bundle impact**, Xalor strips away the performance penalties of traditional validation libraries to deliver true **bare-metal efficiency**.",
       "subDescription": "By executing type unrolling entirely at _compilation phase_ rather than evaluating properties dynamically at runtime, data processing checks bypass overhead completely. Contrast your project specs directly against industry baselines across bundle sizes and validation speeds to see the architectural **performance deltas** live.",
@@ -302,6 +307,7 @@
   },
   "gettingStarted": {
     "header": {
+      "id": "intro",
       "header": "Get Started",
       "description": "Well help you get the basics down and run through registering your first type, validating data and explore some other available APIs. ",
       "overline": "Environment Ingress",

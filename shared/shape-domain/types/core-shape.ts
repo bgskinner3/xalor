@@ -32,12 +32,6 @@ export type TSolidShapePrimitiveKeys = (typeof SOLID_SHAPE_PRIMITIVE_KEYS)[numbe
 /* prettier-ignore */
 export type TSolidShapeLiteralKeys = (typeof SOLID_SHAPE_LITERAL_KEYS)[number];
 
-/* prettier-ignore */
-export type TRegistryMap = typeof INSTANCE_REGISTRY_MAPPER;
-
-/* prettier-ignore */
-export type TRegisteredInstancesUnion = ReturnType<TRegistryMap[keyof TRegistryMap]['def']>;
-
 // ===============================================================
 // ===============================================================
 // 🔷 AST CORE TYPE DEFINITIONS
