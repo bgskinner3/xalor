@@ -109,7 +109,7 @@
       "id": "intro",
       "active": true,
       "header": "About Xalor",
-      "overline": "The Core Concept",
+      "overline": "Core Concept",
       "iconName": "layers-duotone",
       "description": "A high-performance type engine that reads your native TypeScript definitions to handle automatic, ultra-fast data validation at runtime—with zero code bloat, zero duplicate schemas, and zero background resource waste."
     },
@@ -156,7 +156,7 @@
       "visuals": {
         "image": {
           "alt": "terminal display",
-          "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/xalor/cache-stability-terminal.png",
+          "href": "",
           "note": "High-fidelity rendering of the Xalor Operational Profiler Report. The dark-mode graphical card maps out real-time compiler telemetry: storage compaction ratios, lifecycle metadata evaporation metrics demonstrating 56.9% fat stripped away from production distribution files, and a clean API contract drift ledger state."
         },
         "codeBlock": {
@@ -317,8 +317,16 @@
       "id": "installation",
       "header": "Installation And Setup",
       "description": "Deploy the core engine package via your native packet registry and initialize the ambient background watcher. The **background compiler** hooks directly into your local build environment to map application types without altering your active runtime configuration overhead.",
-      "installation": { "code": "", "note": "" },
-      "configuration": { "code": "", "note": "" }
+      "installation": {
+        "code": "",
+        "note": "",
+        "link": { "text": "", "href": "" }
+      },
+      "configuration": {
+        "code": "",
+        "note": "",
+        "link": { "text": "", "href": "" }
+      }
     },
     "registerType": {
       "id": "typeRegistration",
