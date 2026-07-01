@@ -308,6 +308,7 @@
   "gettingStarted": {
     "header": {
       "id": "intro",
+      "active": true,
       "header": "Get Started",
       "description": "Well help you get the basics down and run through registering your first type, validating data and explore some other available APIs. ",
       "overline": "Environment Ingress",
@@ -315,43 +316,55 @@
     },
     "installationConfig": {
       "id": "installation",
+      "active": true,
       "header": "Installation And Setup",
       "description": "Deploy the core engine package via your native packet registry and initialize the ambient background watcher. The **background compiler** hooks directly into your local build environment to map application types without altering your active runtime configuration overhead.",
       "installation": {
-        "code": "",
-        "note": "",
+        "code": "npm install @bgskinner2/xalor\npnpm add @bgskinner2/xalor\nyarn add @bgskinner2/xalor",
+        "footnote": "Note: Because Xalor handles type extraction in the background, your environment needs to include our bundler transformer setup during your normal _pnpm build_ or _vite build_ process.",
         "link": { "text": "", "href": "" }
       },
       "configuration": {
-        "code": "",
-        "note": "",
+        "code": "{\n// tsconfig.json\n{\n  // ...\n  \"compilerOptions\": {\n    // ...\n    \"plugins\": [\n      {\n        \"transform\": \"@bgskinner2/xalor/transformer\",\n        \"type\": \"program\"\n      }\n    ]\n  }\n}\n}",
+        "description": "You must register the transformation plugin inside your _tsconfig.json_ file. For advanced environment configurations, see the Full Setup Guide.",
         "link": { "text": "", "href": "" }
       }
     },
     "registerType": {
       "id": "typeRegistration",
+      "active": true,
       "header": "Register Your First Type",
       "description": "Registration can happen in one of two ways. Either through a simple type declaration and injection or through simply passing the data object you'd like to register as a type.",
       "codeBlock": {
-        "code": "",
+        "code": "import { xalor } from '@bgskinner2/xalor';\n\n// 1. Write clean, standard TypeScript types\ntype TUser = {\n  id: number;\n  username: string;\n  email: string;\n  displayName: string;\n  avatarUrl: string;\n  active: boolean;\n  role: 'user' | 'moderator' | 'admin';\n  createdAt: Date;\n  lastLoginAt: string;\n  preferences: {\n    theme: 'light' | 'dark';\n    notifications: boolean;\n    locale: string;\n  };\n  stats: {\n    posts: number;\n    followers: number;\n    following: number;\n  };\n};\n\n// 2. Map it to a string key identifier\nxalor.register<'USER_ACCOUNT', TUser>();\n\n// 3. Narrow and guard data inline instantly\nconst data: unknown = { id: 101, username: 'brennan' };\n\nif (xalor.guard<'USER_ACCOUNT'>(data)) {\n  console.log(data.username); // ✨ Fully typed automatically!\n}\n",
         "note": ""
       },
       "subDescription": "Whether using explicit generic bindings or inline object inferences, Xalor’s compile-time scanner intercepts the target structural graph and provisions a unique Content-Addressable Storage (CAS) pointer hash inside your shadow type registry. This completely separates developer-facing type telemetry from the production-ready application distribution assets.",
-      "link": { "text": "Deep-Dive Schema Registration Paths", "href": "" }
+      "link": {
+        "text": "Deep-Dive Schema Registration Paths",
+        "href": "",
+        "active": true
+      }
     },
     "validateWithParse": {
       "id": "dataValidation",
+      "active": true,
       "header": "Validate Your Data, Not Like Everyone Else",
       "description": "Traditional packages execute heavy, recursive graph traversals over human-maintained validation sheets at runtime. Xalor bypasses runtime graph generation entirely by utilizing the pre-compiled build blueprints. Unknown payloads pass through a strict, linear properties assessment using lightning-fast property matches and direct pointer evaluation.",
       "codeBlock": {
-        "code": "",
+        "code": "import { xalor } from '@bgskinner2/xalor';\n\nconst exampleUser: unknown = {\n  id: 1,\n  username: \"brennan_dev\",\n  email: \"brennan@example.com\",\n  displayName: \"Brennan Dev\",\n  avatarUrl: \"https://example.com/avatar.jpg\",\n  active: true,\n  role: \"admin\",\n  createdAt: new Date(\"2025-01-10T12:00:00Z\"),\n  lastLoginAt: \"2026-06-30T09:15:00Z\",\n  preferences: {\n    theme: \"dark\",\n    notifications: true,\n    locale: \"en-US\",\n  },\n};\n\nconst parsedUser = xalor.parse<'USER_ACCOUNT'>(exampleUser);\n",
         "note": ""
       },
       "subDescription": "When an incoming payload violates a structural layout boundary, the parsing phase aborts instantly without allocating unnecessary error objects in RAM. The execution flow automatically routes the validation exception directly into the Auditor Telemetry Pipeline, identifying the exact line file origin of the target TypeScript contract.",
-      "link": { "text": "Auditor Pipeline Implementation Specs", "href": "" }
+      "link": {
+        "text": "Auditor Pipeline Implementation Specs",
+        "href": "",
+        "active": true
+      }
     },
     "exploreOtherApis": {
       "id": "exploreMore",
+      "active": true,
       "header": "Extend Your Type Ecosystem Architecture",
       "description": "Validation is merely the entry gate. Leverage the unified type-graph infrastructure to trigger automated client SDK generation, orchestrate instant zero-maintenance test seed factories, or spin up live schema drift monitors using the local developer dashboard framework.",
       "subDescription": "Xalor breaks away from the industry-wide misconception that types are disposable, build-only artifacts or simple guardrails for validation rules. We treat your TypeScript architecture as a rich, multi-dimensional source of system intelligence. By saving and content-addressing the deep Abstract Syntax Tree relationships, a single source type model shifts from a static text file into a dynamic runtime primitive capable of generating self-healing infrastructure, deterministic simulation pools, and automated client layers.",
@@ -379,6 +392,8 @@
   },
   "api": {
     "header": {
+      "id": "intro",
+      "active": true,
       "header": "Runtime APIs",
       "description": "Explore the stateless client-side type-proxies and runtime utilities designed to securely intercept, validate, and serialize type layouts with absolute zero performance overhead.",
       "overline": "Client Subsystems",
@@ -388,8 +403,8 @@
       "id": "register",
       "intro": {
         "header": "",
-        "role": "",
-        "features": ""
+        "description": "",
+        "apiList": [{ "id": "register", "name": "register", "status": "live" }]
       },
       "typeRegistration": {
         "description": "",
