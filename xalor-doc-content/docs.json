@@ -321,13 +321,16 @@
       "description": "Deploy the core engine package via your native packet registry and initialize the ambient background watcher. The **background compiler** hooks directly into your local build environment to map application types without altering your active runtime configuration overhead.",
       "installation": {
         "code": "npm install @bgskinner2/xalor\npnpm add @bgskinner2/xalor\nyarn add @bgskinner2/xalor",
-        "footnote": "Note: Because Xalor handles type extraction in the background, your environment needs to include our bundler transformer setup during your normal _pnpm build_ or _vite build_ process.",
-        "link": { "text": "", "href": "" }
+        "footnote": "Note: Because Xalor handles type extraction in the background, your environment needs to include our bundler transformer setup during your normal _pnpm build_ or _vite build_ process."
       },
       "configuration": {
         "code": "{\n// tsconfig.json\n{\n  // ...\n  \"compilerOptions\": {\n    // ...\n    \"plugins\": [\n      {\n        \"transform\": \"@bgskinner2/xalor/transformer\",\n        \"type\": \"program\"\n      }\n    ]\n  }\n}\n}",
-        "description": "You must register the transformation plugin inside your _tsconfig.json_ file. For advanced environment configurations, see the Full Setup Guide.",
-        "link": { "text": "", "href": "" }
+        "footnote": "You must register the transformation plugin inside your _tsconfig.json_ file. For advanced environment configurations, see the Full Setup Guide."
+      },
+      "link": {
+        "text": "Deep-Dive Schema Registration Paths",
+        "href": "",
+        "active": true
       }
     },
     "registerType": {
@@ -403,21 +406,34 @@
       "id": "register",
       "intro": {
         "header": "",
-        "description": "",
-        "apiList": [{ "id": "register", "name": "register", "status": "live" }]
+        "description": "Register to the gloab vault in two ways. OFfering options given the implementations you desire",
+        "apiList": [
+          { "id": "register", "name": "register", "status": "active" }
+        ]
       },
       "typeRegistration": {
+        "header": "",
         "description": "",
-        "codeBlock": ""
+        "codeBlock": {
+          "code": "",
+          "note": ""
+        }
       },
       "dataRegistration": {
+        "header": "",
         "description": "",
-        "codeBlock": ""
+        "codeBlock": {
+          "code": "",
+          "note": ""
+        }
       },
       "vaultViewExplained": {
         "header": "",
         "description": "",
-        "codeBlock": ""
+        "codeBlock": {
+          "code": "",
+          "note": ""
+        }
       }
     },
     "xalorValidate": {
@@ -425,17 +441,117 @@
       "intro": {
         "header": "",
         "description": "",
-        "apiList": [{ "id": "", "name": "", "status": "live" }]
+        "apiList": [
+          { "id": "0636-44e3-8", "name": "guard", "status": "active" },
+          { "id": "7b2a-412e-87d", "name": "parse", "status": "active" }
+        ]
+      },
+      "guard": {
+        "header": "",
+        "description": "",
+        "codeBlock": {
+          "code": "",
+          "note": ""
+        }
+      },
+      "parse": {
+        "header": "",
+        "description": "",
+        "codeBlock": {
+          "code": "",
+          "note": ""
+        }
       }
     },
     "xalorGenerate": {
-      "id": "generate"
+      "id": "generate",
+      "intro": {
+        "header": "",
+        "description": "",
+        "apiList": [
+          { "id": "9f8d-4b53-a", "name": "default", "status": "active" },
+          { "id": "cfae-e3-b9", "name": "cast", "status": "inProgress" }
+        ]
+      },
+      "default": {
+        "header": "",
+        "description": "",
+        "codeBlock": {
+          "code": "",
+          "note": ""
+        }
+      },
+      "cast": {
+        "header": "",
+        "description": "",
+        "codeBlock": {
+          "code": "",
+          "note": ""
+        }
+      }
     },
     "xalorTransform": {
-      "id": "transform"
+      "id": "transform",
+      "intro": {
+        "header": "",
+        "description": "",
+        "apiList": [
+          { "id": "4c2a-4573-a859", "name": "clone", "status": "active" },
+          { "id": "18f5-4d56-bc94", "name": "merge", "status": "active" }
+        ]
+      },
+      "clone": {
+        "header": "",
+        "description": "",
+        "codeBlock": {
+          "code": "",
+          "note": ""
+        }
+      },
+      "merge": {
+        "header": "",
+        "description": "",
+        "codeBlock": {
+          "code": "",
+          "note": ""
+        }
+      }
     },
     "xalorMatch": {
-      "id": "match"
+      "id": "match",
+      "intro": {
+        "header": "",
+        "description": "",
+        "apiList": [
+          { "id": "e395-47b2-9dfd", "name": "drift", "status": "active" },
+          { "id": "4bf-f5ae-e3", "name": "composite", "status": "inProgress" },
+          { "id": "52-49b-aef7", "name": "diff", "status": "research" }
+        ]
+      },
+      "drift": {
+        "header": "",
+        "description": "",
+        "codeBlock": {
+          "code": "",
+          "note": ""
+        }
+      },
+      "composite": {
+        "header": "",
+        "description": "",
+        "codeBlock": {
+          "code": "",
+          "note": ""
+        }
+      },
+      "diff": {
+        "header": "",
+        "description": "",
+        "codeBlock": {
+          "code": "",
+          "note": ""
+        }
+      }
     },
     "bottomLinks": [
       {
