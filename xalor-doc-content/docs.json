@@ -139,7 +139,7 @@
       "visuals": {
         "image": {
           "alt": "phantomBuild",
-          "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/xalor/phantomBuild.png"
+          "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/xalor/phantomBuild-v2.png"
         },
         "codeBlock": {
           "code": "// 📂 dist/server/xalor.blueprints.json\n{\n  \"blueprints\": {\n    \"sh_16c0mbs\": {\n      \"kind\": \"object\",\n      \"properties\": {\n        \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"status\": { \"shape\": { \"kind\": \"union\", \"values\": [\"pending\", \"completed\"] } },\n        \"amount\": { \"shape\": { \"kind\": \"reference\", \"name\": \"sh_1cr65y8\" } }\n      }\n    },\n    \"sh_1nculbp\": {\n      \"kind\": \"object\",\n      \"properties\": {\n        \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"currency\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"amount\": { \"shape\": { \"kind\": \"reference\", \"name\": \"sh_1cr65y8\" } }\n      }\n    }\n  },\n  \"references\": {\n    \"TRANSACTION_SAFE\": \"sh_16c0mbs\",\n    \"BASE_TRANSACTION\": \"sh_1nculbp\"\n  }\n}",
@@ -344,7 +344,7 @@
       },
       "subDescription": "Whether using explicit generic bindings or inline object inferences, Xalor’s compile-time scanner intercepts the target structural graph and provisions a unique Content-Addressable Storage (CAS) pointer hash inside your shadow type registry. This completely separates developer-facing type telemetry from the production-ready application distribution assets.",
       "link": {
-        "text": "Deep-Diver",
+        "text": "Deep Diver",
         "href": "/xalor/docs/api#register",
         "active": true
       }
@@ -516,7 +516,14 @@
           "code": "// 🚧 METHOD UNDER PRODUCTION PASS (Current Status: inProgress)\n// Coerces loose runtime data values cleanly into exact structural blueprint criteria\nconst loosePayload = { id: \"404\", username: 'selina', active: \"true\" };\nconst castedAsset = generateXalorCast('USER_ACCOUNT', loosePayload);\n\n// Under the hood, the engine forces the untrusted payload through primitive type coercers\nconsole.log(castedAsset.id);     // 404 (Safely coerced to an active number token!)\nconsole.log(castedAsset.active); // true (Safely coerced to an active boolean token!)\n\n// ✅ Invariant: Zero 'any' variables, zero manual type escape hatches or casting overrides",
           "note": "The `cast` gateway is configured for raw data ingestion channels. It functions as an inline strategy dispatch that tree-shakes fully from client distribution bundles, executing structural type coercion exclusively based on your static Vault Registry maps."
         },
-        "parametersList": []
+        "parametersList": [
+          {
+            "name": "dataKey",
+            "type": "String",
+            "required": true,
+            "description": "The target key token identifying your precompiled registry contract definition. Required exclusively when executing Direct Mode (Track B) inline enforcement passes."
+          }
+        ]
       }
     },
     "xalorTransform": {
