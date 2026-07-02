@@ -64,7 +64,7 @@
       "href": "/xalor/docs/cli",
       "iconName": "terminal-duotone",
       "active": false,
-      "sectionLinks": []
+      "sectionLinks": [{ "id": "intro", "text": "What CLI" }]
     },
     {
       "id": "1f9b7c3a-6d44-4e22-8a91-0c5e2f8a3b77",
@@ -191,7 +191,7 @@
       "setId": "system"
     },
     {
-      "id": "ce5bc238-45ee-4446-a827-2cf6ce7dede2",
+      "id": "40005c23-b177-40b2-b491-ee1b83452278",
       "text": "Blueprint Graph",
       "iconName": "drafting-compass",
       "active": true,

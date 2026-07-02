@@ -56,16 +56,7 @@ This automation locks in a 100% synchronized state for:
 
 ## I. Custom Text Formatting Cheat Sheet
 
-When authoring or modifying raw content fields inside this repository, your text strings are passed natively to the browser via the frontend parser function `parseInlineFormat`.
-
-To apply rich typographic styling inline without injecting heavy HTML or full markdown parsers, wrap your text in these explicit delimiter tokens:
-
-| Formatting Rule       | Syntax Delimiter | JSON Copy Example                                     | Visual Browser Render                                                     |
-| :-------------------- | :--------------- | :---------------------------------------------------- | :------------------------------------------------------------------------ |
-| **Bold Text**         | `**content**`    | `"Ensure **strict type safety** at borders."`         | Emphasizes copy in bold matching the main text color.                     |
-| **Highlighted Text**  | `_content_`      | `"Validation is executed via _validateXalor_."`       | Renders with a soft background tint and a distinct active accent color.   |
-| **Inline Code Block** | \`content\`      | `"Updates propagate instantly to \`tsconfig.json\`."` | Monospace type representation for system config parameters and variables. |
-
+≈
 <br/>
 <br/>
 
@@ -85,58 +76,3 @@ To apply rich typographic styling inline without injecting heavy HTML or full ma
 
 
 
-
-```text
-
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                                      THE HYBRID BUILD SPLIT                                                            │
-│                              Visualizing Side-by-Side Type Eradication & CAS Compaction                                                │
-├───────────────────────────────────────────────────────┬───────────────────────────────────────────────────────┬────────────────────────┤
-│ 1. COMPILE-TIME SOURCE CODE (Developer Input)         │ 2. REIFICATION GATE (The Production Split)            │ 3. DECOUPLED VAULT     │
-│ Native TypeScript Files (.ts)                         │ Erased Client Bundles vs Server Blueprints           │ server/blueprints.json │
-├───────────────────────────────────────────────────────┼───────────────────────────────────────────────────────┼────────────────────────┤
-│                                                       │                                                       │                        │
-│   // src/models/secure.ts                             │   // dist/client/bundle.js                            │ // Single-Instance CAS │
-│   type TTransactionSafe = {                           │   xalor.parse('sh_16c0mbs', data);                    │                        │
-│     id: string;                                       │                 │                                     │ type TSharedCurrency = {│
-│     status: 'pending' | 'completed';                  │                 │ (O(1) Memory Hydration)             │   value: string;       │
-│     amount: { value: string; exp: number }; ───┐      │                 ▼                                     │   exponent: number;    │
-│   };                                           │      │                                                       │ };                     │
-│                                                │      │   // dist/server/xalor.blueprints.json                │         ▲    ▲         │
-│                                                │(CAS) │   "sh_16c0mbs": {                                     │         │    │         │
-│   // src/models/base.ts                        ├──────┼──►  "id": "string",                                   │         │    │         │
-│   type TBaseTransaction = {                    │      │     "status": "union",                                │         │    │         │
-│     id: string;                                │      │     "amount": "sh_1cr65y8" ───────────────────────────┼─────────┘    │         │
-│     currency: string;                          │      │   },                                                  │              │         │
-│     amount: { value: string; exp: number }; ───┘      │                                                       │              │         │
-│   };                                                  │   "sh_1nculbp": {                                     │              │         │
-│                                                       │     "id": "string",                                   │              │         │
-│                                                       │     "currency": "string",                             │              │         │
-│                                                       │     "amount": "sh_1cr65y8" ───────────────────────────┼──────────────┘         │
-│                                                       │   }                                                   │                        │
-└───────────────────────────────────────────────────────┴───────────────────────────────────────────────────────┴────────────────────────┘
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                                      THE PHANTOM BUILD HYBRID SPLIT                                                    │
-├───────────────────────────────────────────────────────┬───────────────────────────────────────────────────────┬────────────────────────┤
-│ 1. COMPILE-TIME SOURCE CODE (Developer Input)         │ 2. REIFICATION GATE (The Production Split)            │ 3. DECOUPLED VAULT     │
-│ Native TypeScript Interface Files (.ts)               │ Erased Client Bundles vs Server Blueprints           │ server/blueprints.json │
-├───────────────────────────────────────────────────────┼───────────────────────────────────────────────────────┼────────────────────────┤
-│                                                       │                                                       │                        │
-│   // src/models/secure.ts                             │   // dist/client/bundle.js                            │ // Blueprint Cache Card│
-│   type TTransactionSafe = {                           │   xalor.parse('sh_16c0mbs', data);                    │                        │
-│     id: string;                                       │                 │                                     │  "sh_1cr65y8": {       │
-│     status: 'pending' | 'completed';                  │                 │ (O(1) Memory Hydration Map)         │    "kind": "object",   │
-│     amount: { value: string; exp: number }; ───┐      │                 ▼                                     │    "properties": {     │
-│   };                                           │      │                                                       │  ┌───"value": {        │
-│                                                │      │   // dist/server/xalor.blueprints.json                │  │     "type": "string",│
-│   // src/models/base.ts                        │(CAS) │   "sh_16c0mbs": {                                     │  │     "maxLength": 4096│
-│   type TBaseTransaction = {                    ├──────┼──►  "amount": { "name": "sh_1cr65y8" } ──────────────┼──┤   },               │
-│     id: string;                                │      │   },                                                  │  └───"exponent": {     │
-│     currency: string;                          │      │                                                       │        "type": "number"│
-│     amount: { value: string; exp: number }; ───┘      │   "sh_1nculbp": {                                     │      }                 │
-│   };                                                  │     "amount": { "name": "sh_1cr65y8" } ───────────────┘    }                   │
-│                                                       │   }                                                   │  }                     │
-└───────────────────────────────────────────────────────┴───────────────────────────────────────────────────────┴────────────────────────┘
-
-
-```

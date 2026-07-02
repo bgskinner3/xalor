@@ -706,7 +706,14 @@
     ]
   },
   "cli": {
-    "header": {},
+    "header": {
+      "id": "intro",
+      "active": true,
+      "header": "CLI",
+      "description": "",
+      "overline": "----",
+      "iconName": "terminal-duotone"
+    },
     "bottomLinks": [
       {
         "id": "da04f4d2-74a7-439b-9dec-ed41cdc5d5db",
