@@ -112,6 +112,7 @@ type TNodeItemMetrics = {
   depth: number;
   complexityScore: TTaxonomyTokenKeys;
   rawComplexityScore: number;
+  normalizedComplexityScore: number;
   nodesCollapsed: number;
 };
 

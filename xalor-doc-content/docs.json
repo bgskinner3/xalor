@@ -370,8 +370,7 @@
       "active": true,
       "header": "Extend Your Type Ecosystem Architecture",
       "description": "Validation is merely the entry gate. Leverage the unified type-graph infrastructure to trigger automated client SDK generation, orchestrate instant zero-maintenance test seed factories, or spin up live schema drift monitors using the local developer dashboard framework.",
-      "subDescription": "Xalor breaks away from the industry-wide misconception that types are disposable, build-only artifacts or simple guardrails for validation rules. We treat your TypeScript architecture as a rich, multi-dimensional source of system intelligence. By saving and content-addressing the deep Abstract Syntax Tree relationships, a single source type model shifts from a static text file into a dynamic runtime primitive capable of generating self-healing infrastructure, deterministic simulation pools, and automated client layers.",
-      "runtimeApiStatusList": "USE ___ THE ___SHARED"
+      "subDescription": "Xalor breaks away from the industry-wide misconception that types are disposable, build-only artifacts or simple guardrails for validation rules. We treat your TypeScript architecture as a rich, multi-dimensional source of system intelligence. By saving and content-addressing the deep Abstract Syntax Tree relationships, a single source type model shifts from a static text file into a dynamic runtime primitive capable of generating self-healing infrastructure, deterministic simulation pools, and automated client layers."
     },
 
     "bottomLinks": [
@@ -630,7 +629,7 @@
   "sharedData": {
     "runtimeApiStatusList": {
       "link": {
-        "href": "/xalor/docs/apis",
+        "href": "/xalor/docs/api",
         "active": true,
         "text": "api-ref"
       },

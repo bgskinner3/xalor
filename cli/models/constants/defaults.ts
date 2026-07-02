@@ -208,6 +208,7 @@ export const STUDIO_NODE_TEMPLATE: TDeepWriteable<TStudioNodeItem> = {
     depth: 0,
     complexityScore: 'FLAT_O1',
     rawComplexityScore: 0,
+    normalizedComplexityScore: 0,
     nodesCollapsed: 0,
   },
   apisUsed: {
