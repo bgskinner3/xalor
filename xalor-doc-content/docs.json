@@ -134,25 +134,25 @@
       "id": "phantom-build-clean",
       "active": true,
       "header": "Structural Eradication & Tree-Shaking Purity",
-      "description": "Legacy runtime validation frameworks bloat client-side distribution bundles by serializing rich schemas directly into your executable files. This compiles into massive, nested JavaScript object descriptors and heavy recursive validation graphs that travel straight to your user's browsers, degrading load metrics and Lighthouse scores.",
-      "subDescription": "Xalor completely solves this by executing a Hybrid Architecture Split. A background CLI watcher intercepts your TypeScript Abstract Syntax Tree (AST) during compilation, extracting nested shapes and hashing them into a single-instance, Content-Addressable Storage (CAS) primitive map. It entirely erases the type telemetry from your final production build files. Because your executable paths are left with empty generic parameter tokens, bundlers like Vite and Rollup achieve 100% tree-shaking purity. Your client inherits an exceptionally lean, bare-metal runtime execution footprint that evaluates payloads via flat, fast O(1) memory pointer lookups, while completely insulating your private API structures from malicious reverse-engineering.",
+      "description": "Legacy validation frameworks ruin client performance by shipping thousands of lines of heavy, nested JavaScript schema definitions directly to the browser. As your application models scale from **10 to 500**, your production bundles bloat with un-tree-shakable validation logic that crushes your _Google Lighthouse scores_.",
+      "subDescription": "Xalor solves this using a _Hybrid Architecture Split_: a background watcher extracts and hashes your TypeScript AST into an isolated server-side **CAS map**, completely erasing the type telemetry to guarantee **absolute zero bundle inflation**.",
       "visuals": {
         "image": {
           "alt": "phantomBuild",
-          "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/xalor/phantom-build.png"
+          "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/xalor/phantomBuild.png"
         },
         "codeBlock": {
-          "code": "// 📂 dist/server/xalor.blueprints.json\n// An isolated compilation slice of your production type topology\n{\n  \"blueprints\": {\n    \"sh_16c0mbs\": {\n      \"kind\": \"object\",\n      \"properties\": {\n        \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\", \"maxLength\": 4096 }, \"optional\": false, \"name\": \"id\" },\n        \"amount\": { \"shape\": { \"kind\": \"reference\", \"name\": \"sh_1cr65y8\" }, \"optional\": false, \"name\": \"amount\" },\n        \"status\": {\n          \"shape\": {\n            \"kind\": \"union\",\n            \"values\": [\n              { \"kind\": \"literal\", \"type\": \"string\", \"value\": \"pending\" },\n              { \"kind\": \"literal\", \"type\": \"string\", \"value\": \"completed\" }\n            ]\n          },\n          \"optional\": false, \"name\": \"status\"\n        },\n        \"fees\": {\n          \"shape\": { \"kind\": \"union\", \"values\": [{ \"kind\": \"primitive\", \"type\": \"undefined\" }, { \"kind\": \"reference\", \"name\": \"sh_1mw7voa\" }] },\n          \"optional\": true, \"name\": \"fees\"\n        }\n      }\n    }\n  },\n  \"references\": {\n    \"TRANSACTION_SAFE\": \"sh_16c0mbs\",\n    \"BASE_TRANSACTION\": \"sh_1nculbp\"\n  }\n}",
-          "note": "Look closely at the 'amount' and 'fees' property nodes inside sh_16c0mbs. Instead of duplicating the inner properties of your financial currency scales or processing networks inline, the compiler drops a lightweight reference pointer ('sh_1cr65y8', 'sh_1mw7voa'). No matter how many thousands of unique API endpoints handle these nested structures across your system, the schema overhead is paid exactly once inside your centralized blueprints vault."
+          "code": "// 📂 dist/server/xalor.blueprints.json\n{\n  \"blueprints\": {\n    \"sh_16c0mbs\": {\n      \"kind\": \"object\",\n      \"properties\": {\n        \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"status\": { \"shape\": { \"kind\": \"union\", \"values\": [\"pending\", \"completed\"] } },\n        \"amount\": { \"shape\": { \"kind\": \"reference\", \"name\": \"sh_1cr65y8\" } }\n      }\n    },\n    \"sh_1nculbp\": {\n      \"kind\": \"object\",\n      \"properties\": {\n        \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"currency\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"amount\": { \"shape\": { \"kind\": \"reference\", \"name\": \"sh_1cr65y8\" } }\n      }\n    }\n  },\n  \"references\": {\n    \"TRANSACTION_SAFE\": \"sh_16c0mbs\",\n    \"BASE_TRANSACTION\": \"sh_1nculbp\"\n  }\n}",
+          "note": "Look closely at the `amount` rows inside **both** `sh_16c0mbs` and `sh_1nculbp`. Instead of copy-pasting duplicate structural logic across thousands of endpoints, the engine maps both parent configurations directly to a single shared layout vault token (`sh_1cr65y8`). Your project pays the memory assignment tax exactly once."
         }
       }
     },
-    "cacheStability": {
-      "id": "cache-stability",
+    "compilerAudit": {
+      "id": "compiler-lifecycle-audit",
       "active": true,
-      "header": "The Atomic Shield & Ghost Emitter",
-      "description": "When multiple processes or code editors compile your code simultaneously, they introduce severe **write contentions** that can cause silent database file truncation, split-second file corruption, or lose your editor's autocomplete intellisense.",
-      "subDescription": "Xalor guards your cache data using _The Atomic Shield_—an automated write barrier that flushes database snapshots into a temporary handle before executing a single native **atomic rename operation** to prevent split-second file truncation. Simultaneously, _The Ghost Emitter_ dynamically injects updated string keys straight into your editor's autocomplete maps behind the scenes with **absolute zero source folder pollution**.",
+      "header": "The Operational Profiler & Ghost Emitter",
+      "description": "Traditional frameworks leave you blind to your application's actual data footprint, allowing dead type schemas and silent contract drift to pile up. Xalor exposes this layer completely via a native background toolchain watcher—protecting your machine from local process collisions while delivering bare-metal terminal diagnostics.",
+      "subDescription": "While the _Ghost Emitter_ dynamically streams updated tracking keys directly into your IDE autocomplete maps behind the scenes using **Atomic Shield OS rename protections**, running `npx xalor audit` forces complete architectural visibility. This profiler outputs a real-time ledger tracking structural compaction data, **metadata evaporation deltas**, and exact call-site orphan locations.",
       "visuals": {
         "image": {
           "alt": "terminal display",
@@ -169,12 +169,12 @@
       "id": "type-graph-telemetry",
       "active": true,
       "header": "Isomorphic Type-Graph Telemetry (Beyond Validation)",
-      "description": "Validation is just a side-effect. By extracting deep compile-time metadata, Xalor answers the ultimate question: 'What else can you do with types?' It unlocks an entire ecosystem of **live code tracking**, **automatic mock simulations**, and **visual architecture analytics**.",
-      "subDescription": "Launch our secure Cross-Origin UI (`npx xalor studio`) to view an interactive 3D map of your application's data models. Monitor schema evolution lineage, track _validation health density metrics_, and instantly generate full-fidelity mock data pools or automated clients straight from your static code definitions in real-time.",
+      "description": "Validation is just a beneficial side-effect. By extracting deep, structural compile-time metadata, Xalor answers the ultimate question: 'What else can you do with types?' It unlocks an entire ecosystem of **live code tracking**, automated mock simulations, and real-time visual infrastructure analytics.",
+      "subDescription": "While our local orchestration web console is finalizing, running `npx xalor studio` forces your background toolchain to map out your entire structural schema network. The background compiler serializes your internal contract dependencies into an isomorphic graph matrix—ready to pipe directly into live **3D relationship lineages** or instant mock data factories.",
       "visuals": {
-        "image": {
-          "alt": "image of dahsboard landing",
-          "href": ""
+        "codeBlock": {
+          "code": "       ┌────────────────────────────────────────────────────────┐\n       │     NATIVE AST ENTRY TRACK: src/models/registry.ts     │\n       └───────────────────────────┬────────────────────────────┘\n                                   │\n                     ┌─────────────┴─────────────┐\n                     ▼                           ▼\n        ┌─────────────────────────┐ ┌─────────────────────────┐\n        │  NODE A: TRANSACTION    │ │   NODE B: USER_PROFILE  │\n        │  Hash: sh_16c0mbs       │ │   Hash: sh_pnaa6g       │\n        └────────────┬────────────┘ └────────────┬────────────┘\n                     │                           │\n                     └─────────────┬─────────────┘\n                                   │ (Isomorphic Shared Edge Vector)\n                                   ▼\n                    ┌──────────────────────────────┐\n                    │   CONVERGENT CAS LEAF CELL   │\n                    │   Vault Key: sh_1cr65y8      │\n                    │   • value     ➔ [string]\n                    │   • exponent  ➔ [number]\n                    └──────────────┬───────────────┘\n                                   │\n  ═════════════════════════════════▼═════════════════════════════════\n                XALOR RUNTIME INFRASTRUCTURE INJECTION MATRIX\n  ═══════════════════════════════════════════════════════════════════\n        │                  │                  │                  │\n        ▼                  ▼                  ▼                  ▼\n┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐\n│ xalor.parse  │   │ xalor.guard  │   │ xalor.match  │   │ xalor.default│\n│ Fast O(1)    │   │ Bare-Metal   │   │ Polymorphic  │   │ Test Suite   │\n│ Structural   │   │ Assertive    │   │ Pattern-Match│   │ Mock Data    │\n│ Validation   │   │ Type Gates   │   │ Closure Handl│   │ Hydrator DTO │\n└───────┬──────┘   └───────┬──────┘   └───────┬──────┘   └───────┬──────┘\n        │                  │                  │                  │\n        └──────────────────┼──────────────────┼──────────────────┘\n                           ▼                  ▼\n                   ┌──────────────┐   ┌──────────────┐\n                   │ xalor.merge  │   │ xalor.clone  │\n                   │ Polymorphic  │   │ Deep Copy    │\n                   │ AST Combine  │   │ Identity     │\n                   │ Node Utility │   │ Preservation │\n                   └──────────────┘   └──────────────┘",
+          "note": "Because Xalor has already extracted and compiled your complete codebase type topology into content-addressed primitive objects, your types unlock an extensible infrastructure layer. Pass your reference keys natively into our 6 core runtime strategy vectors:\n\n• _xalor.parse_: Executes high-velocity structural verification returning typed data.\n• _xalor.guard_: Functions as a bare-metal assertive inline type gate passing unknown objects safely.\n• _xalor.match_: Evaluates polymorphic payload webhooks directly into strongly-typed closure handlers.\n• _xalor.default_: Instantly hydrates local unit test suites using clean, zero-config factory data records.\n• _xalor.merge_: Combines separate, pre-compiled AST structural blueprints together on the fly in memory.\n• _xalor.clone_: Performs deep memory object duplication while fully preserving internal structural type identity."
         },
         "video": {
           "gif-alt": "video of something working in the studio",
@@ -330,7 +330,7 @@
       "link": {
         "text": "Deep-Dive Schema Registration Paths",
         "href": "",
-        "active": true
+        "active": false
       }
     },
     "registerType": {
@@ -344,8 +344,8 @@
       },
       "subDescription": "Whether using explicit generic bindings or inline object inferences, Xalor’s compile-time scanner intercepts the target structural graph and provisions a unique Content-Addressable Storage (CAS) pointer hash inside your shadow type registry. This completely separates developer-facing type telemetry from the production-ready application distribution assets.",
       "link": {
-        "text": "Deep-Dive Schema Registration Paths",
-        "href": "",
+        "text": "Deep-Diver",
+        "href": "/xalor/docs/api#register",
         "active": true
       }
     },
@@ -360,8 +360,8 @@
       },
       "subDescription": "When an incoming payload violates a structural layout boundary, the parsing phase aborts instantly without allocating unnecessary error objects in RAM. The execution flow automatically routes the validation exception directly into the Auditor Telemetry Pipeline, identifying the exact line file origin of the target TypeScript contract.",
       "link": {
-        "text": "Auditor Pipeline Implementation Specs",
-        "href": "",
+        "text": "More Validations",
+        "href": "/xalor/docs/api#validate",
         "active": true
       }
     },
@@ -372,7 +372,6 @@
       "description": "Validation is merely the entry gate. Leverage the unified type-graph infrastructure to trigger automated client SDK generation, orchestrate instant zero-maintenance test seed factories, or spin up live schema drift monitors using the local developer dashboard framework.",
       "subDescription": "Xalor breaks away from the industry-wide misconception that types are disposable, build-only artifacts or simple guardrails for validation rules. We treat your TypeScript architecture as a rich, multi-dimensional source of system intelligence. By saving and content-addressing the deep Abstract Syntax Tree relationships, a single source type model shifts from a static text file into a dynamic runtime primitive capable of generating self-healing infrastructure, deterministic simulation pools, and automated client layers."
     },
-
     "bottomLinks": [
       {
         "id": "3d42b389-9a49-4cfa-9a16-a890a7709518",
@@ -404,14 +403,14 @@
     "xalorRegister": {
       "id": "register",
       "intro": {
-        "header": "",
-        "description": "Register to the gloab vault in two ways. OFfering options given the implementations you desire",
+        "header": "Xalor Registration",
+        "description": "",
         "apiList": [
           { "id": "register", "name": "register", "status": "active" }
         ]
       },
       "typeRegistration": {
-        "header": "",
+        "header": "Register With Types",
         "description": "",
         "codeBlock": {
           "code": "",
@@ -419,15 +418,7 @@
         }
       },
       "dataRegistration": {
-        "header": "",
-        "description": "",
-        "codeBlock": {
-          "code": "",
-          "note": ""
-        }
-      },
-      "vaultViewExplained": {
-        "header": "",
+        "header": "Register With Data",
         "description": "",
         "codeBlock": {
           "code": "",
@@ -626,6 +617,7 @@
       }
     ]
   },
+  "playground": {},
   "sharedData": {
     "runtimeApiStatusList": {
       "link": {

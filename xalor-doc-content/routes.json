@@ -24,7 +24,7 @@
         { "id": "intro", "text": "Core Concept" },
         { "id": "single-source-truth", "text": "Source Of Truth" },
         { "id": "phantom-build-clean", "text": "Structural Eradication" },
-        { "id": "cache-stability", "text": "Ghost Emitter" },
+        { "id": "compiler-lifecycle-audit", "text": "Lifecycle Audit" },
         { "id": "type-graph-telemetry", "text": "Type-Graph Telemetry" },
         { "id": "empirical-benchmarks", "text": "Benchmarks" }
       ]
@@ -183,7 +183,7 @@
   "studioMainTabs": [
     {
       "id": "ce5bc238-45ee-4446-a827-2cf6ce7dede2",
-      "text": "System",
+      "text": "System Overview",
       "iconName": "sitemap",
       "active": true,
       "isExternal": false,
@@ -191,8 +191,17 @@
       "setId": "system"
     },
     {
+      "id": "ce5bc238-45ee-4446-a827-2cf6ce7dede2",
+      "text": "Blueprint Graph",
+      "iconName": "drafting-compass",
+      "active": true,
+      "isExternal": false,
+      "href": "#blueprint",
+      "setId": "blueprint"
+    },
+    {
       "id": "d2201ee0-7e6f-453f-928f-512bf7a8d2d9",
-      "text": "Type",
+      "text": "Type Overview",
       "iconName": "sparkles",
       "active": true,
       "isExternal": false,
@@ -201,7 +210,7 @@
     },
     {
       "id": "2662b805-806c-4a58-bb3f-0ac3b227c765",
-      "text": "Actions",
+      "text": "Runtime Actions",
       "iconName": "fast-flash-bolt",
       "active": true,
       "isExternal": false,

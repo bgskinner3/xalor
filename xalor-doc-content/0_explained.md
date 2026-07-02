@@ -82,3 +82,61 @@ To apply rich typographic styling inline without injecting heavy HTML or full ma
 
 <br/>
 <br/>
+
+
+
+
+```text
+
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                      THE HYBRID BUILD SPLIT                                                            │
+│                              Visualizing Side-by-Side Type Eradication & CAS Compaction                                                │
+├───────────────────────────────────────────────────────┬───────────────────────────────────────────────────────┬────────────────────────┤
+│ 1. COMPILE-TIME SOURCE CODE (Developer Input)         │ 2. REIFICATION GATE (The Production Split)            │ 3. DECOUPLED VAULT     │
+│ Native TypeScript Files (.ts)                         │ Erased Client Bundles vs Server Blueprints           │ server/blueprints.json │
+├───────────────────────────────────────────────────────┼───────────────────────────────────────────────────────┼────────────────────────┤
+│                                                       │                                                       │                        │
+│   // src/models/secure.ts                             │   // dist/client/bundle.js                            │ // Single-Instance CAS │
+│   type TTransactionSafe = {                           │   xalor.parse('sh_16c0mbs', data);                    │                        │
+│     id: string;                                       │                 │                                     │ type TSharedCurrency = {│
+│     status: 'pending' | 'completed';                  │                 │ (O(1) Memory Hydration)             │   value: string;       │
+│     amount: { value: string; exp: number }; ───┐      │                 ▼                                     │   exponent: number;    │
+│   };                                           │      │                                                       │ };                     │
+│                                                │      │   // dist/server/xalor.blueprints.json                │         ▲    ▲         │
+│                                                │(CAS) │   "sh_16c0mbs": {                                     │         │    │         │
+│   // src/models/base.ts                        ├──────┼──►  "id": "string",                                   │         │    │         │
+│   type TBaseTransaction = {                    │      │     "status": "union",                                │         │    │         │
+│     id: string;                                │      │     "amount": "sh_1cr65y8" ───────────────────────────┼─────────┘    │         │
+│     currency: string;                          │      │   },                                                  │              │         │
+│     amount: { value: string; exp: number }; ───┘      │                                                       │              │         │
+│   };                                                  │   "sh_1nculbp": {                                     │              │         │
+│                                                       │     "id": "string",                                   │              │         │
+│                                                       │     "currency": "string",                             │              │         │
+│                                                       │     "amount": "sh_1cr65y8" ───────────────────────────┼──────────────┘         │
+│                                                       │   }                                                   │                        │
+└───────────────────────────────────────────────────────┴───────────────────────────────────────────────────────┴────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                      THE PHANTOM BUILD HYBRID SPLIT                                                    │
+├───────────────────────────────────────────────────────┬───────────────────────────────────────────────────────┬────────────────────────┤
+│ 1. COMPILE-TIME SOURCE CODE (Developer Input)         │ 2. REIFICATION GATE (The Production Split)            │ 3. DECOUPLED VAULT     │
+│ Native TypeScript Interface Files (.ts)               │ Erased Client Bundles vs Server Blueprints           │ server/blueprints.json │
+├───────────────────────────────────────────────────────┼───────────────────────────────────────────────────────┼────────────────────────┤
+│                                                       │                                                       │                        │
+│   // src/models/secure.ts                             │   // dist/client/bundle.js                            │ // Blueprint Cache Card│
+│   type TTransactionSafe = {                           │   xalor.parse('sh_16c0mbs', data);                    │                        │
+│     id: string;                                       │                 │                                     │  "sh_1cr65y8": {       │
+│     status: 'pending' | 'completed';                  │                 │ (O(1) Memory Hydration Map)         │    "kind": "object",   │
+│     amount: { value: string; exp: number }; ───┐      │                 ▼                                     │    "properties": {     │
+│   };                                           │      │                                                       │  ┌───"value": {        │
+│                                                │      │   // dist/server/xalor.blueprints.json                │  │     "type": "string",│
+│   // src/models/base.ts                        │(CAS) │   "sh_16c0mbs": {                                     │  │     "maxLength": 4096│
+│   type TBaseTransaction = {                    ├──────┼──►  "amount": { "name": "sh_1cr65y8" } ──────────────┼──┤   },               │
+│     id: string;                                │      │   },                                                  │  └───"exponent": {     │
+│     currency: string;                          │      │                                                       │        "type": "number"│
+│     amount: { value: string; exp: number }; ───┘      │   "sh_1nculbp": {                                     │      }                 │
+│   };                                                  │     "amount": { "name": "sh_1cr65y8" } ───────────────┘    }                   │
+│                                                       │   }                                                   │  }                     │
+└───────────────────────────────────────────────────────┴───────────────────────────────────────────────────────┴────────────────────────┘
+
+
+```
