@@ -400,118 +400,204 @@
       "overline": "Client Subsystems",
       "iconName": "cpu-duotone"
     },
+
     "xalorRegister": {
       "id": "register",
       "intro": {
-        "header": "Xalor Registration",
-        "description": "",
+        "header": "Compile-Time Type Registration",
+        "description": "Centralized initialization gateway that intercepts static type contracts during compilation and maps them directly into physical server-side blueprints, leaving **absolute zero runtime compilation cost** inside your production bundle.",
+        "subDescription": "The primary, zero-overhead automated extraction channel. When a developer registers a contract using explicit TypeScript definitions, the background compiler plugin intercepts the generic parameter tokens, extracts the complete Abstract Syntax Tree (AST) layout, and completely strips the type telemetry from the executable bundle file. It transforms the expression into a pre-compiled JSON schema blueprint on disk while logging **line-precise GPS file coordinates** for instant runtime trace diagnostics.",
         "apiList": [
-          { "id": "register", "name": "register", "status": "active" }
+          { "id": "register", "name": "registerXalor", "status": "active" }
         ]
       },
       "typeRegistration": {
         "header": "Register With Types",
-        "description": "",
+        "description": "Extracts native TypeScript generic parameters at build time, converting the static interface into a pre-compiled JSON schema while erasing 100% of the type telemetry from your client bundle.",
         "codeBlock": {
-          "code": "",
-          "note": ""
+          "code": "// 🚀 DESIGN-TIME INVOCATION (What developers write in their source files)\nregisterXalor<\"User\", IUser>();\n\n// ⚙️ TRANSPILED COMPILATION OUTPUT (The Scout rewrites this expression behind the scenes)\n// The compiler completely erases the heavy generic type parameters to protect client bundle size\n// It injects line-precise GPS code coordinates linked straight to your source code directory map\nregisterXalor({\n  key: \"User\",\n  shape: { kind: \"object\", properties: { ... } },\n  area: \"src/models/user.ts:12:1\",\n  filePath: \"src/models/user.ts\",\n  symbolName: \"IUser\",\n  typeName: \"User\"\n});",
+          "note": "Look at the transpiled output string. The compiler completely erases the heavy generic block and embeds line-precise _GPS code coordinates_ and a pre-compiled structural layout map directly into the artifact, giving your runtime engine a **hard-zero compilation boot tax**."
         }
       },
       "dataRegistration": {
         "header": "Register With Data",
-        "description": "",
+        "description": "Infers structural data metadata implicitly from a concrete JavaScript object shape, dynamically generating a validated contract manifest without requiring a pre-existing TypeScript interface definition.",
         "codeBlock": {
-          "code": "",
-          "note": ""
+          "code": "// 🚀 DESIGN-TIME INVOCATION (What developers write in their source files)\n// Bypasses manual typing overhead completely by extracting layout structures dynamically\nconst configInstance = { host: \"localhost\", port: 8080 };\nregisterXalor<\"AppConfig\">(configInstance);\n\n// ⚙️ TRANSPILED COMPILATION OUTPUT (The Scout rewrites this expression behind the scenes)\n// The background toolchain analyzes the properties of the data shape natively on save\nregisterXalor({\n  key: \"AppConfig\",\n  shape: { kind: \"object\", properties: { host: { shape: { kind: \"string\" } }, port: { shape: { kind: \"number\" } } } },\n  area: \"src/config/app.ts:4:1\",\n  filePath: \"src/config/app.ts\",\n  symbolName: \"AppConfig\",\n  typeName: \"AppConfig\"\n});",
+          "note": "When evaluating raw values, Xalor bypasses manual typing overhead entirely. The background toolchain analyzes the properties of the object shape during compilation, generating a **self-healing contract manifest mapping** natively on save with zero folder pollution."
         }
       }
     },
     "xalorValidate": {
       "id": "validate",
       "intro": {
-        "header": "",
-        "description": "",
+        "header": "Runtime Enforcement Gates",
+        "description": "High-velocity runtime execution channels that validate incoming payloads using flat, fast `O(1)` memory pointer matching—completely bypassing traditional recursive graph evaluation.",
         "apiList": [
           { "id": "0636-44e3-8", "name": "guard", "status": "active" },
           { "id": "7b2a-412e-87d", "name": "parse", "status": "active" }
         ]
       },
       "guard": {
-        "header": "",
-        "description": "",
+        "header": "Guard (xalor.guard)",
+        "description": "Operates as a dual-mode enforcement gateway: returns a stateless type predicate closure when curried, or executes an immediate boolean inline narrowing pass when a runtime payload is passed directly.",
         "codeBlock": {
-          "code": "",
-          "note": ""
-        }
+          "code": "// 🚀 TRACK A: CLOSURE GENERATION MODE (Zero-argument currying pass)\n// Curries the execution block to generate an isolated, reusable type predicate closure\nconst isUserValid = xalor.guard('USER_ACCOUNT');\n\nif (isUserValid(rawPayload)) {\n  // rawPayload is safely narrowed and nominally branded to ISolidRegistry['USER_ACCOUNT']\n  console.log(rawPayload.username);\n}\n\n\n// 🚀 TRACK B: DIRECT INLINE ENFORCEMENT MODE (Immediate predicate evaluation pass)\n// Bypasses closure generation to execute an instant structural evaluation over the payload shape\nif (xalor.guard(rawPayload, 'USER_ACCOUNT')) {\n  // Under the hood, the engine auto-detects the argument arity and resolves the lookup map instantly\n  console.log(rawPayload.username);\n}",
+          "note": "The `guard` gate scales with your execution context. Curried track maps are highly optimized for streaming network ingress pipes or upstream event loops, while direct inline checks provide instantaneous, zero-boilerplate variable narrowing inside local function architectures."
+        },
+        "parametersList": [
+          {
+            "name": "keyOrPayload",
+            "type": "String | Object",
+            "required": true,
+            "description": "Polymorphic primary argument. In Currying Mode (Track A), pass the String blueprint token key. In Direct Mode (Track B), pass the raw, untrusted incoming runtime object payload instance."
+          },
+          {
+            "name": "dataKey",
+            "type": "String",
+            "required": true,
+            "description": "The target key token identifying your precompiled registry contract definition. Required exclusively when executing Direct Mode (Track B) inline enforcement passes."
+          }
+        ]
       },
       "parse": {
-        "header": "",
-        "description": "",
+        "header": "Parse (xalor.parse)",
+        "description": "Synchronously processes data ingress contracts, enforcing a strict, fail-fast boundary gate that intercepts malformed streams.",
         "codeBlock": {
-          "code": "",
-          "note": ""
-        }
+          "code": "// 🚀 DESIGN-TIME INVOCATION (Synchronous Schema Parsing Track)\n// Processes data ingress contracts instantly against pre-compiled Vault registry blueprints\ntry {\n  const verifiedUser = validateXalorParse('USER_ACCOUNT', rawPayload);\n  // ✅ Invariant: Enforces fail-fast boundary gate, avoiding micro-task queue overhead\n  // rawPayload is safely validated, cast, and cryptographically branded to the Registry target!\n  console.log(verifiedUser.username);\n} catch (error) {\n  // Outputs traceable, line-precise GPS terminal diagnostics on contract breach\n  console.error(\"Ingress Validation Failed:\", error.message);\n}",
+          "note": "Because structural evaluation happens entirely at build-time, `validateXalorParse` executes at hardware-level speeds with absolute zero client-side parser runtime parsing overhead."
+        },
+        "parametersList": [
+          {
+            "name": "dataKey",
+            "type": "String",
+            "required": true,
+            "description": "The target key token identifying your precompiled registry contract definition. Required exclusively when executing Direct Mode (Track B) inline enforcement passes."
+          },
+          {
+            "name": "data",
+            "type": "unknown",
+            "required": true,
+            "description": "The raw incoming, untrusted runtime object payload instance to evaluate against the matching Vault registry map."
+          }
+        ]
       }
     },
     "xalorGenerate": {
       "id": "generate",
       "intro": {
-        "header": "",
-        "description": "",
+        "header": "The Generation Pillar Layer",
+        "description": "Standardized polymorphic runtime gateway that materializes safe, baseline object structures out of precompiled Vault registry blueprints using zero runtime strategy allocations.",
         "apiList": [
           { "id": "9f8d-4b53-a", "name": "default", "status": "active" },
           { "id": "cfae-e3-b9", "name": "cast", "status": "inProgress" }
         ]
       },
       "default": {
-        "header": "",
-        "description": "",
+        "header": "Default (xalor.default)",
+        "description": "Manufactures clean, pristine zero-state object models with guaranteed schema-valid default primitive leaf values to shield downstream code from undefined property crashes.",
         "codeBlock": {
-          "code": "",
-          "note": ""
-        }
+          "code": "// 🚀 TRACK A: DIRECT METHOD INVOCATION (Explicit Key Ingress)\n// Pre-populates primitive leaf properties exclusively with system primitives (\"\", 0, false)\nconst emptyUserForm = generateXalorDefault('USER_ACCOUNT');\n\n// emptyUserForm is safely manufactured, pre-hydrated, and nominally branded!\nconsole.log(emptyUserForm.username); // \"\"\nconsole.log(emptyUserForm.active);   // false\n\n\n// 🚀 TRACK B: POLYMORPHIC GATEWAY INVOCATION (Generic Macro Extraction Track)\n// Build-time generic parameters <\"KEY\", \"mode\"> are stripped and injected at indices 1 and 2 at runtime\nconst emptyUser = generateXalor<'User', 'default'>();\n\n// ✅ Invariant: Zero 'any' variables, zero type escape assertions, zero manual casting hooks\nconsole.log(emptyUser.username); // \"\"",
+          "note": "The `default` generation layer eliminates manual seeding boilerplate. By reading type specifications flatly out of the main Vault Registry, it structures guaranteed valid models instantly without incurring task queue overhead or middleman switchboard traversal layers."
+        },
+        "parametersList": [
+          {
+            "name": "dataKey",
+            "type": "String",
+            "required": true,
+            "description": "The target key token identifying your precompiled registry contract definition. Required exclusively when executing Direct Mode (Track B) inline enforcement passes."
+          }
+        ]
       },
       "cast": {
-        "header": "",
-        "description": "",
+        "header": "Cast (xalor.cast)",
+        "description": "Coerces loose runtime data values cleanly into the exact structural and primitive types demanded by your type blueprint contracts with zero-allocation inline strategy dispatch.",
         "codeBlock": {
-          "code": "",
-          "note": ""
-        }
+          "code": "// 🚧 METHOD UNDER PRODUCTION PASS (Current Status: inProgress)\n// Coerces loose runtime data values cleanly into exact structural blueprint criteria\nconst loosePayload = { id: \"404\", username: 'selina', active: \"true\" };\nconst castedAsset = generateXalorCast('USER_ACCOUNT', loosePayload);\n\n// Under the hood, the engine forces the untrusted payload through primitive type coercers\nconsole.log(castedAsset.id);     // 404 (Safely coerced to an active number token!)\nconsole.log(castedAsset.active); // true (Safely coerced to an active boolean token!)\n\n// ✅ Invariant: Zero 'any' variables, zero manual type escape hatches or casting overrides",
+          "note": "The `cast` gateway is configured for raw data ingestion channels. It functions as an inline strategy dispatch that tree-shakes fully from client distribution bundles, executing structural type coercion exclusively based on your static Vault Registry maps."
+        },
+        "parametersList": []
       }
     },
     "xalorTransform": {
       "id": "transform",
       "intro": {
-        "header": "",
-        "description": "",
+        "header": "Structural Transformation Suite",
+        "description": "High-velocity data manipulation engines that clone, sanitize, or fuse pre-compiled structural trees on the fly in memory with zero middleware overhead.",
         "apiList": [
           { "id": "4c2a-4573-a859", "name": "clone", "status": "active" },
           { "id": "18f5-4d56-bc94", "name": "merge", "status": "active" }
         ]
       },
       "clone": {
-        "header": "",
-        "description": "",
+        "header": "Clone (xalor.clone)",
+        "description": "Performs a deep, circular-safe duplicate copy of an input object while physically scrubbing away any properties or keys not explicitly defined in the target blueprint contract.",
         "codeBlock": {
-          "code": "",
-          "note": ""
-        }
+          "code": "// 🚀 DESIGN-TIME INVOCATION (Deep Structural Copy & Sanmitization Track)\nconst dirtyPayload = { id: 101, username: 'neo', untrackedHackerKey: 'exploit' };\nconst cleanClone = generateXalorClone('USER_ACCOUNT', dirtyPayload);\n\n// ✅ Invariant: Zero-allocation inline strategy dispatch; tree-shakes fully from client profiles\nconsole.log(cleanClone.username); // \"neo\"\nconsole.log(Reflect.has(cleanClone, 'untrackedHackerKey')); // false (Scrubbed completely by contract!)",
+          "note": "Unlike traditional deep clone utilities that blindly copy object structures, `generateXalorClone` processes fields strictly against precompiled type singletons to purge malicious reverse-engineering vectors automatically."
+        },
+        "parametersList": [
+          {
+            "name": "dataKey",
+            "type": "String",
+            "required": true,
+            "description": "The target key token identifying your precompiled registry contract definition. Required exclusively when executing Direct Mode (Track B) inline enforcement passes."
+          },
+          {
+            "name": "data",
+            "type": "unknown",
+            "required": true,
+            "description": "The raw incoming object payload stream to deeply duplicate and sanitize against your structural contract."
+          }
+        ]
       },
       "merge": {
-        "header": "",
-        "description": "",
+        "header": "Merge (xalor.merge)",
+        "description": "Executes single-pass deep object mutations by unrolling baseline graphs, recursively overlaying delta patches, and processing functional filter masks natively while maintaining class prototypes.",
         "codeBlock": {
-          "code": "",
-          "note": ""
-        }
+          "code": "// 🚀 TRACK 1: FLAT OVERRIDE (dataTwo acts as an absolute override patch layer)\nconst result1 = xalor.merge<'USER_TEST'>({ \n  dataOne: { id: 101, username: 'XalethorOriginal', active: false }, \n  dataTwo: { username: 'XalethorPatched', active: true }\n}); // Returns: { id: 101, username: 'XalethorPatched', active: true }\n\n// 🚀 TRACK 2: ARRAY COLLECTION SYMMETRY (Steps into collections item-by-item by index)\nconst result2 = xalor.merge<'STORE_ORDER'>({\n  dataOne: { orderId: 'ORD-707', items: [{ SKU: 'PROD-A', quantity: 1 }, { SKU: 'PROD-B', quantity: 5 }] },\n  dataTwo: { items: [{ quantity: 3 }, { SKU: 'PROD-B-UPDATED' }, { SKU: 'PROD-C-NEW', quantity: 9 }] }\n}); // Returns index-aligned updates and seamlessly appends trailing items\n\n// 🚀 TRACK 3: COMPOUND DEPTH MUTATION (Recursively updates layers deep across compound boundaries)\nconst result3 = xalor.merge<'DEEPLY_NESTED_STORE'>({\n  dataOne: { orderId: 'ORD-DEEP', items: [{ SKU: 'CHIP-V1', logistics: { warehouseCode: 'CENTRAL-01', dimensions: { weight: 0.5, fragile: false } } }] },\n  dataTwo: { items: [{ logistics: { dimensions: { fragile: true } } }] }\n}); // Safely mutates nested 'fragile' flag without wiping adjacent warehouse metadata\n\n// 🚀 TRACK 4: PIPELINE FILTER MATRIX (Executes continuous Merge ➔ Pick ➔ Omit ➔ Map lifecycle in 1 pass)\nconst result4 = xalor.merge<'USER_TEST'>({\n  dataOne: { id: 505, username: 'SkinnerOriginal', active: false },\n  dataTwo: { username: 'SkinnerMorphed', active: true },\n  pick: ['id', 'username', 'active'],\n  omit: ['active'],\n  map: { id: (currentId) => currentId + 1000, username: (name) => name.toUpperCase() }\n}); // Returns: { id: 1505, username: 'SKINNERMORPHED' } (active field is pruned cleanly)\n\n// 🚀 TRACK 5: SIBLING CONTEXT MAPPING (Functional maps supply parentGraph flat context as a reference)\nconst result5 = xalor.merge<'USER_TEST'>({\n  dataOne: { id: 711, username: 'Agent_Zero', active: true },\n  dataTwo: { id: 999 },\n  map: { username: (name, parent) => parent.id === 999 ? 'AGENT_UPGRADED' : name }\n}); // Returns: { id: 999, username: 'AGENT_UPGRADED', active: true }\n\n// 🚀 TRACK 6: ADVERSARIAL PROTOTYPE RETENTION (Preserves native class constructor layouts when patched via literals)\nclass DatabaseUserRecord { id = 808; username = 'BaseClassInstance'; }\nconst result6 = xalor.merge<'USER_TEST'>({ dataOne: new DatabaseUserRecord(), dataTwo: { username: 'UpgradedClassInstance' } });\nObject.getPrototypeOf(result6) === DatabaseUserRecord.prototype; // ✅ true (Commandment V Compliance)\n\n// 🚀 TRACK 7: INTENTIONAL STATE NULLIFICATION (Explicit null declarations overwrite, undefined variables ignored)\nconst result7 = xalor.merge<'USER_TEST'>({\n  dataOne: { id: 404, username: 'PersistentUser', active: true },\n  dataTwo: { username: null, active: undefined }\n}); // Returns: { id: 404, username: null, active: true }",
+          "note": "The `merge` toolchain scales effortlessly across complex application topologies. By executing graph operations inside an isolated single-pass architecture, it delivers hard cryptographic guard compliance while maintaining absolute performance parity on highly persistent serverless edge request paths."
+        },
+        "parametersList": [
+          {
+            "name": "dataOne",
+            "type": "Object",
+            "required": true,
+            "description": "The authoritative, baseline object structure to mutate. Reads static type specifications flatly out of the main Vault Registry."
+          },
+          {
+            "name": "dataTwo",
+            "type": "Object",
+            "required": true,
+            "description": "The incoming delta patch layer. Object Two acts as an absolute override patch layer over Object One."
+          },
+          {
+            "name": "pick",
+            "type": "Array",
+            "required": false,
+            "description": "Explicit whitelist of property keys to retain at depth layer zero. Selection masks prune out unnamed fields."
+          },
+          {
+            "name": "omit",
+            "type": "Array",
+            "required": false,
+            "description": "Blacklist of property fields to prune completely from the remaining keys. Exclusion masks handle deep pruning."
+          },
+          {
+            "name": "map",
+            "type": "Object",
+            "required": false,
+            "description": "Functional mapping callbacks executed over fully-sanitized target fields. Supplies the parent context graph flatly as an available callback parameter."
+          }
+        ]
       }
     },
     "xalorMatch": {
       "id": "match",
       "intro": {
-        "header": "",
-        "description": "",
+        "header": "Advanced Toolchain Diagnostics & Integrity Gates",
+        "description": "Validation is just a baseline side-effect. This suite houses Xalor’s advanced runtime platform capabilities—delivering hyper-optimized engines configured to trace schema evolutions, evaluate deep compound anomalies, and enforce cryptographic infrastructure boundaries in real time.",
+        "subDescription": "By analyzing your application's data models as an interconnected isomorphic network topology, these gates protect your distributed system boundaries against unexpected drift, structural degradation, and upstream API contract failures.",
         "apiList": [
           { "id": "e395-47b2-9dfd", "name": "drift", "status": "active" },
           { "id": "4bf-f5ae-e3", "name": "composite", "status": "inProgress" },
@@ -519,27 +605,77 @@
         ]
       },
       "drift": {
-        "header": "",
-        "description": "",
+        "header": "matchXalorDrift",
+        "description": "An upstream versioning bridge and migration gate that safely catches out-of-sync or legacy payloads, validates them against historical blueprint ancestors, and upcasts them to current structural type specifications on the fly in memory.",
+        "parametersList": [
+          {
+            "name": "payload",
+            "type": "unknown",
+            "required": true,
+            "description": "The raw, untrusted incoming runtime object payload instance to evaluate."
+          },
+          {
+            "name": "ctx.currentKey",
+            "type": "String",
+            "required": true,
+            "description": "The target key mapping identifying today's active modern model schema definition."
+          },
+          {
+            "name": "ctx.ancestralKey",
+            "type": "String",
+            "required": true,
+            "description": "The target key mapping identifying yesterday's historical blueprint ancestor schema definition."
+          },
+          {
+            "name": "ctx.strict",
+            "type": "Boolean",
+            "required": false,
+            "description": "When true, forces rigid validation checks across all ancestral fields."
+          },
+          {
+            "name": "ctx.prune",
+            "type": "Boolean",
+            "required": false,
+            "description": "When true, instructs the sanitation engine to destructively shear obsolete or untracked properties in-place out of physical memory layout grids."
+          },
+          {
+            "name": "ctx.current",
+            "type": "Function",
+            "required": true,
+            "description": "The primary execution lane triggered when the payload perfectly satisfies today's modern schema definition."
+          },
+          {
+            "name": "ctx.v1_ancestor",
+            "type": "Function",
+            "required": true,
+            "description": "The fallback upcast lane triggered when data matches yesterday's schema. Provides a fully type-safe, legacy-typed mutation closure."
+          },
+          {
+            "name": "ctx.default",
+            "type": "Function",
+            "required": true,
+            "description": "The recovery channel circuit breaker triggered when data fails both today's schema and yesterday's ancestor schema layout. Handles network anomalies gracefully without throwing unhandled exceptions."
+          }
+        ],
         "codeBlock": {
-          "code": "",
-          "note": ""
+          "code": "// 🚀 TRACK 1: ACTIVE GENERATION LANE (Pristine Modern Payload Routing Pass)\n// If the payload completely satisfies today's modern definition, it skips upcasting and hits current()\nconst result1 = xalor.drift<'USER_ACCOUNT_EVOLUTION'>(modernPayload, {\n  currentKey: 'USER_TEST', ancestralKey: 'USER_TEST_V1_ANCESTOR', strict: true,\n  current: (v2Data) => v2Data, // Returns pristine data; Nominally branded to V2 natively via xalor.guard\n  v1_ancestor: () => { throw new Error('Invariant Breach: Legacy upcaster fired on native modern shape.'); },\n  default: () => { throw new Error('Invariant Breach: Baseline layout engine tripped into default.'); }\n});\n\n// 🚀 TRACK 2: ANCESTRAL UPCAST & PRUNE (Intercepts legacy shapes, runs mappers, shears remnants)\n// If data matches yesterday's layout, v1_ancestor() provides full type safety and IDE autocomplete for yesterday's exact fields\nconst result2 = xalor.drift<'STORE_LEDGER_EVOLUTION'>(legacyPayload, {\n  currentKey: 'STORE_ORDER', ancestralKey: 'STORE_ORDER_V1_ANCESTOR', strict: false, prune: true,\n  current: () => { throw new Error('Invariant Breach: Modern release channel intercepted corrupted historical data.'); },\n  v1_ancestor: (v1Data) => {\n    return { orderId: v1Data.orderId, items: [{ SKU: v1Data.legacySKU, quantity: v1Data.legacyQty }] };\n  },\n  default: () => { throw new Error('Invariant Breach: Valid migration timeline dropped down to recovery loops.'); }\n}); // If prune: true, obsolete properties (e.g., rogue client telemetry metrics) are sheared in-place out of physical RAM\n\n// 🚀 TRACK 3: CIRCUIT BREAKER RECOVERY (Clean fall-through when data matches nothing)\n// If a malformed payload violates both today's and yesterday's schemas, the default() fallback lane handles the structural error natively\nconst result3 = xalor.drift<'USER_ACCOUNT_EVOLUTION'>(corruptedPayload, {\n  currentKey: 'USER_TEST', ancestralKey: 'USER_TEST_V1_ANCESTOR', strict: true,\n  current: (v2Data) => v2Data,\n  v1_ancestor: (v1Data) => ({ id: v1Data.id, username: v1Data.username, active: false }),\n  default: () => ({ id: 0, username: 'system_anonymous_recovery_fallback', active: false }) // Returns a valid fallback interface\n}); // Prevents unhandled processing crashes while explicitly branding the recovery output as a valid USER_TEST entity\n\n// 🚀 TRACK 4: NATIVE WEB-PLATFORM STREAMING (Validates complex native interfaces, closures, and streams)\n// The background AOT transformer intercepts call expressions and appends trailing tokens positionally\nconst result4 = xalor.drift<'ADVANCED_PIPELINE_EVOLUTION'>(complexPayload, {\n  currentKey: 'ADVANCED_COMPLEXITY_SHAPE', ancestralKey: 'ADVANCED_COMPLEXITY_V1_ANCESTOR', strict: true,\n  current: (v2Data) => v2Data, // Handles native platform class instances, instances of TransformStream, and closure functions seamlessly\n  v1_ancestor: () => { throw new Error('Invariant Breach: Target hit incorrect historical lane.'); },\n  default: () => ({ __FALLBACK_TRIGGERED__: true })\n});",
+          "note": "The `drift` framework acts as an ironclad perimeter wall for asynchronous deployments. By combining multi-track branch parsing with clean in-place field sanitization (`prune: true`), it maps distributed data contracts instantly while treating transformation variables as transient memory objects—garbage-collecting them immediately upon function exit to ensure total immunity from memory bloat."
         }
       },
       "composite": {
-        "header": "",
-        "description": "",
+        "header": "matchXalorComposite",
+        "description": "A dynamic structural intersection switchboard that evaluates untyped payloads against an ad-hoc, on-the-fly combination of multiple discrete blueprint hashes or token keys in volatile heap memory.",
         "codeBlock": {
-          "code": "",
-          "note": ""
+          "code": "// 🚀 DYNAMIC STRUCTURAL INTERSECTION VERIFICATION PASS (Under Production Pass)\n// Combines multiple separate, pre-compiled registry models into a fluid, transient blueprint on the fly\nconst combinedRoute = matchXalorComposite(['USER_PROFILE', 'sh_14rk84m'], mixedIncomingPayload, {\n  // 🚀 LANE 1: THE COMPOUND STRUCTURAL TRAIT SUCCESS PASS\n  // Blueprints are evaluated Left-to-Right under the Sequential Object Assign Override Law\n  // Overlapping rules automatically adopt the strictest possible variant via Cascading Strictness\n  success: (enrichedData) => {\n    return `Account Verified: ${enrichedData.profile.name} | Total Posts: ${enrichedData.posts}`;\n  },\n\n  // 🚀 LANE 2: THE SECURITY CIRCUIT BREAKER FALLBACK PASS\n  // Triggered on contract failure or if the input array crosses the defensive Breadth Bomb Cap (max 8 keys)\n  default: () => 'SECURITY ALERT: Payload fails compound structural trait criteria'\n});\n\n// 🔍 WHAT INTELLISENSE SEES WHEN YOU HOVER OVER THIS SITE:\n// type TEnrichedRoute = xalor.composite<['USER_PROFILE', 'sh_14rk84m']>;\n// type TEnrichedRoute = { id: string; profile: { name: string; isVerified: boolean; }; posts: number; ... }",
+          "note": "The `composite` gateway treats your precompiled registry as a fluid library of reusable structural components. To maintain microsecond velocities, the engine executes a Shallow Object Deflation Bypass—flattening only the top-level property keys of the merged blueprints during dynamic compilation while passing deeply interned child references directly to the standalone validator core to isolate the host memory budget and prevent dynamic cache loops from causing V8 RAM bleed."
         }
       },
       "diff": {
-        "header": "",
-        "description": "",
+        "header": "xalor.diff",
+        "description": "Architectural research channel that leverages centralized build-time serialized registry snapshots to perform immediate, O(1) runtime structural delta verifications between independent data schemas.",
         "codeBlock": {
-          "code": "",
-          "note": ""
+          "code": "// 🔬 MODULE UNDER HIGH-LEVEL ARCHITECTURAL RESEARCH (Current Status: research)\n// Compares separate keys inside your registry metadata block point-free, computing an exact structural overlapping matrix\nconst compatibilityMatrix = xalor.diff<'USER_ACCOUNT', 'USER_PROFILE'>({\n  sourceModelKey: 'USER_ACCOUNT', // Today's modern, expanded User schema profile\n  targetModelKey: 'USER_PROFILE', // The slimmed down, nested Profile interface view\n  strict: true,                   // Rejects the execution if extraneous property overflows are detected\n\n  // 🚀 LANE 1: ASYMMETRIC CONFLICT ALERT PASS (Fired on structural contract breach)\n  // Exposes exact missing keys, path deltas, and type incompatibilities natively via IDE hover cards\n  onMismatch: (diffReport) => {\n    // ✅ Invariant: Deeply nested object graphs enforce a strict recursion depth limit ceiling to prevent build-time AST scanner loops\n    throw new Error(\n      `[xalor] 🚨 MICROSERVICE CONTRACT CLASH FIRED AT: ${diffReport.violatingPath}\\n` +\n      `Expected structural type alignment matching '${diffReport.expectedType}', but received '${diffReport.receivedType}'.`\n    );\n  },\n\n  // 🚀 LANE 2: CONFORMING INTERSECTION FLOW PASS (Executed if schemas are compatible for safe data transfer)\n  // Verifies parameter layout compatibility using pre-calculated build-time snapshots rather than active runtime algorithms\n  onCompatible: (intersectionGraph) => {\n    // ✅ Invariant: Closure serialization restriction bounds check cannot verify the internal behavioral logic of function bodies itself\n    return XalethorService.initializeCrossServiceBridge(intersectionGraph as any);\n  }\n});",
+          "note": "The `diff` engine completely eliminates silent contract breakages in distributed microservice architectures. Because complex TypeScript property nesting variances are unrolled entirely into flat, trace-optimized bitmap arrays by the AOT compiler pass, live production nodes evaluate cross-service network compatibility via blazing-fast index lookups—maintaining an absolute hard-zero performance tax and near-zero runtime memory budget."
         }
       }
     },
