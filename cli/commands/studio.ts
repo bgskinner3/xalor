@@ -2,7 +2,7 @@
 import { resolveXalorPaths } from '../../shared/utils';
 import { STUDIO_COMMAND_CONFIG } from '../models';
 import { studioEngine } from '../service';
-
+// import { auditEngineService } from '../service';
 /**
  * RUN STUDIO COMMAND (Refactored: Immediate Payload Output & Exit)
  *
@@ -25,7 +25,10 @@ export async function runStudioCommand(projectRootPath: string): Promise<void> {
     // Direct linear compilation pass
     const freshPayload =
       await studioEngine.compileDashboardOverviewDataset(port);
-
+    // const freshPayload = await auditEngineService.executeFullAuditRun({
+    //   fix: false,
+    //   debug: false,
+    // });
     // Deep recursive output flush to console
     console.dir(freshPayload, {
       depth: null,

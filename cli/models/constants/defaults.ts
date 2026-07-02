@@ -72,6 +72,7 @@ export const DEFAULT_AUDIT_SHARED_PAYLOAD: TDeepWriteable<TAuditToStudioSharedDa
     telemetry: DEFAULT_AUDIT_PAYLOAD.telemetry,
     lifecycleFootprint: DEFAULT_AUDIT_PAYLOAD.lifecycleFootprint,
     drift: { hasBreakingChanges: false, mutations: [] },
+    topology: { edges: [], cyclicPaths: [] },
   } satisfies TDeepWriteable<TAuditToStudioSharedData>;
 /**
  * createInitialTelemetryPayload
@@ -107,22 +108,7 @@ export function createInitialTelemetryPayload(): TDeepWriteable<TXalorAuditTelem
 }
 export const INITIAL_MUTABLE_TELEMETRY_TEMPLATE =
   createInitialTelemetryPayload();
-/**
- * INITIAL_MUTABLE_TELEMETRY_TEMPLATE
- * ROLE: Deeply mutable static zero-state template structure tracking API distributions.
- * STRATEGY: Compiles metrics point-free exactly once on engine boot from TELEMETRY_API_TOKEN_NAMES.
- * Recursively un-locks all 'readonly' modifiers to allow direct runtime accumulator additions.
- */
-// export const INITIAL_MUTABLE_TELEMETRY_TEMPLATE: TDeepWriteable<TXalorAuditTelemetry> =
-//   {
-//     orphanedKeys: [],
-//     strategyDistribution: TELEMETRY_API_TOKEN_NAMES.map(
-//       (token): TDeepWriteable<TTelemetryStrategyShape> => ({
-//         strategyToken: token,
-//         invocationCount: 0,
-//       }),
-//     ),
-//   } satisfies TDeepWriteable<TXalorAuditTelemetry>;
+
 /**
  * CREATE BASE AUDIT NODE RECORD
  * ROLE: Factory utility generating an unallocated, unique object template to insulate properties.
@@ -188,6 +174,7 @@ export const DEFAULT_STUDIO_PAYLOAD: IStudioOverviewPayload = {
     lastTelemetrySyncTimestamp: Date.now(),
   },
   blueprints: {},
+  topology: { edges: [], cyclicPaths: [] },
 } satisfies IStudioOverviewPayload;
 
 export const STUDIO_NODE_TEMPLATE: TDeepWriteable<TStudioNodeItem> = {

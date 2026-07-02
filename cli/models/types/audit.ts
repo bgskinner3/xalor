@@ -204,6 +204,7 @@ export type TAuditToStudioSharedData = {
   readonly telemetry: TXalorAuditTelemetry;
   readonly lifecycleFootprint: TXalorAuditLifecycleFootprint;
   readonly drift: TXalorAuditDrift;
+  readonly topology: TXalorAuditTopology;
 };
 /**
  * TPackageSizeMetrics
@@ -340,6 +341,24 @@ export type TCapturedAPICall = {
   readonly apiMode: string;
   readonly targetKey: string;
   readonly strategyToken: string;
+};
+
+// ================================================================
+// ================================================================
+// ================================================================
+// TopologyAuditService
+// ================================================================
+// ================================================================
+// ================================================================
+export type TTopologyEdgeParams = {
+  readonly shape: TSolidShape;
+  readonly sourceKey: string;
+  readonly edges: TTopologyEdge[];
+  readonly recurse: (shape: TSolidShape) => void;
+};
+
+export type TTopologyEdgeStrategyMap = {
+  readonly [K in TSolidShape['kind']]: (params: TTopologyEdgeParams) => void;
 };
 
 // ================================================================

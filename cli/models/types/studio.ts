@@ -4,11 +4,11 @@ import type {
   TTripleKV,
   TDeepWriteable,
 } from '../../../shared';
-
 import { TELEMETRY_API_TOKEN_NAMES } from '../constants';
 import type {
   TXalorAuditLifecycleFootprint,
   TAuditToStudioSharedData,
+  IXalorAuditPayload,
 } from './audit';
 
 /**
@@ -186,6 +186,7 @@ export interface IStudioOverviewPayload {
   registryItems: Record<string, TStudioNodeItem>;
   environment: TDeepWriteable<TEnvironment>;
   blueprints: TTripleKV['blueprints'];
+  topology: IXalorAuditPayload['topology'];
 }
 
 export type TServerCommands = Partial<Record<NodeJS.Platform, string>>;

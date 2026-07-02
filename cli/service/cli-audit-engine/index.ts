@@ -155,6 +155,9 @@ export class AuditEngineService extends AuditPresenterService {
       rawVaultData,
       'studio',
     );
+
+    /* prettier-ignore */
+    const topology = topologyAuditService.analyzeDependencyGraphTopology(rawVaultData);
     const lifecycleFootprint =
       packageAuditorService.computeLifecycleFootprintDeltas(rawVaultData);
 
@@ -177,6 +180,7 @@ export class AuditEngineService extends AuditPresenterService {
       telemetry,
       drift,
       lifecycleFootprint,
+      topology,
     };
   }
 }

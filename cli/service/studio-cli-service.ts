@@ -221,6 +221,11 @@ export class StudioCLIEngineService {
     // =========================================================================
     /* prettier-ignore */ studioPayload.environment.activePort = activePort;
 
+    // =========================================================================
+    // TOPOLOGY AND EDGE NODES
+    // =========================================================================
+    /* prettier-ignore */ studioPayload.topology = sharedData.topology;
+
     // 3. EXECUTE REGISTRY HYDRATION INTERACTION PASS
     this.formatNodes(
       { studioPayload, sharedData, rawVaultData },

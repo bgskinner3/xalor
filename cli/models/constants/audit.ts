@@ -1,10 +1,21 @@
 import { SENTRY_TRIGGER_MODES } from '../../../shared';
-import { ObjectUtils } from '../../../shared/utils';
+import { ObjectUtils, yieldItems } from '../../../shared/utils';
 import type {
   TReferenceCollectorMapper,
   TPropertyDeltaContext,
   TPropertyDriftRule,
+  TTopologyEdgeStrategyMap,
 } from '../types';
+import {
+  isReferenceShape,
+  isObjectShape,
+  isArrayShape,
+  isBrandedShape,
+  isIntersectionShape,
+  isFunctionShape,
+  isUnionShape,
+} from '../../../shared';
+
 /**
  * DRIFT_VARIANCE_CATEGORIES
  * ROLE: Evaluation taxonomy categorizing contract mutations over time.
@@ -121,3 +132,97 @@ export const PROPERTY_DRIFT_EVALUATION_RULES: readonly TPropertyDriftRule[] = [
     describe: () => 'Property criteria widened from required down to optional structure.',
   },
 ] satisfies TPropertyDriftRule[];
+
+/**
+ * TOPOLOGY_EDGE_MAPPER
+ *
+ * ROLE: Point-free object lookup dictionary satisfying the exhaustive check constraint.
+ * Scans every single compound shape kind to locate and extract reference connectors.
+ */
+export const TOPOLOGY_EDGE_MAPPER: TTopologyEdgeStrategyMap = {
+  // 1. Direct Reference Nodes (The actual edges we want to capture)
+  reference: (params) => {
+    const { shape, sourceKey, edges } = params;
+    if (!isReferenceShape(shape)) return;
+
+    edges.push({ sourceKey, targetKey: shape.name });
+  },
+
+  // 2. Compound Containers (Continue recursion down into elements)
+  object: (params) => {
+    const { shape, recurse } = params;
+    if (!isObjectShape(shape)) return;
+
+    const props = shape.properties;
+    if (!props) return;
+
+    Object.keys(props).forEach((propKey) => {
+      const isDirectProperty = Object.prototype.hasOwnProperty.call(
+        props,
+        propKey,
+      );
+      const propEntry = props[propKey];
+
+      if (isDirectProperty && propEntry) {
+        recurse(propEntry.shape);
+      }
+    });
+  },
+
+  union: (params) => {
+    const { shape, recurse } = params;
+    if (!isUnionShape(shape)) return;
+
+    (yieldItems(shape.values) || []).forEach((variant) => {
+      recurse(variant);
+    });
+  },
+
+  intersection: (params) => {
+    const { shape, recurse } = params;
+    if (!isIntersectionShape(shape)) return;
+
+    (yieldItems(shape.values) || []).forEach((variant) => {
+      recurse(variant);
+    });
+  },
+
+  array: (params) => {
+    const { shape, recurse } = params;
+    if (!isArrayShape(shape)) return;
+
+    recurse(shape.items);
+
+    const tupleElements = shape.elementShapes;
+    if (tupleElements) {
+      tupleElements.forEach((el) => {
+        recurse(el);
+      });
+    }
+  },
+
+  function: (params) => {
+    const { shape, recurse } = params;
+    if (!isFunctionShape(shape)) return;
+
+    const parameters = shape.parameters;
+    if (parameters) {
+      parameters.forEach((param) => {
+        recurse(param.shape);
+      });
+    }
+    recurse(shape.returnType);
+  },
+
+  branded: (params) => {
+    const { shape, recurse } = params;
+    if (!isBrandedShape(shape)) return;
+
+    recurse(shape.base);
+  },
+
+  // 3. Terminal Leaf Nodes (Explicitly stop recursion threads safely)
+  primitive: () => {},
+  literal: () => {},
+  instanceof: () => {},
+} satisfies TTopologyEdgeStrategyMap;
