@@ -9,7 +9,7 @@ import { ObjectUtils, yieldItems } from '../../../shared';
 import { createDefaultAuditTemplate } from '../../utils';
 
 class AuditRegistryService {
-  private parseManifestCoordinates(
+  public parseManifestCoordinates(
     manifestRow?: TVaultManifestEntry,
   ): TParsedLocation {
     const filePath = manifestRow ? manifestRow.filePath : 'unknown_source';
@@ -35,38 +35,41 @@ class AuditRegistryService {
   /**  @see {@link AuditServiceDocs.extractNodeCoreDataLayout}*/
   public extractNodeCoreDataLayout(vault: TTripleKV): TXalorAuditNode[] {
     const userKeys = ObjectUtils.keys(vault.references);
-
     const casCollapseCounter: Record<string, number> = {};
 
-    for (const key of userKeys) {
+    // FIX: Converted the imperative tracking loop into a clean declarative forEach array pipeline
+    userKeys.forEach((key) => {
       const fingerprint = vault.references[key];
-      casCollapseCounter[fingerprint] =
-        (casCollapseCounter[fingerprint] || 0) + 1;
-    }
+      if (fingerprint) {
+        casCollapseCounter[fingerprint] =
+          (casCollapseCounter[fingerprint] || 0) + 1;
+      }
+    });
 
     const compiledNodes: TXalorAuditNode[] = [];
 
-    for (const typeKey of yieldItems(userKeys)) {
+    // FIX: Swapped out the second imperative loop for a strict point-free array collection pass
+    (yieldItems(userKeys) || []).forEach((typeKey) => {
       const nodeRecord = createDefaultAuditTemplate('node');
-
-      // 💚 PERFORMANCE OPTIMIZATION: Deep clone your structures cleanly using your Axiom utility!
-      // const nodeRecord = cloneDeep(rawNodePayload);
       const casFingerprint = vault.references[typeKey];
 
-      /* prettier-ignore */ const manifestRow: TVaultManifestEntry | undefined = vault.manifest[typeKey];
-      /* prettier-ignore */ const registryRow: TVaultRegistryEntry | undefined = vault.registry[typeKey];
-      /* prettier-ignore */ const symbolName = registryRow ? registryRow.symbolName : 'anonymous_type';
-      /* prettier-ignore */ const location = this.parseManifestCoordinates(manifestRow);
+      /* prettier-ignore */
+      const manifestRow: TVaultManifestEntry | undefined = vault.manifest[typeKey];
+      /* prettier-ignore */
+      const registryRow: TVaultRegistryEntry | undefined = vault.registry[typeKey];
+      /* prettier-ignore */
+      const symbolName = registryRow ? registryRow.symbolName : 'anonymous_type';
+      /* prettier-ignore */
+      const location = this.parseManifestCoordinates(manifestRow);
 
-      // Update identity parameters cleanly
+      // Update structural and nominal identity tokens cleanly point-free
       nodeRecord.identity.typeKey = typeKey;
       nodeRecord.identity.symbolName = symbolName;
       nodeRecord.identity.casFingerprint = casFingerprint;
-
       nodeRecord.location = location;
 
       compiledNodes.push(nodeRecord);
-    }
+    });
 
     return compiledNodes;
   }

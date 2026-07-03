@@ -117,8 +117,6 @@ export class AuditEngineService extends AuditPresenterService {
     summary.compileTimeOverheadMs = finalCompileTimeOverheadMs;
     hygiene.totalOrphanedKeys = telemetry.orphanedKeys.length;
 
-    // Automatically creates or overwrites the production-baseline.json file
-    // inside your node_modules/.cache track to lock this execution pass state.
     await fsContext.syncAuditedBaselineFile(rawVaultData);
 
     return {

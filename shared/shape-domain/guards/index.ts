@@ -11,6 +11,8 @@ import {
   isKeyOfArray,
   isString,
   isKeyInObject,
+  isObject,
+  isNull,
 } from '../../utils/guards';
 import {
   SOLID_SHAPE_PRIMITIVE_KEYS,
@@ -46,6 +48,14 @@ export const isFunctionShape = (s: TSolidShape ): s is Extract<TSolidShape, { ki
 /* prettier-ignore */
 export const isIntersectionShape = (s: TSolidShape ): s is Extract<TSolidShape, { kind: 'intersection' }> => s.kind === 'intersection';
 
+export const isShapeOfKind = <K extends TSolidShape['kind']>(
+  kind: K,
+): TTypeGuard<Extract<TSolidShape, { readonly kind: K }>> => {
+  /* prettier-ignore */
+  return (value: unknown): value is Extract<TSolidShape, { readonly kind: K }> => {
+    return isObject(value) && !isNull(value) && isKeyInObject('kind')(value) && value.kind === kind;
+  };
+};
 /**
  * Runtime instanceof discriminator.
  *

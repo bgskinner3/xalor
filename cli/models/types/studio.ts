@@ -100,6 +100,13 @@ type TNodeItemLocation = {
   readonly anchorIndex: number;
 };
 
+export type TNodeItemTimeMeasure = {
+  // !!! Exact synchronous execution cost of this node tree
+  selfCompileTimeMs: number;
+  // !!! Proportional performance risk rating index
+  cumulativeRuntimeCostScore: number;
+};
+
 /**
  * TNodeItemMetrics
  * ROLE: Evaluation complexity scores and nested depth tracking values.
@@ -114,7 +121,7 @@ type TNodeItemMetrics = {
   rawComplexityScore: number;
   normalizedComplexityScore: number;
   nodesCollapsed: number;
-};
+} & TNodeItemTimeMeasure;
 
 /**
  * TStudioApiUsageMap

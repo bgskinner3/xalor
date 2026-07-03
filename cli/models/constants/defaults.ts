@@ -177,6 +177,13 @@ export const DEFAULT_STUDIO_PAYLOAD: IStudioOverviewPayload = {
   topology: { edges: [], cyclicPaths: [] },
 } satisfies IStudioOverviewPayload;
 
+export const STUDIO_APIS_USED_DEFAULT: TStudioNodeItem['apisUsed'] = {
+  generatorXalor: {},
+  validationXalor: {},
+  transformXalor: {},
+  matchXalor: {},
+} satisfies TStudioNodeItem['apisUsed'];
+
 export const STUDIO_NODE_TEMPLATE: TDeepWriteable<TStudioNodeItem> = {
   identity: {
     id: '',
@@ -197,13 +204,10 @@ export const STUDIO_NODE_TEMPLATE: TDeepWriteable<TStudioNodeItem> = {
     rawComplexityScore: 0,
     normalizedComplexityScore: 0,
     nodesCollapsed: 0,
+    selfCompileTimeMs: 0,
+    cumulativeRuntimeCostScore: 0,
   },
-  apisUsed: {
-    generatorXalor: {},
-    validationXalor: {},
-    transformXalor: {},
-    matchXalor: {},
-  },
+  apisUsed: STUDIO_APIS_USED_DEFAULT,
 } satisfies TDeepWriteable<TStudioNodeItem>;
 /**
  * DEFAULT OOBJECT GENEREATOR

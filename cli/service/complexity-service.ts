@@ -21,7 +21,7 @@ import {
   isFunctionShape,
   isInstanceOfShape,
 } from '../../shared';
-import { ObjectUtils } from '../../shared/utils';
+import { ObjectUtils, yieldItems } from '../../shared/utils';
 import {
   INSTANCE_CATEGORY_WEIGHTS,
   COMPLEXITY_WEIGHT_MAPPER,
@@ -36,19 +36,13 @@ class ComplexityService {
     visited: Set<string>,
     telemetry: TComplexityParams['telemetry'],
   ): number {
-    let weightTally = 0;
-    const len = shapes.length;
-
-    for (let i = 0; i < len; i++) {
-      const subShape = shapes[i];
-      if (!isUndefined(subShape) && !isNull(subShape)) {
-        /* prettier-ignore */
-        weightTally += this.calculateStructuralWeightCore(subShape, pool, depth, visited, telemetry);
-      }
-    }
-
-    return weightTally;
+    return (yieldItems(shapes) || []).reduce((tally, subShape) => {
+      if (isUndefined(subShape) || isNull(subShape)) return tally;
+      /* prettier-ignore */
+      return tally + this.calculateStructuralWeightCore(subShape, pool, depth, visited, telemetry);
+    }, 0);
   }
+
   private readonly COMPLEXITY_CRAWLER_MAPPER: TComplexityCrawlerMapper = {
     primitive: (params) => {
       if (!isPrimitiveShape(params.shape)) return 0;
@@ -90,7 +84,6 @@ class ComplexityService {
       let totalWeight = COMPLEXITY_WEIGHT_MAPPER.array + 
         this.calculateStructuralWeightCore(shape.items, pool, currentDepth, visited, telemetry);
 
-      // Consolidate tuple-based sub-elements cleanly
       if (!isUndefined(shape.elementShapes) && shape.elementShapes.length > 0) {
         /* prettier-ignore */
         totalWeight += this.accumulateSubTreeWeights(shape.elementShapes, pool, currentDepth, visited, telemetry);
@@ -102,44 +95,35 @@ class ComplexityService {
     object: (params) => {
       if (!isObjectShape(params.shape)) return 0;
       const { shape, pool, currentDepth, visited, telemetry } = params;
-
       let totalWeight = COMPLEXITY_WEIGHT_MAPPER.object;
-
       const properties = shape.properties;
       if (isUndefined(properties)) return totalWeight;
 
-      const propertyKeys = ObjectUtils.keys(properties);
-      const len = propertyKeys.length;
-
-      for (let i = 0; i < len; i++) {
-        const key = propertyKeys[i];
-        if (isUndefined(key)) continue;
-
-        const property: TSolidObjectRawShape = properties[key];
-        if (isUndefined(property)) continue;
-
-        // Add property width penalty + drill deep into child shapes
-        /* prettier-ignore */ totalWeight += COMPLEXITY_WEIGHT_MAPPER.object;
-        /* prettier-ignore */ totalWeight += this.calculateStructuralWeightCore(property.shape, pool, currentDepth, visited, telemetry);
-      }
+      ObjectUtils.keys(properties).forEach((key) => {
+        const isDirect = Object.prototype.hasOwnProperty.call(properties, key);
+        const property = properties[key];
+        if (isDirect && !isUndefined(property)) {
+          totalWeight += COMPLEXITY_WEIGHT_MAPPER.object;
+          /* prettier-ignore */
+          totalWeight += this.calculateStructuralWeightCore(property.shape, pool, currentDepth, visited, telemetry);
+        }
+      });
       return totalWeight;
     },
 
     function: (params) => {
       if (!isFunctionShape(params.shape)) return 0;
-
       const { shape, pool, currentDepth, visited, telemetry } = params;
-
       let totalWeight = COMPLEXITY_WEIGHT_MAPPER.function;
 
-      // Extract parameter object shapes
-      const paramsArray = shape.parameters;
-      const len = paramsArray.length;
-      for (let i = 0; i < len; i++) {
-        /* prettier-ignore */ totalWeight += this.calculateStructuralWeightCore(paramsArray[i].shape, pool, currentDepth, visited, telemetry);
-      }
-
-      /* prettier-ignore */ totalWeight += this.calculateStructuralWeightCore(shape.returnType, pool, currentDepth, visited, telemetry);
+      (shape.parameters || []).forEach((param) => {
+        if (!isUndefined(param)) {
+          /* prettier-ignore */
+          totalWeight += this.calculateStructuralWeightCore(param.shape, pool, currentDepth, visited, telemetry);
+        }
+      });
+      /* prettier-ignore */
+      totalWeight += this.calculateStructuralWeightCore(shape.returnType, pool, currentDepth, visited, telemetry);
       return totalWeight;
     },
 
@@ -177,7 +161,6 @@ class ComplexityService {
   ): TSolidShape | undefined {
     return isInstanceOf(pool, Map) ? pool.get(name) : pool[name];
   }
-
   private calculateStructuralWeightCore(
     shape: TSolidShape,
     blueprintsPool: Record<string, TSolidShape> | Map<string, TSolidShape>,
@@ -185,59 +168,25 @@ class ComplexityService {
     visited: Set<string>,
     telemetry: { nodesCount: number },
   ): number {
-    // 🎯 TELEMETRY TALLY: Record nodes collapsed on every internal pass entrance
-    telemetry.nodesCount++;
+    telemetry.nodesCount += 1;
+    /* prettier-ignore */
+    const baseParams = { pool: blueprintsPool, currentDepth: indentDepth, visited, telemetry };
 
-    const baseParams = {
-      pool: blueprintsPool,
-      currentDepth: indentDepth,
-      visited,
-      telemetry,
-    };
-
-    // ======================================================================== //
-    // 🛡️ THE EXHAUSTIVENESS VERIFICATION DISPATCH TABLE
-    // Enforces complete compile-time kind coverage point-free!
-    // ======================================================================== //
-    const DISPATCHER: {
-      [K in TSolidShape['kind']]: (
-        s: Extract<TSolidShape, { kind: K }>,
-      ) => number;
-    } = {
-      /* prettier-ignore */ primitive: (s) => this.COMPLEXITY_CRAWLER_MAPPER.primitive({ shape: s, ...baseParams }),
-      /* prettier-ignore */ literal: (s) => this.COMPLEXITY_CRAWLER_MAPPER.literal({ shape: s, ...baseParams }),
-      /* prettier-ignore */ union: (s) => this.COMPLEXITY_CRAWLER_MAPPER.union({ shape: s, ...baseParams }),
-      /* prettier-ignore */ branded: (s) => this.COMPLEXITY_CRAWLER_MAPPER.branded({ shape: s, ...baseParams }),
-      /* prettier-ignore */ reference: (s) => this.COMPLEXITY_CRAWLER_MAPPER.reference({ shape: s, ...baseParams }),
-      /* prettier-ignore */ array: (s) => this.COMPLEXITY_CRAWLER_MAPPER.array({ shape: s, ...baseParams }),
-      /* prettier-ignore */ object: (s) => this.COMPLEXITY_CRAWLER_MAPPER.object({ shape: s, ...baseParams }),
-      /* prettier-ignore */ intersection: (s) => this.COMPLEXITY_CRAWLER_MAPPER.intersection({ shape: s, ...baseParams }),
-      /* prettier-ignore */ function: (s) => this.COMPLEXITY_CRAWLER_MAPPER.function({ shape: s, ...baseParams }),
-      /* prettier-ignore */ instanceof: (s) => this.COMPLEXITY_CRAWLER_MAPPER.instanceof({ shape: s, ...baseParams }),
-    };
-
-    const handler = DISPATCHER[shape.kind];
-    return handler(shape as never);
+    const handler = this.COMPLEXITY_CRAWLER_MAPPER[shape.kind];
+    return handler({ shape, ...baseParams });
   }
-
   private calculateMaxArrayDepth(
     shapes: readonly TSolidShape[],
     pool: Record<string, TSolidShape> | Map<string, TSolidShape>,
     visited: Set<string>,
   ): number {
-    let absoluteMax = 0;
-    const len = shapes.length;
-
-    for (let i = 0; i < len; i++) {
-      const subShape = shapes[i];
-      if (!isUndefined(subShape) && !isNull(subShape)) {
-        const d = this.calculateMaxDepthCore(subShape, pool, visited);
-        if (d > absoluteMax) absoluteMax = d;
-      }
-    }
-
-    return absoluteMax;
+    return (yieldItems(shapes) || []).reduce((absoluteMax, subShape) => {
+      if (isUndefined(subShape) || isNull(subShape)) return absoluteMax;
+      const currentDepth = this.calculateMaxDepthCore(subShape, pool, visited);
+      return currentDepth > absoluteMax ? currentDepth : absoluteMax;
+    }, 0);
   }
+
   private readonly MAX_DEPTH_STRATEGY_MAPPER: TMaxDepthCrawlerMapper = {
     primitive: () => 1,
     literal: () => 1,

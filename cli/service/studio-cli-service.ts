@@ -4,6 +4,7 @@ import type {
   TDefaultObjectKeys,
   TDefaultReturnKeyMap,
   TFormatNodes,
+  TNodeItemTimeMeasure,
 } from '../models/types';
 import type { TTripleKV } from '../../shared/types';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared/constants';
@@ -23,6 +24,8 @@ import {
   DEFAULT_OBJECT_MAPPER,
   STUDIO_COMMAND_CONFIG,
 } from '../models/constants';
+import { ObjectUtils } from '../../shared';
+import { compileAndProfileSingleNode } from '../utils';
 import { complexityService } from './complexity-service';
 
 export class StudioCLIEngineService {
@@ -81,6 +84,7 @@ export class StudioCLIEngineService {
     params: TFormatNodes,
     references: TTripleKV['references'],
     blueprints: TTripleKV['blueprints'],
+    performanceProfiles: Record<string, TNodeItemTimeMeasure>,
   ) {
     let absoluteWorkspaceMaxScore = 0;
     const { studioPayload, rawVaultData, sharedData } = params;
@@ -117,10 +121,9 @@ export class StudioCLIEngineService {
         filePathLink: filePathLink,
         anchorIndex: node.location.anchor,
       };
-
-      template.blueprintId = isKeyInObject(uuidName)(references)
-        ? references[uuidName]
-        : 'unknown';
+      /* prettier-ignore */
+      const targetBlueprintId = isKeyInObject(uuidName)(references) ? references[uuidName] : 'unknown';
+      template.blueprintId = targetBlueprintId;
       template.dataShape = 'REBUILD IN BROWSER';
 
       const { depth, rawComplexityScore, nodesCollapsed } =
@@ -133,6 +136,10 @@ export class StudioCLIEngineService {
       template.metrics.depth = depth;
       template.metrics.rawComplexityScore = rawComplexityScore;
       template.metrics.nodesCollapsed = nodesCollapsed;
+
+      /* prettier-ignore */ const matchingProfile = performanceProfiles[targetBlueprintId];
+      /* prettier-ignore */ template.metrics.selfCompileTimeMs = matchingProfile ? matchingProfile.selfCompileTimeMs : 0.001;
+      /* prettier-ignore */ template.metrics.cumulativeRuntimeCostScore = matchingProfile ? matchingProfile.cumulativeRuntimeCostScore : 1;
 
       if (isKeyInObject(uuidName)(studioAPIMapper)) {
         template.apisUsed = studioAPIMapper[uuidName];
@@ -160,10 +167,52 @@ export class StudioCLIEngineService {
 
       // Commit the finalized Big-O taxonomy classification to both mirrors instantly!
       template.metrics.complexityScore = complexityScore;
-      node.metrics.complexityScore = complexityScore; // 👈 Keeps sharedData perfectly synchronized in O(1) constant time
+      node.metrics.complexityScore = complexityScore;
     });
   }
+  /**
+   * extractNodeCoreDataLayout
+   *
+   * ROLE: Compiles raw content-addressable storage blueprints into fully unrolled
+   * studio node models, isolating high-precision synchronous timing latencies.
+   * COMPLIANCE: 100% loop-free via forEach, zero casting, zero any selection overrides.
+   */
+  public extractNodeCoreDataLayout(
+    rawVaultData: TTripleKV,
+  ): Record<string, TNodeItemTimeMeasure> {
+    // FIX: Scaled down return contract to hold ONLY your missing isolated timing properties
+    const performanceProfiles: Record<string, TNodeItemTimeMeasure> = {};
+    const blueprintKeys = ObjectUtils.keys(rawVaultData.blueprints);
 
+    blueprintKeys.forEach((blueprintId) => {
+      const shape = rawVaultData.blueprints[blueprintId];
+      if (!shape) return;
+
+      const registryRow = rawVaultData.registry[blueprintId];
+      /* prettier-ignore */ const symbolName = registryRow ? registryRow.symbolName : 'anonymous_type';
+
+      // 1. Fetch the static physical node dimensions
+      /* prettier-ignore */ const baseMetrics = complexityService.harvestBlueprintMetrics(shape, rawVaultData.blueprints);
+      /* prettier-ignore */ const nodesCount = baseMetrics.nodesCollapsed;
+
+      // 2. 🎯 CORE PERFORMANCE INTERCEPTOR ATTACHMENT
+      // Fires the timer utility to record pure, synchronous CPU processing latency
+      const profile = compileAndProfileSingleNode(
+        shape,
+        rawVaultData.blueprints,
+        symbolName,
+        nodesCount,
+      );
+
+      // 3. Store ONLY the missing timing metrics inside your flat index map
+      performanceProfiles[blueprintId] = {
+        selfCompileTimeMs: profile.selfCompileTimeMs,
+        cumulativeRuntimeCostScore: profile.cumulativeRuntimeCostScore,
+      };
+    });
+
+    return performanceProfiles;
+  }
   // !!! ================================================================================
   // !!! ================================================================================
   // !!! EXECUTION METHODS
@@ -225,12 +274,13 @@ export class StudioCLIEngineService {
     // TOPOLOGY AND EDGE NODES
     // =========================================================================
     /* prettier-ignore */ studioPayload.topology = sharedData.topology;
-
+    const performanceProfiles = this.extractNodeCoreDataLayout(rawVaultData);
     // 3. EXECUTE REGISTRY HYDRATION INTERACTION PASS
     this.formatNodes(
       { studioPayload, sharedData, rawVaultData },
       rawVaultData.references,
       rawVaultData.blueprints,
+      performanceProfiles,
     );
 
     /* prettier-ignore */ studioPayload.blueprints = rawVaultData.blueprints;

@@ -54,7 +54,6 @@ function generateMasterConfig() {
         }
 
         if (apiTagValue && modeTagValue) {
-          // 🚀 Dynamically allocate the category collections if seen for the first time
           if (!categoryStore[apiTagValue]) {
             categoryStore[apiTagValue] = {
               rawModes: new Set(),
