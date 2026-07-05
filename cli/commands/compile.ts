@@ -83,7 +83,7 @@ export function runCompileCommand(projectRootPath: string): void {
   diagnosticsList.push(...reifyEmitResult.diagnostics);
   // ========================================================================
   // 🛰️ DEDUPLICATED DIAGNOSTICS PERFORMANCE LEDGER
-  // 🟢 FIXED: Aggregates pre-emit structural errors, pass 1 metadata warnings,
+  // Aggregates pre-emit structural errors, pass 1 metadata warnings,
   // and pass 2 code-generation diagnostics into a single unified array channel!
   // ========================================================================
   diagnosticsList.push(...ts.getPreEmitDiagnostics(program));

@@ -1,13 +1,16 @@
 import ts from 'typescript';
 import * as path from 'path';
 import * as fs from 'fs';
-import type { TXalorParsedConfig, TResolvedConfigPath } from '../types';
+import type {
+  TXalorParsedConfig,
+  TResolvedConfigPath,
+  TSearchFileNames,
+} from '../types';
 import {
   CONFIG_FALLBACK_DEFAULT,
   IS_SOLID_CONFIG_ITEMS,
   REGEX_PATTERNS,
 } from '../constants';
-import { prioritizeTsconfigs } from '../utils';
 import { isArray } from '../utils/guards';
 
 /**
@@ -74,14 +77,37 @@ export class TSConfigService {
       return Object.freeze([]);
     }
 
-    const finalPrioritizedList = prioritizeTsconfigs(
+    const finalPrioritizedList = this.prioritizeTsconfigs(
       configBuffer,
       this.searchFileNames,
     );
 
     return Object.freeze(finalPrioritizedList);
   }
+  private static createPriorityMap = (
+    searchFileNames: TSearchFileNames,
+  ): ReadonlyMap<string, number> =>
+    new Map<string, number>([
+      [searchFileNames.tsconfigBuild, 0],
+      [searchFileNames.tsconfig, 1],
+      [searchFileNames.tsconfigBase, 999],
+    ]);
 
+  private static prioritizeTsconfigs = (
+    configs: readonly TResolvedConfigPath[],
+    searchFileNames: TSearchFileNames,
+  ): TResolvedConfigPath[] => {
+    const priorities = this.createPriorityMap(searchFileNames);
+
+    return [...configs].sort((a, b) => {
+      const aPriority = priorities.get(a.fileName) ?? 100;
+      const bPriority = priorities.get(b.fileName) ?? 100;
+
+      return aPriority !== bPriority
+        ? aPriority - bPriority
+        : a.fileName.localeCompare(b.fileName);
+    });
+  };
   /**
    * extractWorkspaceConfig
    * 🪐 MULTI-TARGET CONFIGURATION DISCOVERY ENGINE

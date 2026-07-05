@@ -255,11 +255,3 @@ class AuditSummaryService {
 }
 
 export const auditSummaryService = new AuditSummaryService();
-// export type TXalorAuditSummary = {
-//   readonly totalRegisteredKeys: number;
-//   readonly totalUniqueFingerprints: number;
-//   readonly casCompressionRatio: number;
-//   readonly totalDatabaseDiskBytes: number;
-//   readonly highestGraphDepthRecorded: number;
-//   readonly compileTimeOverheadMs: number;
-// };

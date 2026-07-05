@@ -125,17 +125,3 @@ registerReifier((type, checker, next, ctx) => {
   }
   return undefined;
 });
-// registerReifier((type, checker, next, ctx) => {
-//   if (!isObjectTypeGuard(type)) return undefined;
-
-//   const objectFlags = type.objectFlags;
-//   if (objectFlags & ObjectFlags.Tuple) {
-//     if (!isTypeReference(type)) return undefined;
-//     reifyTuple(type, checker, next, ctx);
-//   }
-//   if (isArrayType(type)) {
-//     if (!isTypeReference(type)) return undefined;
-//     reifyArray(type, checker, next, ctx);
-//   }
-//   return undefined;
-// });

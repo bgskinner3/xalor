@@ -9,7 +9,7 @@ import type {
   TTripleKV,
 } from '../../shared';
 import { preRegisterMetadata } from '../utils';
-import { IS_SOLID_CONFIG_ITEMS, logDev } from '../../shared';
+import { IS_SOLID_CONFIG_ITEMS } from '../../shared';
 
 /**
  * XALETHOR VAULT KEEPER
@@ -38,12 +38,12 @@ export class XalethorVaultKeeper {
    */
   public static solidify(rawMetadata: TSolidMetadata): void {
     const metadata = preRegisterMetadata(rawMetadata);
-    /* prettier-ignore */ logDev( `[xalor]: parse metaData ${metadata}`, { service: 'vault-keeper.ts/solidifyMeta' });
+    /* prettier-ignore */ console.log( `[xalor]: parse metaData ${metadata}`, { service: 'vault-keeper.ts/solidifyMeta' });
     const { key, shape, area, filePath, symbolName, typeName, anchor } =
       metadata;
 
     if (this.vault.blueprints.has(key)) {
-      /* prettier-ignore */ logDev( `[xalor] 🔄 Updating logic for: ${key}`, { service: 'vault-keeper.ts/Updating', override: true, type: 'warn' });
+      /* prettier-ignore */ console.log( `[xalor] 🔄 Updating logic for: ${key}`, { service: 'vault-keeper.ts/Updating', override: true, type: 'warn' });
     }
     this.vault.blueprints.set(key, shape);
     this.vault.manifest.set(key, { area, filePath, anchor });

@@ -3,7 +3,6 @@ import { TypeFlags } from 'typescript';
 import { isStringLiteralType, isNumberLiteralType } from '../../utils';
 import { registerReifier, maxStringLength } from './core';
 import { isString } from '../../../shared';
-// import { PRIMITIVE_PLATFORM_SCALARS } from '../../constants';
 
 /**
  * LEAF NODE REIFIER

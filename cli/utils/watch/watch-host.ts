@@ -12,10 +12,8 @@ export function createXalorWatchHost(
   configPath: string,
   onProgramCreateHook: (
     program: ts.EmitAndSemanticDiagnosticsBuilderProgram,
-  ) => void, // 🎯 FIXED: Removed the stale emitDebouncer parameter completely!
+  ) => void,
 ): ts.WatchCompilerHostOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram> {
-  // 👈 🎯 THE FIX: Uses the authentic public compiler interface contract!
-
   const customCreateProgram: ts.CreateProgram<
     ts.EmitAndSemanticDiagnosticsBuilderProgram
   > = (
@@ -50,7 +48,7 @@ export function createXalorWatchHost(
     const underlyingProgram = builderProgram.getProgram();
     const originalEmit = underlyingProgram.emit;
 
-    // Intercept emitter loop to inject the custom Xalor AST metadata engine
+    // !! Intercept emitter loop to inject the custom Xalor AST metadata engine
     underlyingProgram.emit = (
       targetSourceFile,
       _writeFile,
@@ -59,7 +57,7 @@ export function createXalorWatchHost(
       _customTransformers,
     ) => {
       const silentWriteFile: ts.WriteFileCallback = () => {
-        // Black-hole swallow callback function to prevent physical .js disk pollution
+        // !! Black-hole swallow callback function to prevent physical .js disk pollution
       };
       return originalEmit(
         targetSourceFile,

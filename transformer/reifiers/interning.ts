@@ -22,22 +22,3 @@ export function internShape(shape: TSolidShape): TSolidShape {
   shapeCache.set(stableHashKey, shape);
   return shape;
 }
-
-/**
- *
- *
- *
- * TODO: REMOVE
- */
-// export function internShape(shape: TSolidShape): TSolidShape {
-//   const fingerprint = JSON.stringify(shape);
-
-//   const existing = shapeCache.get(fingerprint);
-
-//   if (existing) {
-//     return existing;
-//   }
-
-//   shapeCache.set(fingerprint, shape);
-//   return shape;
-// }
