@@ -29,7 +29,7 @@ function executeUnrollPass(
   }
 
   // ========================================================================
-  // 🏛️ STEP 1: GLOBAL INSTANCE TERMINAL SHIELD
+  // I: GLOBAL INSTANCE TERMINAL SHIELD
   // ========================================================================
   const symbol = type.getSymbol() ?? type.aliasSymbol;
   if (!isUndefined(symbol)) {
@@ -58,7 +58,7 @@ function executeUnrollPass(
   }
 
   // ========================================================================
-  // 🪐 1. ARRAY TYPE UNROLLING PASS
+  //  1. ARRAY TYPE UNROLLING PASS
   // ========================================================================
   if (checker.isArrayType(type) && isTypeReference(type)) {
     const typeArgs = checker.getTypeArguments(type);
@@ -75,7 +75,7 @@ function executeUnrollPass(
   }
 
   // ========================================================================
-  // 🪐 2. UNION TYPE UNROLLING PASS
+  //  2. UNION TYPE UNROLLING PASS
   // ========================================================================
   if (isUnionType(type)) {
     const constituents = type.types;
@@ -98,7 +98,7 @@ function executeUnrollPass(
   }
 
   // ========================================================================
-  // 🪐 3. OBJECT / INTERFACE / INTERSECTION TYPE UNROLLING PASS
+  //  3. OBJECT / INTERFACE / INTERSECTION TYPE UNROLLING PASS
   // ========================================================================
   const isClassOrInterface = isClassOrInterfaceType(type);
   const isObject = isObjectTypeGuard(type);
@@ -173,7 +173,7 @@ function executeUnrollPass(
   }
 
   // ========================================================================
-  // 🪐 4. PRIMITIVE PRIMITIVE LEAF NODES (Default Fallback Pass)
+  //  4. PRIMITIVE PRIMITIVE LEAF NODES (Default Fallback Pass)
   // ========================================================================
   return checker.typeToString(type, node, ts.TypeFormatFlags.NoTruncation);
 }

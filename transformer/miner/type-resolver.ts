@@ -151,8 +151,9 @@ export function verifyTypeResolvability(
   if ((flags & TypeFlags.Object) !== 0) {
     const isNativeArray = checker.isArrayType(type);
 
-    // 🟢 FIXED: We check for recursive loop traps ONLY on authentic non-array
+    // check for recursive loop traps ONLY on authentic non-array
     // object records or intersections. This completely blocks the array wrapper leak!
+    // !! RECUREVIE CHECK HERE
     if (type.aliasSymbol && !isNativeArray) {
       const aliasName = type.aliasSymbol.getName();
       const isRunawayCalculation = isTypeRecursive(type, checker);

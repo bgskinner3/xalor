@@ -24,18 +24,13 @@ export function createFreshReifyCTX(
     seen: new Set<Type>(),
   };
 }
-
-/**
- * 📏 Extends your local TReifyCTX type definition locally
- * to inject our internal state override shield parameter point-free.
- */
 interface IHardenedReifyCTX extends TReifyCTX {
   readonly _isCutOverride?: boolean;
 }
 
 /**
  * reifyType
- * 🧬 THE DE-RECURSIVE TYPE UNROLLER (Atomic Cut Pass)
+ * THE DE-RECURSIVE TYPE UNROLLER (Atomic Cut Pass)
  */
 export function reifyType({
   type,
@@ -47,7 +42,7 @@ export function reifyType({
   const hardenedCtx: IHardenedReifyCTX = activeCtx;
 
   // ========================================================================
-  // 🛰️ SHIELD A: RADAR LOOP INTERCEPTOR
+  // RADAR LOOP INTERCEPTOR
   // Catch vertical self-referential cyclic graph chains right at the gateway!
   // ========================================================================
   if (hardenedCtx.seen.has(type)) {
@@ -58,7 +53,7 @@ export function reifyType({
   }
 
   // ========================================================================
-  // 🏛️ SHIELD B: GLOBAL INSTANCEOF CHECKER
+  // SHIELD B: GLOBAL INSTANCEOF CHECKER
   // ========================================================================
   const symbol = type.getSymbol() ?? type.aliasSymbol;
   if (symbol !== undefined) {
@@ -85,9 +80,6 @@ export function reifyType({
 
   // ========================================================================
   // 🛡️ SHIELD C: HARD DEPTH CHOPPER & INTERNING MACHINE
-  // 🟢 FIXED: We isolate execution completely. We call reifyType recursively
-  // with a fresh Set and an explicit override flag to force the middleware
-  // to inherit our reset depth context block natively!
   // ========================================================================
   if (
     hardenedCtx.depth >= hardenedCtx.maxDepth &&
@@ -131,7 +123,7 @@ export function reifyType({
 
 /**
  * runReifierLoop
- * 🧭 Pluggable middleware dispatch router running point-free down your checkers pool
+
  */
 function runReifierLoop(
   type: Type,
