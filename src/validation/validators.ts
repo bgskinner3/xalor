@@ -261,19 +261,7 @@ export function validateFunction(
 
   return true;
 }
-// export function validateFunction(
-//   data: unknown,
-//   shape: TSolidFunctionShape,
-//   ctx: TValidationContext,
-// ): boolean {
-//   if (!isFunction(data)) return reportError(ctx, shape, data);
-//   const expectedParams = shape.parameters.length;
-//   if (data.length < expectedParams) {
-//     return reportError(ctx, shape, data);
-//   }
 
-//   return true;
-// }
 export function validateInstanceOf(
   data: unknown,
   shape: TSolidInstanceOfShape,

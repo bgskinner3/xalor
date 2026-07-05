@@ -1,4 +1,51 @@
-import type { TModeRouter } from '../types';
+import type { TModeRouter } from '../types/base';
+
+/**
+ * COMPILER_DIAGNOSTIC_RULE_KEYS
+ *
+ * ROLE:
+ * Central registry of compiler-level structural and transformation failure states.
+ *
+ * These rules represent failures that occur during:
+ * - AST transformation
+ * - build-time validation
+ * - codegen execution
+ * - vault snapshot compilation
+ *
+ * NOTE:
+ * Some rules intentionally map multiple failure keys to the same underlying rule
+ * (e.g. filesystem_lock, snapshot_corruption). This reflects shared root failure domains.
+ */
+export const COMPILER_DIAGNOSTIC_RULE_KEYS = Object.freeze({
+  COMPILER_MECHANICAL_FAULT: 'mechanical_collapse',
+  GENESIS_HYDRATION_FAULT: 'snapshot_corruption',
+  VAULT_FLUSH_IO_FAULT: 'filesystem_lock',
+  AST_GENERATION_ANOMALY: 'codegen_discrepancy',
+  UNKNOWN_API_TRIGGER: 'invalid_trigger_signature',
+  COLD_START_INFRASTRUCTURE_FAULT: 'filesystem_lock',
+  TEMPLATE_SEED_FAULT: 'filesystem_lock',
+  GENESIS_STREAM_FAULT: 'snapshot_corruption',
+  REGISTRATION_REJECTED_BREACH: 'invalid_type_contract',
+} as const);
+
+/**
+ * COLLISION_BORDER_RULE_KEYS
+ *
+ * ROLE:
+ * Defines structural identity collision states detected during compilation or mapping.
+ *
+ * These errors occur when:
+ * - duplicate keys exist within a single compilation scope
+ * - multiple files claim the same logical identifier
+ *
+ * NOTE:
+ * Both entries map to the same rule because the failure domain is identical
+ * (terminal contradiction of identity uniqueness constraints).
+ */
+export const COLLISION_BORDER_RULE_KEYS = Object.freeze({
+  SAME_FILE: 'terminal_contradiction',
+  CROSS_FILE: 'terminal_contradiction',
+} as const);
 
 /**
  * 🔬 ARCHITECTURAL EXPLANATION OF THE RULES SUITE:
@@ -62,15 +109,88 @@ import type { TModeRouter } from '../types';
  * - Unlike runtime API validation, this represents a *schema-level expectation failure*
  *   where the declared blueprint cannot be satisfied by the input object.
  */
-export const XALOR_INVALID_TYPE_COMPLIANCE_RULE_KEYS = Object.freeze([
-  'unbound_generic',
-  'computational_collapse',
-  'open_index_signature',
-  'unserializable_executable',
-  'catastrophic_compiler_error',
-  'terminal_contradiction',
-  'invalid_type_contract',
-] as const);
+export const TYPE_COMPLIANCE_RULE_KEYS = Object.freeze({
+  UNBOUND_GENERIC_PARAMETER: 'unbound_generic',
+  UNBOUND_GENERIC_CONDITIONAL: 'unbound_generic',
+  CATASTROPHIC_COMPILER_ERROR: 'catastrophic_compiler_error',
+  COMPUTATIONAL_COLLAPSE_ANY_NODE: 'computational_collapse',
+  COMPUTATIONAL_COLLAPSE_RECURSIVE_LOOP: 'computational_collapse',
+  TERMINAL_CONTRADICTION: 'terminal_contradiction',
+  UNSERIALIZABLE_EXECUTABLE: 'unserializable_executable',
+  OPEN_INDEX_SIGNATURE: 'open_index_signature',
+  INVALID_TYPE_CONTRACT: 'invalid_type_contract',
+} as const);
+/**
+ * ⚙️ RUNTIME_API_RULE_KEYS
+ *
+ * ROLE:
+ * Defines runtime validation failure states encountered during schema enforcement.
+ *
+ * These rules occur when:
+ * - runtime data violates structural contracts
+ * - expected schema fields are missing or mismatched
+ * - union/intersection constraints fail evaluation
+ * - depth or traversal limits are exceeded
+ *
+ * NOTE:
+ * These are execution-time errors (post-compilation validation layer).
+ */
+export const RUNTIME_API_RULE_KEYS = Object.freeze({
+  MISSING_KEY_PRESENCE: 'missing_key_presence',
+  MISSING_FROM_VAULT: 'missing_from_vault',
+  PRIMITIVE_MISMATCH: 'primitive_mismatch',
+  LITERAL_MISMATCH: 'literal_mismatch',
+  INTERSECTION_BREACHED: 'intersection_breached',
+  DEPTH_OVERFLOW: 'depth_overflow',
+  UNION_EXHAUSTED: 'union_exhausted',
+  EXCESS_PROPERTY: 'excess_property',
+  MISSING_PROPERTY: 'missing_property',
+} as const);
+/**
+ * 🌊 XALOR_MATCH_DRIFT_RULE_KEYS
+ *
+ * ROLE:
+ * Defines structural versioning and schema migration failure states.
+ *
+ * These rules occur in the matchXalorDrift system when:
+ * - legacy payloads cannot be mapped to current schemas
+ * - ancestral blueprint metadata is missing or invalid
+ * - migration transformations violate target schema constraints
+ * - compiled transformation infrastructure is unavailable
+ *
+ * NOTE:
+ * This layer is responsible for backward-compatible schema evolution across system versions.
+ */
+export const XALOR_MATCH_DRIFT_RULE_KEYS = Object.freeze({
+  MALFORMED_NON_RECORD_PAYLOAD: 'malformed_non_record_payload',
+  ANCESTRAL_KEY_MISSING_FROM_VAULT: 'ancestral_key_missing_from_vault',
+  UNEXPECTED_STREAM_COLLAPSE: 'unexpected_stream_collapse',
+  MIGRATION_MUTATION_VIOLATION: 'migration_mutation_violation',
+  MISSING_COMPILED_INFRASTRUCTURE: 'missing_compiled_infrastructure',
+} as const);
+
+/**
+ * 🧭 XALOR_ERROR_AREAS
+ *
+ * ROLE:
+ * High-level classification system for grouping all Xalor errors into execution domains.
+ *
+ * These values are used for:
+ * - logging segmentation
+ * - telemetry grouping
+ * - UI filtering
+ * - diagnostics routing
+ *
+ * Each area represents a top-level subsystem boundary inside the Xalor architecture.
+ */
+export const XALOR_ERROR_AREAS = Object.freeze({
+  TRANSFORMER_DIAGNOSTIC_COMPILER: 'transformer_diagnostic_compiler',
+  RUNTIME_API: 'runtime_api',
+  TRANSFORMER_COLLISION_SAME_FILE: 'transformer_collision_same_file',
+  TRANSFORMER_COLLISION_CROSS_FILE: 'transformer_collision_cross_file',
+  TRANSFORMER_TYPE_RESOLVER: 'transformer_type_resolver',
+  RUNTIME_MATCH_DRIFT: 'runtime_match_drift',
+} as const);
 /**
  * 🪐 TRANSFORMER EXECUTION MODE ROUTER (The Visual Lane Allocator)
  *

@@ -203,6 +203,7 @@ export type TTypeResolverRuleResult = {
   readonly rule: TXalorComplianceRuleKeys;
   readonly message: (keyName: string, aliasName?: string) => string;
 };
+
 export type TTypeResolverRuleMapper = Record<
   TTypeResolverKeys,
   TTypeResolverRuleResult

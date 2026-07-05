@@ -1,7 +1,7 @@
 import { xalorCentralContext } from '../../service';
-import { XalorInvalidTypeError, TransformerReportService } from '../../error';
 import { COLLISION_BORDER_FAILURE_MAPPER } from '../../constants';
 import type { TFilePathParams } from '../../types';
+import { errorReportService, XalorError } from '../../../shared';
 
 // ========================================================================
 // 🪐 INTEGRATED INTERCEPT LANE B: SAME-FILE LOCAL COPY-PASTE DETECTION
@@ -53,14 +53,13 @@ export function sameFileDetection(params: TFilePathParams) {
       };
 
       if (isWatch) {
-        const coloredAnsiPanelText =
-          TransformerReportService.generateTerminalPanel({
-            keyName,
-            fileLocation: currentActiveAbsoluteFile,
-            message: finalizedMessageText,
-            rule: mapper.rule,
-            mode: executeMode,
-          });
+        const coloredAnsiPanelText = errorReportService.generateTerminalPanel({
+          keyName,
+          fileLocation: currentActiveAbsoluteFile,
+          message: finalizedMessageText,
+          rule: mapper.rule,
+          mode: executeMode,
+        });
         console.warn(coloredAnsiPanelText);
         xalorCentralContext.addBlacklistKey(keyName);
         xalorCentralContext.deleteGlobalAndSession({
@@ -70,7 +69,7 @@ export function sameFileDetection(params: TFilePathParams) {
         return true;
       }
 
-      throw new XalorInvalidTypeError(
+      throw XalorError.InvalidType(
         keyName,
         currentActiveAbsoluteFile,
         sameFileFailure,
@@ -81,78 +80,3 @@ export function sameFileDetection(params: TFilePathParams) {
 
   return false;
 }
-
-/**
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-// export function sameFileDetection(params: TFilePathParams) {
-//   /* prettier-ignore */
-//   const { keyName, activeAreaString, activeAnchorString, relativeProjectKey, isWatch, currentActiveAbsoluteFile, executeMode } = params;
-
-//   /* prettier-ignore */
-//   const { sessionRegistry } = xalorCentralContext.context;
-
-//   const currentFileSlice = sessionRegistry[relativeProjectKey];
-//   if (currentFileSlice === undefined) {
-//     return false;
-//   }
-
-//   const historicalKeyMatch = currentFileSlice.keys[keyName];
-
-//   if (historicalKeyMatch !== undefined) {
-//     if (historicalKeyMatch.anchor !== activeAnchorString) {
-//       const mapper = COLLISION_BORDER_FAILURE_MAPPER.SAME_FILE;
-
-//       const finalizedMessageText = mapper.message({
-//         keyName,
-//         historicalArea: historicalKeyMatch.area,
-//         historicalAnchor: historicalKeyMatch.anchor,
-//         activeArea: activeAreaString,
-//         activeAnchor: activeAnchorString,
-//       });
-//       const sameFileFailure = {
-//         rule: mapper.rule,
-//         message: finalizedMessageText,
-//       };
-//       // 🪐 THE WATCH-MODE SELF-CLEANING Handshake:
-//       if (isWatch) {
-//         const coloredAnsiPanelText =
-//           TransformerReportService.generateTerminalPanel({
-//             keyName,
-//             fileLocation: currentActiveAbsoluteFile,
-//             message: finalizedMessageText,
-//             rule: mapper.rule,
-//             mode: executeMode,
-//           });
-
-//         console.warn(coloredAnsiPanelText);
-
-//         xalorCentralContext.addBlacklistKey(keyName);
-
-//         xalorCentralContext.deleteGlobalAndSession({
-//           keyName,
-//           filePath: currentActiveAbsoluteFile,
-//         });
-
-//         return true;
-//       }
-
-//       throw new XalorInvalidTypeError(
-//         keyName,
-//         currentActiveAbsoluteFile,
-//         sameFileFailure,
-//         executeMode,
-//       );
-//     }
-//   }
-//   return false;
-// }

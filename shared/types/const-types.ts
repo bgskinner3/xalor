@@ -1,4 +1,3 @@
-import { XALOR_MESSAGE_HANDLER } from '../error/messages';
 import { AUDITOR_KEYWORDS, IS_SOLID_CONFIG_ITEMS } from '../constants';
 
 /**
@@ -10,11 +9,7 @@ export type TAuditorKeywords = (typeof AUDITOR_KEYWORDS)[number];
 
 // ====================================================================================================
 // ====================================================================================================
-/**
- * GLOBAL ERROR HANDLER MAPPER KEYS
- */
-export type TXalorErrorKey = keyof typeof XALOR_MESSAGE_HANDLER.ERROR;
-export type TXalorWarningKey = keyof typeof XALOR_MESSAGE_HANDLER.WARNING;
+
 // ====================================================================================================
 // ====================================================================================================
 

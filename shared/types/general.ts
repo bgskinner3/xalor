@@ -38,20 +38,3 @@ export type TGetCallerLocationOptions = {
   topParent?: boolean;
   stripPathPrefix?: string;
 };
-/**
- * 💎 MESSAGE MANIFEST UTILITY TYPINGS
- *
- * Ensures type safety over all parameter payloads being passed to the message
- * generator templates without allowing raw code logic inside the text ledger.
- */
-export type TMessageHandlerParams = {
-  path?: string;
-  expected?: unknown;
-  received?: unknown;
-  key?: string;
-  kind?: TSolidShapeKinds;
-  version?: string;
-  msg?: string;
-  location?: string;
-  error?: unknown;
-};

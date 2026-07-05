@@ -1,8 +1,7 @@
 import { xalorCentralContext } from '../../service';
-import { XalorInvalidTypeError, TransformerReportService } from '../../error';
 import { COLLISION_BORDER_FAILURE_MAPPER } from '../../constants';
 import type { TFilePathParams } from '../../types';
-
+import { errorReportService, XalorError } from '../../../shared';
 // ========================================================================
 // 🪐 INTEGRATED INTERCEPT LANE A: CROSS-FILE REGISTRATION HIJACK PROTECTION
 //
@@ -60,14 +59,13 @@ export function crossFileProtection(params: TFilePathParams): boolean {
         message: finalizedMessageText,
       };
       if (isWatch) {
-        const coloredAnsiPanelText =
-          TransformerReportService.generateTerminalPanel({
-            keyName,
-            fileLocation: currentActiveAbsoluteFile,
-            message: finalizedMessageText,
-            rule: mapper.rule,
-            mode: executeMode,
-          });
+        const coloredAnsiPanelText = errorReportService.generateTerminalPanel({
+          keyName,
+          fileLocation: currentActiveAbsoluteFile,
+          message: finalizedMessageText,
+          rule: mapper.rule,
+          mode: executeMode,
+        });
 
         console.warn(coloredAnsiPanelText);
 
@@ -81,7 +79,7 @@ export function crossFileProtection(params: TFilePathParams): boolean {
         return true;
       }
 
-      throw new XalorInvalidTypeError(
+      throw XalorError.InvalidType(
         keyName,
         currentActiveAbsoluteFile,
         crossFileFailure,

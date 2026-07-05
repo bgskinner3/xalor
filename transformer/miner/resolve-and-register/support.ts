@@ -7,8 +7,7 @@ import type {
 } from '../../types';
 import { XalorRoutesService } from '../../service';
 import { verifyTypeResolvability } from '../type-resolver';
-import { XalorInvalidTypeError } from '../../error';
-
+import { XalorError } from '../../../shared/error';
 /**
  * createPayLoad
  *
@@ -49,7 +48,7 @@ export const verifyAndValidateType = (params: TVerifyAndValidateType): void => {
   );
 
   if (validationFailure && validationFailure.rule) {
-    throw new XalorInvalidTypeError(
+    throw XalorError.InvalidType(
       keyName,
       sourceFile.fileName,
       validationFailure,
