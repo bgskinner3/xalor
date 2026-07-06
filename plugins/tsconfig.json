@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "rootDirs": [".", ".."],
+    "types": ["node", "jest"]
   },
-  "include": ["**/*"]
+  "include": ["**/*", "environments/**/*"]
 }

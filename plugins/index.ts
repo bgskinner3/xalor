@@ -20,7 +20,7 @@ export { xalorNextTurboWatchPlugin } from './environments/next-turbo';
 
 // 2. Export the structural interface definitions to keep external setups typed
 /* prettier-ignore */
-export type { TWebpackCompilerInstance } from './shared-items';
+export type { TWebpackCompilerInstance } from './shared-items.js';
 
 // ============================================================================
 // 🔮 FUTURE EXTENSIBILITY MAP (PRE-ARCHITECTED SLOTS)

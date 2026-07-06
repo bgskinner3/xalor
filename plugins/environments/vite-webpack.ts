@@ -106,12 +106,19 @@ export function executeAmbientTransformationPass(
     relativePathKey = 'src/index.ts';
   }
 
+  const originalCliWatchValue = process.env.XALOR_CLI_WATCH;
+  const originalCliCompileValue = process.env.XALOR_CLI_COMPILE;
+
   try {
     // ====================================================================================
     /**
      * where the plugin coordinates with the TypeScript Compiler API out-of-process.
      */
     // ====================================================================================
+
+    process.env.XALOR_CLI_WATCH = 'true';
+    process.env.XALOR_CLI_COMPILE = 'false';
+
     const program = ts.createProgram([absoluteFilePath], BASE_COMPILER_OPTIONS);
 
     // ⚡ Execute the atomic compilation pass with the Black-Hole Swallow hook
@@ -142,6 +149,9 @@ export function executeAmbientTransformationPass(
     console.error(
       `\x1b[31m🚨 [Xalor AOT] Ambient Watch Interrupted: ${relativePathKey}\x1b[0m`,
     );
+  } finally {
+    process.env.XALOR_CLI_WATCH = originalCliWatchValue;
+    process.env.XALOR_CLI_COMPILE = originalCliCompileValue;
   }
 }
 
