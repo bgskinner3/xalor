@@ -21,8 +21,7 @@ export function vacuumExitBuild() {
 
   // 1. Ingest volatile development telemetry maps from disk
   console.log(` ↳ Ingesting active development data cache from disk...`);
-  /* prettier-ignore */
-  // const devSnapshot = await fsContext.asyncReadText(fsContext.envPaths.vaultFile);
+
   const res = fsContext.readText(fsContext.envPaths.vaultFile);
   const devSnapshot = JSON.parse(res);
   const pathRoot = XalorRoutesService.resolveXalorPaths();
@@ -34,16 +33,6 @@ export function vacuumExitBuild() {
   console.log('HERE BITCH');
 
   if (!isTripleKVShape(devSnapshot)) return;
-  // Debug Log: Dump raw data stream for immediate Alpha testing inspection [VIII]
-  // if (process.env.XALOR_DEBUG === 'true') {
-  //   console.log(
-  //     `\n\x1b[33m🐛 [Xalor Debug Dump] Raw Dev Snapshot Payload Map:\x1b[0m`,
-  //   );
-  //   console.log(devSnapshot);
-  //   console.log(
-  //     `\x1b[33m--------------------------------------------------\x1b[0m\n`,
-  //   );
-  // }
 
   // 2. Validate structural integrity of the collected type graph
   /* prettier-ignore */

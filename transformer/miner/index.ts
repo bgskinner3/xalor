@@ -67,46 +67,16 @@ export function theMiner({
       return visitEachChild(node, visitor, context);
     }
 
-    // 🪐 PATH A: THE REGISTRATION TARGET EXTRACTION LIFECYCLE
-    // TODO: Rsolve complie issue to avoid dual loop
-    // TODO: === that is register first then apply api second.
-    // REMOVE .... ORIGINAL
-    // if (isRegisterTarget(target)) {
-    //   const { keyName, shapeType } = target;
-
-    //   if (!isReifyRuntimeMode && !isStandardInlineMode)
-    //     return visitEachChild(node, visitor, context);
-
-    //   /* prettier-ignore */
-    //   const symbol = shapeType.aliasSymbol || shapeType.getSymbol();
-    //   const declarationNode = symbol?.declarations?.[0] ?? node;
-    //   const shape: TSolidShape = resolveAndRegisterType({
-    //     keyName,
-    //     shapeType,
-    //     node: declarationNode,
-    //     callNode: node,
-    //     sourceFile,
-    //     checker,
-    //   });
-
-    //   /* prettier-ignore */
-    //   const updatedCall = solidVisitorProcessor({ node, sourceFile, factory, target, shape });
-
-    //   return markAsPure(updatedCall);
-    // }
     if (isRegisterTarget(target)) {
       const { keyName, shapeType } = target;
 
-      // 🎯 REVERT TO ORIGINAL: Allow Pass 2 (Reify) or Watch mode to step inside natively!
       if (!isReifyRuntimeMode && !isStandardInlineMode) {
         return visitEachChild(node, visitor, context);
       }
 
-      // Extract the true symbol configuration from the raw compiler type right here
       const activeSymbol = shapeType.aliasSymbol || shapeType.getSymbol();
       const declarationNode = activeSymbol?.declarations?.[0] ?? node;
 
-      // Run the full unrolling and extraction pipeline natively to populate your registries in memory!
       const shape: TSolidShape = resolveAndRegisterType({
         keyName,
         shapeType,
@@ -116,7 +86,6 @@ export function theMiner({
         checker,
       });
 
-      // THE SCRIBE INJECTION: Rewrite the call to bake the shape object directly inline!
       const updatedCall = solidVisitorProcessor({
         node,
         sourceFile,

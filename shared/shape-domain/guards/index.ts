@@ -76,7 +76,7 @@ export const isKeyOfInstanceKind: TTypeGuard<InstanceRegistryKey> = (
   isString(val) && isKeyInObject(val)(INSTANCE_REGISTRY_MAPPER);
 
 /**
- * 🎯 IS SOLID SHAPE PRIMITIVE KEY (THE GATEWAY ACCESS RADAR)
+ SOLID SHAPE PRIMITIVE KEY (THE GATEWAY ACCESS RADAR)
  *
  * ROLE:
  * A high-speed type-narrowing predicate guard used to verify if a runtime string token

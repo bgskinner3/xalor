@@ -38,7 +38,7 @@ export function resolveAndRegisterType({
   const lifecycle = XalorRoutesService.resolveXalorLifecycle();
 
   // ========================================================================
-  // 🪐 PROTECTION LAYER 1: THE COMPILED TYPE RADAR
+  // 1: THE COMPILED TYPE RADAR
   // Analyzes the raw ts.Type before allocating memory fragment maps.
   // ========================================================================
   if (!isCompilerTypePure(shapeType, checker)) {
@@ -83,7 +83,7 @@ export function resolveAndRegisterType({
   const shape: TSolidShape = reifyType({ type: shapeType, checker, ctx });
 
   // ========================================================================
-  // 🪐 PROTECTION LAYER 2: POST-REIFICATION DATA STRUCTURAL VERIFICATION
+  //  2: POST-REIFICATION DATA STRUCTURAL VERIFICATION
   // ========================================================================
   if (!isTypeContractResolvabilityPure(shape)) {
     const errorDetails =
@@ -119,9 +119,6 @@ export function resolveAndRegisterType({
     identity,
   });
 
-  // 🎯 THE CANONICAL TRANSITION: Bypass collision detection when rewriting arguments!
-  // Pass 2 is evaluating the same keys it populated in Pass 1. We switch off the
-  // collision block during reification mode to protect the volatile memory session.
   const isCollision = lifecycle.isReifyRuntimeMode
     ? false
     : validateCollisionBorders({
@@ -132,7 +129,7 @@ export function resolveAndRegisterType({
       });
 
   // ========================================================================
-  // 🪐 THE MUTATION LIFE-CYCLE EXCLUSION CONTEXT
+  // THE MUTATION LIFE-CYCLE EXCLUSION CONTEXT
   // ========================================================================
   if (!isCollision) {
     const assignedCudMode = determineCUDMode({
@@ -155,161 +152,3 @@ export function resolveAndRegisterType({
 
   return shape;
 }
-// export function resolveAndRegisterType({
-//   keyName,
-//   shapeType,
-//   node,
-//   sourceFile,
-//   checker,
-//   callNode,
-// }: TTypeResolutionParams): TSolidShape {
-//   // const { isReifyRuntimeMode } = XalorRoutesService.resolveXalorLifecycle();
-//   const activeExecuteMode = XalorRoutesService.xalorCLIMode();
-
-//   // ========================================================================
-//   // 🪐 PROTECTION LAYER 1: THE COMPILED TYPE RADAR
-//   // implimented at the absolute top! Analyzes the raw ts.Type before
-//   // allocating memory fragment maps or compiling spatial identities.
-//   // ========================================================================
-//   if (!isCompilerTypePure(shapeType, checker)) {
-//     const errorDetails =
-//       'Compiler intercepted un-serializable property structures (functions, raw symbols, or private internal prefixes).';
-
-//     errorReportService.logAnomaly<'TRANSFORMER_DIAGNOSTIC_COMPILER'>(
-//       'TRANSFORMER_DIAGNOSTIC_COMPILER',
-//       {
-//         keyName: 'REGISTRATION_REJECTED_BREACH',
-//         fileLocation: sourceFile.fileName,
-//         error: errorDetails,
-//         mode: activeExecuteMode,
-//       },
-//     );
-
-//     if (activeExecuteMode === 'compile' || activeExecuteMode === 'vacuum') {
-//       xalorCentralContext.hardResetAllMemoryStores();
-
-//       // Resolve the pristine, compiled full dictionary message text body point-free
-//       const fallbackPanelMessage =
-//         errorReportService.getTransformerErrorMessage(
-//           'TRANSFORMER_DIAGNOSTIC_COMPILER',
-//           'REGISTRATION_REJECTED_BREACH',
-//           errorDetails,
-//         );
-
-//       throw XalorError.InvalidType(
-//         keyName, // Retains your actual code UUID key token natively
-//         sourceFile.fileName,
-//         {
-//           rule: 'invalid_type_contract',
-//           message: fallbackPanelMessage,
-//         },
-//         activeExecuteMode,
-//       );
-//     }
-//     return { kind: 'primitive', type: 'unknown' };
-//   }
-
-//   // 1. Run the safe, shallow-probe compatibility validation radar
-//   // TODO: UPDATE ERROR HANDLING
-//   // verifyAndValidateType({ shapeType, checker, keyName, sourceFile });
-
-//   const identity = getSpatialIdentity({
-//     node,
-//     sourceFile,
-//     shapeType,
-//     checker,
-//     callNode,
-//   });
-
-//   // Initialize the memory fragment map buffers
-//   const fragments = new Map<string, TSolidShape>();
-//   const ctx = createMiningCtx(keyName, fragments);
-
-//   // 3. Unroll and serialize the raw type structure down to your pristine JSON nodes
-//   const shape: TSolidShape = reifyType({ type: shapeType, checker, ctx });
-
-//   // ========================================================================
-//   // 🪐 PROTECTION LAYER 2: POST-REIFICATION DATA STRUCTURAL VERIFICATION.
-//   // ========================================================================
-//   if (!isTypeContractResolvabilityPure(shape)) {
-//     const errorDetails =
-//       'Generated JSON schema layout contains un-resolvable primitive fallback masks or prohibited object keys.';
-
-//     errorReportService.logAnomaly('TRANSFORMER_DIAGNOSTIC_COMPILER', {
-//       keyName: 'REGISTRATION_REJECTED_BREACH',
-//       fileLocation: sourceFile.fileName,
-//       error: errorDetails,
-//       mode: activeExecuteMode,
-//     });
-
-//     if (activeExecuteMode === 'compile' || activeExecuteMode === 'vacuum') {
-//       xalorCentralContext.hardResetAllMemoryStores();
-
-//       const fallbackPanelMessage =
-//         errorReportService.getTransformerErrorMessage(
-//           'TRANSFORMER_DIAGNOSTIC_COMPILER',
-//           'REGISTRATION_REJECTED_BREACH',
-//           errorDetails,
-//         );
-
-//       throw XalorError.InvalidType(
-//         keyName,
-//         sourceFile.fileName,
-//         {
-//           rule: 'invalid_type_contract',
-//           message: fallbackPanelMessage,
-//         },
-//         activeExecuteMode,
-//       );
-//     }
-//     return shape;
-//   }
-
-//   // 4. Aggregate parameters point-free into the official database synchronization payload
-//   const payload: TVaultSyncPayload = createPayLoad({
-//     keyName,
-//     sourceFile,
-//     shape,
-//     identity,
-//   });
-//   // if (!isReifyRuntimeMode) {
-//   //   xalorCentralContext.updateGlobalAndSession(payload);
-//   //   return shape;
-//   // }
-//   // 5. THE BI-DIRECTIONAL COLLISION OVERRIDE GATE
-//   const isCollision = validateCollisionBorders({
-//     keyName,
-//     activeAreaString: identity.area,
-//     activeAnchorString: identity.anchor,
-//     currentActiveAbsoluteFile: sourceFile.fileName,
-//   });
-
-//   // 6. THE MUTATION LIFE-CYCLE EXCLUSION CONTEXT
-//   if (!isCollision) {
-//     const assignedCudMode = determineCUDMode({
-//       keyName,
-//       newTypeName: identity.typeName,
-//       newArea: identity.area,
-//       newSymbolName: identity.symbolName,
-//       newFilePath: identity.filePath,
-//       newShape: payload.shape,
-//       newAnchor: identity.anchor,
-//     });
-
-//     // Execute terminal logging and initial delta database sync passes securely
-//     executeVaultMutation({
-//       mode: assignedCudMode,
-//       payload,
-//       identityArea: identity.area,
-//     });
-
-//     flushToRegistry({
-//       key: keyName,
-//       fragments,
-//       payload,
-//     });
-//   }
-
-//   // Always return the unrolled authentic type layout tree to prevent breaking bundle generation flows
-//   return shape;
-// }

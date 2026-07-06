@@ -32,10 +32,6 @@ export function runVacuumCommand(projectRootPath: string) {
     noEmit: false,
     emitDeclarationOnly: false,
     ignoreDeprecations: '6.0',
-
-    // 🎯 THE CANONICAL TRANSITION: Destroy the incremental build caches!
-    // This explicitly forces the compiler program to bypass .tsbuildinfo logs,
-    // guaranteeing that your Scribe AST injections fire fresh on every single run.
     incremental: false,
     composite: false,
     tsBuildInfoFile: undefined,
@@ -47,7 +43,7 @@ export function runVacuumCommand(projectRootPath: string) {
 
   const program = ts.createProgram({
     rootNames: parsedConfig.fileNames,
-    options: modifiedOptions, // 🚀 Now running clean with zero caching pollution locks
+    options: modifiedOptions,
     projectReferences: parsedConfig.projectReferences,
   });
 
@@ -81,17 +77,9 @@ export function runVacuumCommand(projectRootPath: string) {
     '🪐 [Xalor CLI] Phase 2: Materializing code injections inline...',
   );
 
-  // const reifyEmitResult = program.emit(undefined, () => {}, undefined, false, {
-  //   before: [
-  //     xalorTransformerPlugin(program, {
-  //       compilationPhase: 'REIFY_RUNTIME',
-  //     }),
-  //   ],
-  // });
   const reifyEmitResult = program.emit(
     undefined,
     (fileName, text) => {
-      // Write your pruned production JavaScript files straight to your build directory target [Commandment II]
       fs.mkdirSync(path.dirname(fileName), { recursive: true });
       fs.writeFileSync(fileName, text, 'utf-8');
     },
@@ -108,7 +96,7 @@ export function runVacuumCommand(projectRootPath: string) {
 
   diagnosticsList.push(...reifyEmitResult.diagnostics);
   // ========================================================================
-  // 🛰️ DEDUPLICATED DIAGNOSTICS PERFORMANCE LEDGER
+  // DEDUPLICATED DIAGNOSTICS PERFORMANCE LEDGER
   // Aggregates pre-emit structural errors, pass 1 metadata warnings,
   // and pass 2 code-generation diagnostics into a single unified array channel!
   // ========================================================================
