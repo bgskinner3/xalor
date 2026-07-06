@@ -109,7 +109,9 @@ export type TXalorMinerRouterMap = {
   readonly [K in TValidationTriggers]: TExtractRawRegistry<TValidateRawPayload>;
 } & {
   // Transformation triggers: 'xalor.pick', 'xalor.omit', etc.
-  readonly [K in TTransformTriggers]: TExtractRawRegistry<TTransformerRawPayload>;
+  readonly [
+    K in TTransformTriggers
+  ]: TExtractRawRegistry<TTransformerRawPayload>;
 } & {
   // Transformation triggers: 'xalor.pick', 'xalor.omit', etc.
   readonly [K in TMatchTriggers]: TExtractRawRegistry<TMatchRawPayload>;

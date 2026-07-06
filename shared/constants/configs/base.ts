@@ -178,11 +178,11 @@ export const COMPILED_DISTRIBUTION_MANIFEST = Object.freeze({
 /* prettier-ignore */
 const WORKSPACE_INDICATORS = Object.freeze([ 'pnpm-workspace.yaml', 'nx.json', 'turbo.json', 'lerna.json', 'package-lock.json', 'yarn.lock', '.git' ] as const);
 /* prettier-ignore */
-const PACKAGE_INDICATORS = Object.freeze([ 'package.json', 'tsconfig.json', 'tsconfig.base.json', 'tsconfig.build.json' ] as const)
+const PACKAGE_INDICATORS = Object.freeze([ 'package.json', 'tsconfig.json', 'tsconfig.base.json', 'tsconfig.build.json' ] as const);
 /* prettier-ignore */
-const BUILD_IGNORE_DIRECTORIES = Object.freeze([ 'node_modules', 'dist', 'build', '.next', '.cache', 'coverage',   '.git' ] as const)
+const BUILD_IGNORE_DIRECTORIES = Object.freeze([ 'node_modules', 'dist', 'build', '.next', '.cache', 'coverage',   '.git' ] as const);
 /* prettier-ignore */
-const ALLOWED_BASE_FILE_EXTENSIONS = Object.freeze(['.js', '.mjs', '.ts', '.tsx'] as const)
+const ALLOWED_BASE_FILE_EXTENSIONS = Object.freeze(['.js', '.mjs', '.ts', '.tsx'] as const);
 /* prettier-ignore */
 export const ALLOWED_EXTS_SET = new Set<string>(ALLOWED_BASE_FILE_EXTENSIONS);
 

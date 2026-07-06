@@ -31,9 +31,7 @@ export type TSessionPathKeys = {
  * Compile Command Phases in order to prioritize registration first
  */
 export type TCompilationPhase =
-  | 'INGEST_REGISTRY'
-  | 'REIFY_RUNTIME'
-  | 'STANDARD_INLINE';
+  'INGEST_REGISTRY' | 'REIFY_RUNTIME' | 'STANDARD_INLINE';
 
 /**
  * TSessionRegistry

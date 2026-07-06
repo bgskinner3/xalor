@@ -14,10 +14,10 @@ const FILE_PATHS_CONFIG = {
   target: {
     /* prettier-ignore */ cacheDir: path.join(userProjectRootDir, 'node_modules', '.cache', 'xalor'),
     /* prettier-ignore */ vaultFile: path.join(userProjectRootDir, 'node_modules', '.cache', 'xalor', 'vault-snapshot.json'),
-    /* prettier-ignore */ bridgeDir: path.join(userProjectRootDir, 'node_modules', '.cache', 'xalor'),
-    /* prettier-ignore */ bridgeFile: path.join(userProjectRootDir, 'node_modules', '.cache', 'xalor', 'solid-env.ts'),
-    // /* prettier-ignore */ bridgeDir: path.join(userProjectRootDir, '.xalor'), // FILE OUTSIDE MODULES
-    // /* prettier-ignore */ bridgeFile: path.join(userProjectRootDir, '.xalor', 'solid-env.ts'), // FILE OUTSIDE MODULES
+    // /* prettier-ignore */ bridgeDir: path.join(userProjectRootDir, 'node_modules', '.cache', 'xalor'),
+    // /* prettier-ignore */ bridgeFile: path.join(userProjectRootDir, 'node_modules', '.cache', 'xalor', 'solid-env.ts'),
+    /* prettier-ignore */ bridgeDir: path.join(userProjectRootDir, '.xalor'), // FILE OUTSIDE MODULES
+    /* prettier-ignore */ bridgeFile: path.join(userProjectRootDir, '.xalor', 'solid-env.ts'), // FILE OUTSIDE MODULES
   },
   // Source Assets (Inside our packaged distribution bundle)
   source: {

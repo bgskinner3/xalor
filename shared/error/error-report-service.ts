@@ -46,7 +46,7 @@ class ErrorReportService {
   public generateTerminalPanel(ctx: TReportServiceContext): string {
     const { keyName, fileLocation, message, rule, mode } = ctx;
 
-    /* prettier-ignore */ const targetVisualMode: THeaderModes = this.MODE_ROUTER[mode]
+    /* prettier-ignore */ const targetVisualMode: THeaderModes = this.MODE_ROUTER[mode];
     /* prettier-ignore */ const ruleLabel = rule && rule.length > 0 ? rule.toUpperCase() : 'GENERAL_FAULT';
 
     // "tests/integration/payload-validation.spec.ts:55:12"
@@ -122,12 +122,12 @@ class ErrorReportService {
     typeKey: TRuntimeApiErrorKeys,
     ctx: TRuntimeApiContext,
   ): string {
-    /* prettier-ignore */ const errorMapper = this.getAreaErrorMapper('RUNTIME_API')
+    /* prettier-ignore */ const errorMapper = this.getAreaErrorMapper('RUNTIME_API');
     return errorMapper[typeKey].message(ctx);
   }
 
   public getRuntimeDriftError(typeKey: TXalorMatchDriftKeys): string {
-    /* prettier-ignore */ const errorMapper = this.getAreaErrorMapper('RUNTIME_MATCH_DRIFT')
+    /* prettier-ignore */ const errorMapper = this.getAreaErrorMapper('RUNTIME_MATCH_DRIFT');
     return errorMapper[typeKey].message();
   }
   /* prettier-ignore */

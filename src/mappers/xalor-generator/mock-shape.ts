@@ -21,7 +21,7 @@ import { shapeKindUtilsService } from '../../../shared/service';
   boolean: () => Math.random() > 0.5,
   bigint: () => BigInt(Math.floor(Math.random() * 1000000)),
   unknown: () => `unknown_val_${Math.random().toString(36).substring(7)}`,
-} satisfies Record<string,(shape: TSolidShape) => unknown>
+} satisfies Record<string,(shape: TSolidShape) => unknown>;
 
 export const MOCK_SHAPE_MATERIALIZER: TShapeMockMapperMap = {
   // TODO HANDLE UNKNWON

@@ -13,6 +13,7 @@ import {
   isCompilerTypePure,
   isTypeContractResolvabilityPure,
 } from '../sentry-layer';
+
 import { XalorError, errorReportService } from '../../../shared';
 /**
  * resolveAndRegisterType

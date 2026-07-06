@@ -1,11 +1,13 @@
 import { CLI_MAIN_CONFIG_OBJECT } from '../constants';
 type MainConfig = typeof CLI_MAIN_CONFIG_OBJECT;
 type ConfigVariation<P extends keyof MainConfig[keyof MainConfig]> = {
-  [K in keyof MainConfig as MainConfig[K][P] extends boolean
-    ? MainConfig[K][P] extends true
-      ? K
-      : never
-    : K]: MainConfig[K][P] extends boolean ? K : MainConfig[K][P];
+  [
+    K in keyof MainConfig as MainConfig[K][P] extends boolean
+      ? MainConfig[K][P] extends true
+        ? K
+        : never
+      : K
+  ]: MainConfig[K][P] extends boolean ? K : MainConfig[K][P];
 };
 
 /**

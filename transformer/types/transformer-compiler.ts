@@ -108,8 +108,6 @@ export type TPassStrategyMapper = {
  */
 export type TXalorTransformerOptions = {
   readonly compilationPhase?:
-    | 'INGEST_REGISTRY'
-    | 'REIFY_RUNTIME'
-    | 'STANDARD_INLINE';
+    'INGEST_REGISTRY' | 'REIFY_RUNTIME' | 'STANDARD_INLINE';
   readonly targetedFilesCollector?: Set<string>;
 };

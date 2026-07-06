@@ -29,7 +29,7 @@ export class AuditPresenterService {
     summary: IXalorAuditPayload['summary'],
   ) {
     /* prettier-ignore */
-    const textColor = hygiene.totalCriticalDepthWarnings > 0 ? 'error' : 'default'
+    const textColor = hygiene.totalCriticalDepthWarnings > 0 ? 'error' : 'default';
     // ------------------------------------------------------------------------
     // 2. SYSTEM HYGIENE & SAFETY ALARMS PANEL (Dark Slate Contrast Block)
     // ------------------------------------------------------------------------

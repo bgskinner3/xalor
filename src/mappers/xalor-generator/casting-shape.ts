@@ -50,7 +50,7 @@ import { XalethorService } from '../../xalor-service';
     }
   },
   unknown: (data: unknown): unknown => data
-} satisfies TCastingPrimitiveMapper
+} satisfies TCastingPrimitiveMapper;
 
 export const CAST_SHAPE_MAPPER: TShapeCastMapperMapper = {
   primitive: (shape, data) => {

@@ -1,10 +1,5 @@
 export type TCLIBootStrapModes =
-  | 'clear'
-  | 'compile'
-  | 'watch'
-  | 'audit'
-  | 'studio'
-  | 'vacuum';
+  'clear' | 'compile' | 'watch' | 'audit' | 'studio' | 'vacuum';
 
 export type TBootStrapEnvContext = {
   readonly projectRootPath: string;

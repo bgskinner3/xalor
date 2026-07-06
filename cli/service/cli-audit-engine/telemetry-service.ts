@@ -117,9 +117,9 @@ export class TelemetryService {
 
       if (matchesCount > 0) {
         counters[strategyToken] = (counters[strategyToken] ?? 0) + matchesCount;
-        console.log(
-          ` ⚡ STRATEGY INSTANCE LINKED: '${strategyToken}' (${matchesCount} matches)`,
-        );
+        // console.log(
+        //   ` ⚡ STRATEGY INSTANCE LINKED: '${strategyToken}' (${matchesCount} matches)`,
+        // );
       }
     });
   }
