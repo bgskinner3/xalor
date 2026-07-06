@@ -12,15 +12,6 @@ import type { TCommandRouterMapper } from './models';
 import { CLI_LOGGER_MAPPER } from './models';
 
 const COMMAND_ROUTER: TCommandRouterMapper = {
-  // watch: (_projectRoot) => {
-  //   // runWatchCommand(projectRoot);
-  //   console.warn(
-  //     `\n\x1b[33m⚠️  [Xalor CLI Alert]: The 'xalor watch' daemon has been completely deprecated.\x1b[0m\n` +
-  //       `👉 Upgrade Action: Remove 'xalor watch' from your package.json scripts.\n` +
-  //       `                  Simply add 'xalorViteWatchPlugin()' or 'XalorWebpackWatchPlugin'\n` +
-  //       `                  directly into your bundler config for native ambient syncing.\n`,
-  //   );
-  // },
   vacuum: (projectRoot) => {
     console.log(
       `\n\x1b[36m📊 [Xalor CLI] Launching Studio Telemetry Server Core...\x1b[0m\n` +

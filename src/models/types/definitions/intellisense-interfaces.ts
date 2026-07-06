@@ -70,6 +70,17 @@ declare global {
     : T extends object
       ? { [K in keyof T]: TExpandStructure<T[K], Visited | T> }
       : T;
+
+  export type TResolveRegistryStructure<K extends string> =
+    object extends ISolidRegistry
+      ? Record<string, unknown> // Production fallback lane when ghost folders are wiped
+      : K extends keyof ISolidRegistry
+        ? ISolidRegistry[K] // Development direct match lane (Preserves rich Intellisense)
+        : { [P in keyof any]: any };
+
+  export type TActiveRegistryKeys = object extends ISolidRegistry
+    ? string
+    : Extract<keyof ISolidRegistry, string>;
   // ==================================================================
   // ==================================================================
   // ==================================================================

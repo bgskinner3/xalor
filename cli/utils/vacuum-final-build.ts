@@ -3,7 +3,7 @@ import * as path from 'path';
 import { fsContext } from '../../shared/service';
 import { IS_SOLID_CONFIG_ITEMS, isTripleKVShape } from '../../shared';
 import { createDefaultTemplate } from './audit-service';
-// import type { TTripleKV } from '../../shared';
+import { XalorRoutesService } from '../../transformer/service';
 /**
  * VacuumExitBuild
  * THE FINAL GATEKEEPER VACUUM DISPATCHER
@@ -25,11 +25,14 @@ export function vacuumExitBuild(projectRootPath: string) {
   // const devSnapshot = await fsContext.asyncReadText(fsContext.envPaths.vaultFile);
   const res = fsContext.readText(fsContext.envPaths.vaultFile);
   const devSnapshot = JSON.parse(res);
-  console.log(devSnapshot, 'HERREREEE');
-  console.dir(devSnapshot, {
-    depth: null,
-    colors: true,
-  });
+  const pathRoot = XalorRoutesService.resolveXalorPaths();
+
+  const rawJsonString = fs.readFileSync(pathRoot.vaultFile, 'utf-8');
+  const obj = JSON.parse(rawJsonString);
+
+  console.log(obj);
+  console.log('HERE BITCH');
+
   if (!isTripleKVShape(devSnapshot)) return;
   // Debug Log: Dump raw data stream for immediate Alpha testing inspection [VIII]
   // if (process.env.XALOR_DEBUG === 'true') {
