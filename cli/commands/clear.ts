@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import ts from 'typescript';
 import xalorTransformerPlugin from '../../transformer';
-import { IS_SOLID_CONFIG_ITEMS } from '../../shared';
+import { IS_SOLID_CONFIG_ITEMS, INTERNAL_EXECUTION_GATES } from '../../shared';
 import { bootstrapEnvContext } from '../utils';
 import { fileURLToPath } from 'url';
 
@@ -18,6 +18,8 @@ import { fileURLToPath } from 'url';
  */
 export function runClearCommand(projectRootPath: string): void {
   const { fileNames } = IS_SOLID_CONFIG_ITEMS;
+  const { externalCache } = INTERNAL_EXECUTION_GATES;
+
   bootstrapEnvContext({ projectRootPath, cliMode: 'clear' });
 
   const compilerOptions: ts.CompilerOptions = {
@@ -57,6 +59,12 @@ export function runClearCommand(projectRootPath: string): void {
 
   const currentModuleDir = path.dirname(fileURLToPath(import.meta.url));
 
+  // BRIDGE DIR
+  /* prettier-ignore */ const absoluteBridgeDirNode = path.join(projectRootPath, 'node_modules', '.cache', fileNames.cacheFolderName);
+  /* prettier-ignore */ const absoluteBridgeDirExternal =path.join(projectRootPath, fileNames.intelFolderName); // FILE OUTSIDE MODULES
+  // bridgeFile
+  /* prettier-ignore */ const bridgeFileNode = path.join(projectRootPath, 'node_modules', '.cache', fileNames.cacheFolderName, fileNames.bridgeFileName);
+  /* prettier-ignore */ const bridgeFileExternal = path.join(projectRootPath, fileNames.intelFolderName, fileNames.bridgeFileName);
   // TODO: replace with our resolved paths ?
   const FILE_PATHS_CONFIG = {
     target: {
@@ -66,10 +74,12 @@ export function runClearCommand(projectRootPath: string): void {
       vaultFile: path.join(projectRootPath, 'node_modules', '.cache', fileNames.cacheFolderName, fileNames.vaultFileName),
       /* prettier-ignore */
       // bridgeDir: path.join(projectRootPath, 'node_modules', '.cache', fileNames.cacheFolderName),
-      bridgeDir: path.join(projectRootPath, fileNames.intelFolderName), // FILE OUTSIDE MODULES
+      // bridgeDir: path.join(projectRootPath, fileNames.intelFolderName), // FILE OUTSIDE MODULES
+      bridgeDir: externalCache ? absoluteBridgeDirExternal : absoluteBridgeDirNode,
       /* prettier-ignore */
       // bridgeFile: path.join(projectRootPath, 'node_modules', '.cache', fileNames.cacheFolderName, fileNames.bridgeFileName),
-      bridgeFile: path.join(projectRootPath, fileNames.intelFolderName, fileNames.bridgeFileName), // FILE OUTSIDE MODULES
+      // bridgeFile: path.join(projectRootPath, fileNames.intelFolderName, fileNames.bridgeFileName), // FILE OUTSIDE MODULES
+      bridgeFile: externalCache ? bridgeFileExternal : bridgeFileNode,
     },
     source: {
       /* prettier-ignore */

@@ -97,6 +97,8 @@ class FileSystemContextService {
   public resolveXalorPaths(
     rootDir: string = this.projectRoot,
   ): TXalorResolvedPaths {
+    // const { externalCache } = INTERNAL_EXECUTION_GATES;
+
     const fileNames = this.fileNames;
     // CRASH FIX: Enforce string evaluation via explicit valueOf casting
     // to shield path.join from runtime type metadata tokens.

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 // src/cli/bin.ts
 import {
-  runWatchCommand,
   runCompileCommand,
   runStudioCommand,
   runClearCommand,
@@ -12,9 +11,15 @@ import type { TCommandRouterMapper } from './models';
 import { CLI_LOGGER_MAPPER } from './models';
 
 const COMMAND_ROUTER: TCommandRouterMapper = {
-  watch: (projectRoot) => {
-    runWatchCommand(projectRoot);
-  },
+  // watch: (_projectRoot) => {
+  //   // runWatchCommand(projectRoot);
+  //   console.warn(
+  //     `\n\x1b[33m⚠️  [Xalor CLI Alert]: The 'xalor watch' daemon has been completely deprecated.\x1b[0m\n` +
+  //       `👉 Upgrade Action: Remove 'xalor watch' from your package.json scripts.\n` +
+  //       `                  Simply add 'xalorViteWatchPlugin()' or 'XalorWebpackWatchPlugin'\n` +
+  //       `                  directly into your bundler config for native ambient syncing.\n`,
+  //   );
+  // },
   vacuum: (projectRoot) => {
     console.log(
       `🧹 [Xalor CLI] Stage 2 Vacuum running: Purging development telemetry metrics...`,

@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { IS_SOLID_CONFIG_ITEMS } from '../constants';
+import { IS_SOLID_CONFIG_ITEMS, INTERNAL_EXECUTION_GATES } from '../constants';
 import type { TXalorResolvedPaths } from '../types';
 
 export function findProjectRoot(startingPath: string): string {
@@ -40,16 +40,16 @@ export function resolveXalorPaths(
   executionContextPath?: string,
 ): TXalorResolvedPaths {
   const { fileNames } = IS_SOLID_CONFIG_ITEMS;
-
+  const { externalCache } = INTERNAL_EXECUTION_GATES;
   // Resolve the project root via the existing fallback finder service tool
   const rootDir = executionContextPath
     ? findProjectRoot(executionContextPath)
     : process.cwd();
 
   /* prettier-ignore */ const absoluteCacheDir = path.join( rootDir, 'node_modules', '.cache', fileNames.cacheFolderName);
-  // /* prettier-ignore */ const absoluteBridgeDir = path.join(rootDir, 'node_modules', '.cache', fileNames.cacheFolderName);
-  /* prettier-ignore */ const absoluteBridgeDir = path.join(rootDir, fileNames.intelFolderName); // FILE OUTSIDE MODULES
-
+  /* prettier-ignore */ const absoluteBridgeDirNode = path.join(rootDir, 'node_modules', '.cache', fileNames.cacheFolderName);
+  /* prettier-ignore */ const absoluteBridgeDirExternal = path.join(rootDir, fileNames.intelFolderName); // FILE OUTSIDE MODULES
+  /* prettier-ignore */ const absoluteBridgeDir = externalCache ? absoluteBridgeDirExternal : absoluteBridgeDirNode;
   return {
     rootDir,
     cacheDir: absoluteCacheDir,

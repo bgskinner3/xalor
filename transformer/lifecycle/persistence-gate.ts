@@ -144,6 +144,7 @@ export function persistenceGate({
 
   const { globalKeyRegistry, activePassKeys, driftRegistry } =
     xalorCentralContext.context;
+
   const { isDevelopmentPass, isTestEnvironment } =
     XalorRoutesService.resolveXalorLifecycle();
   const currentFileAbsolute = path.resolve(file.fileName);
@@ -157,6 +158,13 @@ export function persistenceGate({
   const currentSessionPath =
     xalorCentralContext.getCurrentSessionPath(currentFileAbsolute);
 
+  // Object.keys(currentSessionPath.keys).forEach((key) => {
+  //   const payload = globalKeyRegistry.get(key);
+
+  //   if (!payload || key.includes('$')) return;
+
+  //   logStatus(payload);
+  // });
   if (currentSessionPath) {
     executeInFileBacktrackingSweep({
       currentSessionPath,

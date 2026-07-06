@@ -5,13 +5,13 @@ import type {
   TExecuteCUDMutationParams,
   TCudExecutionMode,
 } from '../types';
-import { xalorCentralContext, XalorRoutesService } from '../service';
+import { xalorCentralContext } from '../service';
 import {
   isRegistryModified,
   isManifestModified,
   isBlueprintModified,
 } from '../utils';
-
+import type { TVaultSyncPayload } from '../../shared';
 function printCudLog(mode: TCudExecutionMode, keyName: string): void {
   const DIAGNOSTIC_STRATEGY_MAPPER: Record<TCudExecutionMode, () => void> = {
     create: () => console.log(`✨ [Xalor CLI] Added Type Key: '${keyName}'`),
@@ -97,6 +97,22 @@ export function determineCUDMode({
 
   return CUD_EXECUTION_MODES.noop;
 }
+// TODO: implement logger
+export const logStatus = (data: TVaultSyncPayload) => {
+  const assignedCudMode = determineCUDMode({
+    keyName: data.key,
+    newTypeName: data.typeName,
+    newArea: data.area,
+    newSymbolName: data.symbolName,
+    newFilePath: data.filePath,
+    newShape: data.shape,
+    newAnchor: data.anchor,
+  });
+
+  const printMode = CUD_EXECUTION_MODES[assignedCudMode];
+
+  printCudLog(printMode, data.key);
+};
 
 /**
  * THE UMBRELLA CUD MUTATOR HUB
@@ -114,34 +130,34 @@ export function executeVaultMutation({
   payload,
   identityArea,
 }: TExecuteCUDMutationParams): void {
-  const lifecycle = XalorRoutesService.resolveXalorLifecycle();
+  // const lifecycle = XalorRoutesService.resolveXalorLifecycle();
   // const resolvedKeyName = payload?.key ?? keyName ?? 'unknown';
 
   const MUTATION_STRATEGY_MAPPER: Record<TCudExecutionMode, () => void> = {
     create: () => {
       if (payload && identityArea) {
-        const { key } = payload;
+        // const { key } = payload;
         xalorCentralContext.updateGlobalAndSession(payload);
 
-        if (lifecycle.isDevelopmentPass)
-          printCudLog(CUD_EXECUTION_MODES.create, key);
+        // if (lifecycle.isDevelopmentPass)
+        //   printCudLog(CUD_EXECUTION_MODES.create, key);
       }
     },
     update: () => {
       if (payload && identityArea) {
-        const { key } = payload;
+        // const { key } = payload;
         xalorCentralContext.updateGlobalAndSession(payload);
 
-        if (lifecycle.isDevelopmentPass)
-          printCudLog(CUD_EXECUTION_MODES.update, key);
+        // if (lifecycle.isDevelopmentPass)
+        //   printCudLog(CUD_EXECUTION_MODES.update, key);
       }
     },
     delete: () => {
       if (payload) {
         const { key, filePath } = payload;
         xalorCentralContext.deleteGlobalAndSession({ keyName: key, filePath });
-        if (lifecycle.isDevelopmentPass)
-          printCudLog(CUD_EXECUTION_MODES.delete, key);
+        // if (lifecycle.isDevelopmentPass)
+        //   printCudLog(CUD_EXECUTION_MODES.delete, key);
       }
     },
     noop: () => {

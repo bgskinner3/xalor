@@ -1,6 +1,5 @@
 import type { TCLIFlags } from '../../shared';
 import {
-  isWatchMode,
   isVacuumMode,
   isAuditMode,
   isCompileMode,
@@ -86,7 +85,6 @@ function resolveOperationalCliMode(
 ): TCLICommandsControl {
   if (!token) return 'help';
   if (isCompileMode(token)) return 'compile';
-  if (isWatchMode(token)) return 'watch';
   if (isVacuumMode(token)) return 'vacuum';
   if (isStudioMode(token)) return 'studio';
   if (isClearMode(token)) return 'clear';

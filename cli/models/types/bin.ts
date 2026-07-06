@@ -5,7 +5,7 @@ import type { TXalorCLIModes, TCLIFlags } from '../../../shared/cli-domain';
  *
  * CLI layer commands including help to avoid unncessary commands
  */
-export type TCLICommandsControl = TXalorCLIModes | 'help';
+export type TCLICommandsControl = Exclude<TXalorCLIModes, 'watch'>;
 
 /**
  * ICLIConfig

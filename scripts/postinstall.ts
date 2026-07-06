@@ -3,11 +3,20 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { INTERNAL_EXECUTION_GATES } from '../shared/constants/configs/execution-gates.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /* prettier-ignore */ const userProjectRootDir = path.resolve(__dirname, '..', '..', '..', '..', '..');
+/* prettier-ignore */ const {externalCache}= INTERNAL_EXECUTION_GATES;
+
+// BRIDGE DIR
+/* prettier-ignore */ const bridgeDirNode = path.join(userProjectRootDir, 'node_modules', '.cache', 'xalor');
+/* prettier-ignore */ const bridgeDirExternal = path.join(userProjectRootDir, '.xalor'); // FILE OUTSIDE MODULES
+// bridgeFile
+/* prettier-ignore */ const bridgeFileNode = path.join(userProjectRootDir, 'node_modules', '.cache', 'xalor', 'solid-env.ts');
+/* prettier-ignore */ const bridgeFileExternal = path.join(userProjectRootDir, '.xalor', 'solid-env.ts');
 
 const FILE_PATHS_CONFIG = {
   // Target Destinations (Inside the user's workspace)
@@ -16,8 +25,10 @@ const FILE_PATHS_CONFIG = {
     /* prettier-ignore */ vaultFile: path.join(userProjectRootDir, 'node_modules', '.cache', 'xalor', 'vault-snapshot.json'),
     // /* prettier-ignore */ bridgeDir: path.join(userProjectRootDir, 'node_modules', '.cache', 'xalor'),
     // /* prettier-ignore */ bridgeFile: path.join(userProjectRootDir, 'node_modules', '.cache', 'xalor', 'solid-env.ts'),
-    /* prettier-ignore */ bridgeDir: path.join(userProjectRootDir, '.xalor'), // FILE OUTSIDE MODULES
-    /* prettier-ignore */ bridgeFile: path.join(userProjectRootDir, '.xalor', 'solid-env.ts'), // FILE OUTSIDE MODULES
+    // /* prettier-ignore */ bridgeDir: path.join(userProjectRootDir, '.xalor'), // FILE OUTSIDE MODULES
+    // /* prettier-ignore */ bridgeFile: path.join(userProjectRootDir, '.xalor', 'solid-env.ts'), // FILE OUTSIDE MODULES
+    /* prettier-ignore */ bridgeDir: externalCache ? bridgeDirExternal : bridgeDirNode,
+    /* prettier-ignore */ bridgeFile: externalCache ? bridgeFileExternal : bridgeFileNode,
   },
   // Source Assets (Inside our packaged distribution bundle)
   source: {

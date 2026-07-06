@@ -13,6 +13,7 @@ export default defineConfig({
     'transformer/index': 'transformer/index.ts',
     'scripts/postinstall': 'scripts/postinstall.ts',
     'cli/bin': 'cli/bin.ts',
+    'plugins/index': 'plugins/index.ts',
   },
   loader: {
     '.html': 'text',
