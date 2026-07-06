@@ -259,6 +259,7 @@ type TDefaultReturnMap = {
   studioNode: TDeepWriteable<TStudioNodeItem>;
   studioDefault: IStudioOverviewPayload;
   vacuumFinalBuildDist: TVacuumFInalBuildShape;
+  tripleKVData: TTripleKV;
 };
 export type TDefaultObjectKeys = keyof typeof DEFAULT_OBJECT_MAPPER;
 

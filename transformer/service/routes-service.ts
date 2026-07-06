@@ -37,13 +37,15 @@ export class XalorRoutesService {
     // ===============================================================
     // COMPILE PHASE MODES
     // ===============================================================
+    const isStaticCompileGate = isOneShotCompileMode || isProductionVacuumMode;
+
     const compilationPhase = xalorCentralContext.compilationPhase;
     /* prettier-ignore */
-    const isIngestRegistryMode = isOneShotCompileMode && compilationPhase === 'INGEST_REGISTRY';
+    const isIngestRegistryMode = isStaticCompileGate && compilationPhase === 'INGEST_REGISTRY';
     /* prettier-ignore */
-    const isReifyRuntimeMode = isOneShotCompileMode && compilationPhase === 'REIFY_RUNTIME';
+    const isReifyRuntimeMode = isStaticCompileGate && compilationPhase === 'REIFY_RUNTIME';
     /* prettier-ignore */
-    const isStandardInlineMode = !isOneShotCompileMode && compilationPhase === 'STANDARD_INLINE';
+    const isStandardInlineMode = !isStaticCompileGate && compilationPhase === 'STANDARD_INLINE';
     return {
       isWatchMode,
       isOneShotCompileMode,

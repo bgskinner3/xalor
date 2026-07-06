@@ -1,5 +1,6 @@
 import type { TXalorParsedConfig, TTripleKV } from '../../types';
 import { ModuleKind, ScriptTarget } from 'typescript';
+import { TDeepWriteable } from '../../types';
 
 /**
  * REGEX_PATTERNS
@@ -98,11 +99,11 @@ export const CONFIG_FALLBACK_DEFAULT: TXalorParsedConfig = {
   isFallbackMode: true,
 } satisfies TXalorParsedConfig;
 
-export const DEFAULT_VAULT_SHAPE_FALLBACK: TTripleKV = {
+export const DEFAULT_VAULT_SHAPE_FALLBACK: TDeepWriteable<TTripleKV> = {
   blueprints: {},
   references: {},
   manifest: {},
   registry: {},
   driftTracking: {},
   version: '1.0.0',
-} satisfies TTripleKV;
+} satisfies TDeepWriteable<TTripleKV>;

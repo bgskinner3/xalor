@@ -143,7 +143,9 @@ function shouldWritePayload(
  * ROLE:
  * Master orchestration block coordinating the final memory-to-disk cache serialization.
  */
-export async function serializeAndFlushVault(rootDir: string): Promise<void> {
+export async function serializeAndFlushVault(
+  rootDir: string,
+): Promise<TTripleKV> {
   const { globalKeyRegistry } = xalorCentralContext.context;
   const paths = XalorRoutesService.resolveXalorPaths(rootDir);
 
@@ -156,9 +158,10 @@ export async function serializeAndFlushVault(rootDir: string): Promise<void> {
       fs.mkdirSync(paths.cacheDir, { recursive: true });
     }
 
-    if (!shouldWritePayload(paths.vaultFile, newJsonPayload)) return;
+    if (!shouldWritePayload(paths.vaultFile, newJsonPayload)) return snapshot;
 
-    await fs.promises.writeFile(paths.vaultFile, newJsonPayload, 'utf-8');
+    fs.writeFileSync(paths.vaultFile, newJsonPayload, 'utf-8');
+    return snapshot;
   } catch (error: unknown) {
     const mode = XalorRoutesService.xalorCLIMode();
     errorReportService.logAnomaly('TRANSFORMER_DIAGNOSTIC_COMPILER', {
@@ -168,4 +171,5 @@ export async function serializeAndFlushVault(rootDir: string): Promise<void> {
       mode: mode,
     });
   }
+  return snapshot;
 }

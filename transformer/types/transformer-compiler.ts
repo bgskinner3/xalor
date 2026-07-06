@@ -1,6 +1,8 @@
 import type {
   TXalorResolvedPaths,
   TTransformerExecuteMode,
+  TTripleKV,
+  TDeepWriteable,
 } from '../../shared';
 import type { Program, TransformationContext, SourceFile } from 'typescript';
 import type { TMineFilePass } from './the-miners';
@@ -30,13 +32,6 @@ export type TProgramContext = {
   readonly getProgram: () => Program;
 } & TransformationContext;
 
-export type TVacuumFilePass = {
-  /* prettier-ignore */ readonly program: Program;
-  /* prettier-ignore */ readonly context: TransformationContext;
-  /* prettier-ignore */ readonly sourceFile: SourceFile;
-  // /* prettier-ignore */ readonly rootContext: TXalorEngineContext
-};
-
 // ==============================================================================
 // ==============================================================================
 // PassStrategyPayloadMap
@@ -58,7 +53,7 @@ export type TPassStrategyPayloadMap = {
   /** Compile mode demands identical parameters but handles a single-pass execution pipeline path */
   compile: TMineFilePass;
   /** Vacuum mode tracks final production passes and can omit local IDE directory structures completely */
-  vacuum: TVacuumFilePass;
+  vacuum: TMineFilePass;
 
   studio: TMineFilePass;
 };
@@ -110,4 +105,5 @@ export type TXalorTransformerOptions = {
   readonly compilationPhase?:
     'INGEST_REGISTRY' | 'REIFY_RUNTIME' | 'STANDARD_INLINE';
   readonly targetedFilesCollector?: Set<string>;
+  outboundDataMemoryPass?: TDeepWriteable<TTripleKV> | null;
 };

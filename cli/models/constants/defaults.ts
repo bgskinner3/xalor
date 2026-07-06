@@ -10,8 +10,9 @@ import type {
   TStudioNodeItem,
   TVacuumFInalBuildShape,
 } from '../types';
-import { TDeepWriteable } from '../../../shared';
+import type { TDeepWriteable } from '../../../shared';
 import { TELEMETRY_API_TOKEN_NAMES } from './audit';
+import { DEFAULT_VAULT_SHAPE_FALLBACK } from '../../../shared';
 /**
  * DEFAULT_AUDIT_SIZE_METRICS
  */
@@ -241,4 +242,5 @@ export const DEFAULT_OBJECT_MAPPER = {
   studioNode: STUDIO_NODE_TEMPLATE,
   studioDefault: DEFAULT_STUDIO_PAYLOAD,
   vacuumFinalBuildDist: VACUUM_FINAL_DIST_OUTPUT,
+  tripleKVData: DEFAULT_VAULT_SHAPE_FALLBACK,
 } as const;

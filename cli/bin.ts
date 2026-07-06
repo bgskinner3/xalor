@@ -5,7 +5,7 @@ import {
   runStudioCommand,
   runClearCommand,
   runAuditCommand,
-  // runVacuumCommand
+  runVacuumCommand,
 } from './commands';
 import { determineCLIConfig } from './utils';
 import type { TCommandRouterMapper } from './models';
@@ -23,14 +23,14 @@ const COMMAND_ROUTER: TCommandRouterMapper = {
   // },
   vacuum: (projectRoot) => {
     console.log(
-      '/n/n/\n\n\n\n\n\n\n',
-      '/n/n/\n\n\n\n\n\n\n',
-      `🧹 [Xalor CLI] Stage 2 Vacuum running: Purging development telemetry metrics...`,
-      '/n/n/\n\n\n\n\n\n\n',
-      '/n/n/\n\n\n\n\n\n\n',
-      '/n/n/\n\n\n\n\n\n\n',
+      `\n\x1b[36m📊 [Xalor CLI] Launching Studio Telemetry Server Core...\x1b[0m\n` +
+        ` ↳ Status: Active Thread Locked 🟢`,
     );
-    console.log(`📂 Target Workspace Anchor: ${projectRoot}`);
+
+    runVacuumCommand(projectRoot);
+    console.log(
+      `\x1b[34m📂 Target Workspace Anchor:\x1b[0m \x1b[2m${projectRoot}\x1b[0m\n`,
+    );
   },
   compile: (projectRoot) => {
     runCompileCommand(projectRoot);
@@ -39,7 +39,7 @@ const COMMAND_ROUTER: TCommandRouterMapper = {
     console.log(
       '🪐 [Xalor CLI] Auto-compiling workspace to synchronize telemetry registry maps...',
     );
-    // Await your async audit data generation routines cleanly!
+
     await runAuditCommand(projectRoot, flags);
   },
   studio: (projectRoot) => {
