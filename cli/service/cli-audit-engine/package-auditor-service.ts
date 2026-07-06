@@ -1,5 +1,5 @@
 import type { TAuditSizeMetrics, IXalorAuditPayload } from '../../models';
-import { createDefaultAuditTemplate } from '../../utils';
+import { createDefaultTemplate } from '../../utils';
 import {
   isIgnoreDirKey,
   isUndefined,
@@ -169,7 +169,7 @@ class PackageLifecycleAuditor {
   }
 
   private extractExpectedPackageWeights(): TAuditSizeMetrics {
-    const auditSizeMetrics = createDefaultAuditTemplate('packageMetrics');
+    const auditSizeMetrics = createDefaultTemplate('packageMetrics');
 
     /* prettier-ignore */
     const packageJsonPath = fsContext.resolvePath(this.searchFileNames.packageJson);

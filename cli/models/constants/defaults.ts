@@ -8,6 +8,7 @@ import type {
   IStudioOverviewPayload,
   TAuditSizeMetrics,
   TStudioNodeItem,
+  TVacuumFInalBuildShape,
 } from '../types';
 import { TDeepWriteable } from '../../../shared';
 import { TELEMETRY_API_TOKEN_NAMES } from './audit';
@@ -209,8 +210,26 @@ export const STUDIO_NODE_TEMPLATE: TDeepWriteable<TStudioNodeItem> = {
   },
   apisUsed: STUDIO_APIS_USED_DEFAULT,
 } satisfies TDeepWriteable<TStudioNodeItem>;
+
 /**
- * DEFAULT OOBJECT GENEREATOR
+ * CLI Vacuum FINAL BUILD OBJECT
+ */
+export const VACUUM_FINAL_DIST_OUTPUT: TVacuumFInalBuildShape = {
+  blueprints: {},
+  references: {},
+  driftTracking: {},
+  version: '',
+} satisfies TVacuumFInalBuildShape;
+
+/**
+ * ============================================================================
+ * 🪐 VACUUM FINAL DIST OUTPUT (PRODUCTION DATABASE BASELINE)
+ * ============================================================================
+ * ROLE:
+ * Serves as the immutable initialization baseline for the finalized production
+ * static database artifact. This object structure mirrors the precise layout
+ * written to disk during the automated Stage 2 prebuild vacuum pass.
+ * R
  */
 export const DEFAULT_OBJECT_MAPPER = {
   original: DEFAULT_AUDIT_PAYLOAD,
@@ -221,4 +240,5 @@ export const DEFAULT_OBJECT_MAPPER = {
   packageMetrics: DEFAULT_AUDIT_SIZE_METRICS,
   studioNode: STUDIO_NODE_TEMPLATE,
   studioDefault: DEFAULT_STUDIO_PAYLOAD,
+  vacuumFinalBuildDist: VACUUM_FINAL_DIST_OUTPUT,
 } as const;

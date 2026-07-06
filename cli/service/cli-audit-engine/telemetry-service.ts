@@ -20,7 +20,7 @@ import {
   yieldItems,
 } from '../../../shared/utils';
 import {
-  createDefaultAuditTemplate,
+  createDefaultTemplate,
   isTransformerTrigger,
   isValidationTrigger,
   isGeneratorTrigger,
@@ -296,7 +296,7 @@ export class TelemetryService {
     mode: 'audit' | 'studio' = 'audit',
   ): Promise<IXalorAuditPayload['telemetry']> {
     this.mode = mode;
-    const telemetryObject = createDefaultAuditTemplate('telemetry');
+    const telemetryObject = createDefaultTemplate('telemetry');
 
     // Type dynamically map value based on mode to maintain total runtime isolation
     // TODO: FIX ANY

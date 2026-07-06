@@ -47,7 +47,7 @@ import { AuditPresenterService } from './audit-presenter';
  * @class
  */
 export class AuditEngineService extends AuditPresenterService {
-  private createDefaultAuditTemplate<T extends TDefaultObjectKeys>(
+  private createDefaultTemplate<T extends TDefaultObjectKeys>(
     defaultType: T,
   ): TDefaultReturnKeyMap<T> {
     const baseStaticTemplate = DEFAULT_OBJECT_MAPPER[defaultType];
@@ -70,7 +70,7 @@ export class AuditEngineService extends AuditPresenterService {
   /* prettier-ignore */
   public async executeFullAuditRun(flags: { fix: boolean; debug: boolean }): Promise<IXalorAuditPayload> {
 
-    const baseTemplate = this.createDefaultAuditTemplate('original');
+    const baseTemplate = this.createDefaultTemplate('original');
     const performanceStartMarker = performance.now();
 
     const rawVaultData = await fsContext.ingestVaultSnapshotFromDisk();
@@ -136,7 +136,7 @@ export class AuditEngineService extends AuditPresenterService {
     const rawVaultData = await fsContext.ingestVaultSnapshotFromDisk();
 
     if (!rawVaultData) {
-      return this.createDefaultAuditTemplate('studio');
+      return this.createDefaultTemplate('studio');
     }
 
     const nodes = auditRegistryService.extractNodeCoreDataLayout(rawVaultData);

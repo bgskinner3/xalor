@@ -1,8 +1,6 @@
 import * as os from 'os';
 import type {
   IStudioOverviewPayload,
-  TDefaultObjectKeys,
-  TDefaultReturnKeyMap,
   TFormatNodes,
   TNodeItemTimeMeasure,
 } from '../models/types';
@@ -10,7 +8,6 @@ import type { TTripleKV } from '../../shared/types';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared/constants';
 import {
   yieldItems,
-  cloneDeep,
   isValidSolidShape,
   isKeyInObject,
   measurePayloadSizeMB,
@@ -20,23 +17,20 @@ import {
 } from '../../shared';
 import { fsContext } from '../../shared/service';
 import { auditEngineService } from './cli-audit-engine';
-import {
-  DEFAULT_OBJECT_MAPPER,
-  STUDIO_COMMAND_CONFIG,
-} from '../models/constants';
+import { STUDIO_COMMAND_CONFIG } from '../models/constants';
 import { ObjectUtils } from '../../shared';
-import { compileAndProfileSingleNode } from '../utils';
+import { compileAndProfileSingleNode, createDefaultTemplate } from '../utils';
 import { complexityService } from './complexity-service';
 
 export class StudioCLIEngineService {
   private cliConfigOptions = IS_SOLID_CONFIG_ITEMS.cliConfig;
-  private createDefaultAuditTemplate<T extends TDefaultObjectKeys>(
-    defaultType: T,
-  ): TDefaultReturnKeyMap<T> {
-    const baseStaticTemplate = DEFAULT_OBJECT_MAPPER[defaultType];
+  // private createDefaultAuditTemplate<T extends TDefaultObjectKeys>(
+  //   defaultType: T,
+  // ): TDefaultReturnKeyMap<T> {
+  //   const baseStaticTemplate = DEFAULT_OBJECT_MAPPER[defaultType];
 
-    return cloneDeep(baseStaticTemplate);
-  }
+  //   return cloneDeep(baseStaticTemplate);
+  // }
 
   /**
    * CHECK MEMORY BUDGET & STRUCTURAL STABILITY GATE
@@ -102,7 +96,7 @@ export class StudioCLIEngineService {
       const manifest = rawVaultData.manifest[uuidName];
       if (!isValidSolidShape(blueprintShape)) continue;
 
-      const template = this.createDefaultAuditTemplate('studioNode');
+      const template = createDefaultTemplate('studioNode');
 
       /* prettier-ignore */
       const filePathLink = buildAbsolutePathTypeLink(manifest.area, manifest.filePath);
@@ -230,7 +224,7 @@ export class StudioCLIEngineService {
   public async compileDashboardOverviewDataset(
     activePort: number,
   ): Promise<IStudioOverviewPayload> {
-    const studioPayload = this.createDefaultAuditTemplate('studioDefault');
+    const studioPayload = createDefaultTemplate('studioDefault');
     const rawVaultData = await fsContext.ingestVaultSnapshotFromDisk();
 
     // Fire your optimized, headless audit calculator loop pass to fetch raw data calculation sheets

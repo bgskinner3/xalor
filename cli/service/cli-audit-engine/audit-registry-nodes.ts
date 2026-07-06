@@ -6,7 +6,7 @@ import type {
 } from '../../../shared/types';
 import { REGEX_PATTERNS } from '../../../shared/constants';
 import { ObjectUtils, yieldItems } from '../../../shared';
-import { createDefaultAuditTemplate } from '../../utils';
+import { createDefaultTemplate } from '../../utils';
 
 class AuditRegistryService {
   public parseManifestCoordinates(
@@ -50,7 +50,7 @@ class AuditRegistryService {
 
     // FIX: Swapped out the second imperative loop for a strict point-free array collection pass
     (yieldItems(userKeys) || []).forEach((typeKey) => {
-      const nodeRecord = createDefaultAuditTemplate('node');
+      const nodeRecord = createDefaultTemplate('node');
       const casFingerprint = vault.references[typeKey];
 
       /* prettier-ignore */

@@ -135,7 +135,7 @@ export function buildAdjacencyMap(
  *
  * @see {@link AuditServiceDocs.generateDefaultPayload}
  */
-export function createDefaultAuditTemplate<T extends TDefaultObjectKeys>(
+export function createDefaultTemplate<T extends TDefaultObjectKeys>(
   defaultType: T,
 ): TDefaultReturnKeyMap<T> {
   const baseStaticTemplate = DEFAULT_OBJECT_MAPPER[defaultType];

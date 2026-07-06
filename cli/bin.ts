@@ -5,6 +5,7 @@ import {
   runStudioCommand,
   runClearCommand,
   runAuditCommand,
+  // runVacuumCommand
 } from './commands';
 import { determineCLIConfig } from './utils';
 import type { TCommandRouterMapper } from './models';
@@ -22,7 +23,12 @@ const COMMAND_ROUTER: TCommandRouterMapper = {
   // },
   vacuum: (projectRoot) => {
     console.log(
+      '/n/n/\n\n\n\n\n\n\n',
+      '/n/n/\n\n\n\n\n\n\n',
       `🧹 [Xalor CLI] Stage 2 Vacuum running: Purging development telemetry metrics...`,
+      '/n/n/\n\n\n\n\n\n\n',
+      '/n/n/\n\n\n\n\n\n\n',
+      '/n/n/\n\n\n\n\n\n\n',
     );
     console.log(`📂 Target Workspace Anchor: ${projectRoot}`);
   },

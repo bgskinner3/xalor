@@ -81,6 +81,8 @@ export const PACKAGE_FILE_PATHS = Object.freeze({
   bakedFileName: 'baked-vault.js',
   intelFolderName: '.xalor',
   cacheFolderName: 'xalor',
+  // generated final build
+  generatedFinalBuild: 'xalor-vault.generated.json',
 } as const);
 /**
  * TYPED KEY LIST

@@ -7,7 +7,7 @@ import type { TDeepWriteable, TTripleKV, TSolidShape } from '../../../shared';
 import { fsContext } from '../../../shared/service';
 import { PROPERTY_DRIFT_EVALUATION_RULES } from '../../models/constants';
 import { ObjectUtils, isObjectShape, yieldItems } from '../../../shared';
-import { createDefaultAuditTemplate } from '../../utils';
+import { createDefaultTemplate } from '../../utils';
 
 /** @see {@link AuditServiceDocs.interceptContractDriftRadar} */
 class AuditDriftService {
@@ -104,7 +104,7 @@ class AuditDriftService {
   public async interceptContractDriftRadar(
     activeVault: TTripleKV,
   ): Promise<IXalorAuditPayload['drift']> {
-    const driftContext = createDefaultAuditTemplate('drift');
+    const driftContext = createDefaultTemplate('drift');
 
     const baselineFilePath = fsContext.envPaths.baselineFile;
     if (!fsContext.fileExists(baselineFilePath)) return driftContext;
