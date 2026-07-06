@@ -1,7 +1,7 @@
 import * as fs from 'fs';
-import * as path from 'path';
+// import * as path from 'path';
 import { fsContext } from '../../shared/service';
-import { IS_SOLID_CONFIG_ITEMS, isTripleKVShape } from '../../shared';
+import { isTripleKVShape } from '../../shared';
 import { createDefaultTemplate } from './audit-service';
 import { XalorRoutesService } from '../../transformer/service';
 /**
@@ -10,8 +10,8 @@ import { XalorRoutesService } from '../../transformer/service';
  *
  * ROLE: Executes out-of-band telemetry pruning and workspace cleanup before process exit.
  */
-export function vacuumExitBuild(projectRootPath: string) {
-  const { fileNames } = IS_SOLID_CONFIG_ITEMS;
+export function vacuumExitBuild() {
+  // const { fileNames } = IS_SOLID_CONFIG_ITEMS;
   // const paths = resolveXalorPaths();
   // paths.vaultFile;
   console.log(
@@ -70,42 +70,42 @@ export function vacuumExitBuild(projectRootPath: string) {
   productionVault.driftTracking = devSnapshot.driftTracking;
   productionVault.version = devSnapshot.version;
 
-  const vacuumedPayloadString = JSON.stringify(productionVault);
-  const currentPayloadBytes = Buffer.byteLength(vacuumedPayloadString, 'utf8');
+  // const vacuumedPayloadString = JSON.stringify(productionVault);
+  // const currentPayloadBytes = Buffer.byteLength(vacuumedPayloadString, 'utf8');
 
-  /* prettier-ignore */
-  const targetOutputFolder = path.resolve(projectRootPath, './src');
-  /* prettier-ignore */
-  const targetOutputFile = path.resolve(targetOutputFolder, fileNames.generatedFinalBuild);
+  // /* prettier-ignore */
+  // const targetOutputFolder = path.resolve(projectRootPath, './src');
+  // /* prettier-ignore */
+  // const targetOutputFile = path.resolve(targetOutputFolder, fileNames.generatedFinalBuild);
 
-  // 4. Atomic Asset Materialization Loop
-  try {
-    if (!fs.existsSync(targetOutputFolder)) {
-      console.log(
-        ` ↳ Output directory missing. Creating target folder: \x1b[2msrc/\x1b[0m`,
-      );
-      fs.mkdirSync(targetOutputFolder, { recursive: true });
-    }
+  // // 4. Atomic Asset Materialization Loop
+  // try {
+  //   if (!fs.existsSync(targetOutputFolder)) {
+  //     console.log(
+  //       ` ↳ Output directory missing. Creating target folder: \x1b[2msrc/\x1b[0m`,
+  //     );
+  //     fs.mkdirSync(targetOutputFolder, { recursive: true });
+  //   }
 
-    // Inspect current bytes to suppress unnecessary loop churn and bundler HMR triggers [Commandment VIII]
-    let currentDiskBytes = '';
-    if (fs.existsSync(targetOutputFile)) {
-      currentDiskBytes = fs.readFileSync(targetOutputFile, 'utf-8');
-    }
-    console.log(currentDiskBytes, 'currentDiskBytes');
-    if (currentDiskBytes !== vacuumedPayloadString) {
-      fs.writeFileSync(targetOutputFile, vacuumedPayloadString, 'utf-8');
-      /* prettier-ignore */
-      console.log(` \x1b[32m✅ Delivered optimized runtime registry contract (${(currentPayloadBytes / 1024).toFixed(2)} KB) to: src/${fileNames.vaultFileName}\x1b[0m`);
-    } else {
-      /* prettier-ignore */
-      console.log(` ↳ \x1b[34mRuntime registry bytecode matches current disk footprint. Skipping write via Atomic Shield [VIII].\x1b[0m`);
-    }
-  } catch (err) {
-    /* prettier-ignore */
-    console.error(`\x1b[31m🚨 HARD CRASH: Failed to write runtime bytecode map to production asset scope.\x1b[0m`, err);
-    process.exit(1);
-  }
+  //   // Inspect current bytes to suppress unnecessary loop churn and bundler HMR triggers [Commandment VIII]
+  //   let currentDiskBytes = '';
+  //   if (fs.existsSync(targetOutputFile)) {
+  //     currentDiskBytes = fs.readFileSync(targetOutputFile, 'utf-8');
+  //   }
+  //   console.log(currentDiskBytes, 'currentDiskBytes');
+  //   if (currentDiskBytes !== vacuumedPayloadString) {
+  //     fs.writeFileSync(targetOutputFile, vacuumedPayloadString, 'utf-8');
+  //     /* prettier-ignore */
+  //     console.log(` \x1b[32m✅ Delivered optimized runtime registry contract (${(currentPayloadBytes / 1024).toFixed(2)} KB) to: src/${fileNames.vaultFileName}\x1b[0m`);
+  //   } else {
+  //     /* prettier-ignore */
+  //     console.log(` ↳ \x1b[34mRuntime registry bytecode matches current disk footprint. Skipping write via Atomic Shield [VIII].\x1b[0m`);
+  //   }
+  // } catch (err) {
+  //   /* prettier-ignore */
+  //   console.error(`\x1b[31m🚨 HARD CRASH: Failed to write runtime bytecode map to production asset scope.\x1b[0m`, err);
+  //   process.exit(1);
+  // }
 
   // 5. THE MULTI-TARGET WORKSPACE PURGE (Eliminate developer-only configuration baggage)
   console.log(` ↳ Initiating workspace environment sanitization pass...`);

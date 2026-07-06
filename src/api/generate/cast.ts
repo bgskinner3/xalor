@@ -12,10 +12,10 @@ import type { TSolidBranded } from '../../../shared';
  *
  * @see {@link RuntimeApiCoreDocs.generateXalorCast}
  */
-export function generateXalorCast<K extends keyof ISolidRegistry>(
+export function generateXalorCast<K extends TActiveRegistryKeys>(
   injectedKey: K,
   data: unknown,
-): TSolidBranded<K, ISolidRegistry[K]> {
+): TSolidBranded<K, TResolveRegistryStructure<K>> {
   if (!injectedKey) {
     throw new Error(
       `[xalor] 🚨 GATEWAY BLOCK: 'generateXalorCast' executed without compiled metadata properties.`,
@@ -28,7 +28,7 @@ export function generateXalorCast<K extends keyof ISolidRegistry>(
     Reflect.set(castPayload, BRAND_SYMBOL, ['Solid', injectedKey]);
   }
 
-  if (markAsSolid<K, ISolidRegistry[K]>(castPayload)) {
+  if (markAsSolid<K, TResolveRegistryStructure<K>>(castPayload)) {
     return castPayload;
   }
 

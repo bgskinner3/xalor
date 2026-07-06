@@ -25,7 +25,7 @@ import type { TSolidBranded } from '../../shared';
  * - NO Disk persistence.
  */
 export class XalethorVaultGenerator {
-  private static requireShape<K extends keyof ISolidRegistry>(
+  private static requireShape<K extends TActiveRegistryKeys>(
     key: K,
     msg: string,
   ) {
@@ -36,15 +36,15 @@ export class XalethorVaultGenerator {
     }
     return shape;
   }
-  public static getDefault<K extends keyof ISolidRegistry>(
+  public static getDefault<K extends TActiveRegistryKeys>(
     key: K,
-  ): TSolidBranded<K, ISolidRegistry[K]> {
+  ): TSolidBranded<K, TResolveRegistryStructure<K>> {
     /* prettier-ignore */ const shape = 
     this.requireShape( key, 'Generation failed: Blueprint missing from Vault.');
 
     const data = produceDefault(shape);
 
-    if (markAsSolid<K, ISolidRegistry[K]>(data)) return data;
+    if (markAsSolid<K, TResolveRegistryStructure<K>>(data)) return data;
 
     throw new Error(`[xalor] Failed to brand default object for ${key}`);
   }
@@ -57,17 +57,17 @@ export class XalethorVaultGenerator {
    * fields and variable array lengths for testing and prototyping.
    *
    * @param key - The unique identifier of the type in the Registry.
-   * @returns {ISolidRegistry[K]} - A randomized, branded instance of the type.
+   * @returns {TResolveRegistryStructure<K>} - A randomized, branded instance of the type.
    */
-  public static getMock<K extends keyof ISolidRegistry>(
+  public static getMock<K extends TActiveRegistryKeys>(
     key: K,
-  ): TSolidBranded<K, ISolidRegistry[K]> {
+  ): TSolidBranded<K, TResolveRegistryStructure<K>> {
     /* prettier-ignore */ const shape = 
     this.requireShape( key, 'Mocking failed: Blueprint missing from Vault.');
 
     const data = produceMock(shape);
 
-    if (markAsSolid<K, ISolidRegistry[K]>(data)) return data;
+    if (markAsSolid<K, TResolveRegistryStructure<K>>(data)) return data;
 
     throw new Error(`[xalor] Failed to brand mock object for ${key}`);
   }
@@ -83,16 +83,16 @@ export class XalethorVaultGenerator {
    * Resolves the target configuration blueprint, pipes execution into the
    * exhaustive O(1) casting dictionary, and applies a protective nominal brand tag.
    */
-  public static getCast<K extends keyof ISolidRegistry>(
+  public static getCast<K extends TActiveRegistryKeys>(
     data: unknown,
     key: K,
-  ): TSolidBranded<K, ISolidRegistry[K]> {
+  ): TSolidBranded<K, TResolveRegistryStructure<K>> {
     /* prettier-ignore */
     const shape = this.requireShape(key, 'Coercion failed: Blueprint missing from Vault.');
 
     const castedData = produceCast(shape, data);
 
-    if (markAsSolid<K, ISolidRegistry[K]>(castedData)) {
+    if (markAsSolid<K, TResolveRegistryStructure<K>>(castedData)) {
       return castedData;
     }
 

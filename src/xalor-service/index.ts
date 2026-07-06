@@ -77,21 +77,21 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   // ============================================================
-  public static produceDefault<K extends keyof ISolidRegistry>(
+  public static produceDefault<K extends TActiveRegistryKeys>(
     key: K,
-  ): TSolidBranded<K, ISolidRegistry[K]> {
+  ): TSolidBranded<K, TResolveRegistryStructure<K>> {
     return XalethorVaultGenerator.getDefault(key);
   }
-  public static produceMock<K extends keyof ISolidRegistry>(
+  public static produceMock<K extends TActiveRegistryKeys>(
     key: K,
-  ): TSolidBranded<K, ISolidRegistry[K]> {
+  ): TSolidBranded<K, TResolveRegistryStructure<K>> {
     return XalethorVaultGenerator.getMock(key);
   }
 
-  public static produceCast<K extends keyof ISolidRegistry>(
+  public static produceCast<K extends TActiveRegistryKeys>(
     data: unknown,
     key: K,
-  ): TSolidBranded<K, ISolidRegistry[K]> {
+  ): TSolidBranded<K, TResolveRegistryStructure<K>> {
     return XalethorVaultGenerator.getCast(data, key);
   }
   // ============================================================

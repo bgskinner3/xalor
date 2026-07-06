@@ -72,9 +72,9 @@ class XalorCore {
 
   /** @Api generator  @mode default */
 
-  public default<K extends keyof ISolidRegistry>(
+  public default<K extends TActiveRegistryKeys>(
     _compiledKeyReference?: K,
-  ): TSolidBranded<K, ISolidRegistry[K]> {
+  ): TSolidBranded<K, TResolveRegistryStructure<K>> {
     return generateXalorDefault<K>(_compiledKeyReference);
   }
   // ========================================================================

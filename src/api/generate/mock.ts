@@ -14,10 +14,9 @@ import type { TSolidBranded } from '../../../shared';
  * ```
  * @see {@link RuntimeApiCoreDocs.generateXalorMock}
  */
-export function generateXalorMock<K extends keyof ISolidRegistry>(
+export function generateXalorMock<K extends TActiveRegistryKeys>(
   injectedKey: K,
-): TSolidBranded<K, ISolidRegistry[K]> {
-  // 1. Enforce strict parameter presence to protect system boundaries (Commandment V)
+): TSolidBranded<K, TResolveRegistryStructure<K>> {
   if (!injectedKey) {
     throw new Error(
       `[xalor] 🚨 GATEWAY BLOCK: 'generateXalorMock' executed without compiled metadata properties.\n` +
@@ -25,16 +24,12 @@ export function generateXalorMock<K extends keyof ISolidRegistry>(
     );
   }
 
-  // 2. Extract clean, randomized, high-entropy object structure directly from your authoritative service layer
   const mockPayload = XalethorService.produceMock(injectedKey);
 
-  // 3. Leverage strict native type guard to safely attach the nominal brand mapping (Commandment IX)
   if (isRecord(mockPayload)) {
-    // 4. Hydrate your unique runtime BRAND_SYMBOL directly onto the freshly minted object container
     Reflect.set(mockPayload, BRAND_SYMBOL, ['Solid', injectedKey]);
 
-    // 5. Pass through a safe phantom type narrower gate instead of an explicit cast to verify type layout
-    if (markAsSolid<K, ISolidRegistry[K]>(mockPayload)) {
+    if (markAsSolid<K, TResolveRegistryStructure<K>>(mockPayload)) {
       return mockPayload;
     }
   }

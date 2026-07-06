@@ -10,7 +10,7 @@ import { PASS_STRATEGY_MAPPER, BOOT_MODE_STRATEGY_MAPPER } from './mappers';
 import { isGetProgram } from './utils';
 import { xalorCentralContext, XalorRoutesService } from './service';
 import type { TXalorTransformerOptions } from './types';
-
+import { fsContext } from '../shared';
 /**
  * THE ARCHITECTURAL COMPILER TRACKS SINGLE SOURCE OF TRUTH
  *
@@ -41,7 +41,7 @@ export default function xalorTransformerPlugin(
     targetedFilesCollector: new Set<string>(),
   },
 ): ts.TransformerFactory<ts.SourceFile> {
-  xalorCentralContext.resetTargetedRuntimeFiles();
+  // Existing initializations...
   xalorCentralContext.setCompilationPhase(
     options.compilationPhase ?? 'STANDARD_INLINE',
   );
@@ -51,6 +51,42 @@ export default function xalorTransformerPlugin(
 
   const lifecycle = XalorRoutesService.resolveXalorLifecycle();
 
+  // 🎯 THE CANONICAL TRANSITION: Re-hydrate volatile RAM between emit loops!
+  // If we are booting up Pass 2, read your verified Pass 1 disk cache straight back into
+  // xalorCentralContext's globalKeyRegistry map before any AST walkers step into your files.
+  if (lifecycle.isReifyRuntimeMode) {
+    const rawDiskCache = fsContext.ingestVaultSnapshotFromDiskSync();
+
+    if (rawDiskCache && rawDiskCache.blueprints) {
+      // Re-hydrate references and blueprints cleanly back into your active session memory
+      Object.keys(rawDiskCache.references).forEach((key) => {
+        const shapeHash = rawDiskCache.references[key];
+        const extractedShape = rawDiskCache.blueprints[shapeHash];
+        const originalManifest = rawDiskCache.manifest[key] || {
+          area: '',
+          filePath: '',
+          anchor: '',
+        };
+        const originalRegistry = rawDiskCache.registry[key] || {
+          symbolName: 'unknown',
+          typeName: 'any',
+        };
+
+        if (extractedShape) {
+          xalorCentralContext.context.globalKeyRegistry.set(key, {
+            key: key,
+            shape: extractedShape,
+            filePath: originalManifest.filePath,
+            area: originalManifest.area,
+            anchor: originalManifest.anchor,
+            symbolName: originalRegistry.symbolName,
+            typeName: originalRegistry.typeName,
+            version: '',
+          });
+        }
+      });
+    }
+  }
   /* prettier-ignore */ const executeMode: TTransformerExecuteMode = determineTransformerExecuteMode(lifecycle);
 
   /* prettier-ignore */ const { sampleFile, runtimePaths } = resolveTransformerBootAnchor(
