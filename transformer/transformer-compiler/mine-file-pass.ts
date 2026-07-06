@@ -4,8 +4,7 @@ import { runMiningPass, persistenceGate } from '../lifecycle';
 import { shouldProcessFile, handleEmptyFileWipeout } from './resolvers';
 import type { TMineFilePass } from '../types';
 import type { SourceFile } from 'typescript';
-import { XalorInvalidTypeError, TransformerReportService } from '../error';
-import { isInstanceOf } from '../../shared';
+import { isInstanceOf, errorReportService, XalorError } from '../../shared';
 import { XalorRoutesService, xalorCentralContext } from '../service';
 /**
  * INTERCEPT COMPILER RUNTIME EXCEPTION (The Error Dispatch Decoupler)
@@ -34,7 +33,7 @@ function catchFileMiningError(error: unknown, sourceFile: SourceFile): void {
   // ========================================================================
   //  PATH A: CONTROLLED STRUCTURAL TYPE RULE VIOLATIONS
   // ========================================================================
-  if (isInstanceOf(error, XalorInvalidTypeError)) {
+  if (isInstanceOf(error, XalorError)) {
     if (!isWatch) xalorCentralContext.hardResetAllMemoryStores();
 
     if (lifecycle.isOneShotCompileMode || lifecycle.isProductionVacuumMode) {
@@ -42,7 +41,7 @@ function catchFileMiningError(error: unknown, sourceFile: SourceFile): void {
     }
 
     /* prettier-ignore */
-    const watchWarningPanel = TransformerReportService.generateTerminalPanel({
+    const watchWarningPanel = errorReportService.generateTerminalPanel({
       keyName: error.keyName || 'UNKNOWN_REGISTRATION_KEY',
       fileLocation: sourceFile.fileName,
       message: error.failure?.message ?? 'Type declaration tracking boundary anomaly detected.',
@@ -63,7 +62,7 @@ function catchFileMiningError(error: unknown, sourceFile: SourceFile): void {
     throw error;
   }
 
-  TransformerReportService.logAnomaly({
+  errorReportService.logAnomaly('TRANSFORMER_DIAGNOSTIC_COMPILER', {
     keyName: 'COMPILER_MECHANICAL_FAULT',
     fileLocation: sourceFile.fileName,
     error,

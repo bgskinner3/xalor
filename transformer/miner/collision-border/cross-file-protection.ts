@@ -1,5 +1,4 @@
 import { xalorCentralContext } from '../../service';
-import { COLLISION_BORDER_FAILURE_MAPPER } from '../../constants';
 import type { TFilePathParams } from '../../types';
 import { errorReportService, XalorError } from '../../../shared';
 // ========================================================================
@@ -44,16 +43,22 @@ export function crossFileProtection(params: TFilePathParams): boolean {
         });
         continue;
       }
-
-      const mapper = COLLISION_BORDER_FAILURE_MAPPER.CROSS_FILE;
-
-      const finalizedMessageText = mapper.message({
+      const ctx = {
         keyName,
         initialFilePath: activeScanPath,
         initialArea: existingKeyClaim.area,
         hijackFilePath: relativeProjectKey,
         hijackArea: activeAreaString,
-      });
+      };
+      const mapper = errorReportService.getAreaErrorMapper(
+        'TRANSFORMER_COLLISION_CROSS_FILE',
+      );
+      const finalizedMessageText = errorReportService.resolveCollisionFailure(
+        'TRANSFORMER_COLLISION_CROSS_FILE',
+        'CROSS_FILE',
+        ctx,
+      );
+
       const crossFileFailure = {
         rule: mapper.rule,
         message: finalizedMessageText,

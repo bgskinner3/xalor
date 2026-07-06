@@ -13,8 +13,7 @@ import {
   isCompilerTypePure,
   isTypeContractResolvabilityPure,
 } from '../sentry-layer';
-import { TransformerReportService, XalorInvalidTypeError } from '../../error';
-
+import { XalorError, errorReportService } from '../../../shared';
 /**
  * resolveAndRegisterType
  * 🪐 THE INGESTION COORDINATOR GATEHOUSE
@@ -46,23 +45,28 @@ export function resolveAndRegisterType({
     const errorDetails =
       'Compiler intercepted un-serializable property structures (functions, raw symbols, or private internal prefixes).';
 
-    TransformerReportService.logAnomaly({
-      keyName: 'REGISTRATION_REJECTED_BREACH',
-      fileLocation: sourceFile.fileName,
-      error: errorDetails,
-      mode: activeExecuteMode,
-    });
+    errorReportService.logAnomaly<'TRANSFORMER_DIAGNOSTIC_COMPILER'>(
+      'TRANSFORMER_DIAGNOSTIC_COMPILER',
+      {
+        keyName: 'REGISTRATION_REJECTED_BREACH',
+        fileLocation: sourceFile.fileName,
+        error: errorDetails,
+        mode: activeExecuteMode,
+      },
+    );
 
     if (activeExecuteMode === 'compile' || activeExecuteMode === 'vacuum') {
       xalorCentralContext.hardResetAllMemoryStores();
 
       // Resolve the pristine, compiled full dictionary message text body point-free
-      const fallbackPanelMessage = TransformerReportService.getErrorMessage(
-        'REGISTRATION_REJECTED_BREACH',
-        errorDetails,
-      );
+      const fallbackPanelMessage =
+        errorReportService.getTransformerErrorMessage(
+          'TRANSFORMER_DIAGNOSTIC_COMPILER',
+          'REGISTRATION_REJECTED_BREACH',
+          errorDetails,
+        );
 
-      throw new XalorInvalidTypeError(
+      throw XalorError.InvalidType(
         keyName, // Retains your actual code UUID key token natively
         sourceFile.fileName,
         {
@@ -101,7 +105,7 @@ export function resolveAndRegisterType({
     const errorDetails =
       'Generated JSON schema layout contains un-resolvable primitive fallback masks or prohibited object keys.';
 
-    TransformerReportService.logAnomaly({
+    errorReportService.logAnomaly('TRANSFORMER_DIAGNOSTIC_COMPILER', {
       keyName: 'REGISTRATION_REJECTED_BREACH',
       fileLocation: sourceFile.fileName,
       error: errorDetails,
@@ -111,12 +115,14 @@ export function resolveAndRegisterType({
     if (activeExecuteMode === 'compile' || activeExecuteMode === 'vacuum') {
       xalorCentralContext.hardResetAllMemoryStores();
 
-      const fallbackPanelMessage = TransformerReportService.getErrorMessage(
-        'REGISTRATION_REJECTED_BREACH',
-        errorDetails,
-      );
+      const fallbackPanelMessage =
+        errorReportService.getTransformerErrorMessage(
+          'TRANSFORMER_DIAGNOSTIC_COMPILER',
+          'REGISTRATION_REJECTED_BREACH',
+          errorDetails,
+        );
 
-      throw new XalorInvalidTypeError(
+      throw XalorError.InvalidType(
         keyName,
         sourceFile.fileName,
         {

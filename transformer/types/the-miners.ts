@@ -12,7 +12,7 @@ import type {
   TVaultSyncPayload,
   TTransformerExecuteMode,
 } from '../../shared';
-import type { TXalorComplianceRuleKeys } from './error';
+
 /**
  * Encapsulates the context needed for the recursive structural expansion
  * of TypeScript types. By bundling the Type, Checker, and the current
@@ -134,48 +134,6 @@ export type TFilePathParams = {
   activeAreaString: string;
   activeAnchorString: string;
 };
-
-/**
- * TSameFileCollisionCtx
- * SAME-FILE ERROR DATA BLUEPRINT
- */
-export type TSameFileCollisionCtx = {
-  readonly keyName: string;
-  readonly historicalArea: string;
-  readonly historicalAnchor: string;
-  readonly activeArea: string;
-  readonly activeAnchor: string;
-};
-
-/**
- * TCrossFileCollisionCtx
- * CROSS-FILE ERROR DATA BLUEPRINT
- */
-export type TCrossFileCollisionCtx = {
-  readonly keyName: string;
-  readonly initialFilePath: string;
-  readonly initialArea: string;
-  readonly hijackFilePath: string;
-  readonly hijackArea: string;
-};
-
-/**
- * TCollisionBorderFailureConfig
- * CENTRAL MAPPER PROPERTY SPECIFICATION
- */
-export type TCollisionBorderFailureConfig<T> = {
-  readonly rule: TXalorComplianceRuleKeys;
-  readonly message: (ctx: T) => string;
-};
-
-/**
- * TCollisionBorderFailureMapper
- * THE EXPLICIT MAPPER TYPE SYSTEM INTERFACE
- */
-export type TCollisionBorderFailureMapper = {
-  readonly SAME_FILE: TCollisionBorderFailureConfig<TSameFileCollisionCtx>;
-  readonly CROSS_FILE: TCollisionBorderFailureConfig<TCrossFileCollisionCtx>;
-};
 /**
  * TCollisionGuardParams
  */
@@ -185,26 +143,3 @@ export type TCollisionGuardParams = {
   readonly activeAnchorString: string;
   readonly currentActiveAbsoluteFile: string;
 };
-// ================================================================================
-// ================================================================================
-// TYPE RESOLVER MAPPER
-// ================================================================================
-// ================================================================================
-export type TTypeResolverKeys =
-  | 'OPEN_INDEX_SIGNATURE'
-  | 'UNSERIALIZABLE_EXECUTABLE'
-  | 'TERMINAL_CONTRADICTION'
-  | 'COMPUTATIONAL_COLLAPSE_RECURSIVE_LOOP'
-  | 'COMPUTATIONAL_COLLAPSE_ANY_NODE'
-  | 'CATASTROPHIC_COMPILER_ERROR'
-  | 'UNBOUND_GENERIC_CONDITIONAL'
-  | 'UNBOUND_GENERIC_PARAMETER';
-export type TTypeResolverRuleResult = {
-  readonly rule: TXalorComplianceRuleKeys;
-  readonly message: (keyName: string, aliasName?: string) => string;
-};
-
-export type TTypeResolverRuleMapper = Record<
-  TTypeResolverKeys,
-  TTypeResolverRuleResult
->;

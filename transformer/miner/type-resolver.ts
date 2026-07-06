@@ -1,10 +1,9 @@
 // transformer/miner/type-resolver.ts
 import type { Type, TypeChecker } from 'typescript';
 import { TypeFlags } from 'typescript';
-import type { TXalorTypeGuardFailure } from '../types';
-import { TYPE_RESOLVER_RULE_MAPPER } from '../constants';
 import { isTypeRecursive } from './sentry-layer';
-
+import type { TTypeGuardErrorFailure } from '../../shared/error';
+import { errorReportService } from '../../shared/error';
 /**
  * VERIFY TYPE RESOLVABILITY (The System Build-Time Compatibility Radar)
  *
@@ -77,16 +76,18 @@ export function verifyTypeResolvability(
   type: Type,
   checker: TypeChecker,
   keyName: string,
-): TXalorTypeGuardFailure | undefined {
+): TTypeGuardErrorFailure | undefined {
   const flags = type.getFlags();
-
+  const typeResolverRuleMapper = errorReportService.getAreaErrorMapper(
+    'TRANSFORMER_TYPE_RESOLVER',
+  );
   //  1: Catch Abstract Unbound Generics (Type Parameters)
   if ((flags & TypeFlags.TypeParameter) !== 0) {
     return {
       /* prettier-ignore */
-      rule: TYPE_RESOLVER_RULE_MAPPER.UNBOUND_GENERIC_PARAMETER.rule,
+      rule: typeResolverRuleMapper.UNBOUND_GENERIC_PARAMETER.rule,
       /* prettier-ignore */
-      message: TYPE_RESOLVER_RULE_MAPPER.UNBOUND_GENERIC_PARAMETER.message(keyName),
+      message: typeResolverRuleMapper.UNBOUND_GENERIC_PARAMETER.message(keyName),
     };
   }
 
@@ -94,9 +95,9 @@ export function verifyTypeResolvability(
   if ((flags & TypeFlags.Conditional) !== 0) {
     return {
       /* prettier-ignore */
-      rule: TYPE_RESOLVER_RULE_MAPPER.UNBOUND_GENERIC_CONDITIONAL.rule,
+      rule: typeResolverRuleMapper.UNBOUND_GENERIC_CONDITIONAL.rule,
       /* prettier-ignore */
-      message: TYPE_RESOLVER_RULE_MAPPER.UNBOUND_GENERIC_CONDITIONAL.message(keyName),
+      message: typeResolverRuleMapper.UNBOUND_GENERIC_CONDITIONAL.message(keyName),
     };
   }
 
@@ -106,17 +107,17 @@ export function verifyTypeResolvability(
     if (!symbol) {
       return {
         /* prettier-ignore */
-        rule: TYPE_RESOLVER_RULE_MAPPER.CATASTROPHIC_COMPILER_ERROR.rule,
+        rule: typeResolverRuleMapper.CATASTROPHIC_COMPILER_ERROR.rule,
         /* prettier-ignore */
-        message: TYPE_RESOLVER_RULE_MAPPER.CATASTROPHIC_COMPILER_ERROR.message(keyName),
+        message: typeResolverRuleMapper.CATASTROPHIC_COMPILER_ERROR.message(keyName),
       };
     }
     if (symbol.getName() !== 'any') {
       return {
         /* prettier-ignore */
-        rule: TYPE_RESOLVER_RULE_MAPPER.COMPUTATIONAL_COLLAPSE_ANY_NODE.rule,
+        rule: typeResolverRuleMapper.COMPUTATIONAL_COLLAPSE_ANY_NODE.rule,
         /* prettier-ignore */
-        message: TYPE_RESOLVER_RULE_MAPPER.COMPUTATIONAL_COLLAPSE_ANY_NODE.message(keyName),
+        message: typeResolverRuleMapper.COMPUTATIONAL_COLLAPSE_ANY_NODE.message(keyName),
       };
     }
   }
@@ -125,9 +126,9 @@ export function verifyTypeResolvability(
   if ((flags & TypeFlags.Never) !== 0) {
     return {
       /* prettier-ignore */
-      rule: TYPE_RESOLVER_RULE_MAPPER.TERMINAL_CONTRADICTION.rule,
+      rule: typeResolverRuleMapper.TERMINAL_CONTRADICTION.rule,
       /* prettier-ignore */
-      message: TYPE_RESOLVER_RULE_MAPPER.TERMINAL_CONTRADICTION.message(keyName),
+      message: typeResolverRuleMapper.TERMINAL_CONTRADICTION.message(keyName),
     };
   }
 
@@ -141,9 +142,9 @@ export function verifyTypeResolvability(
   ) {
     return {
       /* prettier-ignore */
-      rule: TYPE_RESOLVER_RULE_MAPPER.UNSERIALIZABLE_EXECUTABLE.rule,
+      rule: typeResolverRuleMapper.UNSERIALIZABLE_EXECUTABLE.rule,
       /* prettier-ignore */
-      message: TYPE_RESOLVER_RULE_MAPPER.UNSERIALIZABLE_EXECUTABLE.message(keyName),
+      message: typeResolverRuleMapper.UNSERIALIZABLE_EXECUTABLE.message(keyName),
     };
   }
 
@@ -161,9 +162,9 @@ export function verifyTypeResolvability(
       if (isRunawayCalculation) {
         return {
           /* prettier-ignore */
-          rule: TYPE_RESOLVER_RULE_MAPPER.COMPUTATIONAL_COLLAPSE_RECURSIVE_LOOP.rule,
+          rule: typeResolverRuleMapper.COMPUTATIONAL_COLLAPSE_RECURSIVE_LOOP.rule,
           /* prettier-ignore */
-          message: TYPE_RESOLVER_RULE_MAPPER.COMPUTATIONAL_COLLAPSE_RECURSIVE_LOOP.message(keyName, aliasName),
+          message: typeResolverRuleMapper.COMPUTATIONAL_COLLAPSE_RECURSIVE_LOOP.message(keyName, aliasName),
         };
       }
     }
@@ -174,9 +175,9 @@ export function verifyTypeResolvability(
     if (coreProperties.length === 0 && indexInfos.length > 0) {
       return {
         /* prettier-ignore */
-        rule: TYPE_RESOLVER_RULE_MAPPER.OPEN_INDEX_SIGNATURE.rule,
+        rule: typeResolverRuleMapper.OPEN_INDEX_SIGNATURE.rule,
         /* prettier-ignore */
-        message: TYPE_RESOLVER_RULE_MAPPER.OPEN_INDEX_SIGNATURE.message(keyName),
+        message: typeResolverRuleMapper.OPEN_INDEX_SIGNATURE.message(keyName),
       };
     }
   }

@@ -1,5 +1,5 @@
 import { xalorCentralContext } from '../../service';
-import { COLLISION_BORDER_FAILURE_MAPPER } from '../../constants';
+// import { COLLISION_BORDER_FAILURE_MAPPER } from '../../constants';
 import type { TFilePathParams } from '../../types';
 import { errorReportService, XalorError } from '../../../shared';
 
@@ -38,14 +38,21 @@ export function sameFileDetection(params: TFilePathParams) {
       return false; // Clear entrance bypass: Proceed switchlessly without throwing alerts!
     }
     if (historicalKeyMatch.anchor !== params.activeAnchorString) {
-      const mapper = COLLISION_BORDER_FAILURE_MAPPER.SAME_FILE;
-      const finalizedMessageText = mapper.message({
+      const ctx = {
         keyName,
         historicalArea: historicalKeyMatch.area,
         historicalAnchor: historicalKeyMatch.anchor,
         activeArea: params.activeAreaString,
         activeAnchor: params.activeAnchorString,
-      });
+      };
+      const mapper = errorReportService.getAreaErrorMapper(
+        'TRANSFORMER_COLLISION_SAME_FILE',
+      );
+      const finalizedMessageText = errorReportService.resolveCollisionFailure(
+        'TRANSFORMER_COLLISION_SAME_FILE',
+        'SAME_FILE',
+        ctx,
+      );
 
       const sameFileFailure = {
         rule: mapper.rule,

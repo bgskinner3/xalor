@@ -1,7 +1,7 @@
 import { inflateAndNormalizeShape } from '../utils';
 import type { TSolidMetadata } from '../../shared/types';
-import { TransformerReportService } from '../error';
 import { XalorRoutesService } from '../service';
+import { errorReportService } from '../../shared';
 /**
  * PURE STREAMING HYDRATION ENGINE
  *
@@ -54,7 +54,7 @@ export function processGenesisHydration(
   } catch (error: unknown) {
     const paths = XalorRoutesService.resolveXalorPaths(process.cwd());
     const executeMode = XalorRoutesService.xalorCLIMode();
-    TransformerReportService.logAnomaly({
+    errorReportService.logAnomaly('TRANSFORMER_DIAGNOSTIC_COMPILER', {
       keyName: 'GENESIS_HYDRATION_FAULT',
       fileLocation: paths.vaultFile,
       error,

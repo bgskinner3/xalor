@@ -20,10 +20,11 @@ import {
   isBoolean,
   isUndefined,
   isString,
+  errorReportService,
 } from '../../shared';
 import type { TSolidShape } from '../../shared';
 import { XalorRoutesService } from '../service';
-import { TransformerReportService } from '../error';
+
 /**
  *  The AST Generator (Build-Time Emission)
  *
@@ -208,7 +209,7 @@ export function generateShapeAST(
   }
 
   const executeMode = XalorRoutesService.xalorCLIMode();
-  TransformerReportService.logAnomaly({
+  errorReportService.logAnomaly('TRANSFORMER_DIAGNOSTIC_COMPILER', {
     keyName: 'AST_GENERATION_ANOMALY',
     fileLocation: 'transformer/miner/processor.ts ↳ generateShapeAST',
     error: _exhaustiveCheck.kind || 'undefined',

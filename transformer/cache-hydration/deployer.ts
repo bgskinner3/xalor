@@ -2,9 +2,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import { IS_SOLID_CONFIG_ITEMS } from '../../shared';
+import { IS_SOLID_CONFIG_ITEMS, errorReportService } from '../../shared';
 import type { TXalorResolvedPaths } from '../../shared';
-import { TransformerReportService } from '../error';
 import { XalorRoutesService } from '../service';
 // Safe ESM file coordinate parsing calculated ONCE at module level
 const __filename = fileURLToPath(import.meta.url);
@@ -31,7 +30,7 @@ export function deployBaseline(paths: TXalorResolvedPaths) {
     try {
       fs.mkdirSync(paths.cacheDir, { recursive: true });
     } catch (error: unknown) {
-      TransformerReportService.logAnomaly({
+      errorReportService.logAnomaly('TRANSFORMER_DIAGNOSTIC_COMPILER', {
         keyName: 'COLD_START_INFRASTRUCTURE_FAULT',
         fileLocation: paths.cacheDir,
         error,
@@ -57,7 +56,7 @@ export function deployBaseline(paths: TXalorResolvedPaths) {
         }
       }
     } catch (error: unknown) {
-      TransformerReportService.logAnomaly({
+      errorReportService.logAnomaly('TRANSFORMER_DIAGNOSTIC_COMPILER', {
         keyName: 'TEMPLATE_SEED_FAULT',
         fileLocation: paths.vaultFile,
         error,

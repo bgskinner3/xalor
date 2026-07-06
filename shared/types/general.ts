@@ -1,5 +1,3 @@
-import type { TSolidShapeKinds } from '../shape-domain';
-
 /**
  * 🛠️ GENERIC UTIL TYPES
  *

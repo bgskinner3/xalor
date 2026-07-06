@@ -9,8 +9,7 @@ import {
 } from 'typescript';
 import type { Node, Type, CallExpression, SourceFile } from 'typescript';
 import type { TSolidShape } from '../../shared';
-import { IS_SOLID_CONFIG_ITEMS } from '../../shared';
-import { TransformerReportService } from '../error';
+import { IS_SOLID_CONFIG_ITEMS, errorReportService } from '../../shared';
 import { XalorRoutesService } from '../service';
 /**
  * GET API NAME (The Sentry Identifier)
@@ -60,7 +59,7 @@ export function getAPIName(
 
       // If the namespace is 'xalor' but the method itself is completely unmapped, log it
       const executeMode = XalorRoutesService.xalorCLIMode();
-      TransformerReportService.logAnomaly({
+      errorReportService.logAnomaly('TRANSFORMER_DIAGNOSTIC_COMPILER', {
         keyName: 'UNKNOWN_API_TRIGGER',
         fileLocation: 'transformer/miner/mining-target.ts ↳ getAPIName',
         error: `${expression.expression.text}.${methodName}`,

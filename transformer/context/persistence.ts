@@ -2,11 +2,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared/constants';
-import { isReferenceShape, computeStableShapeHash } from '../../shared';
+import {
+  isReferenceShape,
+  computeStableShapeHash,
+  errorReportService,
+} from '../../shared';
 import type { TVaultSyncPayload, TTripleKV, TSolidShape } from '../../shared';
 import { extractAndNormalizeShape } from '../utils';
 import { XalorRoutesService, xalorCentralContext } from '../service';
-import { TransformerReportService } from '../error';
 
 /**
  * RECONSTRUCT ARCHIVE SNAPSHOT (The Snapshot Master Builder)
@@ -158,7 +161,7 @@ export async function serializeAndFlushVault(rootDir: string): Promise<void> {
     await fs.promises.writeFile(paths.vaultFile, newJsonPayload, 'utf-8');
   } catch (error: unknown) {
     const mode = XalorRoutesService.xalorCLIMode();
-    TransformerReportService.logAnomaly({
+    errorReportService.logAnomaly('TRANSFORMER_DIAGNOSTIC_COMPILER', {
       keyName: 'VAULT_FLUSH_IO_FAULT',
       fileLocation: paths.vaultFile,
       error,

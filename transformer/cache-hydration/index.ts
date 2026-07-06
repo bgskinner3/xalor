@@ -5,9 +5,8 @@ import { processGenesisHydration } from './hydrate-from-genesis';
 import { deployBaseline } from './deployer';
 import type { TGlobalKeyRegistry, TSessionRegistry } from '../types';
 import type { TXalorResolvedPaths } from '../../shared';
-import { TransformerReportService } from '../error';
 import { XalorRoutesService } from '../service';
-
+import { errorReportService } from '../../shared';
 let loadedNumber: number = 0;
 
 /**
@@ -81,7 +80,7 @@ export function hydrateCacheToRegistries(
     });
   } catch (error: unknown) {
     const mode = XalorRoutesService.xalorCLIMode();
-    TransformerReportService.logAnomaly({
+    errorReportService.logAnomaly('TRANSFORMER_DIAGNOSTIC_COMPILER', {
       keyName: 'GENESIS_STREAM_FAULT',
       fileLocation: paths.vaultFile,
       error,
