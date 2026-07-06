@@ -56,11 +56,12 @@ export function validateCollisionBorders(
   // ========================================================================
   // INTEGRATED INTERCEPT LANE A: CROSS-FILE REGISTER HIJACKS
   // ========================================================================
-  crossFileProtection(PATH_PARAMS);
+  const isCrossFileCollision = crossFileProtection(PATH_PARAMS);
+  if (isCrossFileCollision) return isCrossFileCollision;
   // ========================================================================
   // INTEGRATED INTERCEPT LANE B: SAME-FILE COPY-PASTE DUPLICATIONS
   // ========================================================================
-  sameFileDetection(PATH_PARAMS);
-
+  const isSameFIleCollision = sameFileDetection(PATH_PARAMS);
+  if (isSameFIleCollision) return isSameFIleCollision;
   return false;
 }

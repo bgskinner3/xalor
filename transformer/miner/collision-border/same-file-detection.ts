@@ -1,5 +1,4 @@
 import { xalorCentralContext } from '../../service';
-// import { COLLISION_BORDER_FAILURE_MAPPER } from '../../constants';
 import type { TFilePathParams } from '../../types';
 import { errorReportService, XalorError } from '../../../shared';
 
@@ -22,22 +21,21 @@ export function sameFileDetection(params: TFilePathParams) {
   /* prettier-ignore */
   const { keyName, relativeProjectKey, isWatch, currentActiveAbsoluteFile, executeMode } = params;
   /* prettier-ignore */
-  const { sessionRegistry } = xalorCentralContext.context;
+  const { sessionRegistry, activePassKeys } = xalorCentralContext.context;
 
   const currentFileSlice = sessionRegistry[relativeProjectKey];
   if (currentFileSlice === undefined) return false;
 
   const historicalKeyMatch = currentFileSlice.keys[keyName];
   if (historicalKeyMatch !== undefined) {
-    if (isWatch && historicalKeyMatch.anchor !== params.activeAnchorString) {
-      xalorCentralContext.deleteFromSessionRegistry({
-        keyName,
-        filePath: currentActiveAbsoluteFile,
-      });
-
-      return false; // Clear entrance bypass: Proceed switchlessly without throwing alerts!
-    }
     if (historicalKeyMatch.anchor !== params.activeAnchorString) {
+      if (isWatch && !activePassKeys.has(keyName)) {
+        xalorCentralContext.deleteFromSessionRegistry({
+          keyName,
+          filePath: currentActiveAbsoluteFile,
+        });
+        return false;
+      }
       const ctx = {
         keyName,
         historicalArea: historicalKeyMatch.area,
@@ -45,6 +43,7 @@ export function sameFileDetection(params: TFilePathParams) {
         activeArea: params.activeAreaString,
         activeAnchor: params.activeAnchorString,
       };
+
       const mapper = errorReportService.getAreaErrorMapper(
         'TRANSFORMER_COLLISION_SAME_FILE',
       );
@@ -59,6 +58,7 @@ export function sameFileDetection(params: TFilePathParams) {
         message: finalizedMessageText,
       };
 
+      // 🖨️ WATCH MODE NON-BLOCKING ALERT LOGGING
       if (isWatch) {
         const coloredAnsiPanelText = errorReportService.generateTerminalPanel({
           keyName,
@@ -67,12 +67,11 @@ export function sameFileDetection(params: TFilePathParams) {
           rule: mapper.rule,
           mode: executeMode,
         });
+
         console.warn(coloredAnsiPanelText);
+
         xalorCentralContext.addBlacklistKey(keyName);
-        xalorCentralContext.deleteGlobalAndSession({
-          keyName,
-          filePath: currentActiveAbsoluteFile,
-        });
+
         return true;
       }
 

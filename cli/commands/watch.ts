@@ -20,10 +20,24 @@ export function runWatchCommand(projectRootPath: string): void {
   let rapidSaveChainCount = 0;
   let lastTriggerTimestamp = Date.now();
 
+  // const emitDebouncer = new CliDebouncer<
+  //   [ts.EmitAndSemanticDiagnosticsBuilderProgram]
+  // >((program) => {
+  //   program.emit();
+  // }, config.INITIAL_SEED_DELAY_MS);
   const emitDebouncer = new CliDebouncer<
-    [ts.EmitAndSemanticDiagnosticsBuilderProgram]
-  >((program) => {
-    program.emit();
+    [
+      ts.EmitAndSemanticDiagnosticsBuilderProgram,
+      ((program: ts.EmitAndSemanticDiagnosticsBuilderProgram) => void)?,
+    ]
+  >((program, originalReporter) => {
+    // 🌟 FIX: Execute exactly ONE single emit pass. This single execution runs your
+    // intercepted transformer AND updates native compiler diagnostic tokens safely point-free!
+    if (originalReporter) {
+      originalReporter(program);
+    } else {
+      program.emit();
+    }
   }, config.INITIAL_SEED_DELAY_MS);
 
   // Define your execution hook strategy to handle incoming filesystem mutations

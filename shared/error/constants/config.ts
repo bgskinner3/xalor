@@ -231,7 +231,7 @@ export const XALOR_ERROR_AREAS = Object.freeze({
 export const REPORT_SERVICE_MODE_ROUTER: TModeRouter = {
   vacuum: 'hard',
   compile: 'hard',
-  watch: 'watch',
+  watch: 'hard',
   studio: 'watch',
 } satisfies TModeRouter;
 /**

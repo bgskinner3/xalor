@@ -76,11 +76,6 @@ export function crossFileProtection(params: TFilePathParams): boolean {
 
         xalorCentralContext.addBlacklistKey(keyName);
 
-        xalorCentralContext.deleteGlobalAndSession({
-          keyName,
-          filePath: currentActiveAbsoluteFile,
-        });
-
         return true;
       }
 

@@ -39,7 +39,7 @@ export function resolveAndRegisterType({
 
   // ========================================================================
   // 🪐 PROTECTION LAYER 1: THE COMPILED TYPE RADAR
-  // 🟢 FIXED: Implemented at the absolute top! Analyzes the raw ts.Type before
+  // implimented at the absolute top! Analyzes the raw ts.Type before
   // allocating memory fragment maps or compiling spatial identities.
   // ========================================================================
   if (!isCompilerTypePure(shapeType, checker)) {

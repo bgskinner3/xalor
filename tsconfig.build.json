@@ -21,7 +21,8 @@
     "transformer/**/*",
     "shared/**/*",
     "scripts/**/*",
-    "cli/**/*"
+    "cli/**/*",
+    "plugins/**/*",
   ],
   "exclude": [
     "**/__tests__/**",
