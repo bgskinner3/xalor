@@ -79,7 +79,71 @@ Production JavaScript Output (0 KB Client Parser Overhead)
 npm install @bgskinner2/xalor
 ```
 
-_Note: To enable AOT type extraction, ensure your project compiler layer is configured with `ts-patch` or the corresponding Xalor plugin wrapper._
+## 🪐 Ambient Project Integration
+
+Xalor completely replaces fragile background terminal watch daemons by hooking directly into your build tool's native development loop. It updates your type graph validation registries in-memory instantly on every file save.
+
+### 🛡️ Core Compiler Configuration
+
+To ensure your code editor instantly discovers live type updates without reloading, append the generated environment file cache path straight to the `include` block inside your project's **`tsconfig.json`**:
+
+```json
+{
+  "include": ["src/**/*", "node_modules/.cache/xalor/solid-env.ts"]
+}
+```
+
+---
+
+### ⚡ Route A: Vite-Based Toolchains
+
+Supports raw Vite configurations, React-Vite sandboxes, Nuxt 3, SvelteKit, and Vitest.
+
+- Open your project's **`vite.config.ts`** or `vite.config.js` profile.
+- Import the **`xalorViteWatchPlugin`** method from the public plugins directory.
+- Register the function call directly inside Vite's active **`plugins` array**.
+- The hook activates _only_ during development (`apply: 'serve'`), adding zero overhead to builds.
+
+```typescript
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { xalorViteWatchPlugin } from '@bgskinner2/xalor/plugins';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    xalorViteWatchPlugin(), // 🪐 Runs fast out-of-process AOT mining loops natively on save
+  ],
+});
+```
+
+---
+
+### 📦 Route B: Next.js & Webpack Toolchains
+
+Supports Next.js (App & Pages Routers), NestJS servers, and standard Webpack projects.
+
+- Open your project's **`next.config.js`** or `webpack.config.js` file.
+- Pull the **`XalorWebpackWatchPlugin`** constructor class out of your plugins module.
+- Push a fresh class instance straight into the internal **Webpack plugins array block**.
+- Isolate the injection with a condition to ensure it executes **strictly inside local dev servers**.
+
+```javascript
+const { XalorWebpackWatchPlugin } = require('@bgskinner2/xalor/plugins');
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  webpack: (config, { dev }) => {
+    // 🛡️ Only couple the ambient type synchronization gateway during active hot-reloads
+    if (dev) {
+      config.plugins.push(new XalorWebpackWatchPlugin());
+    }
+    return config;
+  },
+};
+
+module.exports = nextConfig;
+```
 
 <br/>
 <br/>

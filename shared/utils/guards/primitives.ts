@@ -74,6 +74,19 @@ export const isPrimitive: TTypeGuard<TPrimitive> = (
   isString(value) || isNumber(value) || isBoolean(value) || isBigInt(value);
 /**
  * @utilType Guard
+ * @name isOptional
+ * @category Guards Core
+ * @description Creates a type guard that accepts either `undefined` or a value matching the supplied guard.
+ * @link #isoptional
+ *
+ * ## 🧩 isOptional — Optional Guard Combinator
+ */
+export const isOptional =
+  <T>(guard: TTypeGuard<T>): TTypeGuard<T | undefined> =>
+  (value: unknown): value is T | undefined =>
+    isUndefined(value) || guard(value);
+/**
+ * @utilType Guard
  * @name isFunction
  * @category Guards Core
  * @description Validates that a value is a callable function.

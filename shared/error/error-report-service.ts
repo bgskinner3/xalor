@@ -94,8 +94,7 @@ class ErrorReportService {
   /* prettier-ignore */ public resolveCollisionFailure(area: 'TRANSFORMER_COLLISION_CROSS_FILE',key: TCollisionBorderKeys,context: TCrossFileCollisionCtx): string;
   public resolveCollisionFailure(
     area:
-      | 'TRANSFORMER_COLLISION_SAME_FILE'
-      | 'TRANSFORMER_COLLISION_CROSS_FILE',
+      'TRANSFORMER_COLLISION_SAME_FILE' | 'TRANSFORMER_COLLISION_CROSS_FILE',
     key: TCollisionBorderKeys,
     context: TSameFileCollisionCtx | TCrossFileCollisionCtx,
   ): string {

@@ -280,3 +280,59 @@ export const hasOwnProperty = <T extends object, K extends PropertyKey>(
 ): obj is T & Record<K, unknown> => {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 };
+
+/**
+ * @utilType Guard
+ * @name isShape
+ * @category Guards Core
+ * @description Factory for creating recursive structural type guards that validate an object against a schema of guards.
+ * @link #isshape
+ *
+ * ## 🧩 isShape — Recursive Structural Type Guard Factory
+ *
+ * Creates a **high-fidelity type guard** that validates whether an unknown object
+ * conforms to a specific structural "contract" defined by a schema of guards.
+ *
+ * @typeParam T - The target interface or object type to validate.
+ * @param schema - A mapping of keys from `T` to their corresponding `TTypeGuard`.
+ * @returns A type guard function that narrows `unknown` to `T`.
+ *
+ *
+ * ```ts
+ *
+ *  type Nested = {
+ *     id: string;
+ *     meta: { ok: boolean };
+ *    };
+ *
+ *   const isNested = matchesShape<Nested>({
+ *      id: isString,
+ *      meta: isShape<{ ok: boolean }>({
+ *        ok: isBoolean,
+ *      }),
+ *    });
+ *
+ *
+ *  isNested(valid)
+ *
+ * ```
+ */
+export const matchesShape = <T extends object>(schema: {
+  [K in keyof T]: TTypeGuard<T[K]>;
+}): TTypeGuard<T> => {
+  const schemaKeys = ObjectUtils.keys(schema);
+
+  return (value: unknown): value is T => {
+    if (!isObject(value)) return false;
+
+    for (const key of schemaKeys) {
+      const guard = schema[key];
+
+      if (!isKeyInObject(key)(value)) return false;
+
+      if (!guard(value[key])) return false;
+    }
+
+    return true;
+  };
+};

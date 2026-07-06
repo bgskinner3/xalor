@@ -40,7 +40,8 @@ test-notes.md
 hold.md
 skeleton/
 cb-docs/
-
+/setup.md
+setup.md
 
 # # .npmignore
 # src/

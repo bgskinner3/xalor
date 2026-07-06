@@ -56,6 +56,10 @@
       "types": "./dist/transformer/index.d.ts",
       "import": "./dist/transformer/index.js",
       "require": "./dist/transformer/index.cjs"
+    },
+    "./plugins": {
+      "types": "./dist/plugins/index.d.ts",
+      "default": "./dist/plugins/index.js"
     }
   },
   "files": [

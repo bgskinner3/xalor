@@ -22,7 +22,7 @@
     "shared/**/*",
     "scripts/**/*",
     "cli/**/*",
-    "plugins/**/*",
+    "plugins/**/*"
   ],
   "exclude": [
     "**/__tests__/**",

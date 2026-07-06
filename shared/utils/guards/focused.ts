@@ -4,8 +4,8 @@ import type {
   TVaultSyncPayload,
   TTripleKV,
 } from '../../types';
-import { isObject, isKeyInObject, isRecord } from './objects';
-import { isNull, isString } from './primitives';
+import { isObject, isKeyInObject, isRecord, matchesShape } from './objects';
+import { isNull, isString, isFunction, isOptional } from './primitives';
 import { XALOR_MATCH_ERROR_MESSAGES } from '../../../src/models';
 
 /**
@@ -163,3 +163,30 @@ export function assertDriftRegistryKey<K extends keyof ISolidDriftRegistry>(
     );
   }
 }
+
+/**
+ * Validates whether a value conforms to a Webpack compiler instance shape.
+ *
+ * Checks for required plugin hooks (`hooks.watchRun.tap`) and optionally
+ * validates the `watchFileSystem` structure when present.
+ *
+ * Uses recursive structural guards to ensure runtime safety for deeply
+ * nested compiler internals.
+ */
+export const isCompilerInstance = <T = unknown>(value: unknown): value is T =>
+  matchesShape({
+    hooks: matchesShape({
+      watchRun: matchesShape({
+        tap: isFunction,
+      }),
+    }),
+    // Next.js production builds do not expose a file system watcher.
+    // Wrapping this node in `isOptional` ensures the guard passes on cold-builds,
+    watchFileSystem: isOptional(
+      matchesShape({
+        watcher: matchesShape({
+          mtimes: isRecord,
+        }),
+      }),
+    ),
+  })(value);
