@@ -2,8 +2,7 @@ import type { TShapeCloneMapperMap } from '../../models/types';
 import { isObject, isNull, isFunction } from '../../../shared/utils/guards';
 import { XalethorVaultKeeper } from '../../xalor-service/vault-keeper';
 import { IS_SOLID_CONFIG_ITEMS } from '../../../shared';
-import { validateShape, createInitialContext } from '../../validation';
-
+import { XalethorService } from '../../xalor-service';
 /**
  * ============================================================================
  * DESIGN SYSTEM MAPPER: CLONE SHAPE SANITIZER
@@ -71,7 +70,11 @@ export const CLONE_SHAPE_SANITIZER_MAPPER: TShapeCloneMapperMap = {
   union: (shape, data, seen, depth, recurse) => {
     // Union Sniffing: Locate which sub-branch validly parses this payload shape
     const matchingBranch = shape.values.find((branch) =>
-      validateShape(data, branch, createInitialContext()),
+      XalethorService.validateShape(
+        data,
+        branch,
+        XalethorService.createInitialContext(),
+      ),
     );
 
     return matchingBranch ? recurse(data, matchingBranch, seen, depth) : null;

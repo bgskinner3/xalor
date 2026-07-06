@@ -13,8 +13,8 @@ import {
   isArray,
   ObjectUtils,
 } from '../../../shared';
-import { validateShape, createInitialContext } from '../../validation';
 import { XalethorVaultKeeper } from '../../xalor-service/vault-keeper';
+import { XalethorService } from '../../xalor-service';
 /**
  * CASTING_PRIMITIVE_GENERATORS
  *
@@ -96,10 +96,10 @@ export const CAST_SHAPE_MAPPER: TShapeCastMapperMapper = {
   },
 
   union: (shape, data, depth, recurse) => {
-    const ctx = createInitialContext();
+    const ctx = XalethorService.createInitialContext();
 
     const immediateMatch = shape.values.find((branch) =>
-      validateShape(data, branch, ctx),
+      XalethorService.validateShape(data, branch, ctx),
     );
 
     if (immediateMatch) return recurse(immediateMatch, data, depth);

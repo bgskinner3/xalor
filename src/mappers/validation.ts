@@ -22,7 +22,7 @@ import {
   isIntersectionShape,
   isInstanceOfShape,
 } from '../../shared';
-import { validateShape } from '../validation/validate-shape';
+import { XalethorService } from '../xalor-service';
 /**
  * 💎 SHAPE_VALIDATION_MAPPER MAPPING TABLE
  *
@@ -51,7 +51,7 @@ export const SHAPE_VALIDATION_MAPPER: TValidatorMapper = {
   branded: (data, shape, ctx) => {
     if (!isBrandedShape(shape)) return false;
 
-    return validateShape(data, shape.base, ctx);
+    return XalethorService.validateShape(data, shape.base, ctx);
   },
   array: (data, shape, ctx) => {
     if (!isArrayShape(shape)) return false;

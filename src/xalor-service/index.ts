@@ -3,10 +3,11 @@ import type {
   TSolidError,
   TSolidBranded,
   TTripleKV,
+  TSolidShape,
+  TValidationContext,
 } from '../../shared';
 import { XalethorVaultKeeper } from './vault-keeper';
-import { XalethorVaultValidator } from './vault-validator';
-import { XalethorVaultAuditor } from './vault-auditor';
+import { XalethorVaultCompliance } from './vault-compliance';
 import { XalethorVaultGenerator } from './vault-generator';
 import { XalethorVaultTransform } from './vault-transform';
 import { XalethorVaultMatch } from './vault-match';
@@ -50,35 +51,23 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   // ============================================================
-  public static validateShape(data: unknown, key: string): boolean {
-    return XalethorVaultValidator.validateShape(data, key);
+  public static validateShapeByKey(data: unknown, key: string): boolean {
+    return XalethorVaultCompliance.validateShapeByKey(data, key);
+  }
+  /* prettier-ignore */ public static validateShape(data: unknown,  shape: TSolidShape, ctx: TValidationContext,): boolean {
+    return XalethorVaultCompliance.validateShape(data, shape, ctx);
   }
   public static has(key: string): boolean {
-    return XalethorVaultValidator.has(key);
+    return XalethorVaultCompliance.has(key);
   }
-  // ============================================================
-  // ============================================================
-  // ============================================================
-  // AUDITOR
-  // ============================================================
-  // ============================================================
-  // ============================================================
+  public static createInitialContext(key?: string): TValidationContext {
+    return XalethorVaultCompliance.createInitialContext(key);
+  }
   public static panic(key: string): never {
-    return XalethorVaultAuditor.panic(key);
+    return XalethorVaultCompliance.panic(key);
   }
   public static getKeyErrors(key: string): TSolidError[] {
-    return XalethorVaultAuditor.getErrors(key);
-  }
-  public static auditReport(
-    targetKey: string,
-    isValid: boolean,
-    rawErrors: TSolidError[],
-  ) {
-    return XalethorVaultAuditor.compileAuditReport(
-      targetKey,
-      isValid,
-      rawErrors,
-    );
+    return XalethorVaultCompliance.getErrors(key);
   }
 
   // ============================================================

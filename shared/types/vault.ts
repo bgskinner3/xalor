@@ -1,4 +1,5 @@
 import type { TSolidShape } from '../shape-domain';
+import type { TRuntimeApiErrorRules } from '../error';
 /**
  * TVaultManifestEntry
  *
@@ -84,15 +85,22 @@ export type TSolidError = {
  *
  * @see {@link GlobalRootTypeDocs.TXalorRuleKind }
  */
-export type TXalorRuleKind =
-  | 'primitive_mismatch'
-  | 'literal_mismatch'
-  | 'missing_property'
-  | 'excess_property'
-  | 'union_exhausted'
-  | 'intersection_breached'
-  | 'depth_overflow';
-
+// export type TXalorRuleKind =
+//   | 'primitive_mismatch'
+//   | 'literal_mismatch'
+//   | 'missing_property'
+//   | 'excess_property'
+//   | 'invalid_key_format' // 🛡️ Added
+//   | 'union_exhausted'
+//   | 'intersection_breached'
+//   | 'depth_overflow'
+//   | 'missing_key_presence'
+//   | 'missing_from_vault'
+//   | 'function_mismatch'
+//   | 'instance_mismatch'
+//   | 'brand_constraint_violation'
+//   | 'function_returns_violation'
+//   | 'collection_bounds_exceeded';
 /**
  * TXalorIssue
  *
@@ -107,7 +115,7 @@ export type TXalorIssue = {
   path: string;
   expected: string;
   received: string;
-  rule: TXalorRuleKind;
+  rule: TRuntimeApiErrorRules;
 };
 
 /**

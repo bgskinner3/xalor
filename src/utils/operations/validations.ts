@@ -15,7 +15,7 @@ export function buildValidationTools<
 >(key: K): TReturnValidationTools<K> {
   const guard: TTypeGuard<ISolidRegistry[K]> = (
     val: unknown,
-  ): val is ISolidRegistry[K] => XalethorService.validateShape(val, key);
+  ): val is ISolidRegistry[K] => XalethorService.validateShapeByKey(val, key);
 
   const assert: TAssert<ISolidRegistry[K]> = makeAssert(guard, key);
 

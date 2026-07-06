@@ -5,6 +5,7 @@ import {
   RUNTIME_API_RULE_KEYS,
   XALOR_MATCH_DRIFT_RULE_KEYS,
   XALOR_ERROR_AREAS,
+  CORE_CONFIG_RULE_KEYS,
 } from '../constants';
 
 type TRuleKeys<T extends Record<PropertyKey, string>> = keyof T;
@@ -65,7 +66,11 @@ export type TTypeComplianceRules = TRuleValues<typeof TYPE_COMPLIANCE_RULE_KEYS>
 // ================================================================================
 /* prettier-ignore */
 export type TRuntimeApiErrorKeys = TRuleKeys<typeof RUNTIME_API_RULE_KEYS>;
-
+/**
+ * TXalorRuleKind
+ *
+ * @see {@link GlobalRootTypeDocs.TXalorRuleKind }
+ */
 /* prettier-ignore */
 export type TRuntimeApiErrorRules = TRuleValues<typeof RUNTIME_API_RULE_KEYS>;
 
@@ -103,9 +108,4 @@ export type TXalorErrorAreaRule = TRuleValues<typeof XALOR_ERROR_AREAS>;
 // ================================================================================
 // ================================================================================
 
-// export type TAllErrorMapperKeys =
-//   | TCompilerDiagnosticKeys
-//   | TCollisionBorderKeys
-//   | TTypeComplianceKeys
-//   | TRuntimeApiErrorKeys
-//   | TXalorMatchDriftKeys;
+export type TCoreConfigRuleKeys = keyof typeof CORE_CONFIG_RULE_KEYS;

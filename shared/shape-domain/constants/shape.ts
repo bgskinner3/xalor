@@ -1,6 +1,6 @@
 // /shared/shape-domain/constant.ts
 import type { TInstanceRegistryMapper } from '../types';
-import { ObjectUtils } from '../../utils';
+
 /**
  * ⚙️ SHAPE KIND CONFIGURATION (AST NODE TAXONOMY)
  *
@@ -160,7 +160,11 @@ export const INSTANCE_REGISTRY_MAPPER: TInstanceRegistryMapper = {
   /* prettier-ignore */ WritableStream: { ctor: WritableStream, category: INSTANCE_CATEGORIES.stream, def: () => new WritableStream() },
   /* prettier-ignore */ TransformStream: { ctor: TransformStream, category: INSTANCE_CATEGORIES.stream, def: () => new TransformStream() },
 } as const satisfies TInstanceRegistryMapper;
+
 export const NATIVE_BUILTINS = new Set<string>([
   'Error',
-  ...ObjectUtils.keys(INSTANCE_REGISTRY_MAPPER),
+  ...Object.keys(INSTANCE_REGISTRY_MAPPER),
 ]);
+// export const NATIVE_BUILTINS = new Set<
+//   keyof typeof INSTANCE_REGISTRY_MAPPER | 'Error'
+// >(['Error', ...ObjectUtils.keys(INSTANCE_REGISTRY_MAPPER)]);

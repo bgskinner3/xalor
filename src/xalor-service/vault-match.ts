@@ -2,7 +2,7 @@ import type { TApplyNominalBrand, IXalorDriftContext } from '../models/types';
 import { isRegistryKey, isRecord } from '../../shared/utils';
 import { isObjectShape } from '../../shared/shape-domain/guards';
 import { XalethorVaultKeeper } from './vault-keeper';
-import { XalethorVaultValidator } from './vault-validator';
+import { XalethorVaultCompliance } from './vault-compliance';
 import {
   markAsSolid,
   refinePayloadContract,
@@ -81,7 +81,7 @@ export class XalethorVaultMatch {
   ): TApplyNominalBrand<R> | false {
     const { current, currentKey, strict } = ctx;
     /* prettier-ignore */
-    const isValidCurrentShape = XalethorVaultValidator.validateShape(payload, currentKey);
+    const isValidCurrentShape = XalethorVaultCompliance.validateShapeByKey(payload, currentKey);
 
     if (isValidCurrentShape) {
       if (!strict || this.enforceStrictValidation(currentKey, payload)) {
@@ -123,7 +123,7 @@ export class XalethorVaultMatch {
     }
 
     /* prettier-ignore */
-    if (!XalethorVaultValidator.validateShape(payload, ancestralKey)) return false;
+    if (!XalethorVaultCompliance.validateShapeByKey(payload, ancestralKey)) return false;
     /* prettier-ignore */
     if (strict && !this.enforceStrictValidation(ancestralKey, payload)) return false;
 
@@ -142,7 +142,7 @@ export class XalethorVaultMatch {
       }
 
       /* prettier-ignore */
-      if (!XalethorVaultValidator.validateShape(upcastOutput, currentKey)) return false;
+      if (!XalethorVaultCompliance.validateShapeByKey(upcastOutput, currentKey)) return false;
       /* prettier-ignore */
       if (strict && !this.enforceStrictValidation(currentKey, upcastOutput)) return false;
 

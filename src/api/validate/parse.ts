@@ -39,7 +39,7 @@ export function validateXalorParse<K extends keyof ISolidRegistry>(
   }
 
   // 2. Route directly to raw structural service evaluation loop
-  const isValid = XalethorService.validateShape(data, injectedKey);
+  const isValid = XalethorService.validateShapeByKey(data, injectedKey);
 
   if (isValid && isRecord(data)) {
     // 3. Hydrate the unique runtime BRAND_SYMBOL directly onto the verified payload instance

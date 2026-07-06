@@ -332,6 +332,62 @@ export const RUNTIME_API_RULE_MAPPER: TRuntimeApiErrorMapper = {
       `Expected: ${ctx.expected}\n` +
       `Action: Supply the missing property with a value that satisfies the declared schema.`,
   },
+  INVALID_KEY_FORMAT: {
+    errorArea: XALOR_ERROR_AREAS.RUNTIME_API,
+    rule: RUNTIME_API_RULE_KEYS.INVALID_KEY_FORMAT,
+    message: (ctx) =>
+      `INVALID OBJECT KEY STRUCTURE: Object key name at '${ctx.path}' violates expression or map constraints.\n` +
+      `Received Key: ${ctx.received}\n` +
+      `Action: Revise the key token to adhere strictly to your dynamic index pattern criteria.`,
+  },
+  FUNCTION_MISMATCH: {
+    errorArea: XALOR_ERROR_AREAS.RUNTIME_API,
+    rule: RUNTIME_API_RULE_KEYS.FUNCTION_MISMATCH,
+    message: (ctx) =>
+      `FUNCTION BOUNDARY MISMATCH: Provided functional contract signature is malformed or insufficient.\n` +
+      `Location: ${ctx.path}\n` +
+      `Expected Signature: ${ctx.expected}\n` +
+      `Action: Ensure your executable callback matches mandatory parameter footprint thresholds.`,
+  },
+  INSTANCE_MISMATCH: {
+    errorArea: XALOR_ERROR_AREAS.RUNTIME_API,
+    rule: RUNTIME_API_RULE_KEYS.INSTANCE_MISMATCH,
+    message: (ctx) =>
+      `PLATFORM CLASS INSTANCE MISMATCH: Object is not a valid instance of the required platform class.\n` +
+      `Location: ${ctx.path}\n` +
+      `Expected Constructor: ${ctx.expected}\n` +
+      `Received Prototype  : ${ctx.received}\n` +
+      `Action: Instantiate the data object utilizing the correct platform constructor (e.g. new Date()).`,
+  },
+  BRAND_CONSTRAINT_VIOLATION: {
+    errorArea: XALOR_ERROR_AREAS.RUNTIME_API,
+    rule: RUNTIME_API_RULE_KEYS.BRAND_CONSTRAINT_VIOLATION,
+    message: (ctx) =>
+      `NOMINAL BRAND REFINEMENT BREACH: Underlying base type passes, but fails structural brand validation.\n` +
+      `Location: ${ctx.path}\n` +
+      `Expected Nominal Brand: ${ctx.expected}\n` +
+      `Action: Ensure the input payload fulfills all value assertions defined by the branded type metadata.`,
+  },
+  FUNCTION_RETURNS_VIOLATION: {
+    errorArea: XALOR_ERROR_AREAS.RUNTIME_API,
+    rule: RUNTIME_API_RULE_KEYS.FUNCTION_RETURNS_VIOLATION,
+    message: (ctx) =>
+      `FUNCTION RETURN TYPE VIOLATION: Execution interceptor caught an invalid return structure layout.\n` +
+      `Location: ${ctx.path}\n` +
+      `Expected Output Shape: ${ctx.expected}\n` +
+      `Received Output Value: ${ctx.received}\n` +
+      `Action: Modify the functional logic block output to fulfill your declared return context contract.`,
+  },
+  COLLECTION_BOUNDS_EXCEEDED: {
+    errorArea: XALOR_ERROR_AREAS.RUNTIME_API,
+    rule: RUNTIME_API_RULE_KEYS.COLLECTION_BOUNDS_EXCEEDED,
+    message: (ctx) =>
+      `COLLECTION SIZE LIMIT EXCEEDED: Target string length or array item count broke boundary laws.\n` +
+      `Location: ${ctx.path}\n` +
+      `Max Limit Allowed : ${ctx.expected}\n` +
+      `Received Payload  : ${ctx.received}\n` +
+      `Action: Truncate string characters or array items to remain within strict size constraint limits.`,
+  },
 } satisfies TRuntimeApiErrorMapper;
 
 /**

@@ -3,7 +3,7 @@ import type {
   TStrictSolidMetaData,
   TSolidMetadata,
   TValidationContext,
-  TXalorRuleKind,
+  TRuntimeApiErrorRules,
   TAuditorKeywords,
 } from '../../../shared';
 
@@ -89,7 +89,7 @@ export type TValidatorMapper = {
  * static evaluation safety across deep parsing translation runs.
  */
 export type TRuleAuditorMapper = Readonly<
-  Record<TAuditorKeywords, TXalorRuleKind>
+  Record<TAuditorKeywords, TRuntimeApiErrorRules>
 >;
 
 /**

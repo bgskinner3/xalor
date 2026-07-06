@@ -2,6 +2,7 @@ import {
   REPORT_SERVICE_MODE_ROUTER,
   COMPILER_DIAGNOSTIC_FALLBACKS,
   CORE_MAPPER_TABLE,
+  CORE_CONFIG_RULE_KEYS,
 } from './constants';
 import { xalorLog } from '../service';
 import {
@@ -24,6 +25,7 @@ import type {
   TSameFileCollisionCtx,
   TXalorMatchDriftKeys,
   TLogAnomalyParams,
+  TCoreConfigRuleKeys,
 } from './types';
 
 // 'original' | 'formatted'
@@ -33,6 +35,12 @@ class ErrorReportService {
   /* prettier-ignore */
   public getAreaErrorMapper<T extends TXalorErrorArea>(name: T): TCoreMapperType[T] {
     return CORE_MAPPER_TABLE[name];
+  }
+
+  public getConfigRuleKeys<T extends TCoreConfigRuleKeys>(
+    key: T,
+  ): (typeof CORE_CONFIG_RULE_KEYS)[T] {
+    return CORE_CONFIG_RULE_KEYS[key];
   }
 
   public generateTerminalPanel(ctx: TReportServiceContext): string {

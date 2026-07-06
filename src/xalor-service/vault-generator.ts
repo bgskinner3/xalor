@@ -1,5 +1,5 @@
 import { XalethorVaultKeeper } from './vault-keeper';
-import { XalethorVaultAuditor } from './vault-auditor';
+import { XalethorVaultCompliance } from './vault-compliance';
 import {
   produceDefault,
   markAsSolid,
@@ -32,7 +32,7 @@ export class XalethorVaultGenerator {
     const shape = XalethorVaultKeeper.peek('blueprint', key);
 
     if (!shape) {
-      XalethorVaultAuditor.panic(key, msg);
+      XalethorVaultCompliance.panic(key, msg);
     }
     return shape;
   }
