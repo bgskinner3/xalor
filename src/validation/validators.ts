@@ -23,7 +23,6 @@ import {
   isBigInt,
   isFunction,
   isKeyInObject,
-  // isInstanceOf,
 } from '../../shared';
 import { yieldEntries, yieldFiltered } from '../../shared';
 import { shapeKindUtilsService } from '../../shared/service';
@@ -35,10 +34,6 @@ import { XalethorVaultCompliance } from '../xalor-service/vault-compliance';
 const report = XalethorVaultCompliance.reportError;
 const validateShape = XalethorVaultCompliance.validateShape;
 
-/**
- * 💎 Collection Validators
- * Optimized for O(1) memory and fast-bailout.
- */
 export function validateArray(
   data: unknown,
   shape: TSolidArrayShape,
