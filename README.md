@@ -33,42 +33,40 @@
 <br/>
 
 <div align="center">
-  <p style="font-size:18px; max-width:700px;">
-    <em>“An ahead-of-time (AOT) TypeScript compilation engine that transforms static type contracts into live runtime validation and pattern-matching systems—without duplicating schemas or inflating client bundle sizes.”</em>
+  <p style="font-size:24px; max-width:750px; font-weight: 600; margin-bottom: 5px;">
+    <em>“What else can you do with your types?”</em>
+  </p>
+  <p style="font-size:16px; max-width:750px; color: #444; line-height: 1.6;">
+    Xalor is an ahead-of-time (AOT) TypeScript compilation engine that transforms static type contracts into an active, system-wide <strong>Distributed Contract Governance Framework</strong>. It manages data lifecycles, functional pattern matching, and runtime schema upcasting natively—with hard-zero dynamic parser bloat.
   </p>
 </div>
 
-<br/>
-<br/>
-
-In modern high-scale TypeScript applications:
-
-- **Type Erasure:** Types only exist at compile time; runtime verification requires completely detached schema definitions (Zod, Yup, ArkType).
-- **Workspace Clutter:** Maintaining duplicated static types alongside manual validation schemas introduces immediate code drift.
-- **Bundle Inflation:** Traditional validation libraries force the client browser to download heavy runtime parsing engines, inflating bundle sizes by up to 50KB.
-- **Procedural Overkill:** Evaluating complex polymorphic network payloads results in massive, brittle `if/else` or `switch` type-guard matrices.
-
-**Xalor removes this separation entirely.** Your TypeScript types become your live runtime metadata.
 
 <br/>
 <br/>
 
-## 🧠 The Architecture
+### 🚫 The Distributed Architecture Problem
+In distributed enterprise production ecosystems, applications suffer from **Version Deployment Desynchronization**. Microservices, asynchronous data lakes, mobile clients, databases, and external webhooks update asynchronously. 
+* Traditional parsers (Zod, Valibot) are reactive dead-ends. They blindly reject out-of-sync or legacy data structures, throwing rigid validation exceptions that break core execution paths, drop financial webhooks, and crash checkouts for un-updated mobile application users.
 
-Unlike standard runtime parsing engines, Xalor utilizes a two-phase ahead-of-time (AOT) compilation strategy via a custom compiler plugin:
+### 🪐 The Xalor Core Solution
+Xalor stops treating types as passive compile-time annotations. By extracting your project's type geometry out-of-band at build time, Xalor constructs a centralized, relational schema grid that unlocks advanced data evolution and upcasting mechanisms natively.
+
+
+<br/>
+<br/>
+
+## 🧠 The Architecture Lifecycle
 
 ```text
-TypeScript Source File (.ts)
-│
-▼ (Build Time / ts-patch sweep)
-Xalor AST Transformer ──> Extracts structural metadata blueprints
-│
-▼ (Injects optimized code-gen lookups)
-Production JavaScript Output (0 KB Client Parser Overhead)
+  [DEVELOPMENT TIME]          [COMPILATION TIME]              [PRODUCTION RUNTIME]
+Developer writes pure ──► AOT Scribe Appends Tokens ──► O(1) Memory Blueprint Match
+ TypeScript Interfaces    & Purges Telemetry Ballast    & Resilient Contract Evolution
 ```
 
-1. **Build-Time Compilation:** The Xalor AST transformer scans your source code call-sites during the compilation phase, parses complex generic or recursive structures, and embeds lightweight static lookup blueprints into the production JavaScript artifact.
-2. **Zero-Overhead Runtime:** The runtime library bypasses parsing or type reconstruction completely, evaluating incoming payloads directly against pre-compiled schema graphs.
+1. **Phase 1 (Ingest & Map):** The Xalor AST transformer scans your macro layout targets during the compilation window, unrolling complex generic or recursive trees into content-addressed blueprints.
+2. **Phase 2 (Reify & Scribe):** The engine modifies the compiler stream mid-flight, wiping out transient generic arguments (`<'TOKEN'>`) and realigning parameters to pass lean string reference constants.
+3. **Phase 3 (Vacuum & Absolute Shedding):** At the terminal gate, the CLI purges IDE ghost folders (`./xalor`), amputates verbose developer telemetry (`manifest`, `registry`), and flushes a minified Relational Core layout down to your project.
 
 <br/>
 <br/>
@@ -79,15 +77,97 @@ Production JavaScript Output (0 KB Client Parser Overhead)
 npm install @bgskinner2/xalor
 ```
 
-## 🪐 Ambient Project Integration
-
-Xalor completely replaces fragile background terminal watch daemons by hooking directly into your build tool's native development loop. It updates your type graph validation registries in-memory instantly on every file save.
-
-### 🛡️ Core Compiler Configuration
-
-To ensure your code editor instantly discovers live type updates without reloading, append the generated environment file cache path straight to the `include` block inside your project's **`tsconfig.json`**:
+### 🛡️ Implicit Production Lifecycle Gates
+Xalor integrates directly into your native package manager toolchain using standard implicit scripts. Update your project's **`package.json`** to automate the out-of-band compilation and vacuum routines before assets serialize to your distribution targets:
 
 ```json
+"scripts": {
+  "prebuild": "xalor vacuum",
+  "build": "tsc",
+  "reset": "rm -rf .xalor src/vault-snapshot.json dist node_modules/.cache/xalor"
+}
+```
+* **The Gatekeeper Advantage:** If a duplicate key registration or broken structural layout contract is detected during `prebuild`, the pipeline executes an immediate, unrecoverable hard crash (`process.exit(1)`), stopping your primary builder and insulating production systems from structural configuration corruption.
+
+
+<br/>
+<br/>
+
+
+## 🧩 The Contract Governance API & Capabilities
+
+### 1. matchDrift: The Upstream Versioning Bridge & Migration Gate
+`matchDrift` solves the single most painful flaw in asynchronous distributed networks: safely processing mismatched or legacy payloads by checking them against historical blueprint ancestors and upcasting them to current structural specifications on the fly.
+
+```ts
+import { xalor } from '@bgskinner2/xalor';
+
+// Process an incoming network packet or historical log stream contextually
+const currentPayload = xalor.drift<'INVOICE_STREAM'>(incomingEvent, {
+  currentKey: 'V2_EXPANDED_INVOICE',
+  ancestralKey: 'V1_FLAT_INVOICE_RECORD',
+  
+  // UPCAST LANE: Executes contextually ONLY if data matches yesterday's shape.
+  // Closures are 100% type-safe with full editor autocomplete reflecting yesterday's exact fields.
+  v1_ancestor: (legacyData) => {
+    return {
+      invoiceId: legacyData.invoiceId,
+      meta: {
+        createdContext: 'UPCAST_MIGRATION_LANE',
+        securityChecksum: 0,
+        isSystemEncrypted: false
+      }
+    };
+  }
+});
+```
+* 🏢 **Scenario A (The Slow User):** You refactor a schema from `user_phone` to a nested object block. 40% of mobile store application users haven't updated their client yet. `matchDrift` catches the old requests, detects they satisfy the `v1_ancestor` layout signature, intercepts them, maps properties cleanly to the modern shape, and passes the updated entity downstream.
+* 🪙 **Scenario B (Immutable Financial Streams):** A permanent Kafka/RabbitMQ ledger contains events written two years ago under a flat schema format. Modern system code expects an expanded multi-tier tracking layout. `matchDrift` parses the stream, instantly isolates legacy items, and triggers the migration closure block to dynamically normalize the historic financial ledgers for compliance tracking with zero runtime heap accumulation.
+
+<br/>
+<br/>
+
+
+## 🛠️ CLI Developer Tooling
+
+```bash
+# Force an out-of-band workspace AST metadata compilation sweep and type audit
+npx xalor compile
+
+# Execute the final production telemetry vacuum, ballast amputation, and asset delivery
+npx xalor vacuum
+
+# Profile type graph compaction ratios, cache sizes, and search for dead code orphans
+npx xalor audit
+```
+
+View the [Full CLI Reference & Studio Guide](http://masterofsum.dev/xalor/docs) to learn about `build`, `clear`, and our local interactive orchestration dashboard.
+
+<br/>
+<br/>
+
+
+## 📊 Ecosystem Comparison
+
+| Operational Feature | Zod / Valibot | Typia | **Xalor** |
+| :--- | :---: | :---: | :---: |
+| **Single Source of Truth** (Types are schemas) | ❌ | ✔️ | **✔️** |
+| **Zero Client Bundle Inflation** (0 KB runtime parser) | ❌ | ✔️ | **✔️** |
+| **Ambient Project Integration** (Zero complex setup clutter) | ✔️ | ❌ | **✔️** |
+| **GPS Diagnostic Tracing** (Traceability tracking rules) | ❌ | ❌ | **✔️** |
+| **Distributed Contract Governance** (`matchDrift` Upcast Lanes) | ❌ | ❌ | **✔️** |
+
+
+<br/>
+<br/>
+
+
+## 📄 License
+
+This project is licensed under the MIT License.  
+© 2026 Brennan Skinner
+
+
 {
   "include": ["src/**/*", "node_modules/.cache/xalor/solid-env.ts"]
 }
