@@ -25,9 +25,9 @@ import type { TSolidBranded } from '../../../shared';
  * ```
  * @see {@link RuntimeApiCoreDocs.generateXalorDefault}
  */
-export function generateXalorDefault<K extends TActiveRegistryKeys>(
-  injectedKey?: K,
-): TSolidBranded<K, TResolveRegistryStructure<K>> {
+export function generateXalorDefault<
+  K extends TActiveRegistryKeys = TActiveRegistryKeys,
+>(injectedKey?: K): TSolidBranded<K, TResolveRegistryStructure<K>> {
   // Cast key safely to string for your internal Xalethor lookup layers [Commandment IX]
   const activeKeyToken = (injectedKey ?? 'unknown') as string;
   assertRegistryKey(injectedKey);

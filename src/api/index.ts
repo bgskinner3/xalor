@@ -23,7 +23,7 @@ class XalorCore {
    * @Api register
    * @mode register
    */
-  /* prettier-ignore */ public register<_K extends keyof ISolidRegistry | (string & {}), _T>(): void;
+  /* prettier-ignore */ public register<_K extends keyof ISolidRegistry | (string & {}),  _T = unknown,>(): void;
   /* prettier-ignore */ public register<_K extends keyof ISolidRegistry | (string & {})>(data: unknown): void;
   /* prettier-ignore */ public register<K extends keyof ISolidRegistry | (string & {})>(data?: unknown): void {
     return registerXalor<K>(data);
@@ -72,7 +72,7 @@ class XalorCore {
 
   /** @Api generator  @mode default */
 
-  public default<K extends TActiveRegistryKeys>(
+  public default<K extends TActiveRegistryKeys = TActiveRegistryKeys>(
     _compiledKeyReference?: K,
   ): TSolidBranded<K, TResolveRegistryStructure<K>> {
     return generateXalorDefault<K>(_compiledKeyReference);

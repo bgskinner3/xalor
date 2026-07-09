@@ -68,47 +68,6 @@ declare global {
   T extends object ? { [K in keyof T]: TExpandStructure<T[K], Visited | T> } :
   T;
 
-  // export type TExpandStructure<T, Visited = never> =
-  // // Step 1: Strict Recursive Emitter Loop Interceptor
-  // T extends Visited ? T :
-  // T extends { subCategories?: readonly unknown[] } ? T :
-  // T extends (...args: infer Args) => infer Ret
-  //   ? (...args: { [I in keyof Args]: TExpandStructure<Args[I], Visited | T> }) => TExpandStructure<Ret, Visited | T>
-  //   : T extends Date ? Date
-  //   : T extends RegExp ? RegExp
-  //   : T extends URL ? URL
-  //   : T extends URLSearchParams ? URLSearchParams
-  //   : T extends Headers ? Headers
-  //   : T extends Request ? Request
-  //   : T extends Response ? Response
-  //   : T extends Blob ? Blob
-  //   : T extends File ? File
-  //   : T extends Error ? Error
-  //   : T extends Map<unknown, unknown> ? Map<unknown, unknown>
-  //   : T extends Set<unknown> ? Set<unknown>
-  //   : T extends WeakMap<object, unknown> ? WeakMap<object, unknown>
-  //   : T extends WeakSet<object> ? WeakSet<object>
-  //   : T extends ArrayBuffer ? ArrayBuffer
-  //   : T extends DataView ? DataView
-  //   : T extends Int8Array ? Int8Array
-  //   : T extends Uint8Array ? Uint8Array
-  //   : T extends Uint8ClampedArray ? Uint8ClampedArray
-  //   : T extends Int16Array ? Int16Array
-  //   : T extends Uint16Array ? Uint16Array
-  //   : T extends Int32Array ? Int32Array
-  //   : T extends Uint32Array ? Uint32Array
-  //   : T extends Float32Array ? Float32Array
-  //   : T extends Float64Array ? Float64Array
-  //   : T extends BigInt64Array ? BigInt64Array
-  //   : T extends BigUint64Array ? BigUint64Array
-  //   : T extends Promise<infer P> ? Promise<TExpandStructure<P, Visited | T>>
-  //   : T extends ReadableStream ? ReadableStream
-  //   : T extends WritableStream ? WritableStream
-  //   : T extends TransformStream ? TransformStream
-  //   : T extends object
-  //     ? { [K in keyof T]: TExpandStructure<T[K], Visited | T> }
-  //     : T;
-
   /**
    * 🪐 PRODUCTION-RESILIENT KEY CHECKER
    * Filters out prototype strings to prevent key lookup assignment pollution.
