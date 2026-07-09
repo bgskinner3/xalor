@@ -14,7 +14,7 @@
         "getStarted": {
           "text": "Get Started",
           "active": true,
-          "href": "/xalor/docs/getting-started"
+          "href": "/xalor/docs/gettingStarted"
         },
         "playground": {
           "text": "Try the playground",

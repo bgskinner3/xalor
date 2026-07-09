@@ -94,14 +94,6 @@
         "active": true
       },
       {
-        "id": "4fafa57e-1862-4283-aee3-54d596c2ddec",
-        "text": "Roadmap",
-        "href": "/xalor/docs",
-        "iconName": "routing-duotone",
-        "linkType": "secondary",
-        "active": false
-      },
-      {
         "id": "10e7588e-fc6d-488d-894c-28d6b762e6b8",
         "text": "Github",
         "href": "https://github.com/bgskinner3/xalor/tree/main",
