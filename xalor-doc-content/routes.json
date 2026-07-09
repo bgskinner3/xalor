@@ -19,7 +19,7 @@
       "text": "About Xalor",
       "iconName": "layers-duotone",
       "href": "/xalor/docs/whatIsXalor",
-      "active": false,
+      "active": true,
       "sectionLinks": [
         { "id": "intro", "text": "Core Concept" },
         { "id": "single-source-truth", "text": "Source Of Truth" },
@@ -34,7 +34,7 @@
       "text": "Getting Started",
       "iconName": "rocket-tilted",
       "href": "/xalor/docs/gettingStarted",
-      "active": false,
+      "active": true,
       "sectionLinks": [
         { "id": "intro", "text": "Get Started" },
         { "id": "installation", "text": "Installation" },
@@ -48,7 +48,7 @@
       "text": "API",
       "iconName": "cpu-duotone",
       "href": "/xalor/docs/api",
-      "active": false,
+      "active": true,
       "sectionLinks": [
         { "id": "intro", "text": "Our Runtime" },
         { "id": "register", "text": "Register Types" },
