@@ -100,7 +100,7 @@ export type TTypeResolutionParams = {
   readonly node: Node;
   readonly sourceFile: SourceFile;
   readonly checker: TypeChecker;
-  callNode?: CallExpression;
+  readonly callNode?: CallExpression;
 };
 /**
  * 🪐 TVERIFYANDVALIDATETYPE PARAMETER MATRIX
@@ -111,6 +111,7 @@ export type TVerifyAndValidateType = {
   readonly checker: TypeChecker;
   readonly keyName: string;
   readonly sourceFile: SourceFile;
+  readonly callNode?: CallExpression;
 };
 export type TMineFilePass = {
   readonly program: Program;

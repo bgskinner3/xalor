@@ -4,6 +4,7 @@ import {
   isUnionType,
   isIntersectionType,
   isTypeReference,
+  isAmbientPlatformType,
 } from '../../utils';
 import { shapeKindUtilsService } from '../../../shared';
 import { isUndefined } from '../../../shared/utils/guards';
@@ -35,11 +36,20 @@ export function isTypeRecursive(
     const cleanSymbolName = symbolName.replace(/Constructor$/, '');
 
     if (shapeKindUtilsService.isKnownInstanceKey(cleanSymbolName)) return false;
+
+    // AMBIENT PROVENANCE SHIELD: Halt instantly if this symbol lives inside standard lib.d.ts files
+    const declarations = symbol.getDeclarations();
+    if (!isUndefined(declarations) && declarations.length > 0) {
+      if (isAmbientPlatformType(type)) return false;
+    }
   }
 
-  /* prettier-ignore */ const fullyQualifiedName = checker.typeToString(type);
-  /* prettier-ignore */ const cleanQualifiedName = fullyQualifiedName.replace(/Constructor$/, '');
-  /* prettier-ignore */ if (shapeKindUtilsService.isKnownInstanceKey(cleanQualifiedName)) return false;
+  const fullyQualifiedName = checker.typeToString(type);
+  if (!isUndefined(fullyQualifiedName) && !fullyQualifiedName.startsWith('{')) {
+    const cleanQualifiedName = fullyQualifiedName.replace(/Constructor$/, '');
+    if (shapeKindUtilsService.isKnownInstanceKey(cleanQualifiedName))
+      return false;
+  }
 
   // Record this type to track the active depth path retrieval loop
   visited.add(type);
@@ -122,26 +132,25 @@ export function isTypeRecursive(
   // ========================================================================
   // 🪐 5. OBJECT PROPERTIES EXTRACTION SWEEP
   // ========================================================================
-  if (isObjectTypeGuard(type)) {
-    if (isTypeReference(type)) {
+  if (isObjectTypeGuard(type) || isIntersectionType(type)) {
+    if (isObjectTypeGuard(type) && isTypeReference(type)) {
       const typeArguments = checker.getTypeArguments(type);
       const argLen = typeArguments.length;
       for (let i = 0; i < argLen; i++) {
         const arg = typeArguments[i];
-        /* prettier-ignore */ if (!isUndefined(arg) && isTypeRecursive(arg, checker, visited)) return true;
+        if (!isUndefined(arg) && isTypeRecursive(arg, checker, visited))
+          return true;
       }
     }
-
-    const properties = type.getProperties();
+    // This allows the type checker to flatten and resolve inheritance/intersection chains automatically!
+    const properties = checker.getPropertiesOfType(type);
     const propLen = properties.length;
     for (let i = 0; i < propLen; i++) {
       const sym = properties[i];
-      if (sym === undefined) continue;
+      if (isUndefined(sym)) continue;
 
       const name = sym.getName();
-      if (name.startsWith('_') || name.startsWith('$')) {
-        continue;
-      }
+      if (name.startsWith('_') || name.startsWith('$')) continue;
 
       const targetDecl = !isUndefined(sym.valueDeclaration)
         ? sym.valueDeclaration
@@ -151,9 +160,10 @@ export function isTypeRecursive(
 
       if (isUndefined(targetDecl)) continue;
 
-      /* prettier-ignore */ const propType = checker.getTypeOfSymbolAtLocation(sym, targetDecl);
+      const propType = checker.getTypeOfSymbolAtLocation(sym, targetDecl);
 
-      /* prettier-ignore */ if (!isUndefined(propType) && isTypeRecursive(propType, checker, visited)) return true;
+      if (!isUndefined(propType) && isTypeRecursive(propType, checker, visited))
+        return true;
     }
   }
 

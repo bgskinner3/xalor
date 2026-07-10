@@ -119,6 +119,9 @@ export const TYPE_COMPLIANCE_RULE_KEYS = Object.freeze({
   UNSERIALIZABLE_EXECUTABLE: 'unserializable_executable',
   OPEN_INDEX_SIGNATURE: 'open_index_signature',
   INVALID_TYPE_CONTRACT: 'invalid_type_contract',
+  UNBOUND_INDEX_ACCESS_LOOKUP: 'unbound_generic',
+  UNSUPPORTED_MAPPED_TYPE_MODIFIER: 'open_index_signature',
+  UNRESOLVED_TUPLE_REST_VARIADIC: 'computational_collapse',
 } as const);
 /**
  * ⚙️ RUNTIME_API_RULE_KEYS

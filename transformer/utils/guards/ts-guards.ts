@@ -46,7 +46,26 @@ export function isUnionType(type: Type): type is UnionType {
 export function isIntersectionType(type: Type): type is IntersectionType {
   return type.isIntersection();
 }
-
+/**
+ * IS TEMPLATE MAPPED TYPE
+ * Safe guard to determine if a type is a mapped type containing dynamic template keys.
+ * Satisfies Commandment IX by avoiding 'as any' assertions.
+ */
+/* prettier-ignore */
+export function isTemplateMappedType(type: ts.Type): type is ts.ObjectType {
+  // 1. Ensure it carries standard object traits first
+  if ((type.getFlags() & ts.TypeFlags.Object) !== 0) {
+    const objectType = type as ts.ObjectType;
+    
+    // 2. Safely verify if it's explicitly classified as a Mapped type
+    if ((objectType.objectFlags & ts.ObjectFlags.Mapped) !== 0) {
+      // 3. Use standard javascript property presence checks to probe the shape.
+      // TypeScript allows checking for property strings natively to narrow types.
+      return 'templateFlags' in objectType;
+    }
+  }
+  return false;
+}
 /**
  *IS OBJECT TYPE
  * Detects structural types like Interfaces, Classes, or Type Literals.
@@ -66,6 +85,20 @@ export function isObjectTypeGuard(type: Type): type is ObjectType {
  */
 export function isClassOrInterfaceType(type: Type): type is InterfaceType {
   return type.isClassOrInterface();
+}
+/**
+ * IS AMBIENT PLATFORM TYPE
+ * Determines if a type originates from native compiler declarations (lib.d.ts).
+ * Crucial for stopping recursive inspectors from falling into platform prototype chains.
+ */
+export function isAmbientPlatformType(type: Type): boolean {
+  const symbol = type.getSymbol() ?? type.aliasSymbol;
+  if (!symbol) return false;
+
+  const declarations = symbol.getDeclarations();
+  if (!declarations || declarations.length === 0) return false;
+
+  return declarations.some((d) => d.getSourceFile().isDeclarationFile);
 }
 /**
  * IS TYPE REFERENCE

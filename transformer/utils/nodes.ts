@@ -59,7 +59,7 @@ export function isSolidCall(
       if (
         declaration.getSourceFile().fileName === node.getSourceFile().fileName
       ) {
-        return false; // Local user-defined shadow function/method. Reject it.
+        return false;
       }
     }
   }

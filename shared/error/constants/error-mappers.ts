@@ -212,6 +212,27 @@ export const TYPE_RESOLVER_RULE_MAPPER: TTypeResolverRuleMapper = {
       `This indicates a mismatch between declared type shape and the expected registry-bound contract definition.\n` +
       `Action: Refactor the type into a strict DTO-compliant structure with explicit, serializable properties and re-register the schema.`,
   },
+  UNSUPPORTED_MAPPED_TYPE_MODIFIER: {
+    errorArea: XALOR_ERROR_AREAS.TRANSFORMER_TYPE_RESOLVER,
+    rule: TYPE_COMPLIANCE_RULE_KEYS.UNSUPPORTED_MAPPED_TYPE_MODIFIER,
+    message: (keyName: string, detail?: string) =>
+      `Target key '${keyName}' contains an unsupported dynamic or negative mapped type modifier (${detail}).\n` +
+      `Action: Xalor requires explicit static object maps. Remove template string key-remapping (-readonly, as \`\${K}\`) constructs.`,
+  },
+  UNBOUND_INDEX_ACCESS_LOOKUP: {
+    errorArea: XALOR_ERROR_AREAS.TRANSFORMER_TYPE_RESOLVER,
+    rule: TYPE_COMPLIANCE_RULE_KEYS.UNBOUND_INDEX_ACCESS_LOOKUP,
+    message: (keyName: string) =>
+      `Target key '${keyName}' utilizes an un-evaluated indexed access type lookup (e.g., T[K]).\n` +
+      `Action: The targeted property lookup index must resolve to a literal value space or concrete index boundary.`,
+  },
+  UNRESOLVED_TUPLE_REST_VARIADIC: {
+    errorArea: XALOR_ERROR_AREAS.TRANSFORMER_TYPE_RESOLVER,
+    rule: TYPE_COMPLIANCE_RULE_KEYS.UNRESOLVED_TUPLE_REST_VARIADIC,
+    message: (keyName: string) =>
+      `Target array/tuple for key '${keyName}' utilizes an unbounded variadic rest element (...T).\n` +
+      `Action: Array definitions must be explicitly bounded or pass discrete static length parameters.`,
+  },
 } satisfies TTypeResolverRuleMapper;
 
 // ================================================================================

@@ -130,6 +130,10 @@ export const INSTANCE_CATEGORIES = Object.freeze({
  */
 export const INSTANCE_REGISTRY_MAPPER: TInstanceRegistryMapper = {
   /* prettier-ignore */ Date: { ctor: Date, category: INSTANCE_CATEGORIES.core, def: () => new Date(0) },
+  // FIX: Grouped natively under core to prevent layout or optimization routing bloat
+  /* prettier-ignore */ "Intl.DateTimeFormat": { ctor: Intl.DateTimeFormat, category: INSTANCE_CATEGORIES.core, def: () => new Intl.DateTimeFormat('en') },
+  /* prettier-ignore */ "Intl.NumberFormat": { ctor: Intl.NumberFormat, category: INSTANCE_CATEGORIES.core, def: () => new Intl.NumberFormat('en') },
+  /* prettier-ignore */ "Intl.PluralRules": { ctor: Intl.PluralRules, category: INSTANCE_CATEGORIES.core, def: () => new Intl.PluralRules('en') },
   /* prettier-ignore */ RegExp: { ctor: RegExp, category: INSTANCE_CATEGORIES.core, def: () => /(?:)/ },
   /* prettier-ignore */ Map: { ctor: Map, category: INSTANCE_CATEGORIES.collection, def: () => new Map() },
   /* prettier-ignore */ Set: { ctor: Set, category: INSTANCE_CATEGORIES.collection, def: () => new Set() },

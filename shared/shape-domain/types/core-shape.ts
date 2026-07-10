@@ -68,6 +68,9 @@ export type TInstanceConstructorRegistry = {
   /* prettier-ignore */ ReadableStream: typeof ReadableStream;
   /* prettier-ignore */ WritableStream: typeof WritableStream;
   /* prettier-ignore */ TransformStream: typeof TransformStream;
+  /* prettier-ignore */ "Intl.DateTimeFormat": typeof Intl.DateTimeFormat;
+  /* prettier-ignore */ "Intl.NumberFormat": typeof Intl.NumberFormat;
+  /* prettier-ignore */ "Intl.PluralRules": typeof Intl.PluralRules;
 };
 
 /** @see {@link GlobalRootTypeDocs.TSolidShape} */

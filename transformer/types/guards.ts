@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import type { TVaultSyncPayload, TSentryTriggerNames } from '../../shared';
+import type { TVaultSyncPayload } from '../../shared';
 import type {
   TRegisterTriggers,
   TGeneratorTriggers,

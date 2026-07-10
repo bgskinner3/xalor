@@ -40,12 +40,13 @@ export const createPayLoad = ({
  * It immediately halts the build process if a type breaks our data invariants.
  */
 export const verifyAndValidateType = (params: TVerifyAndValidateType): void => {
-  const { shapeType, checker, keyName, sourceFile } = params;
+  const { shapeType, checker, keyName, sourceFile, callNode } = params;
   const mode = XalorRoutesService.xalorCLIMode();
   const validationFailure = verifyTypeResolvability(
     shapeType,
     checker,
     keyName,
+    callNode,
   );
 
   if (validationFailure && validationFailure.rule) {

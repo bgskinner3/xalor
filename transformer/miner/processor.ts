@@ -29,9 +29,7 @@ export function solidVisitorProcessor({
     const nodeStartPosition = node.getStart(sourceFile);
     const areaString = getFormattedPosition(sourceFile, nodeStartPosition);
     /* prettier-ignore */
-    finalArgs = PROCESSOR_REWRITE_MAPPER['xalor.register'](
-      target, node, factory, areaString, shape,
-    );
+    finalArgs = PROCESSOR_REWRITE_MAPPER['xalor.register'](target, node, factory, areaString, shape);
   }
 
   /* prettier-ignore */
@@ -40,10 +38,8 @@ export function solidVisitorProcessor({
   if (isValidateTarget(target)) finalArgs = PROCESSOR_REWRITE_MAPPER[target.apiName](target, node, factory);
   /* prettier-ignore */
   if (isTransformerTarget(target)) finalArgs = PROCESSOR_REWRITE_MAPPER[target.apiName](target, node, factory);
-
-  if (isMatchTarget(target)) {
-    finalArgs = PROCESSOR_REWRITE_MAPPER[target.apiName](target, node, factory);
-  }
+  /* prettier-ignore */
+  if (isMatchTarget(target)) finalArgs = PROCESSOR_REWRITE_MAPPER[target.apiName](target, node, factory);
 
   return factory.updateCallExpression(
     node,
