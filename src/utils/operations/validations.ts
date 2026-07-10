@@ -8,7 +8,7 @@ import type {
   TTypeGuard,
   TAssert,
   TResolveInstanceGraph,
-} from '../../../shared';
+} from '../../../shared/types';
 
 export function buildValidationTools<
   K extends Extract<TActiveRegistryKeys, string>,

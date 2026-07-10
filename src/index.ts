@@ -6,5 +6,5 @@
 /// <reference path="./models/types/definitions/intellisense-interfaces.ts" />
 
 // src/index.ts
-export * from './api';
+export { xalor } from './api';
 export * from './models/types/definitions';

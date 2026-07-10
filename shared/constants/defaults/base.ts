@@ -1,5 +1,4 @@
-import type { TXalorParsedConfig, TTripleKV } from '../../types';
-import { ModuleKind, ScriptTarget } from 'typescript';
+import type { TTripleKV } from '../../types';
 import { TDeepWriteable } from '../../types';
 
 /**
@@ -62,42 +61,6 @@ export const AUDITOR_KEYWORDS = Object.freeze([
   'primitive',
   'type',
 ] as const);
-/**
- * CONFIG_FALLBACK_DEFAULT
- * 🪐 THE GEOMETRY BASELINE ZERO-CONFIG CONTEXT FALLBACK
- *
- * ROLE:
- * Serves as an immutable, production-ready environment configuration baseline.
- * Safely handles application parameters if the target project workspace missing,
- * corrupts, or strips out an explicit project-level `tsconfig.json` layout file.
- *
- * DESIGN INVARIANT:
- * Enforces strict common common denominator specifications to keep the engine compilation
- * threads completely isolated, secure, and running with near-zero latency.
- *
- * @param compilerOptions Native engine directives configuring compilation targets and target formats
- * @param includePatterns Default directory traversal matching filters capturing active source paths
- * @param excludePatterns Rigid security pattern masks blocking generated output bundles or artifacts
- * @param isFallbackMode System state flag tracking whether the active run pass relies on default parameters
- */
-export const CONFIG_FALLBACK_DEFAULT: TXalorParsedConfig = {
-  compilerOptions: {
-    target: ScriptTarget.Latest,
-    module: ModuleKind.CommonJS,
-  },
-  includePatterns: ['src/**/*', 'app/**/*', 'test/**/*'],
-  excludePatterns: [
-    'dist',
-    'build',
-    'out',
-    'lib',
-    'node_modules',
-    '.cache',
-    '.next',
-    '.xalor',
-  ],
-  isFallbackMode: true,
-} satisfies TXalorParsedConfig;
 
 export const DEFAULT_VAULT_SHAPE_FALLBACK: TDeepWriteable<TTripleKV> = {
   blueprints: {},

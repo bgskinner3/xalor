@@ -1,5 +1,5 @@
-import { IS_SOLID_CONFIG_ITEMS } from '../../../shared';
-import type { TSolidShape } from '../../../shared';
+import { IS_SOLID_CONFIG_ITEMS } from '../../../shared/constants';
+import type { TSolidShape } from '../../../shared/shape-domain/types';
 import {
   DEFAULT_SHAPE_MATERIALIZER,
   MOCK_SHAPE_MATERIALIZER,

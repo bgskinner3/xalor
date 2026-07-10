@@ -53,14 +53,11 @@ export function isIntersectionType(type: Type): type is IntersectionType {
  */
 /* prettier-ignore */
 export function isTemplateMappedType(type: ts.Type): type is ts.ObjectType {
-  // 1. Ensure it carries standard object traits first
+
   if ((type.getFlags() & ts.TypeFlags.Object) !== 0) {
     const objectType = type as ts.ObjectType;
-    
-    // 2. Safely verify if it's explicitly classified as a Mapped type
+  
     if ((objectType.objectFlags & ts.ObjectFlags.Mapped) !== 0) {
-      // 3. Use standard javascript property presence checks to probe the shape.
-      // TypeScript allows checking for property strings natively to narrow types.
       return 'templateFlags' in objectType;
     }
   }

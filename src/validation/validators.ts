@@ -153,59 +153,6 @@ export function validateObject(
   ctx.path = originalPath;
   return true;
 }
-// export function validateObject(
-//   data: unknown,
-//   shape: { properties: Record<string, TSolidObjectRawShape> },
-//   ctx: TValidationContext,
-// ): boolean {
-//   if (!isObject(data) || isNull(data) || !isRecord(data))
-//     return report(ctx, 'object', data);
-
-//   const originalPath = ctx.path;
-
-//   // 1. Fetch properties using Object.keys to automatically skip non-enumerable properties
-//   // const payloadKeys = Object.keys(data);
-//   // const keyCount = payloadKeys.length;
-
-//   // 2. Modified Blueprint Mapping: Filter entries to completely ignore prototype attack vectors
-//   const propertyEntries = yieldEntries(
-//     shape.properties,
-//     (_key, _value): _key is string => !PROTO_EXPLOIT_KEYS.has(_key), // 🛡️ Skip malicious tracking keys here
-//   );
-
-//   for (const [key, metadata] of propertyEntries) {
-//     // 🛡️ Double-check to ensure prototype keys never leak into the validation loop
-//     if (PROTO_EXPLOIT_KEYS.has(key)) continue;
-
-//     const hasProperty = Object.hasOwn(data, key);
-//     const value = data[key];
-//     ctx.path = originalPath === '$' ? key : `${originalPath}.${key}`;
-
-//     if (metadata.requiresKeyPresence && !hasProperty) {
-//       const result = report(ctx, metadata.shape, 'missing_key_presence');
-//       ctx.path = originalPath;
-//       return result;
-//     }
-
-//     if (!hasProperty || value === undefined) {
-//       if (metadata.optional || metadata.requiresKeyPresence) continue;
-//       const result = report(ctx, metadata.shape, 'missing');
-//       ctx.path = originalPath;
-//       return result;
-//     }
-
-//     if (metadata.shape) {
-//       // NOTE: Ensure this points to your new high-performance validateShapeFast/validateShape loop
-//       if (!validateShape(value, metadata.shape, ctx)) {
-//         ctx.path = originalPath;
-//         return false;
-//       }
-//     }
-//   }
-
-//   ctx.path = originalPath;
-//   return true;
-// }
 
 /**
  * 💎 Graph Validators
@@ -327,32 +274,6 @@ export function validateFunction(
   return true;
 }
 
-// export function validateFunction(
-//   data: unknown,
-//   shape: TSolidFunctionShape,
-//   ctx: TValidationContext,
-// ): boolean {
-//   if (!isFunction(data)) {
-//     return report(ctx, shape, data);
-//   }
-
-//   let mandatoryParamsCount = 0;
-//   const totalBlueprintParams = shape.parameters.length;
-
-//   for (let i = 0; i < totalBlueprintParams; i++) {
-//     const paramNode = shape.parameters[i];
-//     if (paramNode && !paramNode.optional) {
-//       mandatoryParamsCount++;
-//     }
-//   }
-
-//   if (data.length < mandatoryParamsCount) {
-//     return report(ctx, shape, data);
-//   }
-
-//   return true;
-// }
-
 export function validateInstanceOf(
   data: unknown,
   shape: TSolidInstanceOfShape,
@@ -368,21 +289,3 @@ export function validateInstanceOf(
   }
   return true;
 }
-
-// export function validateInstanceOf(
-//   data: unknown,
-//   shape: TSolidInstanceOfShape,
-//   ctx: TValidationContext,
-// ): boolean {
-//   if (data == null) {
-//     return report(ctx, shape, data);
-//   }
-
-//   const ctor = shapeKindUtilsService.resolveInstanceCtor(shape.name);
-
-//   if (!(data instanceof ctor)) {
-//     return report(ctx, shape.name, data);
-//   }
-
-//   return true;
-// }

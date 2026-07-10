@@ -1,5 +1,3 @@
-'use client';
-
 import type {
   IXalorAuditPayload,
   TScanTelemetryParams,
@@ -8,7 +6,8 @@ import type {
   TCapturedAPICall,
   TStudioApiUsageMap,
 } from '../../models/types';
-import { TSConfigService, fsContext } from '../../../shared/service';
+import { fsContext } from '../../../shared/service';
+import { tsConfigService } from '../ts-config-service';
 import type {
   TDeepWriteable,
   TRuntimeTriggerName,
@@ -55,7 +54,7 @@ export class TelemetryService {
     });
 
     const seenKeys = new Set<string>();
-    const configMatrix = TSConfigService.extractWorkspaceConfig(projectRoot);
+    const configMatrix = tsConfigService.extractWorkspaceConfig(projectRoot);
     const baseIncludePath = configMatrix.includePatterns[0] ?? '';
     const cleanDirName = baseIncludePath.replace('/**/*', '').replace('/*', '');
     const targetDir = fsContext.resolvePath(cleanDirName || '.');

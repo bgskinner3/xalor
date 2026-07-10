@@ -1,17 +1,11 @@
 import ts from 'typescript';
 import * as path from 'path';
 import * as fs from 'fs';
-import type {
-  TXalorParsedConfig,
-  TResolvedConfigPath,
-  TSearchFileNames,
-} from '../types';
-import {
-  CONFIG_FALLBACK_DEFAULT,
-  IS_SOLID_CONFIG_ITEMS,
-  REGEX_PATTERNS,
-} from '../constants';
-import { isArray } from '../utils/guards';
+import type { TSearchFileNames } from '../../shared/types';
+import type { TXalorParsedConfig, TResolvedConfigPath } from '../models/types';
+import { CONFIG_FALLBACK_DEFAULT } from '../models/constants';
+import { IS_SOLID_CONFIG_ITEMS, REGEX_PATTERNS } from '../../shared/constants';
+import { isArray } from '../../shared/utils';
 
 /**
  * ============================================================================================================
@@ -31,9 +25,9 @@ import { isArray } from '../utils/guards';
  */
 export class TSConfigService {
   /* prettier-ignore */
-  private static readonly searchFileNames = IS_SOLID_CONFIG_ITEMS.searchFileNames;
+  private  readonly searchFileNames = IS_SOLID_CONFIG_ITEMS.searchFileNames;
 
-  private static resolveConfigName(
+  private resolveConfigName(
     projectRootPath: string,
     explicitProjectFlag?: string,
   ): string {
@@ -45,7 +39,7 @@ export class TSConfigService {
     return discoveryList[0]?.fileName ?? this.searchFileNames.tsconfig;
   }
 
-  public static findAllWorkspaceConfigs(
+  public findAllWorkspaceConfigs(
     projectRootPath: string,
   ): readonly TResolvedConfigPath[] {
     const configBuffer: TResolvedConfigPath[] = [];
@@ -84,7 +78,7 @@ export class TSConfigService {
 
     return Object.freeze(finalPrioritizedList);
   }
-  private static createPriorityMap = (
+  private createPriorityMap = (
     searchFileNames: TSearchFileNames,
   ): ReadonlyMap<string, number> =>
     new Map<string, number>([
@@ -93,7 +87,7 @@ export class TSConfigService {
       [searchFileNames.tsconfigBase, 999],
     ]);
 
-  private static prioritizeTsconfigs = (
+  private prioritizeTsconfigs = (
     configs: readonly TResolvedConfigPath[],
     searchFileNames: TSearchFileNames,
   ): TResolvedConfigPath[] => {
@@ -116,7 +110,7 @@ export class TSConfigService {
    * Evaluates the workspace, determines the ideal configuration target file natively,
    * and returns an immutable configuration matrix with perfect type purity.
    */
-  public static extractWorkspaceConfig(
+  public extractWorkspaceConfig(
     projectRootPath: string,
     explicitProjectFlag?: string,
   ): TXalorParsedConfig {
@@ -158,3 +152,5 @@ export class TSConfigService {
     };
   }
 }
+
+export const tsConfigService = new TSConfigService();

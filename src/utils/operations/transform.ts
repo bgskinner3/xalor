@@ -1,5 +1,5 @@
-import { IS_SOLID_CONFIG_ITEMS } from '../../../shared';
-import type { TSolidShape } from '../../../shared';
+import { IS_SOLID_CONFIG_ITEMS } from '../../../shared/constants/configs';
+import type { TSolidShape } from '../../../shared/shape-domain/types';
 import { CLONE_SHAPE_SANITIZER_MAPPER } from '../../mappers';
 
 /**

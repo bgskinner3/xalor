@@ -6,7 +6,7 @@ import {
   produceMock,
   produceCast,
 } from '../utils';
-import type { TSolidBranded } from '../../shared';
+import type { TSolidBranded } from '../../shared/types/utility';
 /**
  * XALETHOR VAULT GENERATOR
  *
