@@ -50,7 +50,7 @@ export type TRegisterRawPayload = {
  * Captured when encountering 'xalor.default', 'xalor.mock', 'xalor.clone', etc.
  */
 export type TGenerateRawPayload = {
-  readonly keyName: string | undefined;
+  readonly keyName: string;
   readonly mode: TGeneratorXalorModes | undefined;
   readonly apiName: TGeneratorTriggers; // The precise method token invoked
 };
@@ -60,7 +60,7 @@ export type TGenerateRawPayload = {
  * Captured when encountering 'xalor.guard', 'xalor.assert', 'xalor.parse', etc.
  */
 export type TValidateRawPayload = {
-  readonly keyName: string | undefined;
+  readonly keyName: string;
   readonly mode: TValidationXalorModes | undefined;
   readonly apiName: TValidationTriggers; // The precise method token invoked
 };
@@ -70,7 +70,7 @@ export type TValidateRawPayload = {
  * Captured when encountering 'xalor.pick', 'xalor.omit', 'xalor.rename', etc.
  */
 export type TTransformerRawPayload = {
-  readonly keyName: string | undefined;
+  readonly keyName: string;
   readonly mode: TTransformXalorModes | undefined;
   readonly apiName: TTransformTriggers; // The precise method token invoked
 };
@@ -79,7 +79,7 @@ export type TTransformerRawPayload = {
  * Captured when encountering 'xalor.pick', 'xalor.omit', 'xalor.rename', etc.
  */
 export type TMatchRawPayload = {
-  readonly keyName: string | undefined;
+  readonly keyName: string;
   readonly mode: TMatchXalorModes | undefined;
   readonly apiName: TMatchTriggers; // The precise method token invoked
 };

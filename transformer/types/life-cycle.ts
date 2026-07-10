@@ -25,6 +25,7 @@ export type TXalorLifecycleContext = {
   readonly isIngestRegistryMode: boolean;
   readonly isReifyRuntimeMode: boolean;
   readonly isStandardInlineMode: boolean;
+  readonly isVacuumStripMode: boolean;
 };
 
 /**

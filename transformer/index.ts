@@ -51,10 +51,10 @@ export default function xalorTransformerPlugin(
 
   const lifecycle = XalorRoutesService.resolveXalorLifecycle();
 
-  // 🎯 THE CANONICAL TRANSITION: Re-hydrate volatile RAM between emit loops!
+  // THE CANONICAL TRANSITION: Re-hydrate volatile RAM between emit loops!
   // If we are booting up Pass 2, read your verified Pass 1 disk cache straight back into
   // xalorCentralContext's globalKeyRegistry map before any AST walkers step into your files.
-  if (lifecycle.isReifyRuntimeMode) {
+  if (lifecycle.isVacuumStripMode) {
     const rawDiskCache = fsContext.ingestVaultSnapshotFromDiskSync();
 
     if (rawDiskCache && rawDiskCache.blueprints) {
@@ -94,9 +94,9 @@ export default function xalorTransformerPlugin(
   );
 
   const activeBootRoutine = BOOT_MODE_STRATEGY_MAPPER[executeMode];
-  if (activeBootRoutine) {
-    activeBootRoutine({ sampleFile, runtimePaths });
-  }
+
+  if (activeBootRoutine) activeBootRoutine({ sampleFile, runtimePaths });
+
   const { isClearMode } = lifecycle;
   if (isClearMode) {
     return (_context: ts.TransformationContext) => {

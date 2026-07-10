@@ -46,6 +46,8 @@ export class XalorRoutesService {
     const isReifyRuntimeMode = isStaticCompileGate && compilationPhase === 'REIFY_RUNTIME';
     /* prettier-ignore */
     const isStandardInlineMode = !isStaticCompileGate && compilationPhase === 'STANDARD_INLINE';
+    /* prettier-ignore */
+    const isVacuumStripMode = isProductionVacuumMode && compilationPhase === 'VACUUM_STRIP';
     return {
       isWatchMode,
       isOneShotCompileMode,
@@ -58,6 +60,7 @@ export class XalorRoutesService {
       isReifyRuntimeMode,
       isStandardInlineMode,
       isIncrementalBuild,
+      isVacuumStripMode,
     };
   }
 

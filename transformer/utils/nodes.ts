@@ -44,7 +44,11 @@ export function isSolidCall(
   // Resolve your active execution parameters
   const lifecycle = XalorRoutesService.resolveXalorLifecycle();
 
-  if (checker && !lifecycle.isReifyRuntimeMode) {
+  if (
+    checker &&
+    !lifecycle.isReifyRuntimeMode &&
+    !lifecycle.isVacuumStripMode
+  ) {
     const symbol = checker.getSymbolAtLocation(identifierNode);
     const declaration = symbol?.valueDeclaration;
     if (

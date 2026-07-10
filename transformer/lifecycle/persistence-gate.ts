@@ -84,17 +84,16 @@ function executeCompilationFlushAndHarvest(
   params: TFlushAndHarvestParams,
 ): void {
   /* prettier-ignore */
-  const { file, program, rootDir, globalKeyRegistry, isTestEnvironment, isDevelopmentPass } = params;
+  const { file, program, rootDir, globalKeyRegistry, isTestEnvironment, isDevelopmentPass,  } = params;
 
   const shouldTriggerFlush = isCompilationLoopTerminated(
     file,
     program,
     globalKeyRegistry,
   );
-  const isWatchLoopActive =
-    XalorRoutesService.resolveXalorLifecycle().isWatchMode;
+  const { isWatchMode } = XalorRoutesService.resolveXalorLifecycle();
 
-  if (shouldTriggerFlush || isWatchLoopActive) {
+  if (shouldTriggerFlush || isWatchMode) {
     if (!isTestEnvironment) {
       const cacheKeySnapshot = Array.from(globalKeyRegistry.keys());
       cacheKeySnapshot.forEach((key) => {
@@ -157,7 +156,7 @@ export function persistenceGate({
   // ====================================================================================
   const currentSessionPath =
     xalorCentralContext.getCurrentSessionPath(currentFileAbsolute);
-
+  // TODO: LOGGER
   // Object.keys(currentSessionPath.keys).forEach((key) => {
   //   const payload = globalKeyRegistry.get(key);
 

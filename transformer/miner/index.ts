@@ -53,8 +53,12 @@ export function theMiner({
   context,
   sourceFile,
 }: TMinerCorParams): Visitor {
-  const { isIngestRegistryMode, isReifyRuntimeMode, isStandardInlineMode } =
-    XalorRoutesService.resolveXalorLifecycle();
+  const {
+    isIngestRegistryMode,
+    isReifyRuntimeMode,
+    isStandardInlineMode,
+    isVacuumStripMode,
+  } = XalorRoutesService.resolveXalorLifecycle();
   const checker = program.getTypeChecker();
   const { factory } = context;
 
@@ -70,7 +74,7 @@ export function theMiner({
     if (isRegisterTarget(target)) {
       const { keyName, shapeType } = target;
 
-      if (!isReifyRuntimeMode && !isStandardInlineMode) {
+      if (!isReifyRuntimeMode && !isStandardInlineMode && !isVacuumStripMode) {
         return visitEachChild(node, visitor, context);
       }
 
@@ -85,7 +89,9 @@ export function theMiner({
         sourceFile,
         checker,
       });
-
+      if (isVacuumStripMode) {
+        return factory.createNotEmittedStatement(node);
+      }
       const updatedCall = solidVisitorProcessor({
         node,
         sourceFile,
@@ -115,10 +121,11 @@ export function theMiner({
       }
       return markAsPure(updatedCall);
     }
+
     // PATH Validate: validateXalor
     if (isValidateTarget(target)) {
       /* prettier-ignore */
-      const updatedCall = solidVisitorProcessor({ node, sourceFile, factory, target });
+      const updatedCall = solidVisitorProcessor({ node, sourceFile, factory, target});
       if (isReifyRuntimeMode) {
         console.log(`🧼 [Xalor CLI] Validated Type Key: '${target.keyName}'`);
       }

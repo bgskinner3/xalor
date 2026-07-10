@@ -12,6 +12,7 @@ import type {
   TValidationXalorModes,
 } from '../../shared';
 import { MATCH_PROCESSOR_MAPPER } from '../mappers/match-processor-mapper';
+
 /**
  * Reusable utility to scrape out a single string-literal generic argument from index [0]
  * and dynamically compute the execution mode flavor directly from the fully qualified API name string.
@@ -68,6 +69,21 @@ export function formatGenerationArgs<T extends IBasePayload>(
   node: CallExpression,
   factory: NodeFactory,
 ): Expression[] {
+  // const { isVacuumStripMode } = XalorRoutesService.resolveXalorLifecycle();
+  // const keyName = raw.keyName ?? 'unknown';
+
+  // /* prettier-ignore */ const trackedContextRecord = xalorCentralContext.context.globalKeyRegistry.get(keyName);
+  // /* prettier-ignore */ const shape = trackedContextRecord?.shape;
+
+  // if (isVacuumStripMode && isValidSolidShape(shape)) {
+  //   const runtimeConfigExpression = factory.createObjectLiteralExpression([
+  //     /* prettier-ignore */ factory.createPropertyAssignment('shape', generateShapeAST(factory, shape)),
+  //   ]);
+
+  //   return node.arguments.length > 0
+  //     ? [...node.arguments, runtimeConfigExpression]
+  //     : [runtimeConfigExpression];
+  // }
   const keyLiteral = factory.createStringLiteral(raw.keyName ?? 'unknown');
   const modeLiteral = factory.createStringLiteral(mode);
 
@@ -86,10 +102,25 @@ export function formatValidationArgs<T extends IBasePayload>(
   node: CallExpression,
   factory: NodeFactory,
 ): Expression[] {
+  // const { isVacuumStripMode } = XalorRoutesService.resolveXalorLifecycle();
+  // const keyName = raw.keyName ?? 'unknown';
+
+  // /* prettier-ignore */ const trackedContextRecord = xalorCentralContext.context.globalKeyRegistry.get(keyName);
+  // /* prettier-ignore */ const shape = trackedContextRecord?.shape;
+
+  // if (isVacuumStripMode && isValidSolidShape(shape)) {
+  //   const runtimeConfigExpression = factory.createObjectLiteralExpression([
+  //     /* prettier-ignore */ factory.createPropertyAssignment('shape', generateShapeAST(factory, shape)),
+  //   ]);
+
+  //   return node.arguments.length > 0
+  //     ? [...node.arguments, runtimeConfigExpression]
+  //     : [runtimeConfigExpression];
+  // }
+
   const keyLiteral = factory.createStringLiteral(raw.keyName ?? 'unknown');
   const modeLiteral = factory.createStringLiteral(mode);
 
-  // 🎯 REALIGNMENT PASS: Ensures xalor.audit(data) expands to xalor.audit(data, key, mode)
   return node.arguments.length > 0
     ? [...node.arguments, keyLiteral, modeLiteral]
     : [keyLiteral, modeLiteral];
@@ -104,6 +135,22 @@ export function formatTransformationArgs<T extends IBasePayload>(
   node: CallExpression,
   factory: NodeFactory,
 ): Expression[] {
+  // const { isVacuumStripMode } = XalorRoutesService.resolveXalorLifecycle();
+  // const keyName = raw.keyName ?? 'unknown';
+
+  // /* prettier-ignore */ const trackedContextRecord = xalorCentralContext.context.globalKeyRegistry.get(keyName);
+  // /* prettier-ignore */ const shape = trackedContextRecord?.shape;
+
+  // if (isVacuumStripMode && isValidSolidShape(shape)) {
+  //   const runtimeConfigExpression = factory.createObjectLiteralExpression([
+  //     /* prettier-ignore */ factory.createPropertyAssignment('shape', generateShapeAST(factory, shape)),
+  //   ]);
+
+  //   return node.arguments.length > 0
+  //     ? [...node.arguments, runtimeConfigExpression]
+  //     : [runtimeConfigExpression];
+  // }
+
   const keyLiteral = factory.createStringLiteral(raw.keyName ?? 'unknown');
   const modeLiteral = factory.createStringLiteral(mode);
 

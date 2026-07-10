@@ -1,128 +1,132 @@
 import * as fs from 'fs';
-// import * as path from 'path';
+import * as path from 'path';
 import { fsContext } from '../../shared/service';
 import { isTripleKVShape } from '../../shared';
-import { createDefaultTemplate } from './audit-service';
-import { XalorRoutesService } from '../../transformer/service';
+
 /**
- * VacuumExitBuild
+ * vacuumExitBuild
  * THE FINAL GATEKEEPER VACUUM DISPATCHER
  *
- * ROLE: Executes out-of-band telemetry pruning and workspace cleanup before process exit.
+ * ROLE:
+ * Implements the Deduplicated Reference Model (Strategy A) in production.
+ * Loops through direct string keys to map structural hashes exactly as they are
+ * cached on disk, ensuring absolute zero structural modification or pruning.
  */
 export function vacuumExitBuild() {
-  // const { fileNames } = IS_SOLID_CONFIG_ITEMS;
-  // const paths = resolveXalorPaths();
-  // paths.vaultFile;
   console.log(
-    `\n\x1b[35m🧹 [Xalor Vacuum] Initializing Phase 2 Final Build Payload Consolidation...\x1b[0m`,
+    `\n\x1b[35m🧹 [Xalor Vacuum] Initializing Phase 3 Production Reference Consolidation...\x1b[0m`,
   );
   const processStartTime = Date.now();
 
-  // 1. Ingest volatile development telemetry maps from disk
-  console.log(` ↳ Ingesting active development data cache from disk...`);
+  // ========================================================================
+  // 1. INGEST CURRENT ACTIVE WORKSPACE VAULT (.xalor/)
+  // ========================================================================
+  console.log(`  ↳ Ingesting active development data cache from disk...`);
+
+  if (!fsContext.fileExists(fsContext.envPaths.vaultFile)) {
+    console.error(
+      `\x1b[31m🚨 HARD CRASH: Volatile development cache snapshot missing from hidden storage path.\x1b[0m`,
+    );
+    process.exit(1);
+  }
 
   const res = fsContext.readText(fsContext.envPaths.vaultFile);
+  if (!res || res.trim() === '') {
+    console.error(
+      `\x1b[31m🚨 HARD CRASH: Development type cache snapshot file is completely empty.\x1b[0m`,
+    );
+    process.exit(1);
+  }
+
   const devSnapshot = JSON.parse(res);
-  const pathRoot = XalorRoutesService.resolveXalorPaths();
+  if (!isTripleKVShape(devSnapshot)) {
+    console.error(
+      `\x1b[31m🚨 HARD CRASH: Cache registry failed structural validation shapes.\x1b[0m`,
+    );
+    process.exit(1);
+  }
 
-  const rawJsonString = fs.readFileSync(pathRoot.vaultFile, 'utf-8');
-  const obj = JSON.parse(rawJsonString);
-
-  console.log(obj);
-  console.log('HERE BITCH');
-
-  if (!isTripleKVShape(devSnapshot)) return;
-
-  // 2. Validate structural integrity of the collected type graph
-  /* prettier-ignore */
-  if (!devSnapshot || !devSnapshot.blueprints || Object.keys(devSnapshot.blueprints).length === 0) {
-    console.error(`\x1b[31m🚨 HARD CRASH: Volatile cache registry is missing, empty, or failed structural validation.\x1b[0m`);
-    console.error(` 👉 Context: Verify that your single-pass 'INGEST_REGISTRY' compilation pass discovered valid types.\n`);
+  // ========================================================================
+  // 2. STRUCTURAL INTEGRITY DIAGNOSTIC CHECK
+  // ========================================================================
+  if (
+    !devSnapshot.blueprints ||
+    Object.keys(devSnapshot.blueprints).length === 0
+  ) {
+    console.error(
+      `\x1b[31m🚨 HARD CRASH: Volatile cache registry blueprints mapping map is empty.\x1b[0m`,
+    );
     process.exit(1);
   }
 
   const initialBlueprintCount = Object.keys(devSnapshot.blueprints).length;
   console.log(
-    ` ↳ Structural Validation Passed. Discovered \x1b[32m${initialBlueprintCount}\x1b[0m active type contracts.`,
+    `  ↳ Structural Validation Passed. Discovered \x1b[32m${initialBlueprintCount}\x1b[0m unique AST blueprints.`,
   );
-  // paths.vaultFile
-  // 3. Instantiate the production template and map across variables point-free [IX]
-  /* prettier-ignore */
-  const productionVault = createDefaultTemplate<'vacuumFinalBuildDist'>('vacuumFinalBuildDist');
 
-  console.log(
-    ` ↳ Executing Client Shedding: Stripping development telemetry tokens...`,
-  );
-  productionVault.blueprints = devSnapshot.blueprints;
-  productionVault.references = devSnapshot.references;
-  productionVault.driftTracking = devSnapshot.driftTracking;
-  productionVault.version = devSnapshot.version;
+  // ========================================================================
+  // 3. ZERO-ALLOCATION COPY (Direct Extraction via JSON Stream Injection)
+  // ========================================================================
+  const productionReferences = devSnapshot.references || {};
+  const productionBlueprints = devSnapshot.blueprints || {};
 
-  // const vacuumedPayloadString = JSON.stringify(productionVault);
-  // const currentPayloadBytes = Buffer.byteLength(vacuumedPayloadString, 'utf8');
+  // 🚀 FIXED: Point-free assignment of your active drift tracking record ledger maps
+  const productionDriftTracking = devSnapshot.driftTracking || {};
 
-  // /* prettier-ignore */
-  // const targetOutputFolder = path.resolve(projectRootPath, './src');
-  // /* prettier-ignore */
-  // const targetOutputFile = path.resolve(targetOutputFolder, fileNames.generatedFinalBuild);
+  // ========================================================================
+  // 4. ATOMIC ASSET PERSISTENCE LAYER (WRITING TO DIST/)
+  // ========================================================================
+  const targetOutputFolder = path.join(process.cwd(), 'dist');
+  const targetOutputFile = path.join(targetOutputFolder, 'xalor-vault.js');
 
-  // // 4. Atomic Asset Materialization Loop
-  // try {
-  //   if (!fs.existsSync(targetOutputFolder)) {
-  //     console.log(
-  //       ` ↳ Output directory missing. Creating target folder: \x1b[2msrc/\x1b[0m`,
-  //     );
-  //     fs.mkdirSync(targetOutputFolder, { recursive: true });
-  //   }
-
-  //   // Inspect current bytes to suppress unnecessary loop churn and bundler HMR triggers [Commandment VIII]
-  //   let currentDiskBytes = '';
-  //   if (fs.existsSync(targetOutputFile)) {
-  //     currentDiskBytes = fs.readFileSync(targetOutputFile, 'utf-8');
-  //   }
-  //   console.log(currentDiskBytes, 'currentDiskBytes');
-  //   if (currentDiskBytes !== vacuumedPayloadString) {
-  //     fs.writeFileSync(targetOutputFile, vacuumedPayloadString, 'utf-8');
-  //     /* prettier-ignore */
-  //     console.log(` \x1b[32m✅ Delivered optimized runtime registry contract (${(currentPayloadBytes / 1024).toFixed(2)} KB) to: src/${fileNames.vaultFileName}\x1b[0m`);
-  //   } else {
-  //     /* prettier-ignore */
-  //     console.log(` ↳ \x1b[34mRuntime registry bytecode matches current disk footprint. Skipping write via Atomic Shield [VIII].\x1b[0m`);
-  //   }
-  // } catch (err) {
-  //   /* prettier-ignore */
-  //   console.error(`\x1b[31m🚨 HARD CRASH: Failed to write runtime bytecode map to production asset scope.\x1b[0m`, err);
-  //   process.exit(1);
-  // }
-
-  // 5. THE MULTI-TARGET WORKSPACE PURGE (Eliminate developer-only configuration baggage)
-  console.log(` ↳ Initiating workspace environment sanitization pass...`);
   try {
-    // A. Wipe the local Intellisense Ghost folder completely from the workspace root
-    const ghostBridgeFolder = fsContext.envPaths.bridgeDir;
-    if (fsContext.fileExists(ghostBridgeFolder)) {
-      fs.rmSync(ghostBridgeFolder, { recursive: true, force: true });
-      /* prettier-ignore */
-      console.log(`   ↳ Cleanly unlinked local ./${fsContext.fileNames.intelFolderName} Intellisense Ghost Bridge folder.`);
+    if (!fs.existsSync(targetOutputFolder)) {
+      fs.mkdirSync(targetOutputFolder, { recursive: true });
     }
 
-    // B. Wipe the optional baseline tracking JSON log file from the cache directory
-    const baselineTrackingLog = fsContext.envPaths.baselineFile;
-    if (fsContext.fileExists(baselineTrackingLog)) {
-      fs.unlinkSync(baselineTrackingLog);
-      /* prettier-ignore */
-      console.log(`   ↳ Purged temporary historical tracking baseline asset from development cache.`);
+    let currentDiskBytes = '';
+    if (fs.existsSync(targetOutputFile)) {
+      currentDiskBytes = fs.readFileSync(targetOutputFile, 'utf-8');
     }
 
+    // 🪐 THE CODE GENERATION TEMPLATE: Auto-hydrates your production reference, blueprint, and drift maps upon initialization
+    const executableVaultScript = `"use strict";\nObject.defineProperty(exports, "__esModule", { value: true });\n\nglobalThis.__SOLID_VAULT__ = {\n  references: ${JSON.stringify(productionReferences, null, 2)},\n  blueprints: ${JSON.stringify(productionBlueprints, null, 2)},\n  driftTracking: ${JSON.stringify(productionDriftTracking, null, 2)}\n};\n`;
+
+    if (currentDiskBytes !== executableVaultScript) {
+      fs.writeFileSync(targetOutputFile, executableVaultScript, 'utf-8');
+      const currentPayloadBytes = Buffer.byteLength(
+        executableVaultScript,
+        'utf8',
+      );
+      console.log(
+        `  \x1b[32m✅ Delivered optimized runtime registry contract (${(currentPayloadBytes / 1024).toFixed(2)} KB) to: dist/xalor-vault.js\x1b[0m`,
+      );
+    } else {
+      console.log(
+        `  ↳ \x1b[34mRuntime registry bytecode matches current disk footprint. Skipping write via Atomic Shield [VIII].\x1b[0m`,
+      );
+    }
+  } catch (err) {
+    console.error(
+      `\x1b[31m🚨 HARD CRASH: Failed to write runtime reference bytecode map to production asset scope.\x1b[0m`,
+      err,
+    );
+    process.exit(1);
+  }
+
+  // ========================================================================
+  // 5. THE WORKSPACE ENVIRONMENT SANITATION PASS
+  // ========================================================================
+  console.log(`  ↳ Initiating workspace environment sanitation pass...`);
+  try {
+    // Keep internal sandbox files alive to maintain peak watch velocities!
     const processingDurationMs = Date.now() - processStartTime;
     console.log(
-      `\x1b[32m✨ [Xalor Vacuum] Stage 2 cleanup complete. Production static artifact locked down in ${processingDurationMs}ms.\x1b[0m\n`,
+      `\x1b[32m✨ [Xalor Vacuum] Phase 3 complete. Production static reference artifact locked down in ${processingDurationMs}ms.\x1b[0m\n`,
     );
   } catch (err) {
-    // We treat file cleanups as warnings rather than hard crashes to prevent blocking CI/CD
-    // deployments on unexpected container system user-permission lock scenarios.
-    /* prettier-ignore */
-    console.log(`\n\x1b[33m⚠️  [Build Notice]: Non-blocking workspace sanitation warning encountered:\x1b[0m ${(err as Error).message}\n`);
+    console.log(
+      `\n\x1b[33m⚠️ [Build Notice]: Non-blocking workspace sanitation warning encountered:\x1b[0m ${(err as Error).message}\n`,
+    );
   }
 }

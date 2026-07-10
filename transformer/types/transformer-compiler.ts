@@ -6,6 +6,8 @@ import type {
 } from '../../shared';
 import type { Program, TransformationContext, SourceFile } from 'typescript';
 import type { TMineFilePass } from './the-miners';
+import type { TCompilationPhase } from './context';
+
 export type TBootStrategyParams = {
   /** The isolated sample file path coordinates used to boot your builders */
   readonly sampleFile: string;
@@ -102,8 +104,7 @@ export type TPassStrategyMapper = {
  * @param targetedFilesCollector A local memory reference envelope tracking the exact file paths requiring code materialization
  */
 export type TXalorTransformerOptions = {
-  readonly compilationPhase?:
-    'INGEST_REGISTRY' | 'REIFY_RUNTIME' | 'STANDARD_INLINE';
+  readonly compilationPhase?: TCompilationPhase;
   readonly targetedFilesCollector?: Set<string>;
   outboundDataMemoryPass?: TDeepWriteable<TTripleKV> | null;
 };
