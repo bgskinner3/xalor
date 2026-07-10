@@ -77,7 +77,12 @@ export function theMiner({
       if (!isReifyRuntimeMode && !isStandardInlineMode && !isVacuumStripMode) {
         return visitEachChild(node, visitor, context);
       }
-
+      console.log(
+        isIngestRegistryMode,
+        isReifyRuntimeMode,
+        isStandardInlineMode,
+        isVacuumStripMode,
+      );
       const activeSymbol = shapeType.aliasSymbol || shapeType.getSymbol();
       const declarationNode = activeSymbol?.declarations?.[0] ?? node;
 

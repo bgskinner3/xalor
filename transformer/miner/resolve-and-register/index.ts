@@ -34,8 +34,7 @@ export function resolveAndRegisterType({
   callNode,
 }: TTypeResolutionParams): TSolidShape {
   const activeExecuteMode = XalorRoutesService.xalorCLIMode();
-  const { isReifyRuntimeMode, isVacuumStripMode } =
-    XalorRoutesService.resolveXalorLifecycle();
+  // const { isIngestRegistryMode } = XalorRoutesService.resolveXalorLifecycle();
 
   // ========================================================================
   // 1: THE COMPILED TYPE RADAR
@@ -121,15 +120,12 @@ export function resolveAndRegisterType({
     identity,
   });
 
-  const isCollision =
-    !isReifyRuntimeMode &&
-    !isVacuumStripMode &&
-    validateCollisionBorders({
-      keyName,
-      activeAreaString: identity.area,
-      activeAnchorString: identity.anchor,
-      currentActiveAbsoluteFile: sourceFile.fileName,
-    });
+  const isCollision = validateCollisionBorders({
+    keyName,
+    activeAreaString: identity.area,
+    activeAnchorString: identity.anchor,
+    currentActiveAbsoluteFile: sourceFile.fileName,
+  });
 
   if (!isCollision) {
     const assignedCudMode = determineCUDMode({

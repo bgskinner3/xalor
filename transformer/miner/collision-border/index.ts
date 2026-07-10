@@ -31,8 +31,8 @@ export function validateCollisionBorders(
 
   const executeMode = XalorRoutesService.xalorCLIMode();
 
-  const isIncrementalBuild =
-    XalorRoutesService.resolveXalorLifecycle().isIncrementalBuild;
+  const { isIncrementalBuild } = XalorRoutesService.resolveXalorLifecycle();
+
   /* prettier-ignore */
   const { blacklistedKeys } = xalorCentralContext.context;
 

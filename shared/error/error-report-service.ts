@@ -18,9 +18,6 @@ import type {
   TXalorErrorArea,
   TCompilerDiagnosticKeys,
   TTypeComplianceKeys,
-  TCollisionBorderKeys,
-  TCrossFileCollisionCtx,
-  TSameFileCollisionCtx,
   TLogAnomalyParams,
   TCoreConfigRuleKeys,
 } from './types';
@@ -85,27 +82,6 @@ class ErrorReportService {
       : config.message;
   }
 
-  /* prettier-ignore */ public resolveCollisionFailure(area: 'TRANSFORMER_COLLISION_SAME_FILE',key: TCollisionBorderKeys,context: TSameFileCollisionCtx): string;
-  /* prettier-ignore */ public resolveCollisionFailure(area: 'TRANSFORMER_COLLISION_CROSS_FILE',key: TCollisionBorderKeys,context: TCrossFileCollisionCtx): string;
-  /* prettier-ignore */ public resolveCollisionFailure(
-    area: 'TRANSFORMER_COLLISION_SAME_FILE' | 'TRANSFORMER_COLLISION_CROSS_FILE',
-    key: TCollisionBorderKeys,
-    context: TSameFileCollisionCtx | TCrossFileCollisionCtx,
-  ): string {
-    const errorMapper = this.getAreaErrorMapper(area);
-
-    if (isUndefined(errorMapper)) {
-      return 'An unrecognized compiler collision anomaly occurred.';
-    }
-
-    const config = errorMapper[key];
-
-    if (isUndefined(config)) {
-      return 'An unrecognized compiler collision anomaly occurred.';
-    }
-
-    return config.message(context);
-  }
   /* prettier-ignore */
   public logAnomaly<TArea extends 'TRANSFORMER_DIAGNOSTIC_COMPILER' | 'TRANSFORMER_TYPE_RESOLVER'>(area: TArea,params: TLogAnomalyParams): void {
     const { keyName, fileLocation, error, mode } = params;

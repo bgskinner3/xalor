@@ -1,6 +1,6 @@
 import { xalorCentralContext } from '../../service';
 import type { TFilePathParams } from '../../types';
-import { errorReportService, XalorError } from '../../../shared';
+import { errorReportService } from '../../../shared';
 // ========================================================================
 // 🪐 INTEGRATED INTERCEPT LANE A: CROSS-FILE REGISTRATION HIJACK PROTECTION
 //
@@ -53,16 +53,8 @@ export function crossFileProtection(params: TFilePathParams): boolean {
       const mapper = errorReportService.getAreaErrorMapper(
         'TRANSFORMER_COLLISION_CROSS_FILE',
       );
-      const finalizedMessageText = errorReportService.resolveCollisionFailure(
-        'TRANSFORMER_COLLISION_CROSS_FILE',
-        'CROSS_FILE',
-        ctx,
-      );
+      const finalizedMessageText = mapper['message'](ctx);
 
-      const crossFileFailure = {
-        rule: mapper.rule,
-        message: finalizedMessageText,
-      };
       if (isWatch) {
         const coloredAnsiPanelText = errorReportService.generateTerminalPanel({
           keyName,
@@ -79,12 +71,17 @@ export function crossFileProtection(params: TFilePathParams): boolean {
         return true;
       }
 
-      throw XalorError.InvalidType(
+      const coloredAnsiPanelText = errorReportService.generateTerminalPanel({
         keyName,
-        currentActiveAbsoluteFile,
-        crossFileFailure,
-        executeMode,
-      );
+        fileLocation: currentActiveAbsoluteFile,
+        message: finalizedMessageText,
+        rule: mapper.rule,
+        mode: executeMode,
+      });
+
+      console.warn(coloredAnsiPanelText);
+
+      process.exit(0);
     }
   }
 

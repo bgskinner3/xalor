@@ -6,9 +6,9 @@ export type TGlobalKeyRegistry = Map<string, TVaultSyncPayload>;
 // 🪐 TWIN-MAP BIDIRECTIONAL METADATA STRUCTURES
 // ==============================================================================
 export type TSessionKeyMeta = {
-  readonly anchor: string;
-  readonly area: string;
-  readonly filePath: string;
+  anchor: string;
+  area: string;
+  filePath: string;
 };
 
 export type TSessionAnchorMeta = {

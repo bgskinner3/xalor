@@ -42,15 +42,15 @@ export class XalorError extends Error {
     this._keyName =
       area === 'TRANSFORMER_TYPE_RESOLVER' ? codeAsString : undefined;
 
-    if (Error.captureStackTrace) {
-      // Commandment VI: Track execution paths natively by locking frames to new.target
-      Error.captureStackTrace(this, new.target);
-    }
+    // if (Error.captureStackTrace) {
+    //   // Commandment VI: Track execution paths natively by locking frames to new.target
+    //   Error.captureStackTrace(this, new.target);
+    // }
 
     // Format the definitive error message trace cleanly
-    if (this.nodeLocation !== 'unknown') {
-      this.message = `${this.message}\n ➔ Location: ${this.nodeLocation}`;
-    }
+    // if (this.nodeLocation !== 'unknown') {
+    //   this.message = `${this.message}\n ➔ Location: ${this.nodeLocation}`;
+    // }
   }
 
   /** Returns the precise structural failure payload contract without type casting. */
@@ -85,7 +85,9 @@ export class XalorError extends Error {
         rule: failure.rule,
         mode,
       });
+      // console.log(terminalPanelText);
     }
+    // console.log(failure, terminalPanelText, 'FUCKK YOUEE', '');
     // Return the instance directly. The type resolves instantly as XalorError.
     return new XalorError(
       keyName,

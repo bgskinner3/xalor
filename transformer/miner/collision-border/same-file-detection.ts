@@ -1,6 +1,6 @@
 import { xalorCentralContext } from '../../service';
 import type { TFilePathParams } from '../../types';
-import { errorReportService, XalorError } from '../../../shared';
+import { errorReportService } from '../../../shared';
 
 // ========================================================================
 // 🪐 INTEGRATED INTERCEPT LANE B: SAME-FILE LOCAL COPY-PASTE DETECTION
@@ -47,16 +47,8 @@ export function sameFileDetection(params: TFilePathParams) {
       const mapper = errorReportService.getAreaErrorMapper(
         'TRANSFORMER_COLLISION_SAME_FILE',
       );
-      const finalizedMessageText = errorReportService.resolveCollisionFailure(
-        'TRANSFORMER_COLLISION_SAME_FILE',
-        'SAME_FILE',
-        ctx,
-      );
 
-      const sameFileFailure = {
-        rule: mapper.rule,
-        message: finalizedMessageText,
-      };
+      const finalizedMessageText = mapper['message'](ctx);
 
       // 🖨️ WATCH MODE NON-BLOCKING ALERT LOGGING
       if (isWatch) {
@@ -74,13 +66,17 @@ export function sameFileDetection(params: TFilePathParams) {
 
         return true;
       }
-
-      throw XalorError.InvalidType(
+      const coloredAnsiPanelText = errorReportService.generateTerminalPanel({
         keyName,
-        currentActiveAbsoluteFile,
-        sameFileFailure,
-        executeMode,
-      );
+        fileLocation: currentActiveAbsoluteFile,
+        message: finalizedMessageText,
+        rule: mapper.rule,
+        mode: executeMode,
+      });
+
+      console.warn(coloredAnsiPanelText);
+
+      process.exit(0);
     }
   }
 
