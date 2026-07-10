@@ -38,12 +38,12 @@ class XalorCore {
   // ========================================================================
   // ========================================================================
   /** @Api validation  @mode guard */
-  /* prettier-ignore */ public guard<K extends keyof ISolidRegistry>(): TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>>;
-  /* prettier-ignore */ public guard<K extends keyof ISolidRegistry>( data: unknown): data is ISolidRegistry[K]
-  public guard<K extends keyof ISolidRegistry>(
+  /* prettier-ignore */ public guard<K extends TActiveRegistryKeys>(): TSolidBranded<K, TTypeGuard<TResolveRegistryStructure<K>>>;
+  /* prettier-ignore */ public guard<K extends TActiveRegistryKeys>( data: unknown): data is TResolveRegistryStructure<K>
+  public guard<K extends TActiveRegistryKeys>(
     keyOrPayload?: K | unknown,
     dataKey?: K,
-  ): boolean | TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>> {
+  ): boolean | TSolidBranded<K, TTypeGuard<TResolveRegistryStructure<K>>> {
     const isProperKey = isRegistryKey<K>(keyOrPayload);
     const finalKey = isProperKey ? keyOrPayload : dataKey;
 

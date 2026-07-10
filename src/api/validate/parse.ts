@@ -38,18 +38,13 @@ export function validateXalorParse<K extends TActiveRegistryKeys>(
     return XalethorService.panic(injectedKey);
   }
 
-  // 2. Route directly to raw structural service evaluation loop
   const isValid = XalethorService.validateShapeByKey(data, injectedKey);
 
   if (isValid && isRecord(data)) {
-    // 3. Hydrate the unique runtime BRAND_SYMBOL directly onto the verified payload instance
-    // Satisfies COMMANDMENT IX: The compiler natively knows 'data' can accept properties because it passed isRecord!
     Reflect.set(data, BRAND_SYMBOL, ['Solid', injectedKey]);
 
-    // 4. Utilize a safe phantom type narrower instead of a cast to pass the boundary check
     if (markAsSolid<K, TResolveRegistryStructure<K>>(data)) return data;
   }
 
-  // 5. Immediate fail-fast circuit breaking execution halt (Commandment VI)
   return XalethorService.panic(injectedKey);
 }

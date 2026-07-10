@@ -24,20 +24,20 @@ import { assertRegistryKey } from '../../../shared/utils/guards';
  *
  * @see {@link RuntimeApiCoreDocs.validateXalorGuard}
  */
-export function validateXalorGuard<K extends keyof ISolidRegistry>(
+export function validateXalorGuard<K extends TActiveRegistryKeys>(
   injectedKey?: K,
-): TSolidBranded<K, TTypeGuard<ISolidRegistry[K]>> {
+): TSolidBranded<K, TTypeGuard<TResolveRegistryStructure<K>>> {
   assertRegistryKey(injectedKey);
 
   const { guard } = buildValidationTools(injectedKey);
 
-  const runtimeGuard = (v: unknown): v is ISolidRegistry[K] => {
-    return guard(v) && markAsSolid<K, ISolidRegistry[K]>(v);
+  const runtimeGuard = (v: unknown): v is TResolveRegistryStructure<K> => {
+    return guard(v) && markAsSolid<K, TResolveRegistryStructure<K>>(v);
   };
 
   Reflect.set(runtimeGuard, BRAND_SYMBOL, ['Solid', injectedKey]);
 
-  if (markAsSolid<K, TTypeGuard<ISolidRegistry[K]>>(runtimeGuard)) {
+  if (markAsSolid<K, TTypeGuard<TResolveRegistryStructure<K>>>(runtimeGuard)) {
     return runtimeGuard;
   }
 

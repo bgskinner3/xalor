@@ -34,7 +34,9 @@ export type TProcessorRewriteMap = {
 } & {
   readonly [K in TMatchTriggers]: TRewriterFunction<TMatchRawPayload>;
 };
-
+export interface IBaseProcessorPayload {
+  readonly keyName: string | undefined;
+}
 // ========================================================================
 // DISCRIMINATED REWRITER CONTEXTS
 // ========================================================================

@@ -86,7 +86,7 @@ export const isTripleKVShape: TTypeGuard<TTripleKV> = (
  * straight down to the specific generic type parameter `K`, clearing all strict type assignment
  * restrictions across downstream Bouncer, Facade, and Strategy engines.
  */
-export function isRegistryKey<K extends keyof ISolidRegistry>(
+export function isRegistryKey<K extends TActiveRegistryKeys>(
   key: unknown,
 ): key is K {
   const vault = globalThis.__SOLID_VAULT__;

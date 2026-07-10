@@ -11,13 +11,14 @@ import type {
 } from '../../../shared';
 
 export function buildValidationTools<
-  K extends Extract<keyof ISolidRegistry, string>,
+  K extends Extract<TActiveRegistryKeys, string>,
 >(key: K): TReturnValidationTools<K> {
-  const guard: TTypeGuard<ISolidRegistry[K]> = (
+  const guard: TTypeGuard<TResolveRegistryStructure<K>> = (
     val: unknown,
-  ): val is ISolidRegistry[K] => XalethorService.validateShapeByKey(val, key);
+  ): val is TResolveRegistryStructure<K> =>
+    XalethorService.validateShapeByKey(val, key);
 
-  const assert: TAssert<ISolidRegistry[K]> = makeAssert(guard, key);
+  const assert: TAssert<TResolveRegistryStructure<K>> = makeAssert(guard, key);
 
   return { guard, assert };
 }
