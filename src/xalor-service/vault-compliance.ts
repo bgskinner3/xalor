@@ -28,16 +28,18 @@ import type {
   TRuntimeApiErrorRules,
   TXalorAuditReport,
   TXalorIssue,
+  TErrorReportTemplate,
 } from '../models/types';
 import {
   RUNTIME_API_RULE_MAPPER,
   RUNTIME_API_MESSAGE_KEYWORD_RULES,
   RUNTIME_API_RULE_KEYS,
+  RUNTIME_LOGGER_DESIGN_SPECTRUM,
 } from '../models/constants';
-import { xalorLog } from '../../shared/service/logger-service';
 
 export class XalethorVaultCompliance {
   private static messageKeywordRules = RUNTIME_API_MESSAGE_KEYWORD_RULES;
+  private static runtimeLoggerDesign = RUNTIME_LOGGER_DESIGN_SPECTRUM;
 
   private static get vault(): TSolidVaultMap {
     return ensureGlobalVault();
@@ -83,7 +85,6 @@ export class XalethorVaultCompliance {
   // ============================================================================
   public static validateShapeByKey(data: unknown, key: string): boolean {
     const injectedKey = this.vault.references.get(key)!;
-    console.log(this.vault, 'INEJCTED KEY');
     const shape = this.vault.blueprints.get(injectedKey);
     if (!shape) return false;
 
@@ -199,6 +200,51 @@ export class XalethorVaultCompliance {
     );
   }
   // ============================================================================
+  // 🎨 RAW ANSI SOLID REPORT TEMPLATE (CENTRALIZED TO SPECTRUM)
+  // ============================================================================
+  /**
+   * SolidReportTemplate
+   * 🪐 THE INLINE ANSI BREAKAGE TEMPLATE
+   *
+   * ROLE:
+   * Formats raw validation error streams using centralized design spectrum codes,
+   * eliminating decoupled color values across separate systems.
+   */
+  public static runtimeErrorReportTemplate(ctx: TErrorReportTemplate): string {
+    const { keyName, errorDetails } = ctx;
+
+    // Alias your centralized design spectrum configurations locally
+    const c = this.runtimeLoggerDesign;
+
+    // 1. Compile the Structural Header
+    const header = `\n${c.red}${c.bold}[xalor] 🛑 SOLIDITY BREAK: "${keyName}"${c.reset}\n`;
+
+    // 2. Iterate and map frames point-free with exact matching spaces
+    const bodyBuffer: string[] = [];
+    for (let i = 0; i < errorDetails.length; i++) {
+      const item = errorDetails[i];
+
+      const frame = [
+        ` ${c.cyan}➔ Path:${c.reset} $.${c.bold}${item.err.path}${c.reset}`,
+        ` ${c.textLightGreen}Expected:${c.reset} ${item.cleanExpected}`,
+        ` ${c.textLightRed}Received:${c.reset} ${item.cleanReceived}`,
+        ` ${c.gray}─────────────────────────────────────────────────────────────${c.reset}`,
+        ` ${c.bold}💎 Type Definition (Source Link):${c.reset}`,
+        ` ${c.cyan}↳ ${item.originGps}${c.reset}`,
+        ` ${c.bold}⚡ Runtime Call Site (Invocation Link):${c.reset}`,
+        ` ${c.cyan}↳ ${item.callerGps}${c.reset}`,
+      ].join('\n');
+
+      bodyBuffer.push(frame);
+    }
+
+    // 3. Join records seamlessly with your exact structural gray separator bar
+    const separator = `\n\n${c.gray} =============================================================${c.reset}\n\n`;
+    const body = bodyBuffer.join(separator);
+
+    return `${header}${body}\n`;
+  }
+  // ============================================================================
   // 🛰️ PUBLIC COMPLIANCE REPORT COMPILER (MAPPER ENRICHED)
   // ============================================================================
   /**
@@ -253,7 +299,7 @@ export class XalethorVaultCompliance {
     }
 
     // 6. Direct delegation to the central layout template compiler
-    return xalorLog.runtimeErrorReportTemplate({
+    return this.runtimeErrorReportTemplate({
       keyName: key,
       errorDetails: dynamicErrorPayload,
     });

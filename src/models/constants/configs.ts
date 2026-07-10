@@ -113,3 +113,13 @@ export const RUNTIME_API_MESSAGE_KEYWORD_RULES: readonly (readonly [string, TRun
   /* prettier-ignore */ ['minlength', 'collection_bounds_exceeded'],
   /* prettier-ignore */ ['tuple', 'collection_bounds_exceeded'],
 ] satisfies readonly (readonly [string, TRuntimeApiErrorRules])[];
+
+export const RUNTIME_LOGGER_DESIGN_SPECTRUM = {
+  red: '\x1b[31m',
+  gray: '\x1b[90m',
+  textLightRed: '\x1b[38;5;196m\x1b[1m',
+  textLightGreen: '\x1b[38;5;82m\x1b[1m',
+  bold: '\x1b[1m',
+  cyan: '\x1b[36m',
+  reset: '\x1b[0m',
+} as const;

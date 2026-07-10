@@ -65,7 +65,6 @@ export function runClearCommand(projectRootPath: string): void {
   // bridgeFile
   /* prettier-ignore */ const bridgeFileNode = path.join(projectRootPath, 'node_modules', '.cache', fileNames.cacheFolderName, fileNames.bridgeFileName);
   /* prettier-ignore */ const bridgeFileExternal = path.join(projectRootPath, fileNames.intelFolderName, fileNames.bridgeFileName);
-  // TODO: replace with our resolved paths ?
   const FILE_PATHS_CONFIG = {
     target: {
       /* prettier-ignore */
@@ -73,12 +72,8 @@ export function runClearCommand(projectRootPath: string): void {
       /* prettier-ignore */
       vaultFile: path.join(projectRootPath, 'node_modules', '.cache', fileNames.cacheFolderName, fileNames.vaultFileName),
       /* prettier-ignore */
-      // bridgeDir: path.join(projectRootPath, 'node_modules', '.cache', fileNames.cacheFolderName),
-      // bridgeDir: path.join(projectRootPath, fileNames.intelFolderName), // FILE OUTSIDE MODULES
       bridgeDir: externalCache ? absoluteBridgeDirExternal : absoluteBridgeDirNode,
       /* prettier-ignore */
-      // bridgeFile: path.join(projectRootPath, 'node_modules', '.cache', fileNames.cacheFolderName, fileNames.bridgeFileName),
-      // bridgeFile: path.join(projectRootPath, fileNames.intelFolderName, fileNames.bridgeFileName), // FILE OUTSIDE MODULES
       bridgeFile: externalCache ? bridgeFileExternal : bridgeFileNode,
     },
     source: {

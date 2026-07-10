@@ -98,4 +98,3 @@ export function refineToBrandedResult<_K extends keyof ISolidDriftRegistry, R>(
 ): _result is TApplyNominalBrand<R> {
   return true;
 }
-// refinePayloadContract, refineAncestralContract, refineToCurrentModel, refineToAncestralModel, refineToBrandedResult

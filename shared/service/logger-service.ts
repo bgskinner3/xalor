@@ -10,7 +10,6 @@ import type {
   TLoggerBannerVariant,
   TTextColorToken,
   TLoggerOutputMode,
-  TSolidError,
 } from '../types';
 import { isLiteralMatch, yieldItems, isKeyInObject } from '../utils';
 
@@ -237,60 +236,7 @@ export class LoggerServiceCore {
 
     return buffer.join('\n');
   }
-  // ============================================================================
-  // 🎨 RAW ANSI SOLID REPORT TEMPLATE (CENTRALIZED TO SPECTRUM)
-  // ============================================================================
-  /**
-   * SolidReportTemplate
-   * 🪐 THE INLINE ANSI BREAKAGE TEMPLATE
-   *
-   * ROLE:
-   * Formats raw validation error streams using centralized design spectrum codes,
-   * eliminating decoupled color values across separate systems.
-   */
-  public runtimeErrorReportTemplate(ctx: {
-    readonly keyName: string;
-    readonly errorDetails: Array<{
-      readonly err: TSolidError;
-      readonly originGps: string;
-      readonly callerGps: string;
-      readonly cleanExpected: string;
-      readonly cleanReceived: string;
-    }>;
-  }): string {
-    const { keyName, errorDetails } = ctx;
 
-    // Alias your centralized design spectrum configurations locally
-    const c = LOGGER_DESIGN_SPECTRUM;
-
-    // 1. Compile the Structural Header
-    const header = `\n${c.red}${c.bold}[xalor] 🛑 SOLIDITY BREAK: "${keyName}"${c.reset}\n`;
-
-    // 2. Iterate and map frames point-free with exact matching spaces
-    const bodyBuffer: string[] = [];
-    for (let i = 0; i < errorDetails.length; i++) {
-      const item = errorDetails[i];
-
-      const frame = [
-        ` ${c.cyan}➔ Path:${c.reset} $.${c.bold}${item.err.path}${c.reset}`,
-        ` ${c.textLightGreen}Expected:${c.reset} ${item.cleanExpected}`,
-        ` ${c.textLightRed}Received:${c.reset} ${item.cleanReceived}`,
-        ` ${c.gray}─────────────────────────────────────────────────────────────${c.reset}`,
-        ` ${c.bold}💎 Type Definition (Source Link):${c.reset}`,
-        ` ${c.cyan}↳ ${item.originGps}${c.reset}`,
-        ` ${c.bold}⚡ Runtime Call Site (Invocation Link):${c.reset}`,
-        ` ${c.cyan}↳ ${item.callerGps}${c.reset}`,
-      ].join('\n');
-
-      bodyBuffer.push(frame);
-    }
-
-    // 3. Join records seamlessly with your exact structural gray separator bar
-    const separator = `\n\n${c.gray} =============================================================${c.reset}\n\n`;
-    const body = bodyBuffer.join(separator);
-
-    return `${header}${body}\n`;
-  }
   /**
    * CLI help: ` npx xalor:help`
    *

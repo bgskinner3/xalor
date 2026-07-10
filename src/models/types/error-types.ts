@@ -2,6 +2,7 @@ import {
   RUNTIME_API_RULE_KEYS,
   XALOR_MATCH_DRIFT_RULE_KEYS,
 } from '../constants/configs';
+import type { TSolidError } from '../../../shared/types';
 
 type TRuleKeys<T extends Record<PropertyKey, string>> = keyof T;
 type TRuleValues<T extends Record<PropertyKey, string>> = T[keyof T];
@@ -77,4 +78,15 @@ export type TXalorIssue = {
 export type TXalorAuditReport = {
   valid: boolean;
   issues: TXalorIssue[];
+};
+
+export type TErrorReportTemplate = {
+  readonly keyName: string;
+  readonly errorDetails: Array<{
+    readonly err: TSolidError;
+    readonly originGps: string;
+    readonly callerGps: string;
+    readonly cleanExpected: string;
+    readonly cleanReceived: string;
+  }>;
 };

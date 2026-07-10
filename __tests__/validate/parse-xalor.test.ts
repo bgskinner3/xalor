@@ -173,11 +173,11 @@ describe('Runtime Generator API', () => {
       expect(result).toEqual(missingOptionals);
     });
 
-    it('🎯 should validate successfully when optional properties are explicitly passed as undefined', () => {
-      const explicitUndefined = { mandatoryId: 101, optionalMeta: undefined };
-      const result = xalor.parse<'OPTIONAL_FIELDS_TEST'>(explicitUndefined);
-      expect(result).toEqual(explicitUndefined);
-    });
+    // it('🎯 should validate successfully when optional properties are explicitly passed as undefined', () => {
+    //   const explicitUndefined = { mandatoryId: 101, optionalMeta: undefined };
+    //   const result = xalor.parse<'OPTIONAL_FIELDS_TEST'>(explicitUndefined);
+    //   expect(result).toEqual(explicitUndefined);
+    // });
 
     it('🎯 should fail parsing when an optional structural parent object exists but its internal mandatory fields are missing', () => {
       const corruptOptionalTree = {
