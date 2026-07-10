@@ -41,27 +41,6 @@ export const REGEX_PATTERNS = Object.freeze({
   removeQuotes: /["']/g,
 } as const);
 
-/**
- * 🔑 MASTER AUDITOR KEYWORDS LEDGER
- *
- * ROLE:
- * The single source of truth defining the absolute array list of string tokens
- * scanned by the diagnostic translation engine.
- */
-export const AUDITOR_KEYWORDS = Object.freeze([
-  'missing',
-  'required',
-  'literal',
-  'excess',
-  'stray',
-  'union',
-  'overflow',
-  'depth',
-  'intersection',
-  'primitive',
-  'type',
-] as const);
-
 export const DEFAULT_VAULT_SHAPE_FALLBACK: TDeepWriteable<TTripleKV> = {
   blueprints: {},
   references: {},

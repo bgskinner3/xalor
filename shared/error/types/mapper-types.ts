@@ -1,14 +1,9 @@
 import type {
   TCompilerDiagnosticRules,
   TCompilerDiagnosticKeys,
-  TXalorMatchDriftKeys,
-  TXalorMatchDriftRules,
   TCollisionBorderRules,
   TTypeComplianceKeys,
   TTypeComplianceRules,
-  TRuntimeApiErrorKeys,
-  TRuntimeApiErrorRules,
-  TRuntimeApiContext,
   TSameFileCollisionCtx,
   TCrossFileCollisionCtx,
 } from './const-types';
@@ -36,18 +31,6 @@ type TDiagnosticFallbackConfig = {
   readonly message: string | ((dynamicValue?: string) => string);
 };
 
-type TRuntimeApiConfig = {
-  readonly rule: TRuntimeApiErrorRules;
-  readonly errorArea: 'runtime_api';
-  readonly message: (ctx: TRuntimeApiContext) => string;
-};
-
-type TXalorMatchDriftErrorConfig = {
-  readonly rule: TXalorMatchDriftRules;
-  readonly errorArea: 'runtime_match_drift';
-  readonly message: () => string;
-};
-
 // ================================================================================
 // ================================================================================
 // MAPPER ERROR TYPES
@@ -59,12 +42,6 @@ export type TTypeResolverRuleMapper = Record<TTypeComplianceKeys, TTypeResolverR
 
 /* prettier-ignore */
 export type TCompilerDiagnosticMapper = Record<TCompilerDiagnosticKeys, TDiagnosticFallbackConfig>;
-
-/* prettier-ignore */
-export type TRuntimeApiErrorMapper = Record<TRuntimeApiErrorKeys, TRuntimeApiConfig>
-
-/* prettier-ignore */
-export type TXalorMatchDriftErrorMapper = Record<TXalorMatchDriftKeys, TXalorMatchDriftErrorConfig>
 
 export type TCollisionBorderFailureMapper = {
   readonly SAME_FILE: TCollisionBorderFailureConfig<TSameFileCollisionCtx>;
@@ -79,9 +56,7 @@ export type TCollisionBorderFailureMapper = {
 
 export type TCoreMapperType = {
   TRANSFORMER_DIAGNOSTIC_COMPILER: TCompilerDiagnosticMapper;
-  RUNTIME_API: TRuntimeApiErrorMapper;
   TRANSFORMER_COLLISION_SAME_FILE: TCollisionBorderFailureConfig<TSameFileCollisionCtx>;
   TRANSFORMER_COLLISION_CROSS_FILE: TCollisionBorderFailureConfig<TCrossFileCollisionCtx>;
   TRANSFORMER_TYPE_RESOLVER: TTypeResolverRuleMapper;
-  RUNTIME_MATCH_DRIFT: TXalorMatchDriftErrorMapper;
 };

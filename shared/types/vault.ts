@@ -1,5 +1,5 @@
 import type { TSolidShape } from '../shape-domain';
-import type { TRuntimeApiErrorRules } from '../error';
+
 /**
  * TVaultManifestEntry
  *
@@ -80,56 +80,6 @@ export type TSolidError = {
   origin?: string | TVaultManifestEntry; // Definition GPS
 };
 
-/**
- * TXalorRuleKind
- *
- * @see {@link GlobalRootTypeDocs.TXalorRuleKind }
- */
-// export type TXalorRuleKind =
-//   | 'primitive_mismatch'
-//   | 'literal_mismatch'
-//   | 'missing_property'
-//   | 'excess_property'
-//   | 'invalid_key_format' // 🛡️ Added
-//   | 'union_exhausted'
-//   | 'intersection_breached'
-//   | 'depth_overflow'
-//   | 'missing_key_presence'
-//   | 'missing_from_vault'
-//   | 'function_mismatch'
-//   | 'instance_mismatch'
-//   | 'brand_constraint_violation'
-//   | 'function_returns_violation'
-//   | 'collection_bounds_exceeded';
-/**
- * TXalorIssue
- *
- * @key path - The full dot-notation breadcrumb path matching the payload (e.g., '$.address.zip')
- * @key expected - A human-readable description or stringified representation of the required shape
- * @key received - A stringified JSON or primitive readout of the broken input that was provided
- * @key rule - The specific type-system rule or boundary law that was violated
- *
- * @see {@link GlobalRootTypeDocs.TXalorIssue }
- */
-export type TXalorIssue = {
-  path: string;
-  expected: string;
-  received: string;
-  rule: TRuntimeApiErrorRules;
-};
-
-/**
- * TXalorAuditReport
- *
- * @key valid - Quick flag indicating if the data satisfies the target blueprint
- * @key issues - An array containing deterministic diagnostic traces for each failure found
- *
- * @see {@link GlobalRootTypeDocs.TXalorAuditReport }
- */
-export type TXalorAuditReport = {
-  valid: boolean;
-  issues: TXalorIssue[];
-};
 /**
  * TXalorResolvedPaths
  *

@@ -19,16 +19,11 @@ import type {
   TCompilerDiagnosticKeys,
   TTypeComplianceKeys,
   TCollisionBorderKeys,
-  TRuntimeApiErrorKeys,
-  TRuntimeApiContext,
   TCrossFileCollisionCtx,
   TSameFileCollisionCtx,
-  TXalorMatchDriftKeys,
   TLogAnomalyParams,
   TCoreConfigRuleKeys,
 } from './types';
-
-// 'original' | 'formatted'
 
 class ErrorReportService {
   private readonly MODE_ROUTER = REPORT_SERVICE_MODE_ROUTER;
@@ -110,23 +105,6 @@ class ErrorReportService {
     }
 
     return config.message(context);
-  }
-  // ================================================================================
-  // ================================================================================
-  // RUNTIME ERRORS
-  // ================================================================================
-  // ================================================================================
-  public getRuntimeErrorMessage(
-    typeKey: TRuntimeApiErrorKeys,
-    ctx: TRuntimeApiContext,
-  ): string {
-    /* prettier-ignore */ const errorMapper = this.getAreaErrorMapper('RUNTIME_API');
-    return errorMapper[typeKey].message(ctx);
-  }
-
-  public getRuntimeDriftError(typeKey: TXalorMatchDriftKeys): string {
-    /* prettier-ignore */ const errorMapper = this.getAreaErrorMapper('RUNTIME_MATCH_DRIFT');
-    return errorMapper[typeKey].message();
   }
   /* prettier-ignore */
   public logAnomaly<TArea extends 'TRANSFORMER_DIAGNOSTIC_COMPILER' | 'TRANSFORMER_TYPE_RESOLVER'>(area: TArea,params: TLogAnomalyParams): void {

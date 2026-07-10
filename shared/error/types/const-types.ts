@@ -2,8 +2,6 @@ import {
   COMPILER_DIAGNOSTIC_RULE_KEYS,
   COLLISION_BORDER_RULE_KEYS,
   TYPE_COMPLIANCE_RULE_KEYS,
-  RUNTIME_API_RULE_KEYS,
-  XALOR_MATCH_DRIFT_RULE_KEYS,
   XALOR_ERROR_AREAS,
   CORE_CONFIG_RULE_KEYS,
 } from '../constants';
@@ -58,38 +56,6 @@ export type TTypeComplianceKeys =  TRuleKeys<typeof TYPE_COMPLIANCE_RULE_KEYS>;
 
 /* prettier-ignore */
 export type TTypeComplianceRules = TRuleValues<typeof TYPE_COMPLIANCE_RULE_KEYS>;
-
-// ================================================================================
-// ================================================================================
-//   RUNTIME_API TYPES
-// ================================================================================
-// ================================================================================
-/* prettier-ignore */
-export type TRuntimeApiErrorKeys = TRuleKeys<typeof RUNTIME_API_RULE_KEYS>;
-/**
- * TXalorRuleKind
- *
- * @see {@link GlobalRootTypeDocs.TXalorRuleKind }
- */
-/* prettier-ignore */
-export type TRuntimeApiErrorRules = TRuleValues<typeof RUNTIME_API_RULE_KEYS>;
-
-export type TRuntimeApiContext = {
-  path: string;
-  expected?: string;
-  received?: string;
-};
-
-// ================================================================================
-// ================================================================================
-//   XALOR_MATCH_DRIFT TYPES
-// ================================================================================
-// ================================================================================
-/* prettier-ignore */
-export type TXalorMatchDriftKeys = TRuleKeys<typeof XALOR_MATCH_DRIFT_RULE_KEYS>;
-
-/* prettier-ignore */
-export type TXalorMatchDriftRules = TRuleValues<typeof XALOR_MATCH_DRIFT_RULE_KEYS>;
 
 // ================================================================================
 // ================================================================================

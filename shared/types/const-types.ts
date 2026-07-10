@@ -1,11 +1,4 @@
-import { AUDITOR_KEYWORDS, IS_SOLID_CONFIG_ITEMS } from '../constants';
-
-/**
- * TAuditorKeywords
- * List of All Auditing key words in order to build Error messages
- * @see {@link FoundationalTypesDocs.TAuditorKeywords}
- */
-export type TAuditorKeywords = (typeof AUDITOR_KEYWORDS)[number];
+import { IS_SOLID_CONFIG_ITEMS } from '../constants';
 
 // ====================================================================================================
 // ====================================================================================================

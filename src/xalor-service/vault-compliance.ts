@@ -2,9 +2,6 @@ import { ensureGlobalVault } from '../utils';
 import type {
   TSolidError,
   TSolidVaultMap,
-  TXalorAuditReport,
-  TXalorIssue,
-  TRuntimeApiErrorRules,
   TValidationContext,
   TSolidShape,
 } from '../../shared';
@@ -22,14 +19,21 @@ import {
   isUndefined,
   isLiteralShape,
 } from '../../shared';
-import {
-  IS_SOLID_CONFIG_ITEMS,
-  RUNTIME_API_MESSAGE_KEYWORD_RULES,
-  REGEX_PATTERNS,
-  errorReportService,
-} from '../../shared';
+import { IS_SOLID_CONFIG_ITEMS, REGEX_PATTERNS } from '../../shared';
 import { XalethorVaultKeeper } from './vault-keeper';
 import { SHAPE_VALIDATION_MAPPER } from '../mappers';
+import type {
+  TRuntimeApiErrorKeys,
+  TRuntimeApiContext,
+  TRuntimeApiErrorRules,
+  TXalorAuditReport,
+  TXalorIssue,
+} from '../models/types';
+import {
+  RUNTIME_API_RULE_MAPPER,
+  RUNTIME_API_MESSAGE_KEYWORD_RULES,
+  RUNTIME_API_RULE_KEYS,
+} from '../models/constants';
 import { xalorLog } from '../../shared/service/logger-service';
 
 export class XalethorVaultCompliance {
@@ -41,7 +45,13 @@ export class XalethorVaultCompliance {
   private static get errorVault(): TSolidVaultMap['errors'] | undefined {
     return ensureGlobalVault().errors;
   }
-
+  private static getRuntimeErrorMessage(
+    typeKey: TRuntimeApiErrorKeys,
+    ctx: TRuntimeApiContext,
+  ): string {
+    /* prettier-ignore */ const errorMapper = RUNTIME_API_RULE_MAPPER;
+    return errorMapper[typeKey].message(ctx);
+  }
   // ============================================================================
   // 💎 CONTEXT & RECURSION MANAGEMENT
   // ============================================================================
@@ -177,8 +187,7 @@ export class XalethorVaultCompliance {
   private static convertGourdRuleToKey(
     rule: unknown,
   ): rule is Uppercase<TRuntimeApiErrorRules> {
-    const runtimeConfig =
-      errorReportService.getConfigRuleKeys<'RUNTIME_API'>('RUNTIME_API');
+    const runtimeConfig = RUNTIME_API_RULE_KEYS;
     const key = ObjectUtils.entries(runtimeConfig).find(
       ([_, value]) => value === 'missing_property',
     )?.[0];
@@ -225,7 +234,7 @@ export class XalethorVaultCompliance {
           expected: details.cleanExpected,
           received: details.cleanReceived,
         };
-        const resolvedApiLog = errorReportService.getRuntimeErrorMessage(
+        const resolvedApiLog = this.getRuntimeErrorMessage(
           resolvedRuleKey,
           mapperCtx,
         );

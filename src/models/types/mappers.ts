@@ -3,8 +3,6 @@ import type {
   TStrictSolidMetaData,
   TSolidMetadata,
   TValidationContext,
-  TRuntimeApiErrorRules,
-  TAuditorKeywords,
 } from '../../../shared';
 
 /**
@@ -76,21 +74,6 @@ export type TValidatorMapper = {
     ctx: TValidationContext,
   ) => boolean;
 };
-/**
- * T_RULE_AUDITOR_MAPPER
- *
- * ROLE:
- * The static compiler-layer validation matrix schema for the Diagnostic Engine.
- * Enforces strict structural typing bounds on rule classification mappings,
- * ensuring dictionary arrays map token match buckets to concrete category enums.
- *
- * DESIGN:
- * Leverages a dual-tuple multi-dimensional readonly design format to enforce
- * static evaluation safety across deep parsing translation runs.
- */
-export type TRuleAuditorMapper = Readonly<
-  Record<TAuditorKeywords, TRuntimeApiErrorRules>
->;
 
 /**
  * 🎛️ TSHAPE_CAST_MAPPER_MAP
