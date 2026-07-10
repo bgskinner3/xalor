@@ -28,14 +28,12 @@ import type { TSolidBranded } from '../../../shared';
 export function generateXalorDefault<
   K extends TActiveRegistryKeys = TActiveRegistryKeys,
 >(injectedKey?: K): TSolidBranded<K, TResolveRegistryStructure<K>> {
-  // Cast key safely to string for your internal Xalethor lookup layers [Commandment IX]
-  const activeKeyToken = (injectedKey ?? 'unknown') as string;
   assertRegistryKey(injectedKey);
 
   const defaultTemplate = XalethorService.produceDefault(injectedKey);
 
   if (isRecord(defaultTemplate)) {
-    Reflect.set(defaultTemplate, BRAND_SYMBOL, ['Solid', activeKeyToken]);
+    Reflect.set(defaultTemplate, BRAND_SYMBOL, ['Solid', injectedKey]);
 
     if (markAsSolid<K, TResolveRegistryStructure<K>>(defaultTemplate)) {
       return defaultTemplate;
@@ -43,6 +41,6 @@ export function generateXalorDefault<
   }
 
   throw new Error(
-    `[xalor] 🚨 Fallback template generation failed structurally for contract key: ${activeKeyToken}`,
+    `[xalor] 🚨 Fallback template generation failed structurally for contract key: ${injectedKey}`,
   );
 }

@@ -39,15 +39,17 @@ export class XalethorVaultKeeper {
   public static solidify(rawMetadata: TSolidMetadata): void {
     const metadata = preRegisterMetadata(rawMetadata);
     /* prettier-ignore */ console.log( `[xalor]: parse metaData ${metadata}`, { service: 'vault-keeper.ts/solidifyMeta' });
-    const { key, shape, area, filePath, symbolName, typeName, anchor } =
+    /* prettier-ignore */
+    const { key, reference, shape, area, filePath, symbolName, typeName, anchor } =
       metadata;
 
     if (this.vault.blueprints.has(key)) {
       /* prettier-ignore */ console.log( `[xalor] 🔄 Updating logic for: ${key}`, { service: 'vault-keeper.ts/Updating', override: true, type: 'warn' });
     }
-    this.vault.blueprints.set(key, shape);
-    this.vault.manifest.set(key, { area, filePath, anchor });
-    this.vault.registry.set(key, { symbolName, typeName });
+    this.vault.blueprints.set(reference, shape);
+    this.vault.references.set(key, reference);
+    this.vault.manifest?.set(key, { area, filePath, anchor });
+    this.vault.registry?.set(key, { symbolName, typeName });
   }
   public static solidifyDrifts(driftTracking: TTripleKV['driftTracking']) {
     if (!driftTracking) return;
@@ -68,14 +70,16 @@ export class XalethorVaultKeeper {
    * RETRIEVAL: Reconstructs the ghost-identity for the public API
    */
   public static resolve(key: string): TStrictSolidMetaData | undefined {
-    const shape = this.vault.blueprints.get(key);
+    const reference = this.vault.references.get(key) ?? '';
+    const shape = this.vault.blueprints.get(reference);
     if (!shape) return undefined; // No shape means the type doesn't exist at all
 
-    const manifest = this.vault.manifest.get(key);
-    const registry = this.vault.registry.get(key);
+    const manifest = this.vault.manifest?.get(key);
+    const registry = this.vault.registry?.get(key);
 
     return {
       key,
+      reference,
       shape,
       area: manifest?.area ?? 'unknown:0:0',
       anchor: manifest?.anchor ?? '',
@@ -102,8 +106,8 @@ export class XalethorVaultKeeper {
     key: string,
   ): TSolidShape | TVaultManifestEntry | TVaultRegistryEntry | undefined {
     if (variant === 'blueprint') return this.vault.blueprints.get(key);
-    if (variant === 'manifest') return this.vault.manifest.get(key);
-    if (variant === 'registry') return this.vault.registry.get(key);
+    if (variant === 'manifest') return this.vault.manifest?.get(key);
+    if (variant === 'registry') return this.vault.registry?.get(key);
     return undefined;
   }
 }

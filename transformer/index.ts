@@ -75,6 +75,7 @@ export default function xalorTransformerPlugin(
         if (extractedShape) {
           xalorCentralContext.context.globalKeyRegistry.set(key, {
             key: key,
+            reference: shapeHash,
             shape: extractedShape,
             filePath: originalManifest.filePath,
             area: originalManifest.area,

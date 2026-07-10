@@ -94,7 +94,7 @@ export function isRegistryKey<K extends keyof ISolidRegistry>(
     typeof key === 'string' &&
     vault !== undefined &&
     vault.blueprints !== undefined &&
-    vault.blueprints.has(key)
+    vault.references.has(key)
   );
 }
 /**

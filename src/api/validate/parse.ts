@@ -28,10 +28,10 @@ import {
  *
  * @see {@link RuntimeApiCoreDocs.validateXalorParse}
  */
-export function validateXalorParse<K extends keyof ISolidRegistry>(
+export function validateXalorParse<K extends TActiveRegistryKeys>(
   data: unknown,
   injectedKey?: K,
-): TSolidBranded<K, ISolidRegistry[K]> {
+): TSolidBranded<K, TResolveRegistryStructure<K>> {
   assertRegistryKey(injectedKey);
 
   if (!isDefined(data)) {
@@ -47,7 +47,7 @@ export function validateXalorParse<K extends keyof ISolidRegistry>(
     Reflect.set(data, BRAND_SYMBOL, ['Solid', injectedKey]);
 
     // 4. Utilize a safe phantom type narrower instead of a cast to pass the boundary check
-    if (markAsSolid<K, ISolidRegistry[K]>(data)) return data;
+    if (markAsSolid<K, TResolveRegistryStructure<K>>(data)) return data;
   }
 
   // 5. Immediate fail-fast circuit breaking execution halt (Commandment VI)

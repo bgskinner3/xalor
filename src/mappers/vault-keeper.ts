@@ -14,6 +14,7 @@ import type { TSolidMetadata } from '../../shared/types';
 export const RECTIFIER_REGISTRY_MAPPER: TRectifierRegistryMapper = {
   // --- BASICS (Pass-Through Channels) ---
   key: (input: TSolidMetadata) => input.key,
+  reference: (input: TSolidMetadata) => input.reference,
   area: (input: TSolidMetadata) => input.area,
   version: (input: TSolidMetadata) =>
     input.version ? input.version : IS_SOLID_CONFIG_ITEMS.solidVersion,

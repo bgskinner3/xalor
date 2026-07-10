@@ -31,21 +31,36 @@ export function runVacuumCommand(projectRootPath: string) {
     ...parsedConfig.options,
     noEmit: false,
     emitDeclarationOnly: false,
+    //  declaration: true,
     ignoreDeprecations: '6.0',
     incremental: false,
     composite: false,
     tsBuildInfoFile: undefined,
-  } as ts.CompilerOptions;
+  } satisfies ts.CompilerOptions;
 
   if ('plugins' in modifiedOptions) {
     delete modifiedOptions.plugins;
   }
 
+  const productionOnlyFileNames = parsedConfig.fileNames.filter((fileName) => {
+    // Normalize path separators to ensure cross-platform safety (Windows vs Unix)
+    const normalizedPath = fileName.replace(/\\/g, '/');
+
+    // 🪓 THE AXE: Drop any file paths that live inside the hidden .xalor sandbox
+    return !normalizedPath.includes('/.xalor/');
+  });
+
+  // Pass your clean production-only array directly to your program builder
   const program = ts.createProgram({
-    rootNames: parsedConfig.fileNames,
+    rootNames: productionOnlyFileNames, // 🪐 The compiler now ONLY builds pristine application files!
     options: modifiedOptions,
     projectReferences: parsedConfig.projectReferences,
   });
+  // const program = ts.createProgram({
+  //   rootNames: parsedConfig.fileNames,
+  //   options: modifiedOptions,
+  //   projectReferences: parsedConfig.projectReferences,
+  // });
 
   const localTargetedFilesSet = new Set<string>();
   const diagnosticsList: ts.Diagnostic[] = [];

@@ -45,6 +45,7 @@ export function preRegisterMetadata(
 
   return {
     key: RECTIFIER_REGISTRY_MAPPER.key(input),
+    reference: RECTIFIER_REGISTRY_MAPPER.reference(input),
     area: RECTIFIER_REGISTRY_MAPPER.area(input),
     version: RECTIFIER_REGISTRY_MAPPER.version(input),
     shape: RECTIFIER_REGISTRY_MAPPER.shape(input),

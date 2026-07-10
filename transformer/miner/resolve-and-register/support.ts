@@ -27,6 +27,7 @@ export const createPayLoad = ({
   typeName: identity.typeName,
   anchor: identity.anchor,
   shape,
+  reference: '',
   version: IS_SOLID_CONFIG_ITEMS.solidVersion,
 });
 

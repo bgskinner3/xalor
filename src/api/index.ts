@@ -54,10 +54,10 @@ class XalorCore {
     return activeGuard;
   }
   /** @Api validation  @mode parse */
-  public parse<K extends keyof ISolidRegistry>(
+  public parse<K extends TActiveRegistryKeys>(
     data: unknown,
     _compiledKeyReference?: K,
-  ): TSolidBranded<K, ISolidRegistry[K]> {
+  ): TSolidBranded<K, TResolveRegistryStructure<K>> {
     return validateXalorParse<K>(data, _compiledKeyReference);
   }
   // ========================================================================

@@ -124,6 +124,20 @@ export function formatValidationArgs<T extends IBasePayload>(
   return node.arguments.length > 0
     ? [...node.arguments, keyLiteral, modeLiteral]
     : [keyLiteral, modeLiteral];
+  // // if (node.arguments.length === 3) {
+  // //   return node;
+  // // }
+
+  // // Ensure we extract only the original data payload object (the very first argument)
+  // // This completely throws away any accidental duplicated or stacked trailing trailing tokens!
+  // const originalPayloadArg =
+  //   node.arguments[0] || factory.createObjectLiteralExpression([]);
+
+  // const keyLiteral = factory.createStringLiteral(raw?.keyName ?? '');
+  // const modeLiteral = factory.createStringLiteral(mode || 'parse');
+
+  // // Re-map the signature cleanly to exactly three arguments uniformly
+  // return [originalPayloadArg, keyLiteral, modeLiteral];
 }
 
 /**

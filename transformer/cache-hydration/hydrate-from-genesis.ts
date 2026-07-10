@@ -42,6 +42,7 @@ export function processGenesisHydration(
 
       onSolidify({
         key,
+        reference: shapeHash,
         shape: fullyInflatedShape,
         area: manifest?.area ?? 'unknown:0:0',
         filePath: manifest?.filePath ?? 'unknown_file.ts',

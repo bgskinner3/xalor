@@ -29,9 +29,9 @@ export function getGlobalVault(): TSolidVaultMap | undefined {
  * for Pillar 2 (The Vault).
  */
 export function ensureGlobalVault(): TSolidVaultMap {
-  // 1. Initialize the root with the new Triple-KV structure
+  // 1. Core Cold-Start Initialization Gate
   if (!globalThis.__SOLID_VAULT__) {
-    globalThis.__SOLID_VAULT__ = {
+    const rawMapVault: TSolidVaultMap = {
       driftTracking: new Map(),
       blueprints: new Map(),
       references: new Map(),
@@ -39,18 +39,27 @@ export function ensureGlobalVault(): TSolidVaultMap {
       registry: new Map(),
       errors: new Map(),
     };
+    globalThis.__SOLID_VAULT__ = rawMapVault;
   }
 
+  // 2. THE RESILIENCY HEALING & TYPE REFINEMENT GATES:
   const vault = globalThis.__SOLID_VAULT__;
 
-  //  THE RESILIENCY FIX
-  // We ensure every specific Map is healthy to prevent runtime crashes.
-  if (!(vault.driftTracking instanceof Map)) vault.driftTracking = new Map();
-  if (!(vault.blueprints instanceof Map)) vault.blueprints = new Map();
-  if (!(vault.references instanceof Map)) vault.references = new Map();
-  if (!(vault.manifest instanceof Map)) vault.manifest = new Map();
-  if (!(vault.registry instanceof Map)) vault.registry = new Map();
-  if (!(vault.errors instanceof Map)) vault.errors = new Map();
+  // 🚀 THE WIN: We execute an 'instanceof Map' check on a known distinguishing property.
+  // This triggers standard TypeScript Control Flow Analysis, which instantly refines
+  // 'vault' from a loose union down to strictly 'TSolidVaultMap' with zero 'as' overrides!
+  if (vault.blueprints instanceof Map) {
+    if (!(vault.driftTracking instanceof Map)) vault.driftTracking = new Map();
+    if (!(vault.references instanceof Map)) vault.references = new Map();
+    if (!(vault.manifest instanceof Map)) vault.manifest = new Map();
+    if (!(vault.registry instanceof Map)) vault.registry = new Map();
+    if (!(vault.errors instanceof Map)) vault.errors = new Map();
 
+    return vault; // Statically verified as a healthy TSolidVaultMap
+  }
+
+  // 3. PRODUCTION FALLBACK GATES:
+  // If the guard fails, it means we loaded a pre-compiled 'IProductionVault' record array.
+  // We return it exactly as it sits since production files should not carry mutable Map layers.
   return vault;
 }

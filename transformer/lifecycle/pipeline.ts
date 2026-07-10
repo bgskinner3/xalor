@@ -1,7 +1,7 @@
 // transformer/lifecycle/pipeline.ts
 import ts from 'typescript';
 import { theMiner } from '../miner';
-import type { TVaultSyncPayload } from '../../shared';
+import type { TVaultSyncPayload, TSolidVaultMap } from '../../shared';
 import { visitNode } from 'typescript';
 import { XalorRoutesService } from '../service';
 
@@ -53,7 +53,7 @@ export function injectTestReifiedBlueprints(
   globalKeyRegistry: Map<string, TVaultSyncPayload>,
 ): void {
   if (!globalThis.__SOLID_VAULT__) {
-    globalThis.__SOLID_VAULT__ = {
+    const rawMapVault: TSolidVaultMap = {
       driftTracking: new Map(),
       blueprints: new Map(),
       references: new Map(),
@@ -62,24 +62,27 @@ export function injectTestReifiedBlueprints(
       errors: new Map(),
       _isHydrated: false,
     };
+    globalThis.__SOLID_VAULT__ = rawMapVault;
   }
 
   const vault = globalThis.__SOLID_VAULT__;
 
-  globalKeyRegistry.forEach((meta, key) => {
-    vault.blueprints.set(key, meta.shape);
+  if (vault && '_isHydrated' in vault) {
+    globalKeyRegistry.forEach((meta, key) => {
+      vault.blueprints.set(key, meta.shape);
 
-    vault.manifest.set(key, {
-      area: meta.area,
-      filePath: meta.filePath,
-      anchor: meta.anchor,
+      vault.manifest?.set(key, {
+        area: meta.area,
+        filePath: meta.filePath,
+        anchor: meta.anchor,
+      });
+
+      vault.registry?.set(key, {
+        symbolName: meta.symbolName ?? 'unknown',
+        typeName: meta.typeName,
+      });
     });
 
-    vault.registry.set(key, {
-      symbolName: meta.symbolName ?? 'unknown',
-      typeName: meta.typeName,
-    });
-  });
-
-  vault._isHydrated = true;
+    vault._isHydrated = true;
+  }
 }

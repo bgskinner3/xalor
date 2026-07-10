@@ -38,7 +38,7 @@ export class XalethorVaultCompliance {
   private static get vault(): TSolidVaultMap {
     return ensureGlobalVault();
   }
-  private static get errorVault(): TSolidVaultMap['errors'] {
+  private static get errorVault(): TSolidVaultMap['errors'] | undefined {
     return ensureGlobalVault().errors;
   }
 
@@ -56,11 +56,7 @@ export class XalethorVaultCompliance {
   }
 
   public static has(key: string): boolean {
-    return (
-      this.vault.references.has(key) &&
-      this.vault.manifest.has(key) &&
-      this.vault.registry.has(key)
-    );
+    return this.vault.references.has(key);
   }
 
   public static validateKey(key: string): void {
@@ -76,16 +72,18 @@ export class XalethorVaultCompliance {
   // ⚡ ORCHESTRATION ENTRY POINT
   // ============================================================================
   public static validateShapeByKey(data: unknown, key: string): boolean {
-    const shape = this.vault.blueprints.get(key);
+    const injectedKey = this.vault.references.get(key)!;
+    console.log(this.vault, 'INEJCTED KEY');
+    const shape = this.vault.blueprints.get(injectedKey);
     if (!shape) return false;
 
-    this.vault.errors.delete(key);
+    this.vault.errors?.delete(key);
     const ctx = this.createInitialContext(key);
 
     const isValid = this.validateShape(data, shape, ctx);
 
     if (!isValid) {
-      this.vault.errors.set(key, ctx.errors);
+      this.vault.errors?.set(key, ctx.errors);
     }
     return isValid;
   }
@@ -159,12 +157,12 @@ export class XalethorVaultCompliance {
   // 🛰️ DIAGNOSTICS & AUDITING
   // ============================================================================
   public static getErrors(key: string): TSolidError[] {
-    return this.errorVault.get(key) ?? [];
+    return this.errorVault?.get(key) ?? [];
   }
 
   public static clearErrors(key?: string): void {
-    if (key) this.errorVault.delete(key);
-    else this.errorVault.clear();
+    if (key) this.errorVault?.delete(key);
+    else this.errorVault?.clear();
   }
 
   public static panic(key: string, customMessage?: string): never {

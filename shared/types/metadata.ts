@@ -7,6 +7,7 @@ import type { TSolidError } from './vault';
  */
 export type TSolidMetadata<K extends string = string, T = unknown> = {
   key: K;
+  reference: string;
   area: string;
   anchor: string; // #call:1
   version: string;
@@ -49,6 +50,7 @@ export type TVaultSyncPayload = {
   readonly filePath: string;
   readonly typeName: string;
   readonly key: string;
+  readonly reference: string;
   readonly area: string; // 15:1
   readonly anchor: string; // #call:1
   readonly symbolName: string;

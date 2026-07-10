@@ -58,10 +58,10 @@ export type TTripleKV = {
 export type TSolidVaultMap = {
   blueprints: Map<string, TSolidShape>;
   references: Map<string, string>;
-  manifest: Map<string, TVaultManifestEntry>;
-  registry: Map<string, TVaultRegistryEntry>;
   driftTracking: Map<string, TVaultDriftEntry>;
-  errors: Map<string, TSolidError[]>;
+  manifest?: Map<string, TVaultManifestEntry>;
+  registry?: Map<string, TVaultRegistryEntry>;
+  errors?: Map<string, TSolidError[]>;
   _isHydrated?: boolean;
 };
 
