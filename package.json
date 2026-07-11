@@ -47,7 +47,7 @@
     ]
   },
   "exports": {
-    ".": {
+   ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
@@ -59,7 +59,8 @@
     },
     "./plugins": {
       "types": "./dist/plugins/index.d.ts",
-      "default": "./dist/plugins/index.js"
+      "import": "./dist/plugins/index.js",
+      "require": "./dist/plugins/index.cjs"
     }
   },
   "files": [

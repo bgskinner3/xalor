@@ -12,6 +12,8 @@
  *    this layout with your active mined AST type mappings the exact millisecond a project file is saved.
  */
 /* eslint-disable @typescript-eslint/no-unused-vars @typescript-eslint/no-explicit-any */
+/// <reference types="node" />
+
 
 declare global {
   /**

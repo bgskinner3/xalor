@@ -1,8 +1,41 @@
-import * as fs from 'fs';
-import * as path from 'path';
+// import * as fs from 'fs';
+// import * as path from 'path';
 import { fsContext } from '../../shared/service';
-import { isTripleKVShape } from '../../shared';
+import { isTripleKVShape, TSolidVaultMap, TTripleKV } from '../../shared';
 
+export function seedTestVault(
+  productionReferences: TTripleKV['references'],
+  productionBlueprints: TTripleKV['blueprints'],
+  productionDriftTracking: TTripleKV['driftTracking'],
+) {
+  // 1. Instantiate the global container singleton structure if it hasn't booted yet
+  if (!globalThis.__SOLID_VAULT__) {
+    const rawMapVault: TSolidVaultMap = {
+      driftTracking: new Map(),
+      blueprints: new Map(),
+      references: new Map(),
+    };
+    globalThis.__SOLID_VAULT__ = rawMapVault;
+  }
+
+  // 2. THE RESILIENCY HEALING & TYPE REFINEMENT GATES:
+  const vault = globalThis.__SOLID_VAULT__;
+
+  Object.keys(productionReferences).map((key) => {
+    const ref = productionReferences[key];
+    vault.references.set(key, ref);
+  });
+
+  Object.keys(productionBlueprints).map((key) => {
+    const ref = productionBlueprints[key];
+    vault.blueprints.set(key, ref);
+  });
+
+  Object.keys(productionDriftTracking).map((key) => {
+    const ref = productionDriftTracking[key];
+    vault.driftTracking.set(key, ref);
+  });
+}
 /**
  * vacuumExitBuild
  * THE FINAL GATEKEEPER VACUUM DISPATCHER
@@ -76,36 +109,49 @@ export function vacuumExitBuild() {
   // ========================================================================
   // 4. ATOMIC ASSET PERSISTENCE LAYER (WRITING TO DIST/)
   // ========================================================================
-  const targetOutputFolder = path.join(process.cwd(), 'dist');
-  const targetOutputFile = path.join(targetOutputFolder, 'xalor-vault.js');
+  // const targetOutputFolder = path.join(process.cwd(), 'dist');
+  // const targetOutputFile = path.join(targetOutputFolder, 'xalor-vault.js');
 
   try {
-    if (!fs.existsSync(targetOutputFolder)) {
-      fs.mkdirSync(targetOutputFolder, { recursive: true });
-    }
-
-    let currentDiskBytes = '';
-    if (fs.existsSync(targetOutputFile)) {
-      currentDiskBytes = fs.readFileSync(targetOutputFile, 'utf-8');
-    }
-
-    // 🪐 THE CODE GENERATION TEMPLATE: Auto-hydrates your production reference, blueprint, and drift maps upon initialization
-    const executableVaultScript = `"use strict";\nObject.defineProperty(exports, "__esModule", { value: true });\n\nglobalThis.__SOLID_VAULT__ = {\n  references: ${JSON.stringify(productionReferences, null, 2)},\n  blueprints: ${JSON.stringify(productionBlueprints, null, 2)},\n  driftTracking: ${JSON.stringify(productionDriftTracking, null, 2)}\n};\n`;
-
-    if (currentDiskBytes !== executableVaultScript) {
-      fs.writeFileSync(targetOutputFile, executableVaultScript, 'utf-8');
-      const currentPayloadBytes = Buffer.byteLength(
-        executableVaultScript,
-        'utf8',
-      );
-      console.log(
-        `  \x1b[32m✅ Delivered optimized runtime registry contract (${(currentPayloadBytes / 1024).toFixed(2)} KB) to: dist/xalor-vault.js\x1b[0m`,
-      );
-    } else {
-      console.log(
-        `  ↳ \x1b[34mRuntime registry bytecode matches current disk footprint. Skipping write via Atomic Shield [VIII].\x1b[0m`,
-      );
-    }
+    seedTestVault(
+      productionReferences,
+      productionBlueprints,
+      productionDriftTracking,
+    );
+    // if (!fs.existsSync(targetOutputFolder)) {
+    //   fs.mkdirSync(targetOutputFolder, { recursive: true });
+    // }
+    // let currentDiskBytes = '';
+    // if (fs.existsSync(targetOutputFile)) {
+    //   currentDiskBytes = fs.readFileSync(targetOutputFile, 'utf-8');
+    // }
+    // 🪐 THE FIX: Output as a pure, native ES Module string template.
+    // This ensures that when Node imports the compiled asset from /dist, it populates globalThis inside the same memory thread!
+    //     const executableVaultScript = `// 🪐 Xalor AOT Auto-Generated Production Vault
+    // globalThis.__SOLID_VAULT__ = {
+    //   references: new Map(${JSON.stringify(Object.entries(productionReferences), null, 2)}),
+    //   blueprints: new Map(${JSON.stringify(Object.entries(productionBlueprints), null, 2)}),
+    //   driftTracking: new Map(${JSON.stringify(Object.entries(productionDriftTracking), null, 2)}),
+    //   manifest: new Map(),
+    //   registry: new Map(),
+    //   errors: new Map()
+    // };
+    // export default globalThis.__SOLID_VAULT__;
+    // `;
+    // if (currentDiskBytes !== executableVaultScript) {
+    //   fs.writeFileSync(targetOutputFile, executableVaultScript, 'utf-8');
+    //   const currentPayloadBytes = Buffer.byteLength(
+    //     executableVaultScript,
+    //     'utf8',
+    //   );
+    //   console.log(
+    //     `  \x1b[32m✅ Delivered optimized runtime registry contract (${(currentPayloadBytes / 1024).toFixed(2)} KB) to: dist/xalor-vault.js\x1b[0m`,
+    //   );
+    // } else {
+    //   console.log(
+    //     `  ↳ \x1b[34mRuntime registry bytecode matches current disk footprint. Skipping write via Atomic Shield [VIII].\x1b[0m`,
+    //   );
+    // }
   } catch (err) {
     console.error(
       `\x1b[31m🚨 HARD CRASH: Failed to write runtime reference bytecode map to production asset scope.\x1b[0m`,

@@ -70,16 +70,14 @@ export class XalethorVaultKeeper {
    * RETRIEVAL: Reconstructs the ghost-identity for the public API
    */
   public static resolve(key: string): TStrictSolidMetaData | undefined {
-    const reference = this.vault.references.get(key) ?? '';
-    const shape = this.vault.blueprints.get(reference);
+    const shape = this.vault.blueprints.get(key);
     if (!shape) return undefined; // No shape means the type doesn't exist at all
-
     const manifest = this.vault.manifest?.get(key);
     const registry = this.vault.registry?.get(key);
 
     return {
       key,
-      reference,
+      reference: key,
       shape,
       area: manifest?.area ?? 'unknown:0:0',
       anchor: manifest?.anchor ?? '',

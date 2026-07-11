@@ -96,6 +96,8 @@ function temporalManifest(
     `/* eslint-disable ${emitter.eslintDisabled.join(' ')} */`,
     ...emitter.imports,
     '',
+    '/// <reference types="node" />',
+    '',
     'declare global {',
     '  interface ISolidIdentity {',
     ...identityLines,

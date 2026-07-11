@@ -85,7 +85,9 @@ export class XalethorVaultCompliance {
   // ============================================================================
   public static validateShapeByKey(data: unknown, key: string): boolean {
     const injectedKey = this.vault.references.get(key)!;
+
     const shape = this.vault.blueprints.get(injectedKey);
+
     if (!shape) return false;
 
     this.vault.errors?.delete(key);
@@ -108,6 +110,7 @@ export class XalethorVaultCompliance {
     ctx: TValidationContext,
   ): boolean {
     const { reifyLimit } = IS_SOLID_CONFIG_ITEMS;
+
     if (ctx.depth > reifyLimit.maxDepth) return false;
 
     if (isObject(data) && !isNull(data)) {

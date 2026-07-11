@@ -62,24 +62,7 @@ export function runCompileCommand(projectRootPath: string): void {
   );
 
   const diagnosticsList: ts.Diagnostic[] = [...ingestEmitResult.diagnostics];
-  // const hasErrors = diagnosticsList.some(
-  //   (d) => d.category === ts.DiagnosticCategory.Error,
-  // );
 
-  // if (hasErrors) {
-  //   console.error(
-  //     '\n❌ [Xalor CLI] Build failed due to structural type errors.\n',
-  //   );
-
-  //   // Print out only the clean messages to keep your output readable
-  //   diagnosticsList.forEach((diagnostic) => {
-  //     if (diagnostic === undefined) return;
-  //     const msg = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
-  //     console.error(`❌ Error: ${msg}`);
-  //   });
-
-  //   process.exit(1); // 🪓 Hard stop here prevents the second pass text explosion!
-  // }
   // const targetedFilesCount = localTargetedFilesSet.size;
   console.log(
     `✨ Ingestion pass complete. Isolated ${localTargetedFilesSet.size} targeted file tracks from local envelope:\n` +
@@ -125,5 +108,6 @@ export function runCompileCommand(projectRootPath: string): void {
     console.log(
       '\n✅ [Xalor CLI] Workspace snapshot synced and locked successfully!\n',
     );
+    process.exit(0);
   }, 20);
 }
