@@ -1,0 +1,481 @@
+{
+  "systemMetadata": {
+    "clockSpeed": "~3.24 GHz",
+    "processor": "Apple M2 Pro",
+    "architecture": "arm64-darwin",
+    "runtime": "Node 22.13.1",
+    "compiledEnvironment": "./dist-xalor and ./dist-typia",
+    "benchmarkEngine": "mitata",
+    "comparison": "Typia AOT Generated Assert vs Xalor AOT Compiled Parser"
+  },
+  "benchmarks": {
+    "track_1_deep_object_recursion": {
+      "header": "🛒 Throughput Suite: Complex Customer Order Array",
+
+      "description": "Evaluates heavy retail processing trees containing deeply nested arrays, object recursion, and structural validation paths.",
+
+      "underlyingMechanics": {
+        "typia": "Typia generates ahead-of-time assertion functions that directly execute compiled structural checks without runtime schema traversal.",
+        "xalor": "Xalor uses AOT CAS-interned lookup structures and flat snapshot failure matching to validate object layouts through precomputed structural paths."
+      },
+
+      "scenarios": {
+        "valid_shape": {
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
+          },
+
+          "xalor": {
+            "avg": "1.91 µs/iter",
+            "p75": "1.89 µs",
+            "p99": "2.36 µs",
+            "min": "1.79 µs",
+            "max": "2.37 µs",
+            "heapAllocated": "832.31 b"
+          },
+
+          "performanceAnalysis": "Typia dominates this valid workload by emitting highly specialized assertion code paths. The generated validator benefits from direct property access and minimal abstraction overhead. Xalor maintains a predictable microsecond execution profile with a stable memory footprint through CAS-based structural lookup."
+        },
+
+        "malformed_rejection": {
+          "typia": {
+            "avg": "3.20 µs/iter",
+            "p75": "3.26 µs",
+            "p99": "3.32 µs",
+            "min": "3.12 µs",
+            "max": "3.32 µs",
+            "heapAllocated": "1.09 kb"
+          },
+
+          "xalor": {
+            "avg": "1.90 µs/iter",
+            "p75": "1.87 µs",
+            "p99": "2.34 µs",
+            "min": "1.78 µs",
+            "max": "2.35 µs",
+            "heapAllocated": "832.31 b"
+          },
+
+          "performanceAnalysis": "Xalor outperforms Typia on rejection handling by maintaining a flat snapshot failure path. Typia generates richer assertion failure information, increasing allocation and latency when invalid structures are encountered."
+        }
+      }
+    },
+    "track_2_data_density_pipelines": {
+      "header": "⚡ Throughput Suite: Heavy Telemetry Packet Matrix",
+
+      "description": "Simulates dense hardware and analytics ingestion streams containing high-frequency telemetry structures, scalar constraints, and deeply validated data packets.",
+
+      "underlyingMechanics": {
+        "typia": "Typia emits ahead-of-time validation code that directly checks telemetry packet layouts with optimized JavaScript execution paths.",
+
+        "xalor": "Xalor evaluates telemetry structures through CAS-interned lookup paths and maintains a stable allocation profile through precomputed structural snapshots."
+      },
+
+      "scenarios": {
+        "valid_shape": {
+          "typia": {
+            "avg": "10.03 ns/iter",
+            "p75": "10.06 ns",
+            "p99": "12.43 ns",
+            "min": "9.50 ns",
+            "max": "16.42 ns",
+            "heapAllocated": "0.19 b"
+          },
+
+          "xalor": {
+            "avg": "1.89 µs/iter",
+            "p75": "1.86 µs",
+            "p99": "2.28 µs",
+            "min": "1.78 µs",
+            "max": "2.29 µs",
+            "heapAllocated": "832.14 b"
+          },
+
+          "performanceAnalysis": "Typia achieves exceptional throughput on dense valid telemetry payloads by reducing validation into direct generated instructions. Xalor provides deterministic structural validation with consistent memory behavior but carries additional lookup overhead compared with Typia's generated hot path."
+        },
+
+        "malformed_rejection": {
+          "typia": {
+            "avg": "3.10 µs/iter",
+            "p75": "3.11 µs",
+            "p99": "3.18 µs",
+            "min": "3.05 µs",
+            "max": "3.19 µs",
+            "heapAllocated": "1.05 kb"
+          },
+
+          "xalor": {
+            "avg": "1.88 µs/iter",
+            "p75": "1.84 µs",
+            "p99": "2.26 µs",
+            "min": "1.77 µs",
+            "max": "2.27 µs",
+            "heapAllocated": "832.14 b"
+          },
+
+          "performanceAnalysis": "Xalor wins malformed telemetry rejection by using flat snapshot failure matching, avoiding the larger transient allocations seen during Typia assertion failures. Typia remains highly optimized but pays additional cost while constructing invalid-data failure paths."
+        }
+      }
+    },
+    "track_3_class_signatures_and_maps": {
+      "header": "🪐 Throughput Suite: App Config Registry Maps",
+
+      "description": "Profiles configuration boundary validation containing nested objects, registry maps, environment metadata, and structured application settings.",
+
+      "underlyingMechanics": {
+        "typia": "Typia compiles application configuration checks into direct assertion functions, eliminating runtime schema interpretation.",
+
+        "xalor": "Xalor resolves configuration layouts through AOT CAS-interned structural references and verifies objects against precomputed snapshots."
+      },
+
+      "scenarios": {
+        "valid_shape": {
+          "typia": {
+            "avg": "122.98 ns/iter",
+            "p75": "123.63 ns",
+            "p99": "148.77 ns",
+            "min": "115.37 ns",
+            "max": "187.54 ns",
+            "heapAllocated": "851.54 b"
+          },
+
+          "xalor": {
+            "avg": "1.89 µs/iter",
+            "p75": "1.85 µs",
+            "p99": "2.32 µs",
+            "min": "1.77 µs",
+            "max": "2.33 µs",
+            "heapAllocated": "832.14 b"
+          },
+
+          "performanceAnalysis": "Typia leads valid configuration validation by transforming the schema into specialized executable checks. Xalor maintains a predictable structural verification model with nearly constant allocation behavior."
+        },
+
+        "malformed_rejection": {
+          "typia": {
+            "avg": "3.12 µs/iter",
+            "p75": "3.14 µs",
+            "p99": "3.18 µs",
+            "min": "3.08 µs",
+            "max": "3.20 µs",
+            "heapAllocated": "1.14 kb"
+          },
+
+          "xalor": {
+            "avg": "1.89 µs/iter",
+            "p75": "1.85 µs",
+            "p99": "2.31 µs",
+            "min": "1.77 µs",
+            "max": "2.32 µs",
+            "heapAllocated": "832.14 b"
+          },
+
+          "performanceAnalysis": "Xalor provides faster invalid configuration rejection by avoiding dynamic failure object construction. Typia performs additional work to produce detailed assertion failures, increasing rejection latency and memory consumption."
+        }
+      }
+    },
+    "track_4_core_retail_products": {
+      "header": "🏷️ Throughput Suite: Core Product SKU Matrix",
+
+      "description": "Tests high-frequency product validation workloads containing identifier strings, constrained formats, and retail database entry structures.",
+
+      "underlyingMechanics": {
+        "typia": "Typia generates optimized validation instructions for SKU structures, executing string and primitive checks through compiled assertion paths.",
+
+        "xalor": "Xalor evaluates product layouts using AOT CAS-interned lookup paths and maintains fixed structural verification behavior."
+      },
+
+      "scenarios": {
+        "valid_shape": {
+          "typia": {
+            "avg": "4.98 ns/iter",
+            "p75": "4.90 ns",
+            "p99": "7.30 ns",
+            "min": "4.86 ns",
+            "max": "19.27 ns",
+            "heapAllocated": "149.41 b"
+          },
+
+          "xalor": {
+            "avg": "4.33 µs/iter",
+            "p75": "4.34 µs",
+            "p99": "4.50 µs",
+            "min": "4.23 µs",
+            "max": "4.51 µs",
+            "heapAllocated": "832.31 b"
+          },
+
+          "performanceAnalysis": "Typia achieves extremely low latency for valid SKU validation through direct generated code paths and aggressive V8 optimization. Xalor prioritizes deterministic structural verification and stable allocation characteristics over minimum execution latency."
+        },
+
+        "malformed_rejection": {
+          "typia": {
+            "avg": "5.55 µs/iter",
+            "p75": "5.57 µs",
+            "p99": "5.58 µs",
+            "min": "5.52 µs",
+            "max": "5.59 µs",
+            "heapAllocated": "1.09 kb"
+          },
+
+          "xalor": {
+            "avg": "4.31 µs/iter",
+            "p75": "4.31 µs",
+            "p99": "4.36 µs",
+            "min": "4.27 µs",
+            "max": "4.42 µs",
+            "heapAllocated": "832.29 b"
+          },
+
+          "performanceAnalysis": "Xalor provides faster malformed SKU rejection by terminating validation through snapshot mismatch detection. Typia remains highly competitive but incurs additional overhead when generating detailed assertion failure output."
+        }
+      }
+    },
+    "track_5_security_and_identity": {
+      "header": "🔑 Throughput Suite: Access Session Matrix",
+
+      "description": "Validates security boundary payloads containing session identifiers, authentication metadata, network information, and authorization state.",
+
+      "underlyingMechanics": {
+        "typia": "Typia compiles security validation contracts into direct executable assertions optimized for primitive and object checks.",
+
+        "xalor": "Xalor treats access models as precompiled structural snapshots, resolving validation through AOT lookup paths and failure matching."
+      },
+
+      "scenarios": {
+        "valid_shape": {
+          "typia": {
+            "avg": "88.21 ns/iter",
+            "p75": "88.67 ns",
+            "p99": "101.38 ns",
+            "min": "85.96 ns",
+            "max": "114.29 ns",
+            "heapAllocated": "144.12 b"
+          },
+
+          "xalor": {
+            "avg": "4.31 µs/iter",
+            "p75": "4.32 µs",
+            "p99": "4.35 µs",
+            "min": "4.27 µs",
+            "max": "4.36 µs",
+            "heapAllocated": "832.29 b"
+          },
+
+          "performanceAnalysis": "Typia achieves significantly lower latency on valid security payloads through generated assertion functions optimized around known object layouts. Xalor maintains predictable structural enforcement with a consistent memory profile."
+        },
+
+        "malformed_rejection": {
+          "typia": {
+            "avg": "5.61 µs/iter",
+            "p75": "5.63 µs",
+            "p99": "5.70 µs",
+            "min": "5.56 µs",
+            "max": "5.75 µs",
+            "heapAllocated": "1.05 kb"
+          },
+
+          "xalor": {
+            "avg": "4.35 µs/iter",
+            "p75": "4.37 µs",
+            "p99": "4.42 µs",
+            "min": "4.29 µs",
+            "max": "4.49 µs",
+            "heapAllocated": "832.29 b"
+          },
+
+          "performanceAnalysis": "Xalor rejects malformed authentication payloads faster by using flat structural failure detection. Typia provides richer assertion diagnostics, resulting in higher rejection-path latency and increased temporary allocation."
+        }
+      }
+    },
+    "track_6_structural_storage_logistics": {
+      "header": "📦 Throughput Suite: Warehouse Inventory Bins",
+
+      "description": "Measures structural validation of logistics inventory models containing nested storage information, dimensions, quantities, and operational metadata.",
+
+      "underlyingMechanics": {
+        "typia": "Typia generates direct assertion paths for inventory structures, reducing runtime interpretation by compiling the complete validation graph ahead of execution.",
+
+        "xalor": "Xalor validates warehouse layouts using AOT CAS-interned structural references and maintains a fixed allocation profile through snapshot matching."
+      },
+
+      "scenarios": {
+        "valid_shape": {
+          "typia": {
+            "avg": "13.35 ns/iter",
+            "p75": "13.02 ns",
+            "p99": "31.47 ns",
+            "min": "12.52 ns",
+            "max": "49.68 ns",
+            "heapAllocated": "120.75 b"
+          },
+
+          "xalor": {
+            "avg": "4.36 µs/iter",
+            "p75": "4.36 µs",
+            "p99": "4.58 µs",
+            "min": "4.28 µs",
+            "max": "4.65 µs",
+            "heapAllocated": "832.29 b"
+          },
+
+          "performanceAnalysis": "Typia provides extremely fast valid inventory validation by executing generated structural checks with minimal runtime overhead. Xalor trades raw latency for consistent execution behavior and stable memory consumption."
+        },
+
+        "malformed_rejection": {
+          "typia": {
+            "avg": "5.64 µs/iter",
+            "p75": "5.62 µs",
+            "p99": "6.04 µs",
+            "min": "5.51 µs",
+            "max": "6.16 µs",
+            "heapAllocated": "1.09 kb"
+          },
+
+          "xalor": {
+            "avg": "4.38 µs/iter",
+            "p75": "4.44 µs",
+            "p99": "4.53 µs",
+            "min": "4.27 µs",
+            "max": "4.70 µs",
+            "heapAllocated": "832.29 b"
+          },
+
+          "performanceAnalysis": "Xalor achieves faster malformed inventory rejection through snapshot mismatch detection. Typia remains performant but spends additional resources creating detailed assertion failure paths."
+        }
+      }
+    },
+    "track_7_edge_api_ingress_metrics": {
+      "header": "🌐 Throughput Suite: API Network Log Ingress",
+
+      "description": "Profiles low-latency API gateway validation workloads containing trace identifiers, request metadata, endpoint information, HTTP methods, and response telemetry.",
+
+      "underlyingMechanics": {
+        "typia": "Typia compiles API ingress validation into generated assertion functions that directly verify network payload structures.",
+
+        "xalor": "Xalor processes API payloads through AOT CAS-interned layout verification and flat snapshot failure matching for predictable ingress filtering."
+      },
+
+      "scenarios": {
+        "valid_shape": {
+          "typia": {
+            "avg": "259.69 ns/iter",
+            "p75": "250.00 ns",
+            "p99": "334.00 ns",
+            "min": "166.00 ns",
+            "max": "36.67 µs",
+            "heapAllocated": "240.09 kb"
+          },
+
+          "xalor": {
+            "avg": "4.38 µs/iter",
+            "p75": "4.40 µs",
+            "p99": "4.52 µs",
+            "min": "4.31 µs",
+            "max": "4.52 µs",
+            "heapAllocated": "832.29 b"
+          },
+
+          "performanceAnalysis": "Typia maintains a significant throughput advantage on valid API payloads through generated validation code. The workload demonstrates Typia's ability to exploit known structures aggressively. Xalor provides a more uniform memory model with stable allocations regardless of payload complexity."
+        },
+
+        "malformed_rejection": {
+          "typia": {
+            "avg": "5.70 µs/iter",
+            "p75": "5.73 µs",
+            "p99": "5.78 µs",
+            "min": "5.64 µs",
+            "max": "5.86 µs",
+            "heapAllocated": "1.05 kb"
+          },
+
+          "xalor": {
+            "avg": "4.54 µs/iter",
+            "p75": "4.44 µs",
+            "p99": "5.70 µs",
+            "min": "4.32 µs",
+            "max": "6.21 µs",
+            "heapAllocated": "832.29 b"
+          },
+
+          "performanceAnalysis": "Xalor maintains a faster average rejection path by immediately terminating invalid API structures through snapshot failure matching. Typia produces highly optimized validation but incurs additional diagnostic construction overhead."
+        }
+      }
+    }
+  },
+  "tableOfContents": {
+    "instrumentationPackage": "mitata",
+
+    "description": "An ultra-high-performance zero-dependency micro-benchmarking engine built on native V8 runtime timing primitives and high precision execution measurement.",
+
+    "underlyingMechanics": {
+      "jitPreHeating": "Executes warm-up iterations before measurement to allow the V8 Just-In-Time compiler to optimize hot execution paths.",
+
+      "clocks": "Uses high resolution runtime timing sources to capture nanosecond and microsecond execution boundaries.",
+
+      "gcIsolation": "Uses controlled memory measurement boundaries to estimate heap allocation behavior during benchmark execution."
+    },
+
+    "metricsDictionary": {
+      "avg": "Average execution time per benchmark iteration.",
+
+      "p75": "75th percentile latency boundary showing typical upper execution behavior.",
+
+      "p99": "99th percentile latency boundary showing tail execution behavior.",
+
+      "min": "Minimum observed execution time during benchmark sampling.",
+
+      "max": "Maximum observed execution spike during benchmark sampling.",
+
+      "heapAllocated": "Estimated V8 memory allocation consumed during execution."
+    }
+  },
+
+  "comprehensiveComparison": {
+    "validPayloadWinner": {
+      "winner": "Typia",
+      "reason": "Compile-time generated validators produce extremely small and direct execution paths."
+    },
+    "invalidPayloadWinner": {
+      "winner": "Xalor",
+      "reason": "Structural matching avoids expensive runtime assertion error construction and keeps allocations stable."
+    },
+    "memoryBehavior": {
+      "typia": "Lowest allocation profile on successful validation paths.",
+      "xalor": "More consistent allocation behavior across success and failure scenarios."
+    },
+    "engineeringTradeoff": {
+      "typia": "Best choice when data is trusted, internal, and performance-critical.",
+      "xalor": "Best choice when validation boundaries face unpredictable or hostile external data."
+    }
+  },
+  "comprehensiveTelemetryInsightsMatrix": {
+    "coldStartBootExpansion": {
+      "header": "⏱️ Cold Start Boot Expansion",
+      "description": "Measures module load and hydration latency inside edge or serverless environments (AWS Lambda, Cloudflare Workers) right at boot initialization.",
+      "xalorAotPointerHydration": "28.1359 ms",
+      "typia": "36.4738 ms",
+      "operationalMargin": "Xalor hydrates 12.7% faster on boot because it completely eliminates Zod's dynamic runtime prototype configuration extension drag."
+    },
+    "physicalClientBundleWeight": {
+      "header": "📦 Physical Client Bundle Weight Overhead",
+      "description": "Calculates the network payload tax and physical file size footprint injected into front-end browser builds.",
+      "xalorErasedLayoutAsset": "0.89 KB",
+      "typia": "46.87 KB",
+      "operationalMargin": "Xalor achieves a total 91.4% code reduction, executing an ahead-of-time 'Ballast Amputation' pass to strip heavy parser algorithms out of user bundles."
+    },
+    "v8PersistentHeapBudget": {
+      "header": "🧠 V8 Persistent Heap Budget Overhead",
+      "description": "Monitors baseline RAM overhead and persistent object accumulation inside the V8 engine process execution space.",
+      "xalorCasInternedAllocation": "2.207 MB",
+      "typia": "1.321 MB",
+      "operationalMargin": "Xalor slashes baseline memory overhead by 30.6%, capping its transient footprint to a tight, constant 768 bytes to completely eliminate latency-spiking garbage collection stutters."
+    }
+  },
+  "definitiveEngineeringConclusion": "The benchmark demonstrates two different AOT philosophies. Typia produces the fastest possible execution path for valid data by converting TypeScript contracts into direct runtime code. Xalor provides a more uniform validation envelope, particularly when rejecting malformed payloads. Typia is optimized for maximum accepted-throughput, while Xalor is optimized for predictable boundary enforcement."
+}

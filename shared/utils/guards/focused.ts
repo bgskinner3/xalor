@@ -138,10 +138,32 @@ export function assertRegistryKey<K extends keyof ISolidRegistry>(
   key: K | unknown,
 ): asserts key is K {
   if (!isRegistryKey<K>(key)) {
+    const keyStr = String(key);
+    const vault = globalThis.__SOLID_VAULT__;
+
+    // Determine the exact structural failure reason for pinpoint diagnostics
+    let underlyingReason =
+      'The target key is completely missing from the memory footprint.';
+    if (!vault) {
+      underlyingReason =
+        'The global state bridge (__SOLID_VAULT__) is completely uninitialized.';
+    } else if (!vault.blueprints) {
+      underlyingReason =
+        'The global state bridge is active, but the blueprint registry is unhydrated.';
+    } else if (typeof key !== 'string') {
+      underlyingReason = `The requested key is an invalid type (${typeof key}). Keys must be strings.`;
+    } else if (!vault.references.has(keyStr)) {
+      underlyingReason = `The active blueprint map exists, but key "${keyStr}" was never compiled or registered.`;
+    }
+
     throw new Error(
-      `[Xalor Ingress Exception] Compilation Gateway Violation:\n` +
-        `The engine failed to locate a valid, hydrated structural blueprint token for key: "${String(key)}".\n` +
-        `Verify that your background AST transformer is active and your files are swept by ts-patch.`,
+      `[Xalethor Ingress Exception] Compilation Gateway Violation:\n\n` +
+        `Failed to locate a valid, hydrated structural blueprint token for key: "${keyStr}"\n` +
+        `Diagnostic Analysis: ${underlyingReason}\n\n` +
+        `🚀 Action Required:\n` +
+        `1. Ensure your files were processed using your project's custom Xalor CLI builder tool pipeline.\n` +
+        `2. Verify that the file declaring or importing this shape was swept by the compiler step.\n` +
+        `3. Confirm the registry target wasn't cleared out during a hot-module reloading cycle.`,
     );
   }
 }
