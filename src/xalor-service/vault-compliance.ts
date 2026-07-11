@@ -145,6 +145,7 @@ export class XalethorVaultCompliance {
     ctx: TValidationContext,
     expected: string | TSolidShape,
     received: unknown,
+    message?: string,
   ): false {
     const runtimeCaller = getCallerLocation({ preferredIndex: 4 });
     const manifest = ctx.currentKey
@@ -153,11 +154,12 @@ export class XalethorVaultCompliance {
 
     // Cleanly fall back if a headless validation bypass runs without a registration entry
     const originArea = manifest ? manifest.area : 'unknown:0:0';
+    const normalizedMessage = `Validation failed at path context: "${ctx.path}": ${message}`;
 
     ctx.errors.push({
       key: ctx.currentKey || 'unknown',
       path: ctx.path,
-      message: `Validation failed at ${ctx.path}`,
+      message: normalizedMessage,
       expected: serialize(expected),
       received: serialize(received),
       area: runtimeCaller,

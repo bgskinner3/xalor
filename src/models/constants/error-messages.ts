@@ -2,6 +2,7 @@ import { RUNTIME_API_RULE_KEYS, XALOR_MATCH_DRIFT_RULE_KEYS } from './configs';
 import {
   TRuntimeApiErrorMapper,
   TXalorMatchDriftErrorMapper,
+  TRuntimeSHapeValidatorErrorMapper,
 } from '../types/error-types';
 
 /**
@@ -263,3 +264,101 @@ export const XALOR_MATCH_DRIFT_ERROR_MAPPER: TXalorMatchDriftErrorMapper = {
       `Action: Enable the Xalor transformer plugin, perform a clean rebuild, and confirm the generated Blueprint Vault artifacts are available before execution.`,
   },
 } satisfies TXalorMatchDriftErrorMapper;
+
+/**
+ *
+ *
+ *
+ */
+
+export const RUNTIME_SHAPE_VALIDATION_ERRORS: TRuntimeSHapeValidatorErrorMapper =
+  {
+    ARRAY_VALIDATION_TYPE_MISMATCH: {
+      message: 'Input data is not an array structure',
+      expected: (_str) => 'array',
+    },
+    ARRAY_VALIDATION_MIN_LENGTH_VIOLATION: {
+      message: 'Tuple length is shorter than minLength',
+      expected: (str) => `Tuple(minLength: ${str})`,
+    },
+    OBJECT_VALIDATION_TYPE_MISMATCH: {
+      message: 'Input data is not an object, is null, or is not a record',
+      expected: (_str) => 'object',
+    },
+    OBJECT_VALIDATION_EXCESS_PROPERTY: {
+      message: 'Strict mode: unexpected property key found',
+      expected: (_str) => 'excess_property',
+    },
+    OBJECT_VALIDATION_MISSING_REQUIRED_KEY: {
+      message: 'Property required by blueprint is missing from object',
+      expected: (_str, shape) => `${shape}`,
+    },
+    OBJECT_VALIDATION_MISSING_PROPERTY: {
+      message: 'Property is required but completely absent',
+      expected: (_str, shape) => `${shape}`,
+    },
+    OBJECT_VALIDATION_UNDEFINED_PROPERTY: {
+      message: 'Property is present but holds an explicit undefined',
+      expected: (_str, shape) => `${shape}`,
+    },
+    UNION_VALIDATION_NO_MATCH: {
+      message: 'Data failed to match every member of the union',
+      expected: (_str) => 'union',
+    },
+    REF_VALIDATION_MISSING_VAULT_ENTRY: {
+      message: 'Shape name lookup failed in the registry',
+      expected: (_str) => `Registered Shape: ${_str}`,
+    },
+    PRIMITIVE_VALIDATION_NULL_EXPECTED: {
+      message: 'Target type is `null` but data is not null',
+      expected: (_str) => `null`,
+    },
+    PRIMITIVE_VALIDATION_UNDEFINED_EXPECTED: {
+      message: 'Target type is `undefined` but data is defined',
+      expected: (_str) => `undefined`,
+    },
+    PRIMITIVE_VALIDATION_STRING_EXPECTED: {
+      message: 'Target type is `string` but data is not a string',
+      expected: (_str) => `string`,
+    },
+    PRIMITIVE_VALIDATION_NUMBER_EXPECTED: {
+      message: 'Target type is `number` but data is not a number',
+      expected: (_str) => `number`,
+    },
+    PRIMITIVE_VALIDATION_BOOLEAN_EXPECTED: {
+      message: 'Target type is `boolean` but data is not a boolean',
+      expected: (_str) => `boolean`,
+    },
+    PRIMITIVE_VALIDATION_BIGINT_EXPECTED: {
+      message: 'Target type is `bigint` but data is not a bigint',
+      expected: (_str) => `bigint`,
+    },
+    PRIMITIVE_VALIDATION_UNKNOWN_TYPE: {
+      message: 'Catch-all for other unsupported primitive types',
+      expected: (_str, shape) => `${shape}`,
+    },
+    INTERSECTION_VALIDATION_PART_FAILED: {
+      message: 'Data failed to satisfy one of the intersected shapes',
+      expected: (_str) => `intersection`,
+    },
+    LITERAL_VALIDATION_VALUE_MISMATCH: {
+      message: 'Data does not strictly equal (===) literal value',
+      expected: (_str) => `shape (the literal shape object)`,
+    },
+    FUNCTION_VALIDATION_TYPE_MISMATCH: {
+      message: 'Data is not a callable function',
+      expected: (_str) => `shape (the function shape object)`,
+    },
+    FUNCTION_VALIDATION_PARAMETER_MISMATCH: {
+      message: 'Function parameter count (data.length) < expected',
+      expected: (_str) => `function_signature_parameters_mismatch`,
+    },
+    INSTANCEOF_VALIDATION_NIL_VALUE: {
+      message: 'Data is null or undefined',
+      expected: (_str) => `shape (the instance shape object)`,
+    },
+    INSTANCEOF_VALIDATION_PROTOTYPE_MISMATCH: {
+      message: 'Data is not an instance of the resolved constructor',
+      expected: (_str) => `instanceof_${_str}`,
+    },
+  } satisfies TRuntimeSHapeValidatorErrorMapper;

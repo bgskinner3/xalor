@@ -1,353 +1,353 @@
-// src/validation/validators.ts
-import type {
-  TSolidArrayShape,
-  TValidationContext,
-  TSolidObjectRawShape,
-  TSolidShape,
-  TSolidReferenceShape,
-  TSolidLiteralShape,
-  TSolidPrimitiveShape,
-  TSolidIntersectionShape,
-  TSolidInstanceOfShape,
-  TSolidFunctionShape,
-} from '../../shared';
-import {
-  isArray,
-  isObject,
-  isNull,
-  isRecord,
-  isUndefined,
-  isString,
-  isNumber,
-  isBoolean,
-  isBigInt,
-  isFunction,
-  isKeyInObject,
-} from '../../shared';
-import { yieldEntries, yieldFiltered } from '../../shared';
-import { shapeKindUtilsService } from '../../shared/service';
-import { XalethorService } from '../xalor-service';
-import { PROTO_EXPLOIT_KEYS } from '../models/constants';
-import { XalethorVaultCompliance } from '../xalor-service/vault-compliance';
+// // src/validation/validators.ts
+// import type {
+//   TSolidArrayShape,
+//   TValidationContext,
+//   TSolidObjectRawShape,
+//   TSolidShape,
+//   TSolidReferenceShape,
+//   TSolidLiteralShape,
+//   TSolidPrimitiveShape,
+//   TSolidIntersectionShape,
+//   TSolidInstanceOfShape,
+//   TSolidFunctionShape,
+// } from '../../shared';
+// import {
+//   isArray,
+//   isObject,
+//   isNull,
+//   isRecord,
+//   isUndefined,
+//   isString,
+//   isNumber,
+//   isBoolean,
+//   isBigInt,
+//   isFunction,
+//   isKeyInObject,
+// } from '../../shared';
+// import { yieldEntries, yieldFiltered } from '../../shared';
+// import { shapeKindUtilsService } from '../../shared/service';
+// import { XalethorService } from '../xalor-service';
+// import { PROTO_EXPLOIT_KEYS } from '../models/constants';
+// import { XalethorVaultCompliance } from '../xalor-service/vault-compliance';
 
-// Reusable short alias for internal reporting calls
-// const report = XalethorVaultCompliance.reportError;
-// const validateShape = XalethorVaultCompliance.validateShape;
-// 🪐 Contextual Debug Logger Wrapper
-// const logDebug = (
-//   action: string,
-//   path: string,
-//   message: string,
-//   payload?: unknown,
-// ) => {
-//   if (process.env.XALOR_DEBUG === 'true') {
-//     const visualPath = path === '$' ? 'ROOT' : path;
-//     console.log(`[XALOR 🛰️  DEBUG] [${action}] (${visualPath}) ➔ ${message}`);
-//     if (payload !== undefined) {
-//       console.log(
-//         `               ⤷ Value:`,
-//         typeof payload === 'object' ? JSON.stringify(payload) : payload,
+// // Reusable short alias for internal reporting calls
+// // const report = XalethorVaultCompliance.reportError;
+// // const validateShape = XalethorVaultCompliance.validateShape;
+// // 🪐 Contextual Debug Logger Wrapper
+// // const logDebug = (
+// //   action: string,
+// //   path: string,
+// //   message: string,
+// //   payload?: unknown,
+// // ) => {
+// //   if (process.env.XALOR_DEBUG === 'true') {
+// //     const visualPath = path === '$' ? 'ROOT' : path;
+// //     console.log(`[XALOR 🛰️  DEBUG] [${action}] (${visualPath}) ➔ ${message}`);
+// //     if (payload !== undefined) {
+// //       console.log(
+// //         `               ⤷ Value:`,
+// //         typeof payload === 'object' ? JSON.stringify(payload) : payload,
+// //       );
+// //     }
+// //   }
+// // };
+
+// export function validateArray(
+//   data: unknown,
+//   shape: TSolidArrayShape,
+//   ctx: TValidationContext,
+// ): boolean {
+//   if (!isArray(data))
+//     return XalethorVaultCompliance.reportError(ctx, 'array', data);
+
+//   const originalPath = ctx.path;
+//   const len = data.length;
+
+//   if (shape.elementShapes) {
+//     if (len < (shape.minLength || 0)) {
+//       return XalethorVaultCompliance.reportError(
+//         ctx,
+//         `Tuple(minLength: ${shape.minLength})`,
+//         `length: ${len}`,
 //       );
 //     }
+//     const elementCount = shape.elementShapes.length;
+//     for (let i = 0; i < elementCount; i++) {
+//       ctx.path = `${originalPath}[${i}]`;
+//       if (
+//         !XalethorVaultCompliance.validateShape(
+//           data[i],
+//           shape.elementShapes[i],
+//           ctx,
+//         )
+//       ) {
+//         ctx.path = originalPath;
+//         return false;
+//       }
+//     }
+//     ctx.path = originalPath;
+//     return true;
 //   }
-// };
 
-export function validateArray(
-  data: unknown,
-  shape: TSolidArrayShape,
-  ctx: TValidationContext,
-): boolean {
-  if (!isArray(data))
-    return XalethorVaultCompliance.reportError(ctx, 'array', data);
+//   for (let i = 0; i < len; i++) {
+//     ctx.path = `${originalPath}[${i}]`;
+//     if (!XalethorVaultCompliance.validateShape(data[i], shape.items, ctx)) {
+//       ctx.path = originalPath;
+//       return false;
+//     }
+//   }
+//   ctx.path = originalPath;
+//   return true;
+// }
 
-  const originalPath = ctx.path;
-  const len = data.length;
+// export function validateObject(
+//   data: unknown,
+//   shape: { properties: Record<string, TSolidObjectRawShape>; strict?: boolean },
+//   ctx: TValidationContext,
+// ): boolean {
+//   if (!isObject(data) || isNull(data) || !isRecord(data))
+//     return XalethorVaultCompliance.reportError(ctx, 'object', data);
 
-  if (shape.elementShapes) {
-    if (len < (shape.minLength || 0)) {
-      return XalethorVaultCompliance.reportError(
-        ctx,
-        `Tuple(minLength: ${shape.minLength})`,
-        `length: ${len}`,
-      );
-    }
-    const elementCount = shape.elementShapes.length;
-    for (let i = 0; i < elementCount; i++) {
-      ctx.path = `${originalPath}[${i}]`;
-      if (
-        !XalethorVaultCompliance.validateShape(
-          data[i],
-          shape.elementShapes[i],
-          ctx,
-        )
-      ) {
-        ctx.path = originalPath;
-        return false;
-      }
-    }
-    ctx.path = originalPath;
-    return true;
-  }
+//   const originalPath = ctx.path;
 
-  for (let i = 0; i < len; i++) {
-    ctx.path = `${originalPath}[${i}]`;
-    if (!XalethorVaultCompliance.validateShape(data[i], shape.items, ctx)) {
-      ctx.path = originalPath;
-      return false;
-    }
-  }
-  ctx.path = originalPath;
-  return true;
-}
+//   // 1. Optional Strict Mode: Validate against excess properties
+//   if (shape.strict) {
+//     const rawDataKeys = Object.keys(data);
+//     for (let i = 0; i < rawDataKeys.length; i++) {
+//       const key = rawDataKeys[i];
+//       if (
+//         key !== undefined &&
+//         !Object.prototype.hasOwnProperty.call(shape.properties, key)
+//       ) {
+//         ctx.path = originalPath === '$' ? key : `${originalPath}.${key}`;
 
-export function validateObject(
-  data: unknown,
-  shape: { properties: Record<string, TSolidObjectRawShape>; strict?: boolean },
-  ctx: TValidationContext,
-): boolean {
-  if (!isObject(data) || isNull(data) || !isRecord(data))
-    return XalethorVaultCompliance.reportError(ctx, 'object', data);
+//         const result = XalethorVaultCompliance.reportError(
+//           ctx,
+//           'excess_property',
+//           'excess_property',
+//         );
+//         ctx.path = originalPath;
+//         return result;
+//       }
+//     }
+//   }
 
-  const originalPath = ctx.path;
+//   // 2. Blueprint Mapping Loop with prototype injection safety filters
+//   const propertyEntries = yieldEntries(
+//     shape.properties,
+//     (_key, _value): _key is string => !PROTO_EXPLOIT_KEYS.has(_key),
+//   );
 
-  // 1. Optional Strict Mode: Validate against excess properties
-  if (shape.strict) {
-    const rawDataKeys = Object.keys(data);
-    for (let i = 0; i < rawDataKeys.length; i++) {
-      const key = rawDataKeys[i];
-      if (
-        key !== undefined &&
-        !Object.prototype.hasOwnProperty.call(shape.properties, key)
-      ) {
-        ctx.path = originalPath === '$' ? key : `${originalPath}.${key}`;
+//   for (const [key, metadata] of propertyEntries) {
+//     if (PROTO_EXPLOIT_KEYS.has(key)) continue;
 
-        const result = XalethorVaultCompliance.reportError(
-          ctx,
-          'excess_property',
-          'excess_property',
-        );
-        ctx.path = originalPath;
-        return result;
-      }
-    }
-  }
+//     const hasProperty = Object.hasOwn(data, key);
+//     const value = data[key];
+//     ctx.path = originalPath === '$' ? key : `${originalPath}.${key}`;
 
-  // 2. Blueprint Mapping Loop with prototype injection safety filters
-  const propertyEntries = yieldEntries(
-    shape.properties,
-    (_key, _value): _key is string => !PROTO_EXPLOIT_KEYS.has(_key),
-  );
+//     if (!hasProperty) {
+//       if (metadata.requiresKeyPresence) {
+//         const result = XalethorVaultCompliance.reportError(
+//           ctx,
+//           metadata.shape,
+//           'missing_key_presence',
+//         );
+//         ctx.path = originalPath;
+//         return result;
+//       }
+//       if (metadata.optional) {
+//         continue;
+//       }
 
-  for (const [key, metadata] of propertyEntries) {
-    if (PROTO_EXPLOIT_KEYS.has(key)) continue;
+//       const result = XalethorVaultCompliance.reportError(
+//         ctx,
+//         metadata.shape,
+//         'missing',
+//       );
+//       ctx.path = originalPath;
+//       return result;
+//     }
 
-    const hasProperty = Object.hasOwn(data, key);
-    const value = data[key];
-    ctx.path = originalPath === '$' ? key : `${originalPath}.${key}`;
+//     if (value === undefined && !metadata.optional) {
+//       const result = XalethorVaultCompliance.reportError(
+//         ctx,
+//         metadata.shape,
+//         'missing',
+//       );
+//       ctx.path = originalPath;
+//       return result;
+//     }
 
-    if (!hasProperty) {
-      if (metadata.requiresKeyPresence) {
-        const result = XalethorVaultCompliance.reportError(
-          ctx,
-          metadata.shape,
-          'missing_key_presence',
-        );
-        ctx.path = originalPath;
-        return result;
-      }
-      if (metadata.optional) {
-        continue;
-      }
+//     if (metadata.shape) {
+//       if (!XalethorVaultCompliance.validateShape(value, metadata.shape, ctx)) {
+//         ctx.path = originalPath;
+//         return false;
+//       }
+//     }
+//   }
 
-      const result = XalethorVaultCompliance.reportError(
-        ctx,
-        metadata.shape,
-        'missing',
-      );
-      ctx.path = originalPath;
-      return result;
-    }
+//   ctx.path = originalPath;
+//   return true;
+// }
 
-    if (value === undefined && !metadata.optional) {
-      const result = XalethorVaultCompliance.reportError(
-        ctx,
-        metadata.shape,
-        'missing',
-      );
-      ctx.path = originalPath;
-      return result;
-    }
+// export function validateUnion(
+//   data: unknown,
+//   shape: Extract<TSolidShape, { kind: 'union' }>,
+//   ctx: TValidationContext,
+// ): boolean {
+//   const snapshotCount = ctx.errors.length;
 
-    if (metadata.shape) {
-      if (!XalethorVaultCompliance.validateShape(value, metadata.shape, ctx)) {
-        ctx.path = originalPath;
-        return false;
-      }
-    }
-  }
+//   for (let i = 0; i < shape.values.length; i++) {
+//     if (XalethorVaultCompliance.validateShape(data, shape.values[i], ctx)) {
+//       if (ctx.errors.length > snapshotCount) {
+//         ctx.errors.splice(snapshotCount);
+//       }
 
-  ctx.path = originalPath;
-  return true;
-}
+//       return true;
+//     }
+//   }
 
-export function validateUnion(
-  data: unknown,
-  shape: Extract<TSolidShape, { kind: 'union' }>,
-  ctx: TValidationContext,
-): boolean {
-  const snapshotCount = ctx.errors.length;
+//   return XalethorVaultCompliance.reportError(ctx, 'union', data);
+// }
 
-  for (let i = 0; i < shape.values.length; i++) {
-    if (XalethorVaultCompliance.validateShape(data, shape.values[i], ctx)) {
-      if (ctx.errors.length > snapshotCount) {
-        ctx.errors.splice(snapshotCount);
-      }
+// export function validateReference(
+//   data: unknown,
+//   shape: TSolidReferenceShape,
+//   ctx: TValidationContext,
+// ): boolean {
+//   const metadata = XalethorService.inspectMetaData(shape.name);
+//   if (!metadata) {
+//     return XalethorVaultCompliance.reportError(
+//       ctx,
+//       `Registered Shape: ${shape.name}`,
+//       'Missing from Vault',
+//     );
+//   }
+//   return XalethorVaultCompliance.validateShape(data, metadata.shape, ctx);
+// }
 
-      return true;
-    }
-  }
+// export function validatePrimitive(
+//   data: unknown,
+//   shape: TSolidPrimitiveShape,
+//   ctx: TValidationContext,
+// ): boolean {
+//   const { type } = shape;
 
-  return XalethorVaultCompliance.reportError(ctx, 'union', data);
-}
+//   if (type === 'any' || type === 'unknown') return true;
+//   if (type === 'null')
+//     return isNull(data)
+//       ? true
+//       : XalethorVaultCompliance.reportError(ctx, 'null', data);
+//   if (type === 'undefined')
+//     return isUndefined(data)
+//       ? true
+//       : XalethorVaultCompliance.reportError(ctx, 'undefined', data);
+//   if (type === 'string')
+//     return isString(data)
+//       ? true
+//       : XalethorVaultCompliance.reportError(ctx, 'string', data);
+//   if (type === 'number')
+//     return isNumber(data)
+//       ? true
+//       : XalethorVaultCompliance.reportError(ctx, 'number', data);
+//   if (type === 'boolean')
+//     return isBoolean(data)
+//       ? true
+//       : XalethorVaultCompliance.reportError(ctx, 'boolean', data);
+//   if (type === 'bigint')
+//     return isBigInt(data)
+//       ? true
+//       : XalethorVaultCompliance.reportError(ctx, 'bigint', data);
 
-export function validateReference(
-  data: unknown,
-  shape: TSolidReferenceShape,
-  ctx: TValidationContext,
-): boolean {
-  const metadata = XalethorService.inspectMetaData(shape.name);
-  if (!metadata) {
-    return XalethorVaultCompliance.reportError(
-      ctx,
-      `Registered Shape: ${shape.name}`,
-      'Missing from Vault',
-    );
-  }
-  return XalethorVaultCompliance.validateShape(data, metadata.shape, ctx);
-}
+//   return XalethorVaultCompliance.reportError(ctx, type, data);
+// }
 
-export function validatePrimitive(
-  data: unknown,
-  shape: TSolidPrimitiveShape,
-  ctx: TValidationContext,
-): boolean {
-  const { type } = shape;
+// export function validateIntersection(
+//   data: unknown,
+//   shape: TSolidIntersectionShape,
+//   ctx: TValidationContext,
+// ): boolean {
+//   const parts = yieldFiltered(
+//     shape.values,
+//     (_part): _part is TSolidShape => true,
+//   );
 
-  if (type === 'any' || type === 'unknown') return true;
-  if (type === 'null')
-    return isNull(data)
-      ? true
-      : XalethorVaultCompliance.reportError(ctx, 'null', data);
-  if (type === 'undefined')
-    return isUndefined(data)
-      ? true
-      : XalethorVaultCompliance.reportError(ctx, 'undefined', data);
-  if (type === 'string')
-    return isString(data)
-      ? true
-      : XalethorVaultCompliance.reportError(ctx, 'string', data);
-  if (type === 'number')
-    return isNumber(data)
-      ? true
-      : XalethorVaultCompliance.reportError(ctx, 'number', data);
-  if (type === 'boolean')
-    return isBoolean(data)
-      ? true
-      : XalethorVaultCompliance.reportError(ctx, 'boolean', data);
-  if (type === 'bigint')
-    return isBigInt(data)
-      ? true
-      : XalethorVaultCompliance.reportError(ctx, 'bigint', data);
+//   for (const part of parts) {
+//     if (!XalethorVaultCompliance.validateShape(data, part, ctx)) {
+//       return XalethorVaultCompliance.reportError(ctx, 'intersection', data);
+//     }
+//   }
+//   return true;
+// }
 
-  return XalethorVaultCompliance.reportError(ctx, type, data);
-}
+// export function validateLiteral(
+//   data: unknown,
+//   shape: TSolidLiteralShape,
+//   ctx: TValidationContext,
+// ): boolean {
+//   const isMatch = data === shape.value;
 
-export function validateIntersection(
-  data: unknown,
-  shape: TSolidIntersectionShape,
-  ctx: TValidationContext,
-): boolean {
-  const parts = yieldFiltered(
-    shape.values,
-    (_part): _part is TSolidShape => true,
-  );
+//   return isMatch ? true : XalethorVaultCompliance.reportError(ctx, shape, data);
+// }
 
-  for (const part of parts) {
-    if (!XalethorVaultCompliance.validateShape(data, part, ctx)) {
-      return XalethorVaultCompliance.reportError(ctx, 'intersection', data);
-    }
-  }
-  return true;
-}
+// export function validateFunction(
+//   data: unknown,
+//   shape: TSolidFunctionShape,
+//   ctx: TValidationContext,
+// ): boolean {
+//   if (!isFunction(data))
+//     return XalethorVaultCompliance.reportError(ctx, shape, data);
 
-export function validateLiteral(
-  data: unknown,
-  shape: TSolidLiteralShape,
-  ctx: TValidationContext,
-): boolean {
-  const isMatch = data === shape.value;
+//   let mandatoryParamsCount = 0;
+//   const totalBlueprintParams = shape.parameters.length;
 
-  return isMatch ? true : XalethorVaultCompliance.reportError(ctx, shape, data);
-}
+//   for (let i = 0; i < totalBlueprintParams; i++) {
+//     const paramNode = shape.parameters[i];
+//     if (
+//       paramNode &&
+//       isObject(paramNode) &&
+//       isKeyInObject('optional')(paramNode) &&
+//       !paramNode.optional
+//     ) {
+//       mandatoryParamsCount++;
+//     }
+//   }
 
-export function validateFunction(
-  data: unknown,
-  shape: TSolidFunctionShape,
-  ctx: TValidationContext,
-): boolean {
-  if (!isFunction(data))
-    return XalethorVaultCompliance.reportError(ctx, shape, data);
+//   if (data.length < mandatoryParamsCount) {
+//     return XalethorVaultCompliance.reportError(
+//       ctx,
+//       'function_signature_parameters_mismatch',
+//       `provided: ${data.length}`,
+//     );
+//   }
+//   return true;
+// }
 
-  let mandatoryParamsCount = 0;
-  const totalBlueprintParams = shape.parameters.length;
+// export function validateInstanceOf(
+//   data: unknown,
+//   shape: TSolidInstanceOfShape,
+//   ctx: TValidationContext,
+// ): boolean {
+//   if (data == null)
+//     return XalethorVaultCompliance.reportError(ctx, shape, data);
 
-  for (let i = 0; i < totalBlueprintParams; i++) {
-    const paramNode = shape.parameters[i];
-    if (
-      paramNode &&
-      isObject(paramNode) &&
-      isKeyInObject('optional')(paramNode) &&
-      !paramNode.optional
-    ) {
-      mandatoryParamsCount++;
-    }
-  }
+//   const ctor = shapeKindUtilsService.resolveInstanceCtor(shape.name);
+//   const isMatch = data instanceof ctor;
 
-  if (data.length < mandatoryParamsCount) {
-    return XalethorVaultCompliance.reportError(
-      ctx,
-      'function_signature_parameters_mismatch',
-      `provided: ${data.length}`,
-    );
-  }
-  return true;
-}
+//   if (!isMatch) {
+//     const receivedPrototype = isObject(data)
+//       ? data.constructor.name
+//       : typeof data;
 
-export function validateInstanceOf(
-  data: unknown,
-  shape: TSolidInstanceOfShape,
-  ctx: TValidationContext,
-): boolean {
-  if (data == null)
-    return XalethorVaultCompliance.reportError(ctx, shape, data);
+//     return XalethorVaultCompliance.reportError(
+//       ctx,
+//       `instanceof_${shape.name}`,
+//       receivedPrototype,
+//     );
+//   }
 
-  const ctor = shapeKindUtilsService.resolveInstanceCtor(shape.name);
-  const isMatch = data instanceof ctor;
-
-  if (!isMatch) {
-    const receivedPrototype = isObject(data)
-      ? data.constructor.name
-      : typeof data;
-
-    return XalethorVaultCompliance.reportError(
-      ctx,
-      `instanceof_${shape.name}`,
-      receivedPrototype,
-    );
-  }
-
-  return true;
-}
+//   return true;
+// }
 // export function validateArray(
 //   data: unknown,
 //   shape: TSolidArrayShape,

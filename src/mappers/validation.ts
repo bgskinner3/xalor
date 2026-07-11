@@ -8,7 +8,7 @@ import {
   validateFunction,
   validateIntersection,
   validateInstanceOf,
-} from '../validation/validators';
+} from '../validation';
 import type { TValidatorMapper } from '../models/types';
 import {
   isPrimitiveShape,

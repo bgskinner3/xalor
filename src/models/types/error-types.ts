@@ -1,8 +1,10 @@
 import {
   RUNTIME_API_RULE_KEYS,
   XALOR_MATCH_DRIFT_RULE_KEYS,
+  RUNTIME_SHAPE_VALIDATION_ERROR_KEYS,
 } from '../constants/configs';
 import type { TSolidError } from '../../../shared/types';
+import type { TSolidShape } from '../../../shared/shape-domain';
 
 type TRuleKeys<T extends Record<PropertyKey, string>> = keyof T;
 type TRuleValues<T extends Record<PropertyKey, string>> = T[keyof T];
@@ -90,3 +92,15 @@ export type TErrorReportTemplate = {
     readonly cleanReceived: string;
   }>;
 };
+
+// Optional: Strongly type your error keys using TypeScript utility types
+/* prettier-ignore */
+export type TRuntimeShapeValidationErrorKey = typeof RUNTIME_SHAPE_VALIDATION_ERROR_KEYS[number];
+
+type TRuntimeShapeValidationError = {
+  message: string;
+  expected: (str?: string, shape?: TSolidShape) => string;
+};
+
+/* prettier-ignore */
+export type TRuntimeSHapeValidatorErrorMapper = Record<TRuntimeShapeValidationErrorKey, TRuntimeShapeValidationError>
