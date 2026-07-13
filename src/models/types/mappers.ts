@@ -75,6 +75,14 @@ export type TValidatorMapper = {
   ) => boolean;
 };
 
+export type TPrimitiveValidationMapper = Record<
+  string,
+  (d: unknown) => boolean
+>;
+export type TPrimitiveErrorTuple = {
+  expected: string;
+  getMessage: () => string;
+};
 /**
  * 🎛️ TSHAPE_CAST_MAPPER_MAP
  *

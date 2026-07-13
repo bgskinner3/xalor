@@ -4,91 +4,47 @@ import type {
   TSolidPrimitiveShape,
   TSolidInstanceOfShape,
 } from '../../shared';
-import {
-  isObject,
-  isNull,
-  isUndefined,
-  isString,
-  isNumber,
-  isBoolean,
-  isBigInt,
-} from '../../shared';
+import { isObject, isUndefined } from '../../shared';
 import { shapeKindUtilsService } from '../../shared/service';
 import { XalethorVaultCompliance } from '../xalor-service/vault-compliance';
 import { errorService } from '../error';
+import {
+  PRIMITIVE_VALIDATION_CHECKERS,
+  PRIMITIVE_ERROR_METADATA,
+} from '../mappers';
 
 export function validatePrimitive(
   data: unknown,
   shape: TSolidPrimitiveShape,
   ctx: TValidationContext,
 ): boolean {
-  const { type } = shape;
+  const type = shape.type;
+  if (PRIMITIVE_VALIDATION_CHECKERS[type](data)) return true;
+
+  return handlePrimitiveError(ctx, type, data);
+}
+
+/**
+ * Isolated Primitive Error Dispatcher:
+ * Keeps object destructuring and string rendering entirely out of the hot path.
+ */
+function handlePrimitiveError(
+  ctx: TValidationContext,
+  type: string,
+  data: unknown,
+): false {
   const reportError = XalethorVaultCompliance.reportError;
-  const {
-    PRIMITIVE_VALIDATION_NULL_EXPECTED,
-    PRIMITIVE_VALIDATION_UNDEFINED_EXPECTED,
-    PRIMITIVE_VALIDATION_STRING_EXPECTED,
-    PRIMITIVE_VALIDATION_NUMBER_EXPECTED,
-    PRIMITIVE_VALIDATION_BOOLEAN_EXPECTED,
-    PRIMITIVE_VALIDATION_BIGINT_EXPECTED,
-    PRIMITIVE_VALIDATION_UNKNOWN_TYPE,
-  } = errorService.shapeValErrs;
+  const targetConfig = PRIMITIVE_ERROR_METADATA[type];
 
-  // 1. Pass-through Core Types
-  if (type === 'any' || type === 'unknown') {
-    return true;
+  // 1. Monomorphic Ingress Mapping
+  if (!isUndefined(targetConfig)) {
+    reportError(ctx, targetConfig.expected, data, targetConfig.msg());
+    return false;
   }
 
-  if (type === 'never') {
-    /* prettier-ignore */
-    return reportError(ctx, 'never', data, 'Type evaluated as unreachable never.');
-  }
-
-  if (type === 'null') {
-    if (isNull(data)) return true;
-    /* prettier-ignore */
-    return reportError(ctx, 'null', data, PRIMITIVE_VALIDATION_NULL_EXPECTED.message);
-  }
-
-  if (type === 'undefined' || type === 'void') {
-    if (isUndefined(data)) return true;
-    /* prettier-ignore */
-    return reportError(ctx, type, data, PRIMITIVE_VALIDATION_UNDEFINED_EXPECTED.message);
-  }
-
-  if (type === 'string') {
-    if (isString(data)) return true;
-    /* prettier-ignore */
-    return reportError(ctx, 'string', data, PRIMITIVE_VALIDATION_STRING_EXPECTED.message);
-  }
-
-  if (type === 'number') {
-    if (isNumber(data)) return true;
-    /* prettier-ignore */
-    return reportError(ctx, 'number', data, PRIMITIVE_VALIDATION_NUMBER_EXPECTED.message);
-  }
-
-  if (type === 'boolean') {
-    if (isBoolean(data)) return true;
-    /* prettier-ignore */
-    return reportError(ctx, 'boolean', data, PRIMITIVE_VALIDATION_BOOLEAN_EXPECTED.message);
-  }
-
-  if (type === 'bigint') {
-    if (isBigInt(data)) return true;
-    /* prettier-ignore */
-    return reportError(ctx, 'bigint', data, PRIMITIVE_VALIDATION_BIGINT_EXPECTED.message);
-  }
-
-  if (type === 'symbol') {
-    if (typeof data === 'symbol') return true;
-    /* prettier-ignore */
-    return reportError(ctx, 'symbol', data, 'Target type is symbol but data is not a symbol.');
-  }
-
-  // 4. Catch-all fallback for unrecognized primitive schema tokens
   /* prettier-ignore */
-  return reportError(ctx, type, data, PRIMITIVE_VALIDATION_UNKNOWN_TYPE.message);
+  reportError( ctx, type, data, errorService.shapeValErrs.PRIMITIVE_VALIDATION_UNKNOWN_TYPE.message );
+  return false;
 }
 
 export function validateInstanceOf(
@@ -117,3 +73,88 @@ export function validateInstanceOf(
 
   return true;
 }
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+// export function validatePrimitive(
+//   data: unknown,
+//   shape: TSolidPrimitiveShape,
+//   ctx: TValidationContext,
+// ): boolean {
+//   const { type } = shape;
+//   const reportError = XalethorVaultCompliance.reportError;
+//   const {
+//     PRIMITIVE_VALIDATION_NULL_EXPECTED,
+//     PRIMITIVE_VALIDATION_UNDEFINED_EXPECTED,
+//     PRIMITIVE_VALIDATION_STRING_EXPECTED,
+//     PRIMITIVE_VALIDATION_NUMBER_EXPECTED,
+//     PRIMITIVE_VALIDATION_BOOLEAN_EXPECTED,
+//     PRIMITIVE_VALIDATION_BIGINT_EXPECTED,
+//     PRIMITIVE_VALIDATION_UNKNOWN_TYPE,
+//   } = errorService.shapeValErrs;
+
+//   // 1. Pass-through Core Types
+//   if (type === 'any' || type === 'unknown') {
+//     return true;
+//   }
+
+//   if (type === 'never') {
+//     /* prettier-ignore */
+//     return reportError(ctx, 'never', data, 'Type evaluated as unreachable never.');
+//   }
+
+//   if (type === 'null') {
+//     if (isNull(data)) return true;
+//     /* prettier-ignore */
+//     return reportError(ctx, 'null', data, PRIMITIVE_VALIDATION_NULL_EXPECTED.message);
+//   }
+
+//   if (type === 'undefined' || type === 'void') {
+//     if (isUndefined(data)) return true;
+//     /* prettier-ignore */
+//     return reportError(ctx, type, data, PRIMITIVE_VALIDATION_UNDEFINED_EXPECTED.message);
+//   }
+
+//   if (type === 'string') {
+//     if (isString(data)) return true;
+//     /* prettier-ignore */
+//     return reportError(ctx, 'string', data, PRIMITIVE_VALIDATION_STRING_EXPECTED.message);
+//   }
+
+//   if (type === 'number') {
+//     if (isNumber(data)) return true;
+//     /* prettier-ignore */
+//     return reportError(ctx, 'number', data, PRIMITIVE_VALIDATION_NUMBER_EXPECTED.message);
+//   }
+
+//   if (type === 'boolean') {
+//     if (isBoolean(data)) return true;
+//     /* prettier-ignore */
+//     return reportError(ctx, 'boolean', data, PRIMITIVE_VALIDATION_BOOLEAN_EXPECTED.message);
+//   }
+
+//   if (type === 'bigint') {
+//     if (isBigInt(data)) return true;
+//     /* prettier-ignore */
+//     return reportError(ctx, 'bigint', data, PRIMITIVE_VALIDATION_BIGINT_EXPECTED.message);
+//   }
+
+//   if (type === 'symbol') {
+//     if (typeof data === 'symbol') return true;
+//     /* prettier-ignore */
+//     return reportError(ctx, 'symbol', data, 'Target type is symbol but data is not a symbol.');
+//   }
+
+//   // 4. Catch-all fallback for unrecognized primitive schema tokens
+//   /* prettier-ignore */
+//   return reportError(ctx, type, data, PRIMITIVE_VALIDATION_UNKNOWN_TYPE.message);
+// }

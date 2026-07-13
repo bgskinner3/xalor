@@ -23,11 +23,7 @@ class XalorCore {
    * @Api register
    * @mode register
    */
-  /* prettier-ignore */ public register<_K extends keyof ISolidRegistry | (string & {}),  _T = unknown,>(): void;
-  /* prettier-ignore */ public register<_K extends keyof ISolidRegistry | (string & {})>(data: unknown): void;
-  /* prettier-ignore */ public register<K extends keyof ISolidRegistry | (string & {})>(data?: unknown): void {
-    return registerXalor<K>(data);
-  }
+  public register = registerXalor;
   // ========================================================================
   // ========================================================================
   // ========================================================================
@@ -54,12 +50,8 @@ class XalorCore {
     return activeGuard;
   }
   /** @Api validation  @mode parse */
-  public parse<K extends TActiveRegistryKeys>(
-    data: unknown,
-    _compiledKeyReference?: K,
-  ): TSolidBranded<K, TResolveRegistryStructure<K>> {
-    return validateXalorParse<K>(data, _compiledKeyReference);
-  }
+  public parse = validateXalorParse;
+
   // ========================================================================
   // ========================================================================
   // ========================================================================

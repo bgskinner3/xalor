@@ -8,8 +8,8 @@ import {
   validateFunction,
   validateIntersection,
   validateInstanceOf,
-} from '../validation';
-import type { TValidatorMapper } from '../models/types';
+} from '../../validation';
+import type { TValidatorMapper } from '../../models/types';
 import {
   isPrimitiveShape,
   isLiteralShape,
@@ -21,8 +21,8 @@ import {
   isFunctionShape,
   isIntersectionShape,
   isInstanceOfShape,
-} from '../../shared';
-import { XalethorService } from '../xalor-service';
+} from '../../../shared';
+import { XalethorService } from '../../xalor-service';
 /**
  * 💎 SHAPE_VALIDATION_MAPPER MAPPING TABLE
  *
