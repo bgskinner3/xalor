@@ -84,7 +84,7 @@ function executeCompilationFlushAndHarvest(
   params: TFlushAndHarvestParams,
 ): void {
   /* prettier-ignore */
-  const { file, program, rootDir, globalKeyRegistry, isTestEnvironment, isDevelopmentPass,  } = params;
+  const { file, program, rootDir, globalKeyRegistry, isTestEnvironment, isDevelopmentPass } = params;
 
   const shouldTriggerFlush = isCompilationLoopTerminated(
     file,
@@ -113,6 +113,7 @@ function executeCompilationFlushAndHarvest(
         }
       });
       // Commit changes to disk and update intellisense configurations
+
       serializeAndFlushVault(rootDir).catch((err) => {
         console.error('❌ Asynchronous vault sync failure:', err);
       });

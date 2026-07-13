@@ -65,7 +65,7 @@ type TGenerateProcessorTarget = TBaseProcessorTargetParams & {
 type TValidateProcessorTarget = TBaseProcessorTargetParams & {
   readonly target: TValidateRawPayload;
   /** 🎯 INDUSTRIAL CONTROLLERS REQ LOGIC: shape is strictly prohibited here */
-  readonly shape?: undefined;
+  readonly shape?: TSolidShape;
 };
 /** 🛡️ VALIDATE PASS CONFIGURATION (The Consumer Validation Lane - 🚀 Newly Incorporated!) */
 type TTransformerProcessorTarget = TBaseProcessorTargetParams & {

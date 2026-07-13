@@ -18,7 +18,8 @@ function seedTestVault(
 
   // 2. THE RESILIENCY HEALING & TYPE REFINEMENT GATES:
   const vault = globalThis.__SOLID_VAULT__;
-
+  delete vault.manifest;
+  delete vault.registry;
   Object.keys(productionReferences).map((key) => {
     const ref = productionReferences[key];
     vault.references.set(key, ref);

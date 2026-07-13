@@ -75,3 +75,37 @@ export function formatParseArgs<T extends IBaseProcessorPayload>(
 
   return [originalPayloadArg, keyLiteral];
 }
+// export function formatParseArgs<T extends IBaseProcessorPayload>(
+//   raw: T,
+//   node: CallExpression,
+//   factory: NodeFactory,
+// ): Expression[] {
+//   const incomingArgs = node.arguments;
+//   const keyName = raw.keyName ?? 'unknown';
+
+//   if (incomingArgs.length === 3) {
+//     const lastArg = incomingArgs[2];
+//     const secondToLastArg = incomingArgs[1];
+//     if (
+//       ts.isStringLiteral(lastArg) &&
+//       ts.isStringLiteral(secondToLastArg) &&
+//       secondToLastArg.text === keyName
+//     ) {
+//       return [...incomingArgs];
+//     }
+//   }
+
+//   const shape = xalorCentralContext.getShapeFromGlobalVault(keyName);
+//   const keyLiteral = factory.createStringLiteral(keyName);
+//   const originalPayloadArg =
+//     incomingArgs[0] || factory.createObjectLiteralExpression([]);
+//   if (!shape) {
+//     return [originalPayloadArg, keyLiteral];
+//   }
+
+//   const metadataExpression = factory.createObjectLiteralExpression([
+//     /* prettier-ignore */ factory.createPropertyAssignment('shape', generateShapeAST(factory, shape!)),
+//   ]);
+
+//   return [originalPayloadArg, metadataExpression];
+// }

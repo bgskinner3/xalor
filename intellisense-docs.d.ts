@@ -1235,10 +1235,10 @@ declare global {
      * ========================================================================================
      *
      * @role
-     * The "Upstream Versioning Bridge & Migration Gate." Provides a backward-compatible
-     * runtime control-flow gate that allows distributed endpoints to safely process legacy
-     * or out-of-sync incoming payloads by validating them against historical blueprint
-     * ancestors and upcasting them to current structural specifications on the fly [Commandment IV, XII].
+     The "Upstream Versioning Bridge & Migration Gate." Provides a backward-compatible
+     runtime control-flow gate that allows distributed endpoints to safely process legacy
+     or out-of-sync incoming payloads by validating them against historical blueprint
+     ancestors and upcasting them to current structural specifications on the fly [Commandment IV, XII].
      *
      * @why
      * In an enterprise production environment, matchDrift solves the single most painful

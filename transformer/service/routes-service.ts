@@ -61,6 +61,7 @@ export class XalorRoutesService {
       isStandardInlineMode,
       isIncrementalBuild,
       isVacuumStripMode,
+      isStaticCompileGate,
     };
   }
 

@@ -10,6 +10,42 @@ import { PASS_STRATEGY_MAPPER, BOOT_MODE_STRATEGY_MAPPER } from './mappers';
 import { isGetProgram } from './utils';
 import { xalorCentralContext, XalorRoutesService } from './service';
 import type { TXalorTransformerOptions } from './types';
+// import { fsContext } from '../shared';
+// import { TSolidVaultMap, TTripleKV } from '../shared';
+
+// function seedTestVault(
+//   productionReferences: TTripleKV['references'],
+//   productionBlueprints: TTripleKV['blueprints'],
+//   productionDriftTracking: TTripleKV['driftTracking'],
+// ) {
+//   // 1. Instantiate the global container singleton structure if it hasn't booted yet
+//   if (!globalThis.__SOLID_VAULT__) {
+//     const rawMapVault: TSolidVaultMap = {
+//       driftTracking: new Map(),
+//       blueprints: new Map(),
+//       references: new Map(),
+//     };
+//     globalThis.__SOLID_VAULT__ = rawMapVault;
+//   }
+
+//   // 2. THE RESILIENCY HEALING & TYPE REFINEMENT GATES:
+//   const vault = globalThis.__SOLID_VAULT__;
+
+//   Object.keys(productionReferences).map((key) => {
+//     const ref = productionReferences[key];
+//     vault.references.set(key, ref);
+//   });
+
+//   Object.keys(productionBlueprints).map((key) => {
+//     const ref = productionBlueprints[key];
+//     vault.blueprints.set(key, ref);
+//   });
+
+//   Object.keys(productionDriftTracking).map((key) => {
+//     const ref = productionDriftTracking[key];
+//     vault.driftTracking.set(key, ref);
+//   });
+// }
 /**
  * THE ARCHITECTURAL COMPILER TRACKS SINGLE SOURCE OF TRUTH
  *
@@ -40,6 +76,8 @@ export default function xalorTransformerPlugin(
     targetedFilesCollector: new Set<string>(),
   },
 ): ts.TransformerFactory<ts.SourceFile> {
+  xalorCentralContext.seedVault();
+
   // Existing initializations...
   xalorCentralContext.setCompilationPhase(
     options.compilationPhase ?? 'STANDARD_INLINE',

@@ -9,7 +9,9 @@ import type {
   TDriftLineageEntry,
 } from '../types';
 import { XalorRoutesService } from './routes-service';
-
+import { fsContext } from '../../shared';
+import type { TTripleKV, TSolidVaultMap } from '../../shared/types';
+import { TSolidShape } from '../../shared';
 class XalorContextService {
   private static instance: XalorContextService;
   private blacklistedKeys = new Set<string>();
@@ -220,6 +222,60 @@ class XalorContextService {
   public deleteGlobalAndSession(props: TDeleteSessionRegistry) {
     this.deleteFromSessionRegistry(props);
     this.deleteFromGlobalRegistry(props.keyName);
+  }
+  // ============================================================================================
+  // GLOBAL REGISTRY STORE
+  // ============================================================================================
+  public seedVault() {
+    const { isStaticCompileGate } = XalorRoutesService.resolveXalorLifecycle();
+    if (!isStaticCompileGate) return;
+
+    const vaultContext = fsContext.ingestVaultSnapshotFromDiskSync();
+    if (!globalThis.__SOLID_VAULT__) {
+      const rawMapVault: TSolidVaultMap = {
+        driftTracking: new Map(),
+        blueprints: new Map(),
+        references: new Map(),
+        manifest: new Map(),
+        registry: new Map(),
+        errors: new Map(),
+      };
+
+      globalThis.__SOLID_VAULT__ = rawMapVault;
+    }
+    const vault = globalThis.__SOLID_VAULT__;
+    // Static definition of key relationships to completely remove manual loops
+    const targetKeys: Array<keyof TTripleKV & keyof TSolidVaultMap> = [
+      'references',
+      'blueprints',
+      'driftTracking',
+      'manifest',
+      'registry',
+    ];
+
+    // Hydrate all underlying memory registers via zero-overhead iteration
+    for (const key of targetKeys) {
+      const sourceRecord = vaultContext[key];
+      const targetMap = vault[key];
+
+      if (sourceRecord && targetMap) {
+        for (const [itemKey, itemValue] of Object.entries(sourceRecord)) {
+          targetMap.set(itemKey, itemValue);
+        }
+      }
+    }
+  }
+  public getReferenceKey(keyName: string) {
+    /* prettier-ignore */
+    const referenceKey = globalThis.__SOLID_VAULT__?.references.get(keyName);
+    if (!referenceKey) return 'unknown';
+    return referenceKey;
+  }
+  public getShapeFromGlobalVault(keyName: string): TSolidShape | null {
+    const referenceKey = this.getReferenceKey(keyName);
+    const shape = globalThis.__SOLID_VAULT__?.blueprints.get(referenceKey);
+    if (!shape) return null;
+    return shape;
   }
 
   // ============================================================================================
