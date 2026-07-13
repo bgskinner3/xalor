@@ -38,7 +38,7 @@ export class XalethorVaultKeeper {
    */
   public static solidify(rawMetadata: TSolidMetadata): void {
     const metadata = preRegisterMetadata(rawMetadata);
-    /* prettier-ignore */ console.log( `[xalor]: parse metaData ${metadata}`, { service: 'vault-keeper.ts/solidifyMeta' });
+
     /* prettier-ignore */
     const { key, reference, shape, area, filePath, symbolName, typeName, anchor } =
       metadata;

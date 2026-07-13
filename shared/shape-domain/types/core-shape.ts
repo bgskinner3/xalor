@@ -79,7 +79,7 @@ export type TSolidShape =
   | /* prettier-ignore */ { readonly kind: 'literal'; readonly type: TSolidShapeLiteralKeys; readonly value: string | number | boolean; }
   | /* prettier-ignore */ { readonly kind: 'union'; readonly values: readonly TSolidShape[]; }
   | /* prettier-ignore */ { readonly kind: 'intersection'; readonly values: readonly TSolidShape[]; }
-  | /* prettier-ignore */ { readonly kind: 'object'; readonly properties: Readonly<Record<string, TSolidObjectRawShape>>; }
+  | /* prettier-ignore */ { readonly kind: 'object'; readonly properties: Readonly<Record<string, TSolidObjectRawShape>>; readonly strict?: boolean;  }
   | /* prettier-ignore */ { readonly kind: 'array'; readonly items: TSolidShape; readonly minLength: number; readonly hasRest: boolean; readonly elementShapes?: readonly TSolidShape[]; }
   | /* prettier-ignore */ { readonly kind: 'function'; readonly parameters: readonly TSolidObjectRawShape[]; readonly returnType: TSolidShape; }
   | /* prettier-ignore */ { readonly kind: 'branded'; readonly name: string; readonly base: TSolidShape; }

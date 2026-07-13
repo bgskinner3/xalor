@@ -70,6 +70,53 @@ export const TEST_SHAPE_REGISTRY = {
       },
     },
   },
+  // ============================================================================
+  // 🔒 STRICT OBJECTS (Enforces Extra Property Rejection Guards)
+  // ============================================================================
+  STRICT_OBJECT_TEST: {
+    kind: 'object',
+    strict: true, // Evaluated by validateObject to activate extra-property scanning loops
+    properties: {
+      coreId: {
+        name: 'coreId',
+        optional: false,
+        shape: { kind: 'primitive', type: 'string' },
+      },
+      rank: {
+        name: 'rank',
+        optional: false,
+        shape: { kind: 'primitive', type: 'number' },
+      },
+    },
+  },
+
+  // ============================================================================
+  // 🛑 TUPLE BOUNDS (Enforces Index Positional Type Configurations)
+  // Sequence Contract: [string, number, boolean]
+  // ============================================================================
+  TUPLE_BOUNDS_TEST: {
+    kind: 'object',
+    properties: {
+      sequence: {
+        name: 'sequence',
+        optional: false,
+        shape: {
+          kind: 'array',
+          minLength: 3, // Locked tuple length configuration boundary
+          hasRest: false,
+          // Since tuples contain variant types per positional offset,
+          // we use your schema's elementShapes array mapping matrix.
+          elementShapes: [
+            { kind: 'primitive', type: 'string' },
+            { kind: 'primitive', type: 'number' },
+            { kind: 'primitive', type: 'boolean' },
+          ],
+          // items serves as the fallback tracker or empty never type block
+          items: { kind: 'primitive', type: 'never' },
+        },
+      },
+    },
+  },
   TRANSACTION: {
     kind: 'object',
     properties: {

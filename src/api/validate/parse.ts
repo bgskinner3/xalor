@@ -8,6 +8,10 @@ import {
   assertRegistryKey,
 } from '../../../shared/utils/guards';
 
+// 🏎️ THE ZERO-ALLOCATION BRAND CACHE MATRIX
+// Holds long-lived, pre-allocated memory pointers for your nominal tokens
+const brandTokenCache = new Map<string, [string, string]>();
+
 /**
  * RUNTIME API: VALIDATE XALOR PARSE
  *
@@ -41,9 +45,17 @@ export function validateXalorParse<K extends TActiveRegistryKeys>(
   const isValid = XalethorService.validateShapeByKey(data, injectedKey);
 
   if (isValid && isRecord(data)) {
-    Reflect.set(data, BRAND_SYMBOL, ['Solid', injectedKey]);
+    let brandToken = brandTokenCache.get(injectedKey);
+    if (!brandToken) {
+      brandToken = ['Solid', injectedKey];
+      brandTokenCache.set(injectedKey, brandToken);
+    }
 
-    if (markAsSolid<K, TResolveRegistryStructure<K>>(data)) return data;
+    Reflect.set(data, BRAND_SYMBOL, brandToken);
+
+    if (markAsSolid<K, TResolveRegistryStructure<K>>(data)) {
+      return data;
+    }
   }
 
   return XalethorService.panic(injectedKey);

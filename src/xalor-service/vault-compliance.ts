@@ -44,9 +44,7 @@ export class XalethorVaultCompliance {
   private static get vault(): TSolidVaultMap {
     return ensureGlobalVault();
   }
-  private static get errorVault(): TSolidVaultMap['errors'] | undefined {
-    return ensureGlobalVault().errors;
-  }
+
   private static getRuntimeErrorMessage(
     typeKey: TRuntimeApiErrorKeys,
     ctx: TRuntimeApiContext,
@@ -96,7 +94,9 @@ export class XalethorVaultCompliance {
     const isValid = this.validateShape(data, shape, ctx);
 
     if (!isValid) {
-      this.vault.errors?.set(key, ctx.errors);
+      this.vault.errors?.set(key, [...ctx.errors]);
+    } else {
+      this.vault.errors?.delete(key);
     }
     return isValid;
   }
@@ -151,8 +151,6 @@ export class XalethorVaultCompliance {
     const manifest = ctx.currentKey
       ? XalethorVaultKeeper.peek('manifest', ctx.currentKey)
       : undefined;
-
-    // Cleanly fall back if a headless validation bypass runs without a registration entry
     const originArea = manifest ? manifest.area : 'unknown:0:0';
     const normalizedMessage = `Validation failed at path context: "${ctx.path}": ${message}`;
 
@@ -160,7 +158,7 @@ export class XalethorVaultCompliance {
       key: ctx.currentKey || 'unknown',
       path: ctx.path,
       message: normalizedMessage,
-      expected: serialize(expected),
+      expected: typeof expected === 'string' ? expected : serialize(expected),
       received: serialize(received),
       area: runtimeCaller,
       origin: originArea,
@@ -173,12 +171,12 @@ export class XalethorVaultCompliance {
   // 🛰️ DIAGNOSTICS & AUDITING
   // ============================================================================
   public static getErrors(key: string): TSolidError[] {
-    return this.errorVault?.get(key) ?? [];
+    return this.vault.errors?.get(key) ?? [];
   }
 
   public static clearErrors(key?: string): void {
-    if (key) this.errorVault?.delete(key);
-    else this.errorVault?.clear();
+    if (key) this.vault.errors?.delete(key);
+    else this.vault.errors?.clear();
   }
 
   public static panic(key: string, customMessage?: string): never {
@@ -186,24 +184,10 @@ export class XalethorVaultCompliance {
     const finalMessage =
       report ||
       `[xalor] 🚨 ${customMessage || 'Assertion failure'} for key: ${key}`;
-    this.clearErrors(key);
+
     throw new Error(finalMessage);
   }
 
-  private static convertGourdRuleToKey(
-    rule: unknown,
-  ): rule is Uppercase<TRuntimeApiErrorRules> {
-    const runtimeConfig = RUNTIME_API_RULE_KEYS;
-    const key = ObjectUtils.entries(runtimeConfig).find(
-      ([_, value]) => value === 'missing_property',
-    )?.[0];
-
-    return (
-      !isUndefined(key) &&
-      isString(rule) &&
-      isLiteralMatch(rule.toUpperCase(), key)
-    );
-  }
   // ============================================================================
   // 🎨 RAW ANSI SOLID REPORT TEMPLATE (CENTRALIZED TO SPECTRUM)
   // ============================================================================
@@ -249,6 +233,43 @@ export class XalethorVaultCompliance {
 
     return `${header}${body}\n`;
   }
+  /**
+   * convertGourdRuleToKey
+   * Dynamically maps a lowercase snake_case rule value back to its uppercase key definition name.
+   *
+   * COMPLIANCE:
+   * - ZERO prohibited 'as' type assertions.
+   * - ZERO 'any' usage overrides.
+   * - Fully derives correctness through static type verification (Commandment IX).
+   */
+  private static convertGourdRuleToKey(
+    rule: string,
+  ): rule is TRuntimeApiErrorRules {
+    const runtimeConfig = RUNTIME_API_RULE_KEYS;
+
+    // Convert our constant dictionary object directly into a clean entries array matrix
+    const keysEntries = ObjectUtils.entries(runtimeConfig);
+    const totalEntries = keysEntries.length;
+    let discoveredMatchKey: string | undefined = undefined;
+
+    // Zero-allocation style loop to locate the structural uppercase key name mapping
+    for (let i = 0; i < totalEntries; i++) {
+      const pair = keysEntries[i];
+      if (pair !== undefined && pair[1] === rule) {
+        discoveredMatchKey = pair[0];
+        break; // Short-circuit instantly when matched
+      }
+    }
+
+    const uppercaseComparisonKey = rule.toUpperCase().replace(/_/g, '_');
+
+    return (
+      !isUndefined(discoveredMatchKey) &&
+      isString(rule) &&
+      isLiteralMatch(uppercaseComparisonKey, discoveredMatchKey)
+    );
+  }
+
   // ============================================================================
   // 🛰️ PUBLIC COMPLIANCE REPORT COMPILER (MAPPER ENRICHED)
   // ============================================================================
@@ -276,24 +297,28 @@ export class XalethorVaultCompliance {
       const err = errors[i];
       if (err !== undefined) {
         const details = this.parseErrorDetails(err);
-
         const resolvedRuleKey = this.evaluateRuleKind(err);
-        if (!this.convertGourdRuleToKey(resolvedRuleKey)) return '';
 
+        // 🚀 High-Velocity Ingress Rule Validation Guard
+        if (!this.convertGourdRuleToKey(resolvedRuleKey)) {
+          continue; // Skip individual anomalies safely without crashing the full payload report array
+        }
+        /* prettier-ignore */
+        const uppercaseComparisonKey = resolvedRuleKey.toUpperCase().replace(/_/g, '_') as TRuntimeApiErrorKeys;
         const mapperCtx = {
           path: err.path || '$.',
           expected: details.cleanExpected,
           received: details.cleanReceived,
         };
         const resolvedApiLog = this.getRuntimeErrorMessage(
-          resolvedRuleKey,
+          uppercaseComparisonKey,
           mapperCtx,
         );
+
         const humanReadableMessage = resolvedApiLog
           ? resolvedApiLog
           : `STRUCTURAL CONTRACT FAILURE: Verification failed at position '${mapperCtx.path}'.`;
 
-        // 5. Commit the fully enriched, ready-to-use data layer structures
         dynamicErrorPayload.push({
           err,
           ...details,
