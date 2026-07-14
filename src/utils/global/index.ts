@@ -4,7 +4,7 @@ import type {
   TSolidShape,
   TVaultDriftEntry,
 } from '../../../shared';
-import { executeVaultSelfHealingSeeding } from './helpers';
+import { executeVaultSelfHealingSeeding } from './self-healing-seeding';
 let isVaultFullySeeded = false;
 // ====================================================================
 /**

@@ -22,3 +22,9 @@ export type TPackageManifestContract = {
   readonly files?: readonly unknown[];
   readonly dependencies?: Readonly<Record<string, unknown>>;
 };
+export type TPathFinderOptions = {
+  /** Optional overrides for lookahead relative sub-directories (e.g., ['dist', '.xalor']). */
+  readonly targetSubDirs?: readonly string[];
+  /** Optional custom absolute starting location (defaults to process current working directory). */
+  readonly startingDirectory?: string;
+};

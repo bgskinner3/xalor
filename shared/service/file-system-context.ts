@@ -8,6 +8,7 @@ import type {
   TRecursiveReadonly,
   TRootDirBranded,
   TTripleKV,
+  TPathFinderOptions,
 } from '../types';
 import {
   IS_SOLID_CONFIG_ITEMS,
@@ -21,6 +22,8 @@ import {
   isUndefined,
   isDir,
   isTripleKVShape,
+  isString,
+  isNull,
 } from '../utils';
 import { isValidSolidShape } from '../shape-domain';
 class FileSystemContextService {
@@ -278,6 +281,117 @@ class FileSystemContextService {
       // TODO: ADD ERROR LOGGER
       return this.vaultFallback;
     }
+  }
+
+  // ================================================================================
+  // ================================================================================
+  // ADVANCED FILE SEARCH
+  // ================================================================================
+  // ================================================================================
+  /**
+   * locateRuntimeArtifactPath -- ENVIRONMENT-AGNOSTIC RECURSIVE DISCOVERY ENGINE
+   *
+   * ROLE:
+   * Dynamically traverses up the directory tree using functional recursion.
+   * Evaluates local sub-directories and structural parent steps exhaustively
+   * until the target descriptor filename is matched on disk.
+   *
+   * Complies with:
+   * - COMMANDMENT IV: Strict single semantic responsibility.
+   * - COMMANDMENT IX: Zero type escape shortcuts (No 'any', 'as', '!', or 'switch').
+   *
+   * @param fileName - Target filename layout to find on disk (e.g., 'xalor-vault.json').
+   * @param options - Custom overrides to control start directories or lookup buckets.
+   * @returns The resolved absolute filesystem path string.
+   *
+   * @example
+   * // 1. Standard Fallback Invocation (Uses process.cwd() base):
+   * const targetPath = fsContext.locateRuntimeArtifactPath('xalor-vault.json');
+   *
+   * @example
+   * // 2. Build-to-Runtime Location Context Invocation (Recommended for dist layouts):
+   * const targetPath = fsContext.locateRuntimeArtifactPath('xalor-vault.json', {
+   *   startingDirectory: fsContext.getFileLoc(import.meta.url),
+   *   targetSubDirs: ['dist', 'dist-xalor']
+   * });
+   */
+  public locateRuntimeArtifactPath(
+    fileName: string,
+    options?: TPathFinderOptions,
+  ): string {
+    if (!isString(fileName) || fileName.trim().length === 0) {
+      throw new Error(
+        'Path resolution failed: Target filename must be a valid, non-empty string.',
+      );
+    }
+
+    // Define fallback defaults cleanly upfront
+    let targetSubDirs: readonly string[] = ['dist', 'dist-xalor', '.xalor'];
+    let customStartDir = '';
+
+    // Safe parameters extraction using pure language-level safety checks
+    if (!isNull(options) && !isUndefined(options)) {
+      if (
+        !isNull(options.targetSubDirs) &&
+        !isUndefined(options.targetSubDirs)
+      ) {
+        targetSubDirs = options.targetSubDirs;
+      }
+      if (isString(options.startingDirectory)) {
+        customStartDir = options.startingDirectory;
+      }
+    }
+
+    // Establish base directory context using process.cwd() or explicit service preferences
+    // Uses 'this.resolvePath' instead of loose path hooks to enforce class state isolation.
+    const runtimeStartDir: string =
+      customStartDir.trim().length > 0
+        ? this.resolvePath(customStartDir)
+        : this.resolvePath(process.cwd());
+
+    // Kick off the recursion engine bound to this instance context
+    const resolvedArtifactPath: string = this.findPathRecursive(
+      runtimeStartDir,
+      fileName,
+      targetSubDirs,
+    );
+
+    // Testing & Runtime Discovery Observability Log
+    console.log(
+      `\x1b[35m🔍 [Xalor Path Finder] Discovery complete! Target file: "${fileName}" -> Resolved absolute path: [${resolvedArtifactPath}]\x1b[0m`,
+    );
+
+    return resolvedArtifactPath;
+  }
+  private findPathRecursive(
+    currentDir: string,
+    fileName: string,
+    targetSubDirs: readonly string[],
+  ): string {
+    const totalSubDirs = targetSubDirs.length;
+    for (let i = 0; i < totalSubDirs; i++) {
+      const subDir = targetSubDirs[i];
+      if (isString(subDir)) {
+        const structuralTarget = this.resolvePath(currentDir, subDir, fileName);
+        if (this.fileExists(structuralTarget)) {
+          return structuralTarget;
+        }
+      }
+    }
+
+    const immediateTarget = this.resolvePath(currentDir, fileName);
+    if (this.fileExists(immediateTarget)) return immediateTarget;
+
+    const upperDirectory = this.resolvePath(currentDir, '..');
+
+    if (upperDirectory === currentDir) {
+      throw new Error(
+        `Runtime filesystem resolution failed: Target artifact "${fileName}" could not be located inside execution context.`,
+      );
+    }
+
+    // Tail-Recursive Step: Pass state forward cleanly via instance inheritance
+    return this.findPathRecursive(upperDirectory, fileName, targetSubDirs);
   }
 }
 
