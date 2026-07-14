@@ -1,4 +1,11 @@
 {
+  "header": {
+    "id": "intro",
+    "header": "Validation Benchmarks",
+    "description": "Performance comparisons across complex data validation workloads, measuring execution time, latency distribution, and memory allocation.",
+    "overline": "Runtime Performance",
+    "iconName": "terminal-duotone"
+  },
   "systemMetadata": {
     "clockSpeed": "~3.26 GHz",
     "processor": "Apple M2 Pro",
@@ -6,518 +13,859 @@
     "runtime": "Node 22.13.1"
   },
   "benchmarks": {
-    "boot_initialization_penalty": {
-      "header": "Macro Pipeline: Complex Customer Order Graph Assembly + Execution",
-      "description": "Measures the initial cold startup overhead, script evaluation, context generation, and first-item execution tracks under strict cache-eviction environments.",
-      "underlyingMechanics": "Zod links structural closures inside the runtime thread. Typia bypasses macro operations but incurs V8 file registry thrashing due to continuous filesystem cache-busting imports. Xalor pulls structural tokens synchronously from an AOT JSON blueprint file and streams individual AST nodes into an active global vault map.",
+    "bootInitializationPenalty": {
+      "id": "bootInitializationPenalty",
+      "header": "Cold Start Initialization Benchmark",
+      "description": "Measures startup overhead when loading validation systems for the first execution, including initialization cost, schema preparation, and initial validation latency.",
+      "category": "Initialization Performance",
+      "note": "Evaluates first-run execution in a fresh runtime environment before caching and runtime optimizations take effect.",
       "scenarios": {
-        "cold_start_evaluation": {
+        "coldStartEvaluation": {
           "zod": {
-            "avg": "410.56 µs/iter",
-            "p75": "388.13 µs",
-            "p99": "1.52 ms",
-            "min": "283.88 µs",
-            "max": "3.02 ms",
-            "heapAllocated": "516.93 kb"
+            "latency": {
+              "avg": { "value": 410560, "display": "410.56 µs/iter" },
+              "p75": { "value": 388130, "display": "388.13 µs" },
+              "p99": { "value": 1520000, "display": "1.52 ms" },
+              "min": { "value": 283880, "display": "283.88 µs" },
+              "max": { "value": 3020000, "display": "3.02 ms" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 529336, "display": "516.93 kb" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "1.21 ms/iter",
-            "p75": "1.21 ms",
-            "p99": "2.05 ms",
-            "min": "1.09 ms",
-            "max": "3.56 ms",
-            "heapAllocated": "388.31 kb"
+            "latency": {
+              "avg": { "value": 1210000, "display": "1.21 ms/iter" },
+              "p75": { "value": 1210000, "display": "1.21 ms" },
+              "p99": { "value": 2050000, "display": "2.05 ms" },
+              "min": { "value": 1090000, "display": "1.09 ms" },
+              "max": { "value": 3560000, "display": "3.56 ms" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 397629, "display": "388.31 kb" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "356.29 ns/iter",
-            "p75": "334.00 ns",
-            "p99": "625.00 ns",
-            "min": "208.00 ns",
-            "max": "169.92 µs",
-            "heapAllocated": "2.73 kb"
-          },
-          "performanceAnalysis": "Xalor registers a low bootstrap footprint (~356 ns), outperforming runtime dynamic parsers by up to 1,000x on initial evaluation tracks. This occurs because Xalor relies entirely on raw synchronous string extractions to populate its layout, avoiding heavy JavaScript prototype linking loops or dynamic code evaluation cycles entirely."
+            "latency": {
+              "avg": { "value": 356.29, "display": "356.29 ns/iter" },
+              "p75": { "value": 334, "display": "334.00 ns" },
+              "p99": { "value": 625, "display": "625.00 ns" },
+              "min": { "value": 208, "display": "208.00 ns" },
+              "max": { "value": 169920, "display": "169.92 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2796, "display": "2.73 kb" },
+              "unit": "bytes"
+            }
+          }
         }
       }
     },
-    "customer_order_graph": {
-      "header": "Throughput Suite: Complex Customer Order Array",
-      "description": "Evaluates heavy nested objects containing polymorphic elements, structured array matrix pools, and explicit dictionary mappings.",
-      "underlyingMechanics": "Zod dynamically jumps across context closure boundaries at runtime. Typia strips validation structures into unrolled inline expression blocks. Xalor queries incoming payload shapes directly against its compiled internal memory-vault blueprints.",
+    "customerOrderGraph": {
+      "id": "customerOrderGraph",
+      "header": "Complex Customer Order Validation Benchmark",
+      "description": "Measures validation performance on deeply nested order objects containing item arrays, shipping details, metadata records, enums, and timestamp fields.",
+      "category": "Complex Object Validation",
+      "note": "Evaluates both successful validation throughput and malformed payload rejection across realistic transaction data.",
       "scenarios": {
-        "valid_shape": {
+        "validShape": {
           "zod": {
-            "avg": "988.46 ns/iter",
-            "p75": "750.00 ns",
-            "p99": "3.42 µs",
-            "min": "625.00 ns",
-            "max": "3.00 ms",
-            "heapAllocated": "3.01 kb"
+            "latency": {
+              "avg": { "value": 988.46, "display": "988.46 ns/iter" },
+              "p75": { "value": 750, "display": "750.00 ns" },
+              "p99": { "value": 3420, "display": "3.42 µs" },
+              "min": { "value": 625, "display": "625.00 ns" },
+              "max": { "value": 3000000, "display": "3.00 ms" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 3082, "display": "3.01 kb" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "131.00 ns/iter",
-            "p75": "129.86 ns",
-            "p99": "159.94 ns",
-            "min": "125.03 ns",
-            "max": "460.40 ns",
-            "heapAllocated": "328.78 b"
+            "latency": {
+              "avg": { "value": 131, "display": "131.00 ns/iter" },
+              "p75": { "value": 129.86, "display": "129.86 ns" },
+              "p99": { "value": 159.94, "display": "159.94 ns" },
+              "min": { "value": 125.03, "display": "125.03 ns" },
+              "max": { "value": 460.4, "display": "460.40 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 329, "display": "328.78 b" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "353.29 ns/iter",
-            "p75": "334.00 ns",
-            "p99": "500.00 ns",
-            "min": "250.00 ns",
-            "max": "153.29 µs",
-            "heapAllocated": "2.71 kb"
-          },
-          "performanceAnalysis": "Typia completes execution on valid shapes fastest due to its pre-compiled logical inline branches. Xalor scales predictably at 353.29 ns, demonstrating structural speed over Zod by eliminating dynamic runtime schema parsing hops. Xalor incurs a flat allocation cost of 2.71 kb to maintain active tracking metrics inside the memory engine."
+            "latency": {
+              "avg": { "value": 353.29, "display": "353.29 ns/iter" },
+              "p75": { "value": 334, "display": "334.00 ns" },
+              "p99": { "value": 500, "display": "500.00 ns" },
+              "min": { "value": 250, "display": "250.00 ns" },
+              "max": { "value": 153290, "display": "153.29 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2775, "display": "2.71 kb" },
+              "unit": "bytes"
+            }
+          }
         },
-        "malformed_rejection": {
+        "malformedRejection": {
           "zod": {
-            "avg": "12.88 µs/iter",
-            "p75": "11.79 µs",
-            "p99": "22.33 µs",
-            "min": "9.21 µs",
-            "max": "1.77 ms",
-            "heapAllocated": "12.90 kb"
+            "latency": {
+              "avg": { "value": 12880, "display": "12.88 µs/iter" },
+              "p75": { "value": 11790, "display": "11.79 µs" },
+              "p99": { "value": 22330, "display": "22.33 µs" },
+              "min": { "value": 9210, "display": "9.21 µs" },
+              "max": { "value": 1770000, "display": "1.77 ms" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 13210, "display": "12.90 kb" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "761.13 ns/iter",
-            "p75": "765.84 ns",
-            "p99": "857.32 ns",
-            "min": "716.48 ns",
-            "max": "1.27 µs",
-            "heapAllocated": "2.81 kb"
+            "latency": {
+              "avg": { "value": 761.13, "display": "761.13 ns/iter" },
+              "p75": { "value": 765.84, "display": "765.84 ns" },
+              "p99": { "value": 857.32, "display": "857.32 ns" },
+              "min": { "value": 716.48, "display": "716.48 ns" },
+              "max": { "value": 1270, "display": "1.27 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2880, "display": "2.81 kb" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "284.33 ns/iter",
-            "p75": "289.85 ns",
-            "p99": "322.09 ns",
-            "min": "264.24 ns",
-            "max": "341.12 ns",
-            "heapAllocated": "2.65 kb"
-          },
-          "performanceAnalysis": "Xalor blocks the malformed payload in 284.33 ns, outperforming Zod's exception handling routine by 45x. While Zod structures a massive error map tree that flags a high heap overhead of 12.90 kb, Xalor catches validation discrepancies immediately at the outer perimeter of the blueprint engine and drops bad properties without triggering heavy engine context shifts."
+            "latency": {
+              "avg": { "value": 284.33, "display": "284.33 ns/iter" },
+              "p75": { "value": 289.85, "display": "289.85 ns" },
+              "p99": { "value": 322.09, "display": "322.09 ns" },
+              "min": { "value": 264.24, "display": "264.24 ns" },
+              "max": { "value": 341.12, "display": "341.12 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2714, "display": "2.65 kb" },
+              "unit": "bytes"
+            }
+          }
         }
       }
     },
-    "heavy_telemetry_matrix": {
-      "header": "Throughput Suite: Heavy Telemetry Packet Matrix",
-      "description": "Stresses wide numerical structures containing arbitrary BigInt bits, floating-point loads, and complex explicit constraints.",
-      "underlyingMechanics": "Zod steps through objects field-by-field using generic structural functional logic. Typia unrolls validation into flat JavaScript conditionals. Xalor tracks field layouts using specialized in-memory validation tables.",
+    "heavyTelemetryMatrix": {
+      "id": "heavyTelemetryMatrix",
+      "header": "Heavy Telemetry Packet Validation Benchmark",
+      "description": "Measures validation performance on wide telemetry payloads containing nested metrics, numeric constraints, BigInt counters, and device status fields.",
+      "category": "Structured Data Validation",
+      "note": "Tests high-volume machine data validation across hardware metrics, network statistics, and constrained numeric fields.",
+
       "scenarios": {
-        "valid_shape": {
+        "validShape": {
           "zod": {
-            "avg": "242.10 ns/iter",
-            "p75": "186.17 ns",
-            "p99": "679.59 ns",
-            "min": "156.31 ns",
-            "max": "1.39 µs",
-            "heapAllocated": "719.70 b"
+            "latency": {
+              "avg": { "value": 242.1, "display": "242.10 ns/iter" },
+              "p75": { "value": 186.17, "display": "186.17 ns" },
+              "p99": { "value": 679.59, "display": "679.59 ns" },
+              "min": { "value": 156.31, "display": "156.31 ns" },
+              "max": { "value": 1390, "display": "1.39 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 737, "display": "719.70 b" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "9.29 ns/iter",
-            "p75": "9.35 ns",
-            "p99": "11.27 ns",
-            "min": "8.94 ns",
-            "max": "18.13 ns",
-            "heapAllocated": "0.16 b"
+            "latency": {
+              "avg": { "value": 9.29, "display": "9.29 ns/iter" },
+              "p75": { "value": 9.35, "display": "9.35 ns" },
+              "p99": { "value": 11.27, "display": "11.27 ns" },
+              "min": { "value": 8.94, "display": "8.94 ns" },
+              "max": { "value": 18.13, "display": "18.13 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 0.16, "display": "0.16 b" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "278.60 ns/iter",
-            "p75": "284.04 ns",
-            "p99": "313.77 ns",
-            "min": "259.91 ns",
-            "max": "356.00 ns",
-            "heapAllocated": "2.65 kb"
-          },
-          "performanceAnalysis": "Typia processes telemetry counters near native execution speeds (~9.29 ns). Xalor maps the dataset at a consistent pace of 278.60 ns, avoiding latency spikes. This highlights Xalor's reliability when parsing distinct scalar properties, such as 64-bit BigInt items, compared to Zod's dynamic traversal routines."
+            "latency": {
+              "avg": { "value": 278.6, "display": "278.60 ns/iter" },
+              "p75": { "value": 284.04, "display": "284.04 ns" },
+              "p99": { "value": 313.77, "display": "313.77 ns" },
+              "min": { "value": 259.91, "display": "259.91 ns" },
+              "max": { "value": 356, "display": "356.00 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2714, "display": "2.65 kb" },
+              "unit": "bytes"
+            }
+          }
         },
-        "malformed_rejection": {
+        "malformedRejection": {
           "zod": {
-            "avg": "12.47 µs/iter",
-            "p75": "12.30 µs",
-            "p99": "13.60 µs",
-            "min": "11.75 µs",
-            "max": "14.86 µs",
-            "heapAllocated": "5.65 kb"
+            "latency": {
+              "avg": { "value": 12470, "display": "12.47 µs/iter" },
+              "p75": { "value": 12300, "display": "12.30 µs" },
+              "p99": { "value": 13600, "display": "13.60 µs" },
+              "min": { "value": 11750, "display": "11.75 µs" },
+              "max": { "value": 14860, "display": "14.86 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 5786, "display": "5.65 kb" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "556.97 ns/iter",
-            "p75": "569.34 ns",
-            "p99": "587.16 ns",
-            "min": "526.92 ns",
-            "max": "659.47 ns",
-            "heapAllocated": "2.10 kb"
+            "latency": {
+              "avg": { "value": 556.97, "display": "556.97 ns/iter" },
+              "p75": { "value": 569.34, "display": "569.34 ns" },
+              "p99": { "value": 587.16, "display": "587.16 ns" },
+              "min": { "value": 526.92, "display": "526.92 ns" },
+              "max": { "value": 659.47, "display": "659.47 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2150, "display": "2.10 kb" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "277.46 ns/iter",
-            "p75": "283.45 ns",
-            "p99": "301.70 ns",
-            "min": "259.26 ns",
-            "max": "313.85 ns",
-            "heapAllocated": "2.65 kb"
-          },
-          "performanceAnalysis": "Xalor blocks malformed telemetry inputs in 277.46 ns, surpassing Typia’s full validation routine and running 44x faster than Zod. Because Xalor leverages an pre-compiled structure layout to isolate mismatches, it bypasses the processing delays caused by generating runtime diagnostic logs."
+            "latency": {
+              "avg": { "value": 277.46, "display": "277.46 ns/iter" },
+              "p75": { "value": 283.45, "display": "283.45 ns" },
+              "p99": { "value": 301.7, "display": "301.70 ns" },
+              "min": { "value": 259.26, "display": "259.26 ns" },
+              "max": { "value": 313.85, "display": "313.85 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2714, "display": "2.65 kb" },
+              "unit": "bytes"
+            }
+          }
         }
       }
     },
-    "app_config_registry": {
-      "header": "Throughput Suite: App Config Registry Maps",
-      "description": "Tests validation performance when inspecting complex collections, dictionary indices, and literal configurations.",
-      "underlyingMechanics": "Zod routes dynamic objects through broad array scanning loops. Typia builds distinct checks tailored to prototype keys. Xalor queries active configuration parameters against its compiled global state layout.",
+    "appConfigRegistry": {
+      "id": "appConfigRegistry",
+      "header": "Application Configuration Validation Benchmark",
+      "description": "Measures validation performance on structured application configuration objects containing feature flags, connection settings, environment constraints, and typed collections.",
+      "category": "Configuration Validation",
+      "note": "Tests validation of runtime configuration data including maps, nested connection settings, and constrained deployment parameters.",
       "scenarios": {
-        "valid_shape": {
+        "validShape": {
           "zod": {
-            "avg": "219.52 ns/iter",
-            "p75": "352.35 ns",
-            "p99": "566.24 ns",
-            "min": "141.82 ns",
-            "max": "1.34 µs",
-            "heapAllocated": "978.48 b"
+            "latency": {
+              "avg": { "value": 219.52, "display": "219.52 ns/iter" },
+              "p75": { "value": 352.35, "display": "352.35 ns" },
+              "p99": { "value": 566.24, "display": "566.24 ns" },
+              "min": { "value": 141.82, "display": "141.82 ns" },
+              "max": { "value": 1340, "display": "1.34 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 1002, "display": "978.48 b" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "85.96 ns/iter",
-            "p75": "84.20 ns",
-            "p99": "113.69 ns",
-            "min": "78.16 ns",
-            "max": "562.69 ns",
-            "heapAllocated": "648.05 b"
+            "latency": {
+              "avg": { "value": 85.96, "display": "85.96 ns/iter" },
+              "p75": { "value": 84.2, "display": "84.20 ns" },
+              "p99": { "value": 113.69, "display": "113.69 ns" },
+              "min": { "value": 78.16, "display": "78.16 ns" },
+              "max": { "value": 562.69, "display": "562.69 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 664, "display": "648.05 b" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "270.81 ns/iter",
-            "p75": "275.93 ns",
-            "p99": "308.71 ns",
-            "min": "246.67 ns",
-            "max": "811.92 ns",
-            "heapAllocated": "2.65 kb"
-          },
-          "performanceAnalysis": "Typia resolves system map variables efficiently in 85.96 ns. Xalor maps configuration objects reliably at 270.81 ns, demonstrating predictable throughput curves across the entire testing cycle and keeping maximum bounds lower than Zod’s 1.34 µs ceiling."
+            "latency": {
+              "avg": { "value": 270.81, "display": "270.81 ns/iter" },
+              "p75": { "value": 275.93, "display": "275.93 ns" },
+              "p99": { "value": 308.71, "display": "308.71 ns" },
+              "min": { "value": 246.67, "display": "246.67 ns" },
+              "max": { "value": 811.92, "display": "811.92 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2714, "display": "2.65 kb" },
+              "unit": "bytes"
+            }
+          }
         },
-        "malformed_rejection": {
+        "malformedRejection": {
           "zod": {
-            "avg": "10.11 µs/iter",
-            "p75": "10.27 µs",
-            "p99": "10.48 µs",
-            "min": "9.82 µs",
-            "max": "10.50 µs",
-            "heapAllocated": "3.35 kb"
+            "latency": {
+              "avg": { "value": 10110, "display": "10.11 µs/iter" },
+              "p75": { "value": 10270, "display": "10.27 µs" },
+              "p99": { "value": 10480, "display": "10.48 µs" },
+              "min": { "value": 9820, "display": "9.82 µs" },
+              "max": { "value": 10500, "display": "10.50 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 3430, "display": "3.35 kb" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "123.67 ns/iter",
-            "p75": "135.30 ns",
-            "p99": "151.88 ns",
-            "min": "110.81 ns",
-            "max": "884.01 ns",
-            "heapAllocated": "1.18 kb"
+            "latency": {
+              "avg": { "value": 123.67, "display": "123.67 ns/iter" },
+              "p75": { "value": 135.3, "display": "135.30 ns" },
+              "p99": { "value": 151.88, "display": "151.88 ns" },
+              "min": { "value": 110.81, "display": "110.81 ns" },
+              "max": { "value": 884.01, "display": "884.01 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 1208, "display": "1.18 kb" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "266.15 ns/iter",
-            "p75": "273.68 ns",
-            "p99": "288.13 ns",
-            "min": "244.76 ns",
-            "max": "310.81 ns",
-            "heapAllocated": "2.65 kb"
-          },
-          "performanceAnalysis": "Xalor intercepts invalid environment configurations in 266.15 ns. While Zod spends execution cycles building comprehensive error objects, Xalor isolates the invalid properties instantly, maintaining a flat memory layout of 2.65 kb."
+            "latency": {
+              "avg": { "value": 266.15, "display": "266.15 ns/iter" },
+              "p75": { "value": 273.68, "display": "273.68 ns" },
+              "p99": { "value": 288.13, "display": "288.13 ns" },
+              "min": { "value": 244.76, "display": "244.76 ns" },
+              "max": { "value": 310.81, "display": "310.81 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2714, "display": "2.65 kb" },
+              "unit": "bytes"
+            }
+          }
         }
       }
     },
-    "core_product_sku": {
-      "header": "Throughput Suite: Core Product SKU Matrix",
-      "description": "Evaluates short flat objects containing string keywords, numerical parameters, and simple boolean flags.",
-      "underlyingMechanics": "Zod routes data properties through micro-closures. Typia generates highly optimized, flat conditional statements. Xalor matches flat structures against its internal map index table.",
+    "coreProductSku": {
+      "id": "coreProductSku",
+      "header": "Core Product Validation Benchmark",
+      "description": "Measures validation performance on small flat product objects containing primitive fields, numeric values, boolean states, and tag collections.",
+      "category": "Primitive Object Validation",
+      "note": "Provides a baseline workload for validating simple application data structures with minimal nesting.",
       "scenarios": {
-        "valid_shape": {
+        "validShape": {
           "zod": {
-            "avg": "153.72 ns/iter",
-            "p75": "262.88 ns",
-            "p99": "541.73 ns",
-            "min": "91.95 ns",
-            "max": "1.13 µs",
-            "heapAllocated": "928.46 b"
+            "latency": {
+              "avg": { "value": 153.72, "display": "153.72 ns/iter" },
+              "p75": { "value": 262.88, "display": "262.88 ns" },
+              "p99": { "value": 541.73, "display": "541.73 ns" },
+              "min": { "value": 91.95, "display": "91.95 ns" },
+              "max": { "value": 1130, "display": "1.13 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 928.46, "display": "928.46 b" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "4.99 ns/iter",
-            "p75": "4.92 ns",
-            "p99": "7.26 ns",
-            "min": "4.85 ns",
-            "max": "19.61 ns",
-            "heapAllocated": "0.14 b"
+            "latency": {
+              "avg": { "value": 4.99, "display": "4.99 ns/iter" },
+              "p75": { "value": 4.92, "display": "4.92 ns" },
+              "p99": { "value": 7.26, "display": "7.26 ns" },
+              "min": { "value": 4.85, "display": "4.85 ns" },
+              "max": { "value": 19.61, "display": "19.61 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 0.14, "display": "0.14 b" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "278.27 ns/iter",
-            "p75": "282.87 ns",
-            "p99": "317.81 ns",
-            "min": "259.52 ns",
-            "max": "339.20 ns",
-            "heapAllocated": "2.65 kb"
-          },
-          "performanceAnalysis": "Typia processes flat records in ~5 ns by allowing the V8 compiler to easily optimize the path. Xalor completes the validation pass in 278.27 ns. While this is slower than Typia’s unrolled code, Xalor avoids the 1.13 µs maximum latency spike observed with Zod."
+            "latency": {
+              "avg": { "value": 278.27, "display": "278.27 ns/iter" },
+              "p75": { "value": 282.87, "display": "282.87 ns" },
+              "p99": { "value": 317.81, "display": "317.81 ns" },
+              "min": { "value": 259.52, "display": "259.52 ns" },
+              "max": { "value": 339.2, "display": "339.20 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
+              "unit": "bytes"
+            }
+          }
         },
-        "malformed_rejection": {
+
+        "malformedRejection": {
           "zod": {
-            "avg": "10.54 µs/iter",
-            "p75": "10.60 µs",
-            "p99": "10.77 µs",
-            "min": "10.38 µs",
-            "max": "10.77 µs",
-            "heapAllocated": "4.43 kb"
+            "latency": {
+              "avg": { "value": 10540, "display": "10.54 µs/iter" },
+              "p75": { "value": 10600, "display": "10.60 µs" },
+              "p99": { "value": 10770, "display": "10.77 µs" },
+              "min": { "value": 10380, "display": "10.38 µs" },
+              "max": { "value": 10770, "display": "10.77 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 4536.32, "display": "4.43 kb" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "500.57 ns/iter",
-            "p75": "566.57 ns",
-            "p99": "1.36 µs",
-            "min": "322.30 ns",
-            "max": "1.89 µs",
-            "heapAllocated": "1.61 kb"
+            "latency": {
+              "avg": { "value": 500.57, "display": "500.57 ns/iter" },
+              "p75": { "value": 566.57, "display": "566.57 ns" },
+              "p99": { "value": 1360, "display": "1.36 µs" },
+              "min": { "value": 322.3, "display": "322.30 ns" },
+              "max": { "value": 1890, "display": "1.89 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 1648.64, "display": "1.61 kb" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "279.33 ns/iter",
-            "p75": "284.89 ns",
-            "p99": "315.09 ns",
-            "min": "254.38 ns",
-            "max": "337.94 ns",
-            "heapAllocated": "2.65 kb"
-          },
-          "performanceAnalysis": "Xalor flags invalid string names and bad tags in 279.33 ns, outperforming Typia's validation routine by 44% and Zod by 37x. Xalor's underlying blueprint architecture processes data anomalies uniformly, preventing performance degradation."
+            "latency": {
+              "avg": { "value": 279.33, "display": "279.33 ns/iter" },
+              "p75": { "value": 284.89, "display": "284.89 ns" },
+              "p99": { "value": 315.09, "display": "315.09 ns" },
+              "min": { "value": 254.38, "display": "254.38 ns" },
+              "max": { "value": 337.94, "display": "337.94 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
+              "unit": "bytes"
+            }
+          }
         }
       }
     },
-    "access_session_matrix": {
-      "header": "Throughput Suite: Access Session Matrix",
-      "description": "Verifies session structures with explicit security strings, UUID token layouts, and network tracking addresses.",
-      "underlyingMechanics": "Zod evaluates pattern constraints through functional regular expression logic. Typia runs inline string comparisons. Xalor parses keys directly through its layout schema table.",
+    "accessSessionMatrix": {
+      "id": "accessSessionMatrix",
+      "header": "Access Session Validation Benchmark",
+      "description": "Measures validation performance on authentication session objects containing identity fields, UUID tokens, network addresses, expiration timestamps, and security state flags.",
+      "category": "Security Data Validation",
+      "note": "Tests runtime validation of session payloads commonly used in authentication and access control workflows.",
+
       "scenarios": {
-        "valid_shape": {
+        "validShape": {
           "zod": {
-            "avg": "133.84 ns/iter",
-            "p75": "94.58 ns",
-            "p99": "376.09 ns",
-            "min": "85.49 ns",
-            "max": "1.03 µs",
-            "heapAllocated": "624.68 b"
+            "latency": {
+              "avg": { "value": 133.84, "display": "133.84 ns/iter" },
+              "p75": { "value": 94.58, "display": "94.58 ns" },
+              "p99": { "value": 376.09, "display": "376.09 ns" },
+              "min": { "value": 85.49, "display": "85.49 ns" },
+              "max": { "value": 1030, "display": "1.03 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 624.68, "display": "624.68 b" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "89.12 ns/iter",
-            "p75": "88.90 ns",
-            "p99": "105.72 ns",
-            "min": "85.63 ns",
-            "max": "221.13 ns",
-            "heapAllocated": "0.38 b"
+            "latency": {
+              "avg": { "value": 89.12, "display": "89.12 ns/iter" },
+              "p75": { "value": 88.9, "display": "88.90 ns" },
+              "p99": { "value": 105.72, "display": "105.72 ns" },
+              "min": { "value": 85.63, "display": "85.63 ns" },
+              "max": { "value": 221.13, "display": "221.13 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 0.38, "display": "0.38 b" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "282.36 ns/iter",
-            "p75": "287.69 ns",
-            "p99": "318.66 ns",
-            "min": "264.11 ns",
-            "max": "341.96 ns",
-            "heapAllocated": "2.65 kb"
-          },
-          "performanceAnalysis": "Typia processes session parameters fastest at 89.12 ns. Xalor processes the layout table in 282.36 ns, keeping execution times consistent and avoiding the 1.03 µs maximum latency spike seen under Zod."
+            "latency": {
+              "avg": { "value": 282.36, "display": "282.36 ns/iter" },
+              "p75": { "value": 287.69, "display": "287.69 ns" },
+              "p99": { "value": 318.66, "display": "318.66 ns" },
+              "min": { "value": 264.11, "display": "264.11 ns" },
+              "max": { "value": 341.96, "display": "341.96 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
+              "unit": "bytes"
+            }
+          }
         },
-        "malformed_rejection": {
+
+        "malformedRejection": {
           "zod": {
-            "avg": "11.29 µs/iter",
-            "p75": "11.36 µs",
-            "p99": "11.43 µs",
-            "min": "11.12 µs",
-            "max": "11.53 µs",
-            "heapAllocated": "4.11 kb"
+            "latency": {
+              "avg": { "value": 11290, "display": "11.29 µs/iter" },
+              "p75": { "value": 11360, "display": "11.36 µs" },
+              "p99": { "value": 11430, "display": "11.43 µs" },
+              "min": { "value": 11120, "display": "11.12 µs" },
+              "max": { "value": 11530, "display": "11.53 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 4208.64, "display": "4.11 kb" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "549.72 ns/iter",
-            "p75": "563.36 ns",
-            "p99": "579.40 ns",
-            "min": "521.52 ns",
-            "max": "618.52 ns",
-            "heapAllocated": "1.71 kb"
+            "latency": {
+              "avg": { "value": 549.72, "display": "549.72 ns/iter" },
+              "p75": { "value": 563.36, "display": "563.36 ns" },
+              "p99": { "value": 579.4, "display": "579.40 ns" },
+              "min": { "value": 521.52, "display": "521.52 ns" },
+              "max": { "value": 618.52, "display": "618.52 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 1751.04, "display": "1.71 kb" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "281.10 ns/iter",
-            "p75": "286.99 ns",
-            "p99": "308.85 ns",
-            "min": "262.68 ns",
-            "max": "322.36 ns",
-            "heapAllocated": "2.65 kb"
-          },
-          "performanceAnalysis": "Xalor identifies invalid IP and malformed UUID values in 281.10 ns. By checking structural layouts through a flat map index, Xalor bypasses the memory allocation costs of runtime error tracking utilities."
+            "latency": {
+              "avg": { "value": 281.1, "display": "281.10 ns/iter" },
+              "p75": { "value": 286.99, "display": "286.99 ns" },
+              "p99": { "value": 308.85, "display": "308.85 ns" },
+              "min": { "value": 262.68, "display": "262.68 ns" },
+              "max": { "value": 322.36, "display": "322.36 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
+              "unit": "bytes"
+            }
+          }
         }
       }
     },
-    "warehouse_inventory_bins": {
-      "header": "Throughput Suite: Warehouse Inventory Bins",
-      "description": "Processes inventory logistics data consisting of facility identifiers and array listings of storage structures.",
-      "underlyingMechanics": "Zod processes validation loops dynamically across arrays. Typia runs array loops inline using plain JavaScript loop optimization steps. Xalor queries active inventory structural layouts against its global state table.",
+    "warehouseInventoryBins": {
+      "id": "warehouseInventoryBins",
+      "header": "Warehouse Inventory Validation Benchmark",
+      "description": "Measures validation performance on warehouse inventory records containing facility metadata, storage bin collections, numeric capacity constraints, and operational status fields.",
+      "category": "Operational Data Validation",
+      "note": "Tests validation of structured logistics data with nested collections and repeated inventory item records.",
       "scenarios": {
-        "valid_shape": {
+        "validShape": {
           "zod": {
-            "avg": "409.62 ns/iter",
-            "p75": "485.55 ns",
-            "p99": "1.14 µs",
-            "min": "261.14 ns",
-            "max": "1.82 µs",
-            "heapAllocated": "1.91 kb"
+            "latency": {
+              "avg": { "value": 409.62, "display": "409.62 ns/iter" },
+              "p75": { "value": 485.55, "display": "485.55 ns" },
+              "p99": { "value": 1140, "display": "1.14 µs" },
+              "min": { "value": 261.14, "display": "261.14 ns" },
+              "max": { "value": 1820, "display": "1.82 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 1955.84, "display": "1.91 kb" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "13.34 ns/iter",
-            "p75": "12.88 ns",
-            "p99": "36.20 ns",
-            "min": "12.33 ns",
-            "max": "119.24 ns",
-            "heapAllocated": "56.12 b"
+            "latency": {
+              "avg": { "value": 13.34, "display": "13.34 ns/iter" },
+              "p75": { "value": 12.88, "display": "12.88 ns" },
+              "p99": { "value": 36.2, "display": "36.20 ns" },
+              "min": { "value": 12.33, "display": "12.33 ns" },
+              "max": { "value": 119.24, "display": "119.24 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 56.12, "display": "56.12 b" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "277.93 ns/iter",
-            "p75": "286.53 ns",
-            "p99": "314.11 ns",
-            "min": "253.26 ns",
-            "max": "328.17 ns",
-            "heapAllocated": "2.65 kb"
-          },
-          "performanceAnalysis": "Typia processes array values cleanly in 13.34 ns. Xalor evaluates list structures in 277.93 ns. It eliminates the 1.91 kb per-iteration heap overhead seen with Zod, which maintains an average speed floor of 409.62 ns."
+            "latency": {
+              "avg": { "value": 277.93, "display": "277.93 ns/iter" },
+              "p75": { "value": 286.53, "display": "286.53 ns" },
+              "p99": { "value": 314.11, "display": "314.11 ns" },
+              "min": { "value": 253.26, "display": "253.26 ns" },
+              "max": { "value": 328.17, "display": "328.17 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
+              "unit": "bytes"
+            }
+          }
         },
-        "malformed_rejection": {
+
+        "malformedRejection": {
           "zod": {
-            "avg": "12.16 µs/iter",
-            "p75": "12.20 µs",
-            "p99": "12.33 µs",
-            "min": "11.99 µs",
-            "max": "12.33 µs",
-            "heapAllocated": "4.65 kb"
+            "latency": {
+              "avg": { "value": 12160, "display": "12.16 µs/iter" },
+              "p75": { "value": 12200, "display": "12.20 µs" },
+              "p99": { "value": 12330, "display": "12.33 µs" },
+              "min": { "value": 11990, "display": "11.99 µs" },
+              "max": { "value": 12330, "display": "12.33 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 4761.6, "display": "4.65 kb" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "572.32 ns/iter",
-            "p75": "581.22 ns",
-            "p99": "627.85 ns",
-            "min": "539.38 ns",
-            "max": "845.28 ns",
-            "heapAllocated": "2.41 kb"
+            "latency": {
+              "avg": { "value": 572.32, "display": "572.32 ns/iter" },
+              "p75": { "value": 581.22, "display": "581.22 ns" },
+              "p99": { "value": 627.85, "display": "627.85 ns" },
+              "min": { "value": 539.38, "display": "539.38 ns" },
+              "max": { "value": 845.28, "display": "845.28 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2467.84, "display": "2.41 kb" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "283.31 ns/iter",
-            "p75": "293.27 ns",
-            "p99": "321.33 ns",
-            "min": "253.55 ns",
-            "max": "337.77 ns",
-            "heapAllocated": "2.65 kb"
-          },
-          "performanceAnalysis": "Xalor blocks bad hazard classes and invalid capacities in 283.31 ns, processing rejections twice as fast as Typia and 42x faster than Zod. Xalor isolates list layout anomalies without requiring dynamic memory allocations."
+            "latency": {
+              "avg": { "value": 283.31, "display": "283.31 ns/iter" },
+              "p75": { "value": 293.27, "display": "293.27 ns" },
+              "p99": { "value": 321.33, "display": "321.33 ns" },
+              "min": { "value": 253.55, "display": "253.55 ns" },
+              "max": { "value": 337.77, "display": "337.77 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
+              "unit": "bytes"
+            }
+          }
         }
       }
     },
-    "api_network_log": {
-      "header": "Throughput Suite: API Network Log Ingress",
-      "description": "Measures validation throughput when processing raw server transaction logs and edge network metric data.",
-      "underlyingMechanics": "Zod assesses network protocols step by step. Typia unrolls validation logic to process parameters without runtime wrappers. Xalor matches log structures directly against its index schema entries.",
+    "apiNetworkLog": {
+      "id": "apiNetworkLog",
+      "header": "API Network Log Validation Benchmark",
+      "description": "Measures validation performance on API transaction records containing request metadata, endpoint information, HTTP methods, response codes, latency metrics, and payload size fields.",
+      "category": "Network Data Validation",
+      "note": "Tests validation of high-frequency server ingress data commonly produced by API gateways and application telemetry systems.",
       "scenarios": {
-        "valid_shape": {
+        "validShape": {
           "zod": {
-            "avg": "134.84 ns/iter",
-            "p75": "90.52 ns",
-            "p99": "405.50 ns",
-            "min": "82.22 ns",
-            "max": "1.21 µs",
-            "heapAllocated": "568.98 b"
+            "latency": {
+              "avg": { "value": 134.84, "display": "134.84 ns/iter" },
+              "p75": { "value": 90.52, "display": "90.52 ns" },
+              "p99": { "value": 405.5, "display": "405.50 ns" },
+              "min": { "value": 82.22, "display": "82.22 ns" },
+              "max": { "value": 1210, "display": "1.21 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 568.98, "display": "568.98 b" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "5.02 ns/iter",
-            "p75": "5.02 ns",
-            "p99": "6.99 ns",
-            "min": "4.79 ns",
-            "max": "16.37 ns",
-            "heapAllocated": "0.05 b"
+            "latency": {
+              "avg": { "value": 5.02, "display": "5.02 ns/iter" },
+              "p75": { "value": 5.02, "display": "5.02 ns" },
+              "p99": { "value": 6.99, "display": "6.99 ns" },
+              "min": { "value": 4.79, "display": "4.79 ns" },
+              "max": { "value": 16.37, "display": "16.37 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 0.05, "display": "0.05 b" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "273.12 ns/iter",
-            "p75": "281.74 ns",
-            "p99": "318.58 ns",
-            "min": "247.10 ns",
-            "max": "327.75 ns",
-            "heapAllocated": "2.65 kb"
-          },
-          "performanceAnalysis": "Typia checks log data almost instantly (~5.02 ns). Xalor validates entries in 273.12 ns, avoiding maximum latency spikes and running faster than Zod's upper limits of 1.21 µs."
+            "latency": {
+              "avg": { "value": 273.12, "display": "273.12 ns/iter" },
+              "p75": { "value": 281.74, "display": "281.74 ns" },
+              "p99": { "value": 318.58, "display": "318.58 ns" },
+              "min": { "value": 247.1, "display": "247.10 ns" },
+              "max": { "value": 327.75, "display": "327.75 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
+              "unit": "bytes"
+            }
+          }
         },
-        "malformed_rejection": {
+
+        "malformedRejection": {
           "zod": {
-            "avg": "10.16 µs/iter",
-            "p75": "10.21 µs",
-            "p99": "10.24 µs",
-            "min": "10.01 µs",
-            "max": "10.27 µs",
-            "heapAllocated": "3.34 kb"
+            "latency": {
+              "avg": { "value": 10160, "display": "10.16 µs/iter" },
+              "p75": { "value": 10210, "display": "10.21 µs" },
+              "p99": { "value": 10240, "display": "10.24 µs" },
+              "min": { "value": 10010, "display": "10.01 µs" },
+              "max": { "value": 10270, "display": "10.27 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 3420.16, "display": "3.34 kb" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "133.39 ns/iter",
-            "p75": "132.59 ns",
-            "p99": "157.29 ns",
-            "min": "122.46 ns",
-            "max": "777.22 ns",
-            "heapAllocated": "889.50 b"
+            "latency": {
+              "avg": { "value": 133.39, "display": "133.39 ns/iter" },
+              "p75": { "value": 132.59, "display": "132.59 ns" },
+              "p99": { "value": 157.29, "display": "157.29 ns" },
+              "min": { "value": 122.46, "display": "122.46 ns" },
+              "max": { "value": 777.22, "display": "777.22 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 889.5, "display": "889.50 b" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "272.85 ns/iter",
-            "p75": "281.47 ns",
-            "p99": "313.96 ns",
-            "min": "246.77 ns",
-            "max": "325.41 ns",
-            "heapAllocated": "2.65 kb"
-          },
-          "performanceAnalysis": "Xalor rejects invalid methods and durations in 272.85 ns. It filters out malformed payloads uniformly, avoiding the performance drops caused by generating dynamic error diagnostics."
+            "latency": {
+              "avg": { "value": 272.85, "display": "272.85 ns/iter" },
+              "p75": { "value": 281.47, "display": "281.47 ns" },
+              "p99": { "value": 313.96, "display": "313.96 ns" },
+              "min": { "value": 246.77, "display": "246.77 ns" },
+              "max": { "value": 325.41, "display": "325.41 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
+              "unit": "bytes"
+            }
+          }
         }
       }
     },
-    "legacy_invoice_evolution": {
-      "header": "Throughput Suite: Legacy Invoice Upcast (Valid Evolution)",
-      "description": "Measures validation throughput when mapping ancestral data structural schemas into modern entity layouts.",
-      "underlyingMechanics": "Zod maps transformations by running parsing functions across individual properties. Typia processes upcasts using generated build-time tracks. Xalor channels transformations through its structural database upcast layers.",
+    "legacyInvoiceEvolution": {
+      "id": "legacyInvoiceEvolution",
+      "header": "Legacy Invoice Migration Benchmark",
+      "description": "Measures performance when transforming legacy data structures into modern application formats through schema evolution and field mapping.",
+      "category": "Schema Migration Performance",
+      "note": "Tests compatibility workflows where older data representations must be converted into current entity models.",
       "scenarios": {
-        "valid_upcast_lane": {
+        "validUpcastLane": {
           "zod": {
-            "avg": "81.86 ns/iter",
-            "p75": "54.57 ns",
-            "p99": "362.19 ns",
-            "min": "49.14 ns",
-            "max": "1.10 µs",
-            "heapAllocated": "320.22 b"
+            "latency": {
+              "avg": { "value": 81.86, "display": "81.86 ns/iter" },
+              "p75": { "value": 54.57, "display": "54.57 ns" },
+              "p99": { "value": 362.19, "display": "362.19 ns" },
+              "min": { "value": 49.14, "display": "49.14 ns" },
+              "max": { "value": 1100, "display": "1.10 µs" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 320.22, "display": "320.22 b" },
+              "unit": "bytes"
+            }
           },
           "typia": {
-            "avg": "1.11 ns/iter",
-            "p75": "1.09 ns",
-            "p99": "1.39 ns",
-            "min": "1.07 ns",
-            "max": "9.16 ns",
-            "heapAllocated": "0.02 b"
+            "latency": {
+              "avg": { "value": 1.11, "display": "1.11 ns/iter" },
+              "p75": { "value": 1.09, "display": "1.09 ns" },
+              "p99": { "value": 1.39, "display": "1.39 ns" },
+              "min": { "value": 1.07, "display": "1.07 ns" },
+              "max": { "value": 9.16, "display": "9.16 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": { "value": 0.02, "display": "0.02 b" },
+              "unit": "bytes"
+            }
           },
           "xalor": {
-            "avg": "311.33 ns/iter",
-            "p75": "319.35 ns",
-            "p99": "366.82 ns",
-            "min": "283.13 ns",
-            "max": "382.49 ns",
-            "heapAllocated": "2.65 kb"
-          },
-          "performanceAnalysis": "Typia handles structural upcasts almost immediately (~1.11 ns) due to its inline compilation design. Xalor transforms records at a predictable rate of 311.33 ns, leveraging its database mapping layers to process schema transitions safely."
+            "latency": {
+              "avg": { "value": 311.33, "display": "311.33 ns/iter" },
+              "p75": { "value": 319.35, "display": "319.35 ns" },
+              "p99": { "value": 366.82, "display": "366.82 ns" },
+              "min": { "value": 283.13, "display": "283.13 ns" },
+              "max": { "value": 382.49, "display": "382.49 ns" },
+              "unit": "ns"
+            },
+            "memory": {
+              "heapAllocated": {
+                "value": 2713.6,
+                "display": "2.65 kb"
+              },
+              "unit": "bytes"
+            }
+          }
         }
       }
     }
   },
-  "tableOFContents": {
+  "tableOfContents": {
     "instrumentationPackage": "mitata",
     "version": "1.0.34",
-    "description": "An ultra-high-performance, zero-dependency micro-benchmarking engine built directly on top of native V8 runtime hooks and the JavaScript performance timeline API.",
-    "underlyingMechanics": {
-      "jitPreHeating": "Executes dead warm-up iterations to force the V8 Just-In-Time (JIT) compiler to optimize function paths before metrics are captured.",
-      "clocks": "Communicates directly with the host hardware clock via process.hrtime.bigint() to achieve absolute nanosecond precision.",
-      "gcIsolation": "Utilizes child subprocess forks with explicit global.gc() exposures to capture true memory deltas without runtime telemetry bleed."
+    "measurementMethodology": {
+      "warmupPhase": {
+        "title": "JIT Warmup",
+        "description": "Runs initial unmeasured iterations to allow the V8 JavaScript engine to optimize hot execution paths before collecting benchmark samples."
+      },
+      "precisionTiming": {
+        "title": "Nanosecond Timing",
+        "description": "Uses high-resolution runtime timing APIs to capture execution duration at nanosecond precision."
+      },
+      "memoryTracking": {
+        "title": "Heap Allocation Tracking",
+        "description": "Measures additional V8 heap consumption generated during validation execution."
+      }
     },
-    "metricsDictionary": {
-      "avg": "Average execution time per loop iteration",
-      "p75": "75th percentile tail latency threshold",
-      "p99": "99th percentile maximum tail latency outlier",
-      "min": "Minimum recorded execution time boundary",
-      "max": "Absolute maximum recorded latency spike limit",
-      "heapAllocated": "Physical V8 engine memory overhead consumed per run"
+
+    "benchmarkMetrics": {
+      "executionTime": {
+        "title": "Average Execution Time",
+        "description": "Mean duration required to complete a single validation iteration."
+      },
+      "latencyDistribution": {
+        "title": "Latency Percentiles",
+        "description": "Shows execution consistency across samples using percentile measurements."
+      },
+      "memoryFootprint": {
+        "title": "Heap Allocation",
+        "description": "Tracks runtime memory overhead created during validation."
+      }
+    },
+
+    "metricDefinitions": {
+      "avg": {
+        "label": "Average",
+        "description": "The mean execution time across all benchmark iterations."
+      },
+      "p75": {
+        "label": "75th Percentile",
+        "description": "The point where 75% of executions complete faster than this duration."
+      },
+      "p99": {
+        "label": "99th Percentile",
+        "description": "The point where 99% of executions complete faster than this duration, highlighting tail latency behavior."
+      },
+      "min": {
+        "label": "Minimum",
+        "description": "The fastest observed execution during benchmarking."
+      },
+      "max": {
+        "label": "Maximum",
+        "description": "The slowest observed execution, representing worst-case latency spikes."
+      },
+      "heapAllocated": {
+        "label": "Heap Allocation",
+        "description": "Additional memory allocated by the runtime while executing validation."
+      }
     }
   }
 }

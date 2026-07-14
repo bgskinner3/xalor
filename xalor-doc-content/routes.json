@@ -76,11 +76,22 @@
     },
     {
       "id": "e3c1a9d8-5f22-4a11-9c44-7b8d2f6a1e90",
-      "text": "Reference",
-      "href": "/xalor/docs/reference",
+      "text": "Benchmarks",
+      "href": "/xalor/docs/benchmarks",
       "iconName": "book-duotone",
-      "active": false,
-      "sectionLinks": []
+      "active": true,
+      "sectionLinks": [
+        { "id": "intro", "text": "Introduction" },
+        { "id": "bootInitializationPenalty", "text": "Boot Init." },
+        { "id": "customerOrderGraph", "text": "Order Graph" },
+        { "id": "heavyTelemetryMatrix", "text": "Telemetry Matrix" },
+        { "id": "appConfigRegistry", "text": "Config Registry" },
+        { "id": "coreProductSku", "text": "Product Sku" },
+        { "id": "accessSessionMatrix", "text": "Session Matrix" },
+        { "id": "warehouseInventoryBins", "text": "Inventory Bins" },
+        { "id": "apiNetworkLog", "text": "Network Log" },
+        { "id": "legacyInvoiceEvolution", "text": "Invoice Evolution" }
+      ]
     }
   ],
   "landingMarketing": {
