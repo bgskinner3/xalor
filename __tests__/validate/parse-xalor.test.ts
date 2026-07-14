@@ -6,6 +6,7 @@ import { seedTestVault } from '../utils';
   pnpm run test -- __tests__/validate/parse-xalor.test.ts
 
  */
+
 declare global {
   interface ISolidRegistry {
     // STANDARD GENERATE API BLUEPRINT LABELS

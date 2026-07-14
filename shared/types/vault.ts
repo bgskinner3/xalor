@@ -50,6 +50,12 @@ export type TTripleKV = {
   version: string;
 };
 
+export type TBakedTripleKV = {
+  blueprints: Record<string, TSolidShape>;
+  references: Record<string, string>;
+  driftTracking: Record<string, TVaultDriftEntry>;
+};
+
 /**
  * TSolidVaultMap SNAPSHOT
  *

@@ -3,6 +3,7 @@ import type {
   TSolidMetadata,
   TVaultSyncPayload,
   TTripleKV,
+  TBakedTripleKV,
 } from '../../types';
 import { isObject, isKeyInObject, isRecord, matchesShape } from './objects';
 import { isNull, isString, isFunction, isOptional } from './primitives';
@@ -55,21 +56,51 @@ export const isVaultSyncPayload: TTypeGuard<TVaultSyncPayload> = (
   isKeyInObject('symbolName')(val);
 
 /**
- * IS_TRIPLE_KV_GUARD
- * ROLE: High-velocity boundary discriminator validating vault-snapshot.json schema integrity.
- * STRATEGY: Switchlessly examines top-level storage records point-free. Ensures absolute
- * structural presence of all database drawers before allowing downstream metrics processing.
+ * @name isTripleKVShape
+ * @type {TTypeGuard<TTripleKV>}
+ * @category Guard Boundaries
+ * @description
+ * High-velocity structural contract discriminator validating the extensive development
+ * vault configuration schema (typically `vault-snapshot.json` or live workplace buffers).
+ *
+ * @strategy
+ * Switchlessly examines top-level workspace drawers point-free [Commandment IX]. Enforces the
+ * complete presence of metadata tables (`blueprints`, `manifest`, `registry`, `references`) and
+ * strict version identifiers before releasing payload maps for downstream compiler parsing.
  */
 /* prettier-ignore */
 export const isTripleKVShape: TTypeGuard<TTripleKV> = (
   value: unknown,
 ): value is TTripleKV =>
   (isObject(value) ) &&
-  (isKeyInObject('blueprints')(value) && isRecord(value.blueprints)) && 
-  (isKeyInObject('manifest')(value) && isRecord(value.manifest)) && 
-  (isKeyInObject('registry')(value) && isRecord(value.registry)) && 
-  ( isKeyInObject('references')(value) && isRecord(value.references)) && 
+  (isKeyInObject('blueprints')(value) && isRecord(value.blueprints)) &&
+  (isKeyInObject('manifest')(value) && isRecord(value.manifest)) &&
+  (isKeyInObject('registry')(value) && isRecord(value.registry)) &&
+  ( isKeyInObject('references')(value) && isRecord(value.references)) &&
   (isKeyInObject('version')(value) && isString(value.version))
+
+/**
+ * @name isBakedTripleKVShape
+ * @type {TTypeGuard<TBakedTripleKV>}
+ * @category Guard Boundaries
+ * @description
+ * High-velocity production boundary discriminator validating compiled build assets
+ * (typically `xalor-vault.json` or pre-baked edge distribution modules).
+ *
+ * @strategy
+ * Strips away development-only diagnostic footprints (`manifest`, `registry`) to optimize
+ * memory lookups. Enforces the strict structural presence of your core execution matrices
+ * (`blueprints`, `references`, `driftTracking`) to ensure zero-allocation runtime parsing operations,
+ * completely protecting your live edge endpoints from corrupted telemetry injections [Commandment VIII].
+ */
+/* prettier-ignore */
+export const isBakedTripleKVShape: TTypeGuard<TBakedTripleKV> = (
+  value: unknown,
+): value is TTripleKV =>
+  (isObject(value) ) &&
+  (isKeyInObject('blueprints')(value) && isRecord(value.blueprints)) &&
+  (isKeyInObject('references')(value) && isRecord(value.references)) &&
+  (isKeyInObject('driftTracking')(value) && isRecord(value.driftTracking))
 
 /**
  * 🎯 IS REGISTRY KEY (THE LIVE VAULT RADAR INGRESS)
