@@ -2,19 +2,18 @@ import {
   RUNTIME_API_RULE_KEYS,
   XALOR_MATCH_DRIFT_RULE_KEYS,
   RUNTIME_SHAPE_VALIDATION_ERROR_KEYS,
-} from '../constants/configs';
-import type { TSolidError } from '../../../shared/types';
+} from '../constants';
+import type { TSolidError, TValidationContext } from '../../../shared/types';
 import type { TSolidShape } from '../../../shared/shape-domain';
+import { TKeys, TValues } from '../../../shared/types';
 
-type TRuleKeys<T extends Record<PropertyKey, string>> = keyof T;
-type TRuleValues<T extends Record<PropertyKey, string>> = T[keyof T];
 // ================================================================================
 // ================================================================================
 //   RUNTIME_API TYPES
 // ================================================================================
 // ================================================================================
 /* prettier-ignore */
-export type TRuntimeApiErrorKeys = TRuleKeys<typeof RUNTIME_API_RULE_KEYS>;
+export type TRuntimeApiErrorKeys = TKeys<typeof RUNTIME_API_RULE_KEYS>;
 
 export type TRuntimeApiContext = {
   path: string;
@@ -28,12 +27,12 @@ export type TRuntimeApiContext = {
 // ================================================================================
 // ================================================================================
 /* prettier-ignore */
-export type TXalorMatchDriftKeys = TRuleKeys<typeof XALOR_MATCH_DRIFT_RULE_KEYS>;
+export type TXalorMatchDriftKeys = TKeys<typeof XALOR_MATCH_DRIFT_RULE_KEYS>;
 
 /* prettier-ignore */
-export type TXalorMatchDriftRules = TRuleValues<typeof XALOR_MATCH_DRIFT_RULE_KEYS>;
+export type TXalorMatchDriftRules = TValues<typeof XALOR_MATCH_DRIFT_RULE_KEYS>;
 
-export type TRuntimeApiErrorRules = TRuleValues<typeof RUNTIME_API_RULE_KEYS>;
+export type TRuntimeApiErrorRules = TValues<typeof RUNTIME_API_RULE_KEYS>;
 
 type TRuntimeApiConfig = {
   readonly rule: TRuntimeApiErrorRules;
@@ -90,6 +89,7 @@ export type TErrorReportTemplate = {
     readonly callerGps: string;
     readonly cleanExpected: string;
     readonly cleanReceived: string;
+    readonly pathString: string;
   }>;
 };
 
@@ -104,3 +104,33 @@ type TRuntimeShapeValidationError = {
 
 /* prettier-ignore */
 export type TRuntimeSHapeValidatorErrorMapper = Record<TRuntimeShapeValidationErrorKey, TRuntimeShapeValidationError>
+
+// TODO: MOVE TO DIFFERENT GEENRAL FODLER
+export type TXalorEvaluationResult =
+  | {
+      readonly isValid: true;
+      readonly errors: null;
+    }
+  | {
+      readonly isValid: false;
+      readonly errors: readonly TSolidError[];
+    };
+/* prettier-ignore */
+export type TInvertedRuleKeyMap = Record<TRuntimeApiErrorRules, TRuntimeApiErrorKeys>;
+/**
+ * @name TReportErrorGate
+ * @category Functional Signature Types
+ * @description
+ * High-velocity error harvest signature that intercepts contract violations instantly
+ * and appends a point-in-time memory tracking snapshot onto the active context stream.
+ *
+ * @performance
+ * Governed by Commandment VIII: Returns a constant `false` boolean literal to allow immediate,
+ * zero-allocation upstream short-circuiting (`return reportError(...)`) inside active loop lane steps.
+ */
+export type TReportErrorParams = {
+  readonly ctx: TValidationContext;
+  readonly errorKey: TRuntimeShapeValidationErrorKey;
+  readonly received: unknown;
+  readonly shapeContext?: TSolidShape | string | number;
+};

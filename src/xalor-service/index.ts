@@ -7,15 +7,18 @@ import type {
   TValidationContext,
 } from '../../shared';
 import { XalethorVaultKeeper } from './vault-keeper';
-import { XalethorVaultCompliance } from './vault-compliance';
 import { XalethorVaultGenerator } from './vault-generator';
 import { XalethorVaultTransform } from './vault-transform';
 import { XalethorVaultMatch } from './vault-match';
+import { xalethorVaultValidation } from './vault-validation';
+import { xalethorVaultDiagnostics } from './vault-diagnostics';
 import type {
   IXalorDriftContext,
   TApplyNominalBrand,
   TXalorMergeContext,
   TResolveDriftReturnConstraint,
+  TReportErrorParams,
+  TXalorAuditReport,
 } from '../models/types';
 import { isRecord } from '../../shared/utils';
 export class XalethorService {
@@ -26,10 +29,12 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   // ============================================================
-  /* prettier-ignore */ public static solidify(raw: TSolidMetadata): void {
+  /* prettier-ignore */
+  public static solidify(raw: TSolidMetadata): void {
     XalethorVaultKeeper.solidify(raw);
   }
-  /* prettier-ignore */ public static solidifyDrifts(driftTracks: TTripleKV['driftTracking']): void {
+  /* prettier-ignore */
+  public static solidifyDrifts(driftTracks: TTripleKV['driftTracking']): void {
      XalethorVaultKeeper.solidifyDrifts(driftTracks);
   }
   public static blueprintVault(key: string) {
@@ -44,6 +49,35 @@ export class XalethorService {
   public static inspectMetaData(key: string) {
     return XalethorVaultKeeper.resolve(key);
   }
+
+  // ============================================================
+  // ============================================================
+  // ============================================================
+  // ERROR AND DIAGNOSTICS
+  // ============================================================
+  // ============================================================
+  // ============================================================
+  /* prettier-ignore */
+  public static formatReport(key: string, errors?: readonly TSolidError[]): string {
+    return xalethorVaultDiagnostics.formatReport(key, errors);
+  }
+  /* prettier-ignore */
+  public static compileAuditReport(targetKey: string, isValid: boolean, rawErrors: readonly TSolidError[]): TXalorAuditReport {
+     return xalethorVaultDiagnostics.compileAuditReport(targetKey, isValid, rawErrors);
+  }
+  public static getKeyErrors(key: string): TSolidError[] {
+    return xalethorVaultValidation.getErrors(key);
+  }
+  public static setErrors(key: string, errors: TSolidError[]): void {
+    return xalethorVaultValidation.setErrors(key, errors);
+  }
+  public static clearErrors(key?: string): void {
+    return xalethorVaultValidation.clearErrors(key);
+  }
+  public static reportError(params: TReportErrorParams): false {
+    return xalethorVaultValidation.reportError(params);
+  }
+
   // ============================================================
   // ============================================================
   // ============================================================
@@ -52,25 +86,17 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   public static validateShapeByKey(data: unknown, key: string): boolean {
-    return XalethorVaultCompliance.validateShapeByKey(data, key);
+    return xalethorVaultValidation.validateShapeByKey(data, key);
   }
-  /* prettier-ignore */ public static validateShape(data: unknown,  shape: TSolidShape, ctx: TValidationContext,): boolean {
-    return XalethorVaultCompliance.validateShape(data, shape, ctx);
+  /* prettier-ignore */
+  public static validateShape(data: unknown,  shape: TSolidShape, ctx: TValidationContext, blueprintId?: string,): boolean {
+    return xalethorVaultValidation.validateShape(data, shape, ctx, blueprintId);
   }
-  public static has(key: string): boolean {
-    return XalethorVaultCompliance.has(key);
+  public static createInitialContext(key: string): TValidationContext {
+    return xalethorVaultValidation.createInitialContext(key);
   }
-  public static createInitialContext(key?: string): TValidationContext {
-    return XalethorVaultCompliance.createInitialContext(key);
-  }
-  public static panic(key: string): never {
-    return XalethorVaultCompliance.panic(key);
-  }
-  public static panicSoft(key: string): void {
-    return XalethorVaultCompliance.panicSoft(key);
-  }
-  public static getKeyErrors(key: string): TSolidError[] {
-    return XalethorVaultCompliance.getErrors(key);
+  public static panic(key: string, customMessage?: string | undefined): never {
+    return xalethorVaultValidation.panic(key, customMessage);
   }
 
   // ============================================================

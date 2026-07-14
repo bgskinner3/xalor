@@ -1,27 +1,60 @@
-import type { TPrimitiveValidationMapper } from '../../models/types';
-import { errorService } from '../../error';
-export const PRIMITIVE_VALIDATION_CHECKERS: TPrimitiveValidationMapper = {
-  string: (d) => typeof d === 'string',
-  number: (d) => typeof d === 'number',
-  boolean: (d) => typeof d === 'boolean',
-  bigint: (d) => typeof d === 'bigint',
-  symbol: (d) => typeof d === 'symbol',
-  null: (d) => d === null,
-  undefined: (d) => d === undefined,
-  void: (d) => d === undefined,
-  any: () => true,
-  unknown: () => true,
-  never: () => false,
-} satisfies TPrimitiveValidationMapper;
+import type { TValidationContext, TSolidObjectRawShape } from '../../../shared';
+import { XalethorService } from '../../xalor-service';
 
-export const PRIMITIVE_ERROR_METADATA = {
-  /* prettier-ignore */ string: { expected: 'string', msg: () => errorService.shapeValErrs.PRIMITIVE_VALIDATION_STRING_EXPECTED.message },
-  /* prettier-ignore */ number: { expected: 'number', msg: () => errorService.shapeValErrs.PRIMITIVE_VALIDATION_NUMBER_EXPECTED.message },
-  /* prettier-ignore */ boolean: { expected: 'boolean', msg: () => errorService.shapeValErrs.PRIMITIVE_VALIDATION_BOOLEAN_EXPECTED.message },
-  /* prettier-ignore */ null: { expected: 'null', msg: () => errorService.shapeValErrs.PRIMITIVE_VALIDATION_NULL_EXPECTED.message },
-  /* prettier-ignore */ undefined: { expected: 'undefined', msg: () => errorService.shapeValErrs.PRIMITIVE_VALIDATION_UNDEFINED_EXPECTED.message },
-  /* prettier-ignore */ void: { expected: 'void', msg: () => errorService.shapeValErrs.PRIMITIVE_VALIDATION_UNDEFINED_EXPECTED.message },
-  /* prettier-ignore */ bigint: { expected: 'bigint', msg: () => errorService.shapeValErrs.PRIMITIVE_VALIDATION_BIGINT_EXPECTED.message },
-  /* prettier-ignore */ never: { expected: 'never', msg: () => 'Type evaluated as unreachable never.' },
-  /* prettier-ignore */ symbol: { expected: 'symbol', msg: () => 'Target type is symbol but data is not a symbol.' },
-} satisfies Record<string, { expected: string; msg: () => string }>;
+// TODO: MOVE TO VALDTION HELPER UTILS
+/**
+ * Validates native JavaScript Map objects via direct linear iteration.
+ * COMPLIANCE: Absolute zero object key allocations or generic record hash lookups.
+ * GOVERNED BY COMMANDMENT VIII: Zero memory allocations on successful paths.
+ */
+export function validateNativeMapCollection(
+  data: Map<unknown, unknown>,
+  shape: {
+    readonly properties: Readonly<Record<string, TSolidObjectRawShape>>;
+    readonly strict?: boolean;
+  },
+  ctx: TValidationContext,
+): boolean {
+  const valueMetadata = shape.properties;
+
+  // Extract a static target value validator shape node if explicitly mapped by your compiler
+  const fallbackTargetShape =
+    valueMetadata['*']?.shape || valueMetadata['value']?.shape;
+
+  let pass = true;
+
+  // V8 optimizes Map.prototype.forEach to run at near-native C++ loop speed
+  data.forEach((value, key) => {
+    if (!pass) return;
+
+    const stringKey = typeof key === 'string' ? key : String(key);
+    const specificMetadata = valueMetadata[stringKey];
+    const activeTargetShape = specificMetadata?.shape ?? fallbackTargetShape;
+
+    if (activeTargetShape) {
+      ctx.pathStack[ctx.pathPointer++] = stringKey;
+
+      const elementPass = XalethorService.validateShape(
+        value,
+        activeTargetShape,
+        ctx,
+      );
+
+      // ✨ Instant integer register decrement reset
+      ctx.pathPointer--;
+      if (!elementPass) {
+        pass = false;
+      }
+    }
+  });
+
+  if (!pass) {
+    return XalethorService.reportError({
+      ctx,
+      errorKey: 'OBJECT_VALIDATION_TYPE_MISMATCH',
+      received: data,
+    });
+  }
+
+  return true;
+}

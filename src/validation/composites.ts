@@ -2,103 +2,139 @@
 import type {
   TValidationContext,
   TSolidShape,
-  TSolidReferenceShape,
-  TSolidLiteralShape,
   TSolidIntersectionShape,
+  TSolidLiteralShape,
+  TSolidReferenceShape,
   TSolidFunctionShape,
 } from '../../shared';
 import {
-  yieldFiltered,
   isFunction,
-  isKeyInObject,
   isObject,
+  isKeyInObject,
+  yieldFiltered,
 } from '../../shared';
+import { xalethorVaultValidation } from '../xalor-service/vault-validation';
 import { XalethorService } from '../xalor-service';
-import { XalethorVaultCompliance } from '../xalor-service/vault-compliance';
-import { errorService } from '../error';
 
+/**
+ * Validates Intersection types.
+ * COMPLIANCE: Validates parts linearly with zero dynamic string generations.
+ * SYNCHRONIZED: Consumes the new object-based TReportErrorParams payload interface.
+ */
 export function validateIntersection(
   data: unknown,
   shape: TSolidIntersectionShape,
   ctx: TValidationContext,
 ): boolean {
-  const { INTERSECTION_VALIDATION_PART_FAILED } = errorService.shapeValErrs;
-  const reportError = XalethorVaultCompliance.reportError;
-
   const parts = yieldFiltered(
     shape.values,
     (_part): _part is TSolidShape => true,
   );
+
   for (const part of parts) {
-    if (!XalethorVaultCompliance.validateShape(data, part, ctx)) {
-      /* prettier-ignore */
-      return reportError(ctx, 'intersection', data, INTERSECTION_VALIDATION_PART_FAILED.message);
+    if (!xalethorVaultValidation.validateShape(data, part, ctx)) {
+      return xalethorVaultValidation.reportError({
+        ctx,
+        errorKey: 'INTERSECTION_VALIDATION_PART_FAILED',
+        received: data,
+        shapeContext: shape,
+      });
     }
   }
   return true;
 }
 
+/**
+ * Validates Literal value equations.
+ * COMPLIANCE: Ultra-fast strict equality evaluation with flat metadata handoff.
+ * SYNCHRONIZED: Consumes the new object-based TReportErrorParams payload interface.
+ */
 export function validateLiteral(
   data: unknown,
   shape: TSolidLiteralShape,
   ctx: TValidationContext,
 ): boolean {
-  const { LITERAL_VALIDATION_VALUE_MISMATCH } = errorService.shapeValErrs;
-  const reportError = XalethorVaultCompliance.reportError;
+  if (data === shape.value) return true;
 
-  const isMatch = data === shape.value;
-  if (isMatch) return true;
-  /* prettier-ignore */
-  return reportError(ctx, shape, data, LITERAL_VALIDATION_VALUE_MISMATCH.message);
+  return xalethorVaultValidation.reportError({
+    ctx,
+    errorKey: 'LITERAL_VALIDATION_VALUE_MISMATCH',
+    received: data,
+    shapeContext: shape,
+  });
 }
 
+/**
+ * Validates Union member branches.
+ * COMPLIANCE: Zero allocations. Splices transient context errors point-free on branch failure.
+ * SYNCHRONIZED: Consumes the new object-based TReportErrorParams payload interface.
+ */
 export function validateUnion(
   data: unknown,
   shape: Extract<TSolidShape, { kind: 'union' }>,
   ctx: TValidationContext,
 ): boolean {
-  const { UNION_VALIDATION_NO_MATCH } = errorService.shapeValErrs;
-  const reportError = XalethorVaultCompliance.reportError;
   const snapshotCount = ctx.errors.length;
-  for (let i = 0; i < shape.values.length; i++) {
-    if (XalethorVaultCompliance.validateShape(data, shape.values[i], ctx)) {
+  const len = shape.values.length;
+
+  for (let i = 0; i < len; i++) {
+    if (xalethorVaultValidation.validateShape(data, shape.values[i], ctx)) {
+      // ✨ Truncate the array length directly instead of running a heavy .splice()
       if (ctx.errors.length > snapshotCount) {
-        ctx.errors.splice(snapshotCount);
+        ctx.errors.length = snapshotCount;
       }
       return true;
     }
   }
-  return reportError(ctx, 'union', data, UNION_VALIDATION_NO_MATCH.message);
+
+  return xalethorVaultValidation.reportError({
+    ctx,
+    errorKey: 'UNION_VALIDATION_NO_MATCH',
+    received: data,
+    shapeContext: shape,
+  });
 }
 
+/**
+ * Validates Virtual Schema Reference Pointers.
+ * COMPLIANCE: Traverses pre-registered blueprints via pure side-effect-free loops.
+ * SYNCHRONIZED: Consumes the new object-based TReportErrorParams payload interface.
+ */
 export function validateReference(
   data: unknown,
   shape: TSolidReferenceShape,
   ctx: TValidationContext,
 ): boolean {
-  const { REF_VALIDATION_MISSING_VAULT_ENTRY } = errorService.shapeValErrs;
-  const reportError = XalethorVaultCompliance.reportError;
-
   const metadata = XalethorService.inspectMetaData(shape.name);
   if (!metadata) {
-    /* prettier-ignore */
-    return reportError( ctx, REF_VALIDATION_MISSING_VAULT_ENTRY.expected(shape.name), 'Missing from Vault', REF_VALIDATION_MISSING_VAULT_ENTRY.message);
+    return xalethorVaultValidation.reportError({
+      ctx,
+      errorKey: 'REF_VALIDATION_MISSING_VAULT_ENTRY',
+      received: 'Missing from Vault',
+      shapeContext: shape.name,
+    });
   }
-  return XalethorVaultCompliance.validateShape(data, metadata.shape, ctx);
+  return xalethorVaultValidation.validateShape(data, metadata.shape, ctx);
 }
 
+/**
+ * Validates Executable Function footprints.
+ * COMPLIANCE: Eliminates argument string variations on failure. Pass length as number token.
+ * SYNCHRONIZED: Consumes the new object-based TReportErrorParams payload interface.
+ */
 export function validateFunction(
   data: unknown,
   shape: TSolidFunctionShape,
   ctx: TValidationContext,
 ): boolean {
-  const {
-    FUNCTION_VALIDATION_PARAMETER_MISMATCH,
-    FUNCTION_VALIDATION_TYPE_MISMATCH,
-  } = errorService.shapeValErrs;
-  const reportError = XalethorVaultCompliance.reportError;
-  /* prettier-ignore */
-  if (!isFunction(data)) return reportError(ctx, shape, data, FUNCTION_VALIDATION_TYPE_MISMATCH.message);
+  if (!isFunction(data)) {
+    return xalethorVaultValidation.reportError({
+      ctx,
+      errorKey: 'FUNCTION_VALIDATION_TYPE_MISMATCH',
+      received: data,
+      shapeContext: shape,
+    });
+  }
 
   let mandatoryParamsCount = 0;
   const totalBlueprintParams = shape.parameters.length;
@@ -116,8 +152,13 @@ export function validateFunction(
   }
 
   if (data.length < mandatoryParamsCount) {
-    /* prettier-ignore */
-    return reportError( ctx, 'function_signature_parameters_mismatch', `provided: ${data.length}`, FUNCTION_VALIDATION_PARAMETER_MISMATCH.message);
+    return xalethorVaultValidation.reportError({
+      ctx,
+      errorKey: 'FUNCTION_VALIDATION_PARAMETER_MISMATCH',
+      received: data.length, // Passed directly as a raw number token
+      shapeContext: shape,
+    });
   }
+
   return true;
 }

@@ -3,6 +3,8 @@ import {
   TRuntimeApiErrorMapper,
   TXalorMatchDriftErrorMapper,
   TRuntimeSHapeValidatorErrorMapper,
+  TRuntimeShapeValidationErrorKey,
+  TRuntimeApiErrorRules,
 } from '../types/error-types';
 
 /**
@@ -362,3 +364,35 @@ export const RUNTIME_SHAPE_VALIDATION_ERRORS: TRuntimeSHapeValidatorErrorMapper 
       expected: (_str) => `instanceof_${_str}`,
     },
   } satisfies TRuntimeSHapeValidatorErrorMapper;
+
+/* prettier-ignore */
+export const RULE_KIND_MAPPER: Record<TRuntimeShapeValidationErrorKey, TRuntimeApiErrorRules> = {
+  OBJECT_VALIDATION_EXCESS_PROPERTY: 'excess_property',
+  OBJECT_VALIDATION_MISSING_PROPERTY: 'missing_property',
+  
+  // ✨ Synchronized: Exhaustive mapping slot added to satisfy compiler constraints
+  OBJECT_VALIDATION_UNDEFINED_PROPERTY: 'missing_property',
+  OBJECT_VALIDATION_MISSING_REQUIRED_KEY: 'missing_key_presence',
+  
+  UNION_VALIDATION_NO_MATCH: 'union_exhausted',
+  INTERSECTION_VALIDATION_PART_FAILED: 'intersection_breached',
+  LITERAL_VALIDATION_VALUE_MISMATCH: 'literal_mismatch',
+  FUNCTION_VALIDATION_PARAMETER_MISMATCH: 'function_mismatch',
+  INSTANCEOF_VALIDATION_PROTOTYPE_MISMATCH: 'instance_mismatch',
+  ARRAY_VALIDATION_MIN_LENGTH_VIOLATION: 'collection_bounds_exceeded',
+  REF_VALIDATION_MISSING_VAULT_ENTRY: 'missing_from_vault',
+  
+  // Explicit primitive fallback tokens mapped point-free
+  PRIMITIVE_VALIDATION_STRING_EXPECTED: 'primitive_mismatch',
+  PRIMITIVE_VALIDATION_NUMBER_EXPECTED: 'primitive_mismatch',
+  PRIMITIVE_VALIDATION_BOOLEAN_EXPECTED: 'primitive_mismatch',
+  PRIMITIVE_VALIDATION_BIGINT_EXPECTED: 'primitive_mismatch',
+  PRIMITIVE_VALIDATION_NULL_EXPECTED: 'primitive_mismatch',
+  PRIMITIVE_VALIDATION_UNDEFINED_EXPECTED: 'primitive_mismatch',
+  PRIMITIVE_VALIDATION_UNKNOWN_TYPE: 'primitive_mismatch',
+  OBJECT_VALIDATION_TYPE_MISMATCH: 'primitive_mismatch',
+  ARRAY_VALIDATION_TYPE_MISMATCH: 'primitive_mismatch',
+  FUNCTION_VALIDATION_TYPE_MISMATCH: 'primitive_mismatch',
+  INSTANCEOF_VALIDATION_NIL_VALUE: 'primitive_mismatch'
+
+} satisfies Record<TRuntimeShapeValidationErrorKey, TRuntimeApiErrorRules>;

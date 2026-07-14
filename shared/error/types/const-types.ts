@@ -5,20 +5,18 @@ import {
   XALOR_ERROR_AREAS,
   CORE_CONFIG_RULE_KEYS,
 } from '../constants';
+import { TKeys, TValues } from '../../../shared/types';
 
-type TRuleKeys<T extends Record<PropertyKey, string>> = keyof T;
-
-type TRuleValues<T extends Record<PropertyKey, string>> = T[keyof T];
 // ================================================================================
 // ================================================================================
 // COMPILER_DIAGNOSTIC TYPES
 // ================================================================================
 // ================================================================================
 /* prettier-ignore */
-export type TCompilerDiagnosticKeys = TRuleKeys<typeof COMPILER_DIAGNOSTIC_RULE_KEYS>;
+export type TCompilerDiagnosticKeys = TKeys<typeof COMPILER_DIAGNOSTIC_RULE_KEYS>;
 
 /* prettier-ignore */
-export type TCompilerDiagnosticRules = TRuleValues<typeof COMPILER_DIAGNOSTIC_RULE_KEYS>
+export type TCompilerDiagnosticRules = TValues<typeof COMPILER_DIAGNOSTIC_RULE_KEYS>
 
 // ================================================================================
 // ================================================================================
@@ -26,10 +24,10 @@ export type TCompilerDiagnosticRules = TRuleValues<typeof COMPILER_DIAGNOSTIC_RU
 // ================================================================================
 // ================================================================================
 /* prettier-ignore */
-export type TCollisionBorderKeys = TRuleKeys<typeof COLLISION_BORDER_RULE_KEYS>
+export type TCollisionBorderKeys = TKeys<typeof COLLISION_BORDER_RULE_KEYS>
 
 /* prettier-ignore */
-export type TCollisionBorderRules = TRuleValues<typeof COLLISION_BORDER_RULE_KEYS>
+export type TCollisionBorderRules = TValues<typeof COLLISION_BORDER_RULE_KEYS>
 
 export type TSameFileCollisionCtx = {
   readonly keyName: string;
@@ -52,10 +50,10 @@ export type TCrossFileCollisionCtx = {
 // ================================================================================
 // ================================================================================
 /* prettier-ignore */
-export type TTypeComplianceKeys =  TRuleKeys<typeof TYPE_COMPLIANCE_RULE_KEYS>;
+export type TTypeComplianceKeys =  TKeys<typeof TYPE_COMPLIANCE_RULE_KEYS>;
 
 /* prettier-ignore */
-export type TTypeComplianceRules = TRuleValues<typeof TYPE_COMPLIANCE_RULE_KEYS>;
+export type TTypeComplianceRules = TValues<typeof TYPE_COMPLIANCE_RULE_KEYS>;
 
 // ================================================================================
 // ================================================================================
@@ -63,10 +61,10 @@ export type TTypeComplianceRules = TRuleValues<typeof TYPE_COMPLIANCE_RULE_KEYS>
 // ================================================================================
 // ================================================================================
 /* prettier-ignore */
-export type TXalorErrorArea = TRuleKeys<typeof XALOR_ERROR_AREAS>;
+export type TXalorErrorArea = TKeys<typeof XALOR_ERROR_AREAS>;
 
 /* prettier-ignore */
-export type TXalorErrorAreaRule = TRuleValues<typeof XALOR_ERROR_AREAS>;
+export type TXalorErrorAreaRule = TValues<typeof XALOR_ERROR_AREAS>;
 
 // ================================================================================
 // ================================================================================

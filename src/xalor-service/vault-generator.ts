@@ -1,11 +1,12 @@
 import { XalethorVaultKeeper } from './vault-keeper';
-import { XalethorVaultCompliance } from './vault-compliance';
+import { XalethorService } from '.';
 import {
   produceDefault,
   markAsSolid,
   produceMock,
   produceCast,
 } from '../utils';
+import { isValidSolidShape } from '../../shared';
 import type { TSolidBranded } from '../../shared/types/utility';
 /**
  * XALETHOR VAULT GENERATOR
@@ -31,8 +32,8 @@ export class XalethorVaultGenerator {
   ) {
     const shape = XalethorVaultKeeper.peek('blueprint', key);
 
-    if (!shape) {
-      XalethorVaultCompliance.panic(key, msg);
+    if (!isValidSolidShape(shape)) {
+      XalethorService.panic(key, msg);
     }
     return shape;
   }

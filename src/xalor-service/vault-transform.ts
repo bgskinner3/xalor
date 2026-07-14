@@ -4,8 +4,7 @@ import type { TXalorMergeContext } from '../models/types';
 import type { TSolidBranded } from '../../shared';
 import { markAsSolid, produceClone } from '../utils';
 import { XalethorVaultKeeper } from './vault-keeper';
-import { XalethorVaultCompliance } from './vault-compliance';
-
+import { XalethorService } from '.';
 export class XalethorVaultTransform {
   // =================================================
   // =================================================
@@ -90,7 +89,7 @@ export class XalethorVaultTransform {
   private static requireShape<K extends keyof ISolidRegistry>(key: K, msg: string) {
     const shape = XalethorVaultKeeper.peek('blueprint', key);
 
-    if (!shape) XalethorVaultCompliance.panic(key, msg);
+    if (!shape) XalethorService.panic(key, msg);
 
     return shape;
   }

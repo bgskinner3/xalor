@@ -1,56 +1,72 @@
 // src/validation/validators.ts
 import type { TSolidArrayShape, TValidationContext } from '../../shared';
 import { isArray } from '../../shared';
-import { XalethorVaultCompliance } from '../xalor-service/vault-compliance';
-import { errorService } from '../error';
-import { withPathRestore } from '../utils';
-
+import { xalethorVaultValidation } from '../xalor-service/vault-validation';
+/**
+ * Validates array configurations and deep tuple layouts.
+ * COMPLIANCE: Absolute zero closure allocations, string interpolations, or dynamic resizing inside loops.
+ * SYNCHRONIZED: Consumes the new object-based TReportErrorParams payload interface.
+ */
 export function validateArray(
   data: unknown,
   shape: TSolidArrayShape,
   ctx: TValidationContext,
 ): boolean {
-  /* prettier-ignore */
-  const { ARRAY_VALIDATION_TYPE_MISMATCH, ARRAY_VALIDATION_MIN_LENGTH_VIOLATION } = errorService.shapeValErrs;
-  const reportError = XalethorVaultCompliance.reportError;
-
-  if (!isArray(data))
-    return reportError(
+  // 1. Instantly exit on structural mismatch
+  if (!isArray(data)) {
+    return xalethorVaultValidation.reportError({
       ctx,
-      ARRAY_VALIDATION_TYPE_MISMATCH.expected(),
-      data,
-      ARRAY_VALIDATION_TYPE_MISMATCH.message,
-    );
+      errorKey: 'ARRAY_VALIDATION_TYPE_MISMATCH',
+      received: data,
+    });
+  }
 
   const len = data.length;
-  if (shape.elementShapes) {
-    if (len < (shape.minLength || 0)) {
-      return reportError(
+  const elementShapes = shape.elementShapes;
+
+  // 2. High-Speed Branch A: Rigid Heterogeneous Tuple Verification
+  if (elementShapes) {
+    const minLength = shape.minLength || 0;
+    if (len < minLength) {
+      return xalethorVaultValidation.reportError({
         ctx,
-        ARRAY_VALIDATION_MIN_LENGTH_VIOLATION.expected(String(shape.minLength)),
-        `length: ${len}`,
-        ARRAY_VALIDATION_MIN_LENGTH_VIOLATION.message,
-      );
+        errorKey: 'ARRAY_VALIDATION_MIN_LENGTH_VIOLATION',
+        received: len,
+        shapeContext: minLength, // Passed cleanly down as a custom payload marker
+      });
     }
 
-    const elementCount = shape.elementShapes.length;
+    const elementCount = elementShapes.length;
     for (let i = 0; i < elementCount; i++) {
-      const targetPath = ctx.path === '$' ? `[${i}]` : `${ctx.path}[${i}]`;
-      /* prettier-ignore */
-      const pass = withPathRestore(ctx, targetPath, () => 
-        XalethorVaultCompliance.validateShape(data[i], shape.elementShapes![i], ctx)
+      // ✨ Pass the raw number index instantly. Absolute zero string creations!
+      ctx.pathStack[ctx.pathPointer++] = i;
+
+      const pass = xalethorVaultValidation.validateShape(
+        data[i],
+        elementShapes[i],
+        ctx,
       );
+
+      // ✨ Instant integer decrement reset
+      ctx.pathPointer--;
       if (!pass) return false;
     }
+
     return true;
   }
 
+  // 3. High-Speed Branch B: Fast Homogeneous Array Streaming Loop
+  const itemShape = shape.items;
   for (let i = 0; i < len; i++) {
-    const targetPath = ctx.path === '$' ? `[${i}]` : `${ctx.path}[${i}]`;
-    const pass = withPathRestore(ctx, targetPath, () =>
-      XalethorVaultCompliance.validateShape(data[i], shape.items, ctx),
-    );
+    // ✨ Direct primitive numeric assignment to the pre-allocated memory slot
+    ctx.pathStack[ctx.pathPointer++] = i;
+
+    const pass = xalethorVaultValidation.validateShape(data[i], itemShape, ctx);
+
+    // ✨ Instant integer decrement reset
+    ctx.pathPointer--;
     if (!pass) return false;
   }
+
   return true;
 }

@@ -71,15 +71,12 @@ export type TSolidVaultMap = {
  * @see {@link GlobalRootTypeDocs.TSolidError }
  */
 export type TSolidError = {
-  key: string;
-  path: string;
-  message: string;
-  expected: string | TSolidShape;
-  received: unknown;
-  area?: string; // Runtime failure GPS
-  origin?: string | TVaultManifestEntry; // Definition GPS
+  readonly key: string;
+  readonly pathSnapshot: (string | number)[];
+  readonly errorKey: string & {};
+  readonly received: unknown;
+  readonly shapeContext?: TSolidShape | string | number;
 };
-
 /**
  * TXalorResolvedPaths
  *

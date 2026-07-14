@@ -80,3 +80,50 @@ export type TResolveInstanceGraph<T> = T extends (...args: unknown[]) => unknown
               : T[K];
       }
     : T;
+
+/**
+ * @utilType type
+ * @name TKeys
+ * @category Primitive Type Utilities
+ * @description Produces the union of all property keys from an object type.
+ * @link #tkeys
+ *
+ * @example
+ * ```ts
+ * type User = {
+ *   id: number;
+ *   name: string;
+ * };
+ *
+ * type Keys = TKeys<User>;
+ * // "id" | "name"
+ * ```
+ *
+ * Equivalent to TypeScript's built-in `keyof` operator, provided as a reusable
+ * utility type for consistency throughout the library.
+ */
+export type TKeys<T extends Record<PropertyKey, string>> = keyof T;
+
+/**
+ * @utilType type
+ * @name TValues
+ * @category Primitive Type Utilities
+ * @description Produces the union of all property value types from an object type.
+ * @link #tvalues
+ *
+ * @example
+ * ```ts
+ * type User = {
+ *   id: number;
+ *   name: string;
+ *   active: boolean;
+ * };
+ *
+ * type Values = TValues<User>;
+ * // number | string | boolean
+ * ```
+ *
+ * Indexes every property of an object using its complete key union to produce
+ * a union of all possible value types.
+ */
+export type TValues<T extends Record<PropertyKey, string>> = T[keyof T];

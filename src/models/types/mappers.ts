@@ -72,6 +72,7 @@ export type TValidatorMapper = {
     data: unknown,
     shape: TSolidShape,
     ctx: TValidationContext,
+    blueprintId?: string,
   ) => boolean;
 };
 

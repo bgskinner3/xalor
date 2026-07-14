@@ -74,9 +74,10 @@ export type TVaultSyncPayload = {
  *   exception state jumps to preserve sub-microsecond validation speeds.
  */
 export type TValidationContext = {
-  seen: Map<unknown, Set<TSolidShape>>;
-  path: string;
-  errors: TSolidError[];
-  currentKey?: string;
+  readonly seen: Map<unknown, Set<TSolidShape>>;
+  readonly pathStack: (string | number)[];
+  pathPointer: number;
+  readonly errors: TSolidError[];
+  readonly currentKey: string;
   depth: number;
 };

@@ -73,7 +73,7 @@ export const CLONE_SHAPE_SANITIZER_MAPPER: TShapeCloneMapperMap = {
       XalethorService.validateShape(
         data,
         branch,
-        XalethorService.createInitialContext(),
+        XalethorService.createInitialContext(shape.kind),
       ),
     );
 

@@ -96,7 +96,7 @@ export const CAST_SHAPE_MAPPER: TShapeCastMapperMapper = {
   },
 
   union: (shape, data, depth, recurse) => {
-    const ctx = XalethorService.createInitialContext();
+    const ctx = XalethorService.createInitialContext(shape.kind);
 
     const immediateMatch = shape.values.find((branch) =>
       XalethorService.validateShape(data, branch, ctx),
