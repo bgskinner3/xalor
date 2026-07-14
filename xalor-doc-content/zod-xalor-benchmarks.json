@@ -29,6 +29,14 @@
             "max": "2.25 µs",
             "heapAllocated": "768.01 b"
           },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
+          },
           "performanceAnalysis": "Zod short-circuits simple valid object models faster here because its flat JavaScript shape allows the V8 engine to trigger clean JIT compilation path optimizations. Xalor pays a minor traversal tax due to recursive type-graph tracking."
         },
         "malformed_rejection": {
@@ -47,6 +55,14 @@
             "min": "1.65 µs",
             "max": "2.21 µs",
             "heapAllocated": "767.93 b"
+          },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
           },
           "performanceAnalysis": "Xalor blocks the corrupted data 10.5x faster than Zod. When an error occurs, Zod pauses execution to dynamically allocate a massive error subgraph, spiking latency up to 2.33 ms. Xalor handles rejections instantly at the outer rim of the loop, keeping memory entirely flat."
         }
@@ -74,6 +90,14 @@
             "max": "2.16 µs",
             "heapAllocated": "767.93 b"
           },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
+          },
           "performanceAnalysis": "Zod short-circuits valid stream packets at high speeds because V8 completely optimizes its hot-path loop properties. Xalor holds a predictable performance baseline, trading off microscopic ns margins to maintain a lean heap memory ceiling."
         },
         "malformed_rejection": {
@@ -92,6 +116,14 @@
             "min": "4.13 µs",
             "max": "4.26 µs",
             "heapAllocated": "768.05 b"
+          },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
           },
           "performanceAnalysis": "Xalor is 4.8x faster on rejections. Zod allocates 8.73 KB per loop to build structured telemetry error array strings. Xalor completely drops bad data blocks via direct snapshot failure matching, allocating 0 bytes of transient garbage."
         }
@@ -119,6 +151,14 @@
             "max": "4.42 µs",
             "heapAllocated": "768.05 b"
           },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
+          },
           "performanceAnalysis": "Zod leverages runtime inline map shortcuts to parse clean dictionary configurations rapidly. Xalor runs a thorough recursive reference extraction, ensuring perfect safety at the expense of a microscopic entry lag."
         },
         "malformed_rejection": {
@@ -137,6 +177,14 @@
             "min": "4.16 µs",
             "max": "4.27 µs",
             "heapAllocated": "768.05 b"
+          },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
           },
           "performanceAnalysis": "Xalor beats Zod by a 2.8x margin. When encountering wrong object formats in configuration dictionaries, Zod's internal state machine chokes. Xalor uses flat memory mapping parameters to reject the block uniformly."
         }
@@ -164,6 +212,14 @@
             "max": "4.26 µs",
             "heapAllocated": "768.05 b"
           },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
+          },
           "performanceAnalysis": "Zod short-circuits basic text strings at high operational velocities under pure valid workloads. Xalor locks down structural compliance parameters at a highly predictable, flat microsecond ceiling."
         },
         "malformed_rejection": {
@@ -183,6 +239,14 @@
             "max": "4.24 µs",
             "heapAllocated": "768.05 b"
           },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
+          },
           "performanceAnalysis": "Xalor provides 3.2x faster rejections. Zod experiences severe pipeline drag compiling regex error tracks when an alphanumeric SKU fails pattern matching. Xalor cuts off validation instantly at the first character violation."
         }
       }
@@ -200,6 +264,14 @@
             "min": "274.19 ns",
             "max": "335.03 ns",
             "heapAllocated": "1.07 kb"
+          },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
           },
           "xalor": {
             "avg": "4.26 µs/iter",
@@ -228,6 +300,14 @@
             "max": "4.32 µs",
             "heapAllocated": "768.05 b"
           },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
+          },
           "performanceAnalysis": "Xalor blocks unauthorized token shapes 3.5x faster than Zod. Zod balloons transient allocations to compile issue reports, while Xalor hits its flat snapshot failure path, isolating the system memory budget."
         }
       }
@@ -255,6 +335,14 @@
             "max": "4.34 µs",
             "heapAllocated": "768.05 b"
           },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
+          },
           "performanceAnalysis": "Zod short-circuits inventory array objects quickly under pure valid testing cycles. Xalor trades off microscopic ns speeds to eliminate runtime code bloat and preserve low client bundle weights."
         },
         "malformed_rejection": {
@@ -273,6 +361,14 @@
             "min": "4.17 µs",
             "max": "4.31 µs",
             "heapAllocated": "768.05 b"
+          },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
           },
           "performanceAnalysis": "Xalor catches corrupted parameters 3.6x faster than Zod. Zod's validation engine experiences severe pipeline drag compiling error arrays, while Xalor rejects bad objects at the outer rim of the loop."
         }
@@ -293,6 +389,14 @@
             "max": "671.05 ns",
             "heapAllocated": "1.50 kb"
           },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
+          },
           "xalor": {
             "avg": "4.22 µs/iter",
             "p75": "4.23 µs",
@@ -312,6 +416,14 @@
             "max": "22.33 µs",
             "heapAllocated": "4.44 kb"
           },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
+          },
           "xalor": {
             "avg": "4.20 µs/iter",
             "p75": "4.21 µs",
@@ -329,7 +441,7 @@
       "description": "Measures real-world data evolution boundaries when transforming historic, flat database shapes into modern nested layouts.",
       "underlyingMechanics": "Zod executes runtime object duplication and graph transformations. Xalor processes mappings via pre-compiled ancestral upcast lane closures.",
       "scenarios": {
-        "valid_evolution": {
+        "valid_shape": {
           "zod": {
             "avg": "142.81 ns/iter",
             "p75": "142.49 ns",
@@ -337,6 +449,14 @@
             "min": "133.51 ns",
             "max": "255.76 ns",
             "heapAllocated": "648.60 b"
+          },
+          "typia": {
+            "avg": "153.08 ns/iter",
+            "p75": "140.22 ns",
+            "p99": "477.10 ns",
+            "min": "124.58 ns",
+            "max": "740.08 ns",
+            "heapAllocated": "493.45 b"
           },
           "xalor": {
             "avg": "4.20 µs/iter",

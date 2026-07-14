@@ -66,6 +66,9 @@ export class XalethorService {
   public static panic(key: string): never {
     return XalethorVaultCompliance.panic(key);
   }
+  public static panicSoft(key: string): void {
+    return XalethorVaultCompliance.panicSoft(key);
+  }
   public static getKeyErrors(key: string): TSolidError[] {
     return XalethorVaultCompliance.getErrors(key);
   }

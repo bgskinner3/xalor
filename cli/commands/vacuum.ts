@@ -24,6 +24,7 @@ export function runVacuumCommand(projectRootPath: string) {
     );
     process.exit(1);
   }
+
   /* prettier-ignore */
   const parsedConfig = ts.parseJsonConfigFileContent(readResult.config, ts.sys, projectRootPath);
 
@@ -132,7 +133,7 @@ export function runVacuumCommand(projectRootPath: string) {
     }
   });
   vacuumExitBuild();
-
+  globalThis.__XALOR_COMPILE_LOCK__ = true;
   // ====================================================================================
   // NATIVE ASYNC TICK BUFFER
   // ====================================================================================

@@ -36,6 +36,8 @@ class XalorContextService {
     globalThis.__XALOR_TARGETED_RUNTIME_FILES_SET__ ||= new Set<string>();
     /* prettier-ignore */
     globalThis.__XALOR_DRIFT_REGISTRY__ ||= new Map<string, TDriftLineageEntry>();
+
+    globalThis.__XALOR_COMPILE_LOCK__ ||= false;
   }
   get globalKeyRegistry() {
     return globalThis.__XALOR_GLOBAL_KEY_REGISTRY__!;

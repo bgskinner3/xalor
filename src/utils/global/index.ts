@@ -1,6 +1,10 @@
-// models/utils/global/index.ts
 import { IS_SOLID_CONFIG_ITEMS } from '../../../shared';
-import type { TSolidVaultMap } from '../../../shared';
+import type {
+  TSolidVaultMap,
+  TSolidShape,
+  TVaultDriftEntry,
+} from '../../../shared';
+import { executeVaultSelfHealingSeeding } from './helpers';
 
 // ====================================================================
 /**
@@ -21,39 +25,48 @@ import type { TSolidVaultMap } from '../../../shared';
 export function getGlobalVault(): TSolidVaultMap | undefined {
   return globalThis[IS_SOLID_CONFIG_ITEMS.solidVaultKey];
 }
+
 /**
  * ENSURE GLOBAL VAULT
- * Guarantees the existence of the Vault singleton.
- * If the Vault doesn't exist, it initializes the 'items' and 'errors' maps
- * and attaches them to the global scope. This is the primary "Bootloader"
- * for Pillar 2 (The Vault).
+ * This is your primary production runtime bootloader.
+ * It executes entirely inside the compiled /dist environment on server start.
  */
 export function ensureGlobalVault(): TSolidVaultMap {
-  // 1. Core Cold-Start Initialization Gate
-  if (!globalThis.__SOLID_VAULT__) {
-    const rawMapVault: TSolidVaultMap = {
-      driftTracking: new Map(),
-      blueprints: new Map(),
-      references: new Map(),
-      manifest: new Map(),
-      registry: new Map(),
-      errors: new Map(),
-    };
-    globalThis.__SOLID_VAULT__ = rawMapVault;
+  const existingVault = globalThis.__SOLID_VAULT__;
+
+  if (existingVault && existingVault.blueprints.size > 0) {
+    return existingVault;
   }
 
-  // 2. THE RESILIENCY HEALING & TYPE REFINEMENT GATES:
-  const vault = globalThis.__SOLID_VAULT__;
+  const rawMapVault: TSolidVaultMap = {
+    driftTracking: new Map<string, TVaultDriftEntry>(),
+    blueprints: new Map<string, TSolidShape>(),
+    references: new Map<string, string>(),
+    manifest: new Map(),
+    registry: new Map(),
+    errors: new Map(),
+  };
 
-  if (vault.blueprints instanceof Map) {
-    if (!(vault.driftTracking instanceof Map)) vault.driftTracking = new Map();
-    if (!(vault.references instanceof Map)) vault.references = new Map();
-    if (!(vault.manifest instanceof Map)) vault.manifest = new Map();
-    if (!(vault.registry instanceof Map)) vault.registry = new Map();
-    if (!(vault.errors instanceof Map)) vault.errors = new Map();
+  globalThis.__SOLID_VAULT__ = rawMapVault;
 
-    return vault; // Statically verified as a healthy TSolidVaultMap
+  // 🪐 Dispatch the file lookups to our isolated self-healing method function
+  executeVaultSelfHealingSeeding(rawMapVault);
+
+  const isCompilePhaseActive = globalThis.__XALOR_COMPILE_LOCK__ === true;
+
+  if (!isCompilePhaseActive) {
+    // Dispatch the file lookups to your isolated self-healing method function
+    executeVaultSelfHealingSeeding(rawMapVault);
+  }
+  const finalVault = globalThis.__SOLID_VAULT__;
+  if (finalVault.blueprints instanceof Map) {
+    /* prettier-ignore */ if (!(finalVault.driftTracking instanceof Map)) finalVault.driftTracking = new Map();
+    /* prettier-ignore */ if (!(finalVault.references instanceof Map)) finalVault.references = new Map();
+    /* prettier-ignore */ if (!(finalVault.manifest instanceof Map)) finalVault.manifest = new Map();
+    /* prettier-ignore */ if (!(finalVault.registry instanceof Map)) finalVault.registry = new Map();
+    /* prettier-ignore */ if (!(finalVault.errors instanceof Map)) finalVault.errors = new Map();
+    return finalVault;
   }
 
-  return vault;
+  return finalVault;
 }

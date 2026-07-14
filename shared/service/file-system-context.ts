@@ -181,6 +181,9 @@ class FileSystemContextService {
   public async asyncWrite(filePath: string, payload: string): Promise<void> {
     await fs.promises.writeFile(filePath.valueOf(), payload, 'utf8');
   }
+  public writeText(filePath: string, payload: string): void {
+    fs.writeFileSync(filePath, payload, 'utf-8');
+  }
   public async asyncFileStats(filePath: string): Promise<Stats> {
     return await fs.promises.stat(filePath);
   }

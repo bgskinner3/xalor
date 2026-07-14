@@ -187,7 +187,15 @@ export class XalethorVaultCompliance {
 
     throw new Error(finalMessage);
   }
+  public static panicSoft(key: string, customMessage?: string): void {
+    const report = this.formatReport(key);
+    const finalMessage =
+      report ||
+      `[xalor] 🚨 ${customMessage || 'Assertion failure'} for key: ${key}`;
 
+    // throw new Error(finalMessage);
+    console.error(finalMessage);
+  }
   // ============================================================================
   // 🎨 RAW ANSI SOLID REPORT TEMPLATE (CENTRALIZED TO SPECTRUM)
   // ============================================================================

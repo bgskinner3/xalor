@@ -39,7 +39,7 @@ export function validateXalorParse<K extends TActiveRegistryKeys>(
   assertRegistryKey(injectedKey);
 
   if (!isDefined(data)) {
-    return XalethorService.panic(injectedKey);
+    return XalethorService.panicSoft(injectedKey) as never;
   }
 
   const isValid = XalethorService.validateShapeByKey(data, injectedKey);
@@ -58,5 +58,5 @@ export function validateXalorParse<K extends TActiveRegistryKeys>(
     }
   }
 
-  return XalethorService.panic(injectedKey);
+  return XalethorService.panicSoft(injectedKey) as never;
 }

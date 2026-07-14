@@ -12,7 +12,9 @@ import { transformXalorMerge, generateXalorClone } from './transform';
 import { validateXalorGuard, validateXalorParse } from './validate';
 import { generateXalorDefault } from './generate';
 import { matchXalorDrift } from './match';
+import { ensureGlobalVault } from '../utils';
 
+ensureGlobalVault();
 class XalorCore {
   // ========================================================================
   // ========================================================================

@@ -16,5 +16,6 @@ declare global {
   // ======================================================================
   var __XALOR_BOOT_HYDRATED__: boolean | undefined;
   var __XALOR_ROOT_DIR__: string | undefined;
+  var __XALOR_COMPILE_LOCK__: boolean | undefined;
 }
 export {};

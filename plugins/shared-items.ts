@@ -61,3 +61,32 @@ export type TWebpackCompilerInstance = {
     };
   };
 };
+// =================================================
+// =================================================
+// vite-webpack
+// =================================================
+// =================================================
+export type THotUpdateContext = {
+  readonly file: string;
+};
+
+export type TEmitFileOptions = {
+  readonly type: 'asset';
+  readonly fileName: string;
+  readonly source: string;
+};
+
+export type TPluginContext = {
+  /**
+   * NATIVE COMPILATION ASSET INJECTOR
+   * Registers a flat, un-wrapped file footprint straight into the bundler asset tree map.
+   */
+  emitFile(options: TEmitFileOptions): void;
+};
+
+export type TXalorVitePlugin = {
+  readonly name: string;
+  configResolved(): void;
+  handleHotUpdate(ctx: THotUpdateContext): Promise<void> | void;
+  generateBundle(this: TPluginContext): void;
+};

@@ -24,6 +24,7 @@
  */
 import ts from 'typescript';
 import * as path from 'path';
+import * as fs from 'fs';
 import xalorTransformerPlugin from '../../transformer';
 import {
   fsContext,
@@ -31,7 +32,12 @@ import {
   isUndefined,
   ObjectUtils,
 } from '../../shared';
-import type { TWebpackCompilerInstance } from '../shared-items';
+import type {
+  TWebpackCompilerInstance,
+  TXalorVitePlugin,
+  TPluginContext,
+  THotUpdateContext,
+} from '../shared-items';
 import { BASE_COMPILER_OPTIONS } from '../shared-items';
 import type { TTypeGuard } from '../../shared';
 
@@ -72,12 +78,9 @@ export const assertWebpackShapeIntegrity: TTypeGuard<
 export function executeAmbientTransformationPass(
   absoluteFilePath: string,
 ): void {
-  // only hard coded files?
-  // TODO: find out
   if (!absoluteFilePath.endsWith('.ts') && !absoluteFilePath.endsWith('.tsx')) {
     return;
   }
-
   /**
    * CROSS PLATFORM CANONICAL PATH MAPPER
    *
@@ -94,7 +97,6 @@ export function executeAmbientTransformationPass(
    *  primitive string value natively
    */
   const rootStr = fsContext.envPaths.rootDir.valueOf();
-
   const normalizedAbsolute = path.resolve(absoluteFilePath).replace(/\\/g, '/');
   const normalizedRoot = path.resolve(rootStr).replace(/\\/g, '/');
 
@@ -118,10 +120,8 @@ export function executeAmbientTransformationPass(
 
     process.env.XALOR_CLI_WATCH = 'true';
     process.env.XALOR_CLI_COMPILE = 'false';
-
     const program = ts.createProgram([absoluteFilePath], BASE_COMPILER_OPTIONS);
 
-    // ⚡ Execute the atomic compilation pass with the Black-Hole Swallow hook
     program.emit(
       undefined,
       () => {
@@ -177,13 +177,44 @@ export default defineConfig({
 
       ```
  */
-export function xalorViteWatchPlugin() {
+export function xalorViteWatchPlugin(): TXalorVitePlugin {
   return {
     name: 'vite-plugin-xalor-ambient-watch',
-    apply: 'serve' as const,
+    configResolved() {
+      globalThis.__XALOR_COMPILE_LOCK__ = true;
+    },
 
-    async handleHotUpdate(ctx: { file: string }) {
+    // 🔌 'apply: serve' is removed completely. This plugin handles dev watches
+    // and production building lifecycles concurrently out-of-band!
+
+    async handleHotUpdate(ctx: THotUpdateContext) {
       executeAmbientTransformationPass(ctx.file);
+    },
+
+    // 🚀 THE PRODUCTION CURE FOR VITE BUILDS:
+    // Explicitly scopes the execution runtime context string to our custom TPluginContext structure.
+    // This allows the compiler to fully recognize 'this.emitFile' with zero type-escapes!
+    generateBundle(this: TPluginContext) {
+      try {
+        const sourceJsonPath = path.resolve(
+          process.cwd(),
+          './xalor-vault.json',
+        );
+
+        if (fs.existsSync(sourceJsonPath)) {
+          const rawJsonData = fs.readFileSync(sourceJsonPath, 'utf8');
+
+          // Emit the file natively into the asset graph tree structure
+          // This forces Vite to write the file flatly as dist/xalor-vault.json right post-build!
+          this.emitFile({
+            type: 'asset',
+            fileName: 'xalor-vault.json',
+            source: rawJsonData,
+          });
+        }
+      } catch (_err) {
+        // Safe silent fallback during active development hot-reloading saves
+      }
     },
   };
 }
