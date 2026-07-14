@@ -5,7 +5,7 @@ import type {
   TVaultDriftEntry,
 } from '../../../shared';
 import { executeVaultSelfHealingSeeding } from './helpers';
-
+let isVaultFullySeeded = false;
 // ====================================================================
 /**
  * GLOBAL VAULT ACCESSORS
@@ -34,7 +34,7 @@ export function getGlobalVault(): TSolidVaultMap | undefined {
 export function ensureGlobalVault(): TSolidVaultMap {
   const existingVault = globalThis.__SOLID_VAULT__;
 
-  if (existingVault && existingVault.blueprints.size > 0) {
+  if (isVaultFullySeeded && existingVault !== undefined) {
     return existingVault;
   }
 
@@ -44,29 +44,26 @@ export function ensureGlobalVault(): TSolidVaultMap {
     references: new Map<string, string>(),
     manifest: new Map(),
     registry: new Map(),
-    errors: new Map(),
   };
 
   globalThis.__SOLID_VAULT__ = rawMapVault;
 
-  // 🪐 Dispatch the file lookups to our isolated self-healing method function
-  executeVaultSelfHealingSeeding(rawMapVault);
-
   const isCompilePhaseActive = globalThis.__XALOR_COMPILE_LOCK__ === true;
 
   if (!isCompilePhaseActive) {
-    // Dispatch the file lookups to your isolated self-healing method function
     executeVaultSelfHealingSeeding(rawMapVault);
   }
-  const finalVault = globalThis.__SOLID_VAULT__;
-  if (finalVault.blueprints instanceof Map) {
-    /* prettier-ignore */ if (!(finalVault.driftTracking instanceof Map)) finalVault.driftTracking = new Map();
-    /* prettier-ignore */ if (!(finalVault.references instanceof Map)) finalVault.references = new Map();
-    /* prettier-ignore */ if (!(finalVault.manifest instanceof Map)) finalVault.manifest = new Map();
-    /* prettier-ignore */ if (!(finalVault.registry instanceof Map)) finalVault.registry = new Map();
-    /* prettier-ignore */ if (!(finalVault.errors instanceof Map)) finalVault.errors = new Map();
-    return finalVault;
-  }
+  isVaultFullySeeded = true;
 
-  return finalVault;
+  // Enforce rigid graph safety by locking structural metadata shapes
+  Object.freeze(rawMapVault.blueprints);
+  Object.freeze(rawMapVault.references);
+  Object.freeze(rawMapVault.manifest);
+  Object.freeze(rawMapVault.registry);
+  Object.freeze(rawMapVault.driftTracking);
+  Object.freeze(rawMapVault);
+
+  isVaultFullySeeded = true;
+
+  return rawMapVault;
 }

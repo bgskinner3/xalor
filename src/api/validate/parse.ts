@@ -1,5 +1,5 @@
 import { XalethorService } from '../../xalor-service';
-import { markAsSolid } from '../../utils';
+import { markAsSolid, ensureGlobalVault } from '../../utils';
 import { BRAND_SYMBOL } from '../../../shared';
 import type { TSolidBranded } from '../../../shared';
 import {
@@ -36,10 +36,11 @@ export function validateXalorParse<K extends TActiveRegistryKeys>(
   data: unknown,
   injectedKey?: K,
 ): TSolidBranded<K, TResolveRegistryStructure<K>> {
+  ensureGlobalVault();
   assertRegistryKey(injectedKey);
 
   if (!isDefined(data)) {
-    return XalethorService.panicSoft(injectedKey) as never;
+    return XalethorService.panic(injectedKey) as never;
   }
 
   const isValid = XalethorService.validateShapeByKey(data, injectedKey);
@@ -58,5 +59,5 @@ export function validateXalorParse<K extends TActiveRegistryKeys>(
     }
   }
 
-  return XalethorService.panicSoft(injectedKey) as never;
+  return XalethorService.panic(injectedKey) as never;
 }

@@ -124,3 +124,38 @@ export function vacuumExitBuild() {
     );
   }
 }
+// import { TSolidVaultMap, TTripleKV } from '../../shared';
+// function seedTestVault(
+//   productionReferences: TTripleKV['references'],
+//   productionBlueprints: TTripleKV['blueprints'],
+//   productionDriftTracking: TTripleKV['driftTracking'],
+// ) {
+//   // 1. Instantiate the global container singleton structure if it hasn't booted yet
+//   if (!globalThis.__SOLID_VAULT__) {
+//     const rawMapVault: TSolidVaultMap = {
+//       driftTracking: new Map(),
+//       blueprints: new Map(),
+//       references: new Map(),
+//     };
+//     globalThis.__SOLID_VAULT__ = rawMapVault;
+//   }
+
+//   // 2. THE RESILIENCY HEALING & TYPE REFINEMENT GATES:
+//   const vault = globalThis.__SOLID_VAULT__;
+//   delete vault.manifest;
+//   delete vault.registry;
+//   Object.keys(productionReferences).map((key) => {
+//     const ref = productionReferences[key];
+//     vault.references.set(key, ref);
+//   });
+
+//   Object.keys(productionBlueprints).map((key) => {
+//     const ref = productionBlueprints[key];
+//     vault.blueprints.set(key, ref);
+//   });
+
+//   Object.keys(productionDriftTracking).map((key) => {
+//     const ref = productionDriftTracking[key];
+//     vault.driftTracking.set(key, ref);
+//   });
+// }
