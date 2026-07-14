@@ -24,6 +24,8 @@ const REF_FAST_PATH_REGISTRY = new WeakMap<object, TFastPathMetadata>();
  * Validates complex record topologies and nested object trees.
  * COMPLIANCE: 100% statically verifiable type safety. Zero any, zero as, zero dynamic mutations.
  * SYNCHRONIZED: Implements the new object-based TReportErrorParams payload interface via the vault singleton.
+ *
+ * !!! HOTPATH OBJECTS
  */
 export function validateObject(
   data: unknown,

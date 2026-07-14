@@ -79,7 +79,6 @@ export function validateUnion(
 
   for (let i = 0; i < len; i++) {
     if (xalethorVaultValidation.validateShape(data, shape.values[i], ctx)) {
-      // ✨ Truncate the array length directly instead of running a heavy .splice()
       if (ctx.errors.length > snapshotCount) {
         ctx.errors.length = snapshotCount;
       }
@@ -155,7 +154,7 @@ export function validateFunction(
     return xalethorVaultValidation.reportError({
       ctx,
       errorKey: 'FUNCTION_VALIDATION_PARAMETER_MISMATCH',
-      received: data.length, // Passed directly as a raw number token
+      received: data.length,
       shapeContext: shape,
     });
   }
