@@ -16,9 +16,10 @@
     "bootInitializationPenalty": {
       "id": "bootInitializationPenalty",
       "header": "Cold Start Initialization Benchmark",
-      "description": "Measures startup overhead when loading validation systems for the first execution, including initialization cost, schema preparation, and initial validation latency.",
+      "description": "Evaluates startup efficiency when loading validation systems for the first execution, including initialization cost optimizations, schema preparation speed, and initial validation readiness.",
       "category": "Initialization Performance",
-      "note": "Evaluates first-run execution in a fresh runtime environment before caching and runtime optimizations take effect.",
+      "note": "Tracks first-run efficiency in a fresh runtime environment before caching and compiler optimizations take effect.",
+      "underlyingMechanics": "Zod links structural closures inside the runtime thread. Typia bypasses macro operations but incurs V8 file registry thrashing due to continuous filesystem cache-busting imports. Xalor pulls structural tokens synchronously from an AOT JSON blueprint file and streams individual AST nodes into an active global vault map.",
       "scenarios": {
         "coldStartEvaluation": {
           "zod": {
@@ -62,16 +63,19 @@
               "heapAllocated": { "value": 2796, "display": "2.73 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Xalor achieves a 356.29 ns cold-start initialization path, outperforming Zod by approximately 1,152x and Typia by over 3,000x. This advantage comes from avoiding runtime schema construction and dynamic validation setup costs. While Zod allocates 516.93 kb and Typia allocates 388.31 kb during first execution, Xalor maintains a minimal 2.73 kb footprint by loading structural definitions directly into its validation layout."
         }
       }
     },
     "customerOrderGraph": {
       "id": "customerOrderGraph",
       "header": "Complex Customer Order Validation Benchmark",
-      "description": "Measures validation performance on deeply nested order objects containing item arrays, shipping details, metadata records, enums, and timestamp fields.",
+      "description": "Evaluates structural validation throughput on deeply nested order objects containing item arrays, shipping details, metadata records, enums, and timestamp fields.",
       "category": "Complex Object Validation",
-      "note": "Evaluates both successful validation throughput and malformed payload rejection across realistic transaction data.",
+      "note": "Tracks both successful validation efficiency and malformed payload rejection speeds across realistic transaction data.",
+
+      "underlyingMechanics": "Zod dynamically jumps across context closure boundaries at runtime. Typia strips validation structures into unrolled inline expression blocks. Xalor queries incoming payload shapes directly against its compiled internal memory-vault blueprints.",
       "scenarios": {
         "validShape": {
           "zod": {
@@ -115,7 +119,8 @@
               "heapAllocated": { "value": 2775, "display": "2.71 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Typia delivers the fastest successful validation path at 131.00 ns due to generated inline validation branches optimized by the runtime compiler. Xalor completes the same complex object validation in 353.29 ns while maintaining predictable latency behavior with a 500 ns p99 boundary. Compared with Zod's 988.46 ns average and 3.42 µs p99, Xalor removes dynamic schema traversal overhead while maintaining consistent structural verification."
         },
         "malformedRejection": {
           "zod": {
@@ -159,17 +164,18 @@
               "heapAllocated": { "value": 2714, "display": "2.65 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Xalor rejects malformed customer orders in 284.33 ns, executing approximately 2.7x faster than Typia and 45x faster than Zod. The flat rejection path avoids the large diagnostic allocation overhead observed in Zod, which reaches 12.90 kb per iteration while Xalor remains at a consistent 2.65 kb allocation profile."
         }
       }
     },
     "heavyTelemetryMatrix": {
       "id": "heavyTelemetryMatrix",
       "header": "Heavy Telemetry Packet Validation Benchmark",
-      "description": "Measures validation performance on wide telemetry payloads containing nested metrics, numeric constraints, BigInt counters, and device status fields.",
+      "description": "Evaluates data processing efficiency on wide telemetry payloads containing nested metrics, numeric constraints, BigInt counters, and device status fields.",
       "category": "Structured Data Validation",
-      "note": "Tests high-volume machine data validation across hardware metrics, network statistics, and constrained numeric fields.",
-
+      "note": "Tracks high-volume machine data throughput across hardware metrics, network statistics, and constrained numeric fields.",
+      "underlyingMechanics": "Zod steps through objects field-by-field using generic structural functional logic. Typia unrolls validation into flat JavaScript conditionals. Xalor tracks field layouts using specialized in-memory validation tables.",
       "scenarios": {
         "validShape": {
           "zod": {
@@ -213,7 +219,8 @@
               "heapAllocated": { "value": 2714, "display": "2.65 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Typia reaches near-native execution speed on telemetry validation at 9.29 ns through fully generated validation branches. Xalor processes the same wide numerical payload in 278.60 ns with significantly tighter latency distribution, keeping p99 at 313.77 ns compared with Zod's 679.59 ns. Xalor prioritizes deterministic structural mapping while avoiding runtime traversal overhead."
         },
         "malformedRejection": {
           "zod": {
@@ -257,16 +264,18 @@
               "heapAllocated": { "value": 2714, "display": "2.65 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Xalor rejects invalid telemetry packets in 277.46 ns, operating approximately 2x faster than Typia and 45x faster than Zod. Its compiled structural layout allows immediate mismatch detection without constructing runtime error structures, keeping allocations stable at 2.65 kb while Zod expands to 5.65 kb."
         }
       }
     },
     "appConfigRegistry": {
       "id": "appConfigRegistry",
       "header": "Application Configuration Validation Benchmark",
-      "description": "Measures validation performance on structured application configuration objects containing feature flags, connection settings, environment constraints, and typed collections.",
+      "description": "Evaluates ingestion efficiency on structured application configuration objects containing feature flags, connection settings, environment constraints, and typed collections.",
       "category": "Configuration Validation",
-      "note": "Tests validation of runtime configuration data including maps, nested connection settings, and constrained deployment parameters.",
+      "note": "Tracks validation optimization of runtime configuration data including maps, nested connection settings, and constrained deployment parameters.",
+      "underlyingMechanics": "Zod routes dynamic objects through broad array scanning loops. Typia builds distinct checks tailored to prototype keys. Xalor queries active configuration parameters against its compiled global state layout.",
       "scenarios": {
         "validShape": {
           "zod": {
@@ -310,7 +319,8 @@
               "heapAllocated": { "value": 2714, "display": "2.65 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Typia achieves the lowest validation latency at 85.96 ns by using generated conditional paths specialized for configuration objects. Xalor validates configuration layouts in 270.81 ns while maintaining consistent p99 latency of 308.71 ns, avoiding the higher variance seen in Zod where maximum latency reaches 1.34 µs."
         },
         "malformedRejection": {
           "zod": {
@@ -354,16 +364,18 @@
               "heapAllocated": { "value": 2714, "display": "2.65 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Xalor detects invalid configuration states in 266.15 ns with a stable latency profile, outperforming Zod by approximately 38x. Typia remains faster at 123.67 ns due to generated checks, but Xalor provides predictable structural rejection through its indexed layout system without dynamic error processing overhead."
         }
       }
     },
     "coreProductSku": {
       "id": "coreProductSku",
       "header": "Core Product Validation Benchmark",
-      "description": "Measures validation performance on small flat product objects containing primitive fields, numeric values, boolean states, and tag collections.",
+      "description": "Evaluates throughput efficiency on small flat product objects containing primitive fields, numeric values, boolean states, and tag collections.",
       "category": "Primitive Object Validation",
-      "note": "Provides a baseline workload for validating simple application data structures with minimal nesting.",
+      "note": "Provides a baseline efficiency workload for validating simple application data structures with minimal nesting.",
+      "underlyingMechanics": "Zod routes data properties through micro-closures. Typia generates highly optimized, flat conditional statements. Xalor matches flat structures against its internal map index table.",
       "scenarios": {
         "validShape": {
           "zod": {
@@ -407,7 +419,8 @@
               "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Typia dominates simple primitive validation workloads at 4.99 ns by allowing the runtime compiler to optimize fully expanded validation logic. Xalor processes the same flat product structures at 278.27 ns while maintaining a stable maximum latency of 339.20 ns, avoiding the latency spikes observed in Zod's dynamic validation path."
         },
 
         "malformedRejection": {
@@ -452,17 +465,18 @@
               "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Xalor rejects invalid product records in 279.33 ns, running approximately 37x faster than Zod and 44% faster than Typia. Its indexed structural matching approach maintains consistent rejection speed without the runtime error construction costs that increase Zod's allocation footprint to 4.43 kb."
         }
       }
     },
     "accessSessionMatrix": {
       "id": "accessSessionMatrix",
       "header": "Access Session Validation Benchmark",
-      "description": "Measures validation performance on authentication session objects containing identity fields, UUID tokens, network addresses, expiration timestamps, and security state flags.",
+      "description": "Evaluates processing efficiency on authentication session objects containing identity fields, UUID tokens, network addresses, expiration timestamps, and security state flags.",
       "category": "Security Data Validation",
-      "note": "Tests runtime validation of session payloads commonly used in authentication and access control workflows.",
-
+      "note": "Tracks runtime throughput efficiency of session payloads commonly used in authentication and access control workflows.",
+      "underlyingMechanics": "Zod evaluates pattern constraints through functional regular expression logic. Typia runs inline string comparisons. Xalor parses keys directly through its layout schema table.",
       "scenarios": {
         "validShape": {
           "zod": {
@@ -506,7 +520,8 @@
               "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Typia provides the fastest session validation at 89.12 ns through generated inline comparisons. Xalor validates authentication structures at 282.36 ns with a narrow p99 range of 318.66 ns, maintaining predictable execution compared with Zod's wider latency ceiling of 1.03 µs."
         },
 
         "malformedRejection": {
@@ -551,16 +566,18 @@
               "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Xalor identifies malformed session credentials in 281.10 ns, approximately 2x faster than Typia and 40x faster than Zod. The structural lookup model avoids expensive runtime diagnostic generation while maintaining a consistent 2.65 kb memory footprint."
         }
       }
     },
     "warehouseInventoryBins": {
       "id": "warehouseInventoryBins",
       "header": "Warehouse Inventory Validation Benchmark",
-      "description": "Measures validation performance on warehouse inventory records containing facility metadata, storage bin collections, numeric capacity constraints, and operational status fields.",
+      "description": "Evaluates operational data processing efficiency on warehouse inventory records containing facility metadata, storage bin collections, numeric capacity constraints, and operational status fields.",
       "category": "Operational Data Validation",
-      "note": "Tests validation of structured logistics data with nested collections and repeated inventory item records.",
+      "note": "Tracks validation throughput of structured logistics data with nested collections and repeated inventory item records.",
+      "underlyingMechanics": "Zod processes validation loops dynamically across arrays. Typia runs array loops inline using plain JavaScript loop optimization steps. Xalor queries active inventory structural layouts against its global state table.",
       "scenarios": {
         "validShape": {
           "zod": {
@@ -604,7 +621,8 @@
               "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Typia achieves the fastest inventory validation throughput at 13.34 ns using generated iteration paths optimized for arrays and primitive fields. Xalor processes warehouse structures at 277.93 ns with stable latency characteristics, reducing the variance seen in Zod's dynamic array traversal approach."
         },
 
         "malformedRejection": {
@@ -649,16 +667,18 @@
               "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Xalor rejects invalid inventory structures in 283.31 ns, approximately 2x faster than Typia and 42x faster than Zod. Its structural indexing system isolates invalid fields immediately while avoiding the larger allocation overhead generated by runtime validation frameworks."
         }
       }
     },
     "apiNetworkLog": {
       "id": "apiNetworkLog",
       "header": "API Network Log Validation Benchmark",
-      "description": "Measures validation performance on API transaction records containing request metadata, endpoint information, HTTP methods, response codes, latency metrics, and payload size fields.",
+      "description": "Evaluates real-time validation efficiency on API transaction records containing request metadata, endpoint information, HTTP methods, response codes, latency metrics, and payload size fields.",
       "category": "Network Data Validation",
-      "note": "Tests validation of high-frequency server ingress data commonly produced by API gateways and application telemetry systems.",
+      "note": "Tracks high-frequency server ingress capability commonly produced by API gateways and application telemetry systems.",
+      "underlyingMechanics": "Zod assesses network protocols step by step. Typia unrolls validation logic to process parameters without runtime wrappers. Xalor matches log structures directly against its index schema entries.",
       "scenarios": {
         "validShape": {
           "zod": {
@@ -702,7 +722,8 @@
               "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Typia achieves the lowest API log validation latency at 5.02 ns through pre-generated validation paths. Xalor processes network records in 273.12 ns while maintaining predictable latency with a 318.58 ns p99, avoiding the higher maximum latency spikes observed in Zod."
         },
 
         "malformedRejection": {
@@ -747,7 +768,8 @@
               "heapAllocated": { "value": 2713.6, "display": "2.65 kb" },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Xalor rejects malformed API transactions in 272.85 ns with a stable execution profile. Typia remains faster at 133.39 ns due to generated checks, but Xalor maintains consistent structural processing without relying on dynamic error construction paths."
         }
       }
     },
@@ -757,6 +779,7 @@
       "description": "Measures performance when transforming legacy data structures into modern application formats through schema evolution and field mapping.",
       "category": "Schema Migration Performance",
       "note": "Tests compatibility workflows where older data representations must be converted into current entity models.",
+      "underlyingMechanics": "Zod maps transformations by running parsing functions across individual properties. Typia processes upcasts using generated build-time tracks. Xalor channels transformations through its structural database upcast layers.",
       "scenarios": {
         "validUpcastLane": {
           "zod": {
@@ -803,7 +826,8 @@
               },
               "unit": "bytes"
             }
-          }
+          },
+          "performanceAnalysis": "Typia provides near-zero-cost schema migration execution at 1.11 ns through generated transformation logic. Xalor performs safe structural upcasting at 311.33 ns using its schema mapping layers, prioritizing deterministic migration behavior and predictable latency over raw generated-code throughput."
         }
       }
     }
