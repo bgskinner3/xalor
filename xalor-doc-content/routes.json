@@ -63,7 +63,7 @@
       "text": "CLI",
       "href": "/xalor/docs/cli",
       "iconName": "terminal-duotone",
-      "active": false,
+      "active": true,
       "sectionLinks": [{ "id": "intro", "text": "What CLI" }]
     },
     {
@@ -89,8 +89,7 @@
         { "id": "coreProductSku", "text": "Product Sku" },
         { "id": "accessSessionMatrix", "text": "Session Matrix" },
         { "id": "warehouseInventoryBins", "text": "Inventory Bins" },
-        { "id": "apiNetworkLog", "text": "Network Log" },
-        { "id": "legacyInvoiceEvolution", "text": "Invoice Evolution" }
+        { "id": "apiNetworkLog", "text": "Network Log" }
       ]
     }
   ],
