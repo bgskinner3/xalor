@@ -97,7 +97,8 @@ export type TSolidObjectRawShape = {
   shape: TSolidShape;
   optional: boolean;
   name: string;
-  requiresKeyPresence?: boolean;
+  requiresKeyPresence: boolean;
+  allowsExplicitUndefined: boolean;
 };
 
 export type TInstanceRegistryMapper = {

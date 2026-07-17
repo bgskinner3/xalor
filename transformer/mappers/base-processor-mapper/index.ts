@@ -32,7 +32,8 @@ export const PROCESSOR_REWRITE_MAPPER: TProcessorRewriteMap = {
   'xalor.guard':      (raw, node, factory) => formatGuardArgs(raw, node, factory),
   /* prettier-ignore */
   'xalor.parse':      (raw, node, factory) => formatParseArgs(raw, node, factory),
-
+  /* prettier-ignore */
+  'xalor.safeParse':      (raw, node, factory) => formatParseArgs(raw, node, factory),
   // ========================================================================
   // TRANSFORMATION METHODS
   // ========================================================================

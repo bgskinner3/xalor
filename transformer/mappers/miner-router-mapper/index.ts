@@ -31,7 +31,7 @@ export const XALOR_MINING_ROUTER_MAPPER: TXalorMinerRouterMap = {
   // ========================================================================
   /* prettier-ignore */ 'xalor.guard':      (node, checker) => extractSingleKeyPayload<'xalor.guard'>(node, checker, 'xalor.guard'),
   /* prettier-ignore */ 'xalor.parse':      (node, checker) => extractSingleKeyPayload<'xalor.parse'>(node, checker, 'xalor.parse'),
-
+  /* prettier-ignore */ 'xalor.safeParse':      (node, checker) => extractSingleKeyPayload<'xalor.parse'>(node, checker, 'xalor.parse'),
   // ========================================================================
   // TRANSFORMATION METHODS
   // ========================================================================

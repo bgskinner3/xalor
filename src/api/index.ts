@@ -9,7 +9,11 @@ import type {
 } from '../models/types';
 import { registerXalor } from './register';
 import { transformXalorMerge, generateXalorClone } from './transform';
-import { validateXalorGuard, validateXalorParse } from './validate';
+import {
+  validateXalorGuard,
+  validateXalorParse,
+  validateXalorSafeParse,
+} from './validate';
 import { generateXalorDefault } from './generate';
 import { matchXalorDrift } from './match';
 
@@ -49,9 +53,12 @@ class XalorCore {
 
     return activeGuard;
   }
+
   /** @Api validation  @mode parse */
   public parse = validateXalorParse;
 
+  /** @Api validation  @mode safeParse */
+  public safeParse = validateXalorSafeParse;
   // ========================================================================
   // ========================================================================
   // ========================================================================
@@ -63,7 +70,6 @@ class XalorCore {
   // ========================================================================
 
   /** @Api generator  @mode default */
-
   public default<K extends TActiveRegistryKeys = TActiveRegistryKeys>(
     _compiledKeyReference?: K,
   ): TSolidBranded<K, TResolveRegistryStructure<K>> {

@@ -67,8 +67,6 @@ function reifyObjectProperties(
   const { type, checker, next, ctx, maxObjectProperties } = params;
   const shapeProperties: Record<string, TSolidObjectRawShape> = {};
 
-  // Utilizes native type checking programs to automatically evaluate
-  // and completely unroll intersected property fields flatly
   const coreProperties = checker.getPropertiesOfType(type);
   const totalProps = coreProperties.length;
   const loopLimit =
@@ -100,7 +98,8 @@ function reifyObjectProperties(
       shape: next(propType, CHILD_CTX),
       optional: isQuestionMarkOptional,
       name: propName,
-      requiresKeyPresence: !isQuestionMarkOptional && hasExplicitUndefinedValue,
+      requiresKeyPresence: !isQuestionMarkOptional,
+      allowsExplicitUndefined: hasExplicitUndefinedValue,
     };
   }
 

@@ -112,9 +112,30 @@ export type TCastingPrimitiveMapper = {
     data: unknown,
   ) => TPrimitiveTypeMap[K] | unknown;
 };
-export type TFastPathMetadata = {
-  readonly check: (d: Record<string, unknown>) => boolean;
-  readonly keys: readonly string[];
-  readonly errorKeys: readonly TRuntimeShapeValidationErrorKey[];
-  readonly complexKeys?: readonly string[];
-};
+// export type TFastPathMetadata = {
+//   readonly check: (d: Record<string, unknown>) => boolean;
+//   readonly keys: readonly string[];
+//   readonly errorKeys: readonly TRuntimeShapeValidationErrorKey[];
+//   readonly complexKeys?: readonly string[];
+// };
+
+export type TObjectFastPathChecker = (
+  payload: Record<string, unknown>,
+) => boolean;
+export type TArrayFastPathChecker = (payload: unknown[]) => boolean;
+
+export type TFastPathMetadata =
+  | {
+      readonly kind: 'object';
+      readonly check: TObjectFastPathChecker | undefined;
+      readonly keys: readonly string[];
+      readonly errorKeys: readonly TRuntimeShapeValidationErrorKey[];
+      readonly complexKeys: readonly string[];
+    }
+  | {
+      readonly kind: 'array';
+      readonly check: TArrayFastPathChecker | undefined;
+      readonly keys: readonly string[];
+      readonly errorKeys: readonly TRuntimeShapeValidationErrorKey[];
+      readonly complexKeys: readonly string[];
+    };

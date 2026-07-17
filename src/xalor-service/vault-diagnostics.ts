@@ -280,6 +280,14 @@ class XalethorVaultDiagnostics {
 
     return { valid: issues.length === 0, issues };
   }
+  public panic(key: string, customMessage?: string): never {
+    const errors = xalethorVaultValidation.getErrors(key);
+    const report = this.formatReport(key, errors);
+    const finalMessage =
+      report ||
+      `[xalor] 🚨 ${customMessage || 'Assertion failure'} for key: ${key}`;
+    throw new Error(finalMessage);
+  }
 }
 
 export const xalethorVaultDiagnostics = new XalethorVaultDiagnostics();

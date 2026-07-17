@@ -16,16 +16,22 @@ export const TEST_SHAPE_REGISTRY = {
       id: {
         name: 'id',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'primitive', type: 'number' },
       },
       username: {
         name: 'username',
         optional: false,
-        shape: { kind: 'primitive', type: 'string' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'string', maxLength: 25 },
       },
       active: {
         name: 'active',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'primitive', type: 'boolean' },
       },
     },
@@ -36,11 +42,15 @@ export const TEST_SHAPE_REGISTRY = {
       id: {
         name: 'id',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'primitive', type: 'number' },
       },
       username: {
         name: 'username',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'primitive', type: 'string' },
       },
     },
@@ -51,21 +61,29 @@ export const TEST_SHAPE_REGISTRY = {
       orderId: {
         name: 'orderId',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'primitive', type: 'string' },
       },
       legacySKU: {
         name: 'legacySKU',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'primitive', type: 'string' },
       },
       legacyQty: {
         name: 'legacyQty',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'primitive', type: 'number' },
       },
       deprecatedTelemetryId: {
         name: 'deprecatedTelemetryId',
         optional: true,
+        requiresKeyPresence: false,
+        allowsExplicitUndefined: false,
         shape: { kind: 'primitive', type: 'string' },
       },
     },
@@ -80,11 +98,15 @@ export const TEST_SHAPE_REGISTRY = {
       coreId: {
         name: 'coreId',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'primitive', type: 'string' },
       },
       rank: {
         name: 'rank',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'primitive', type: 'number' },
       },
     },
@@ -100,6 +122,8 @@ export const TEST_SHAPE_REGISTRY = {
       sequence: {
         name: 'sequence',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: {
           kind: 'array',
           minLength: 3, // Locked tuple length configuration boundary
@@ -123,6 +147,8 @@ export const TEST_SHAPE_REGISTRY = {
       id: {
         name: 'id',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: {
           kind: 'primitive',
           type: 'string',
@@ -132,6 +158,8 @@ export const TEST_SHAPE_REGISTRY = {
       amount: {
         name: 'amount',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: {
           kind: 'primitive',
           type: 'number',
@@ -141,6 +169,8 @@ export const TEST_SHAPE_REGISTRY = {
       currency: {
         name: 'currency',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: {
           kind: 'union',
           values: [
@@ -170,11 +200,15 @@ export const TEST_SHAPE_REGISTRY = {
       orderId: {
         name: 'orderId',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'primitive', type: 'string' },
       },
       items: {
         name: 'items',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: {
           kind: 'array',
           minLength: 0,
@@ -185,11 +219,15 @@ export const TEST_SHAPE_REGISTRY = {
               SKU: {
                 name: 'SKU',
                 optional: false,
+                requiresKeyPresence: true,
+                allowsExplicitUndefined: false,
                 shape: { kind: 'primitive', type: 'string' },
               },
               quantity: {
                 name: 'quantity',
                 optional: false,
+                requiresKeyPresence: true,
+                allowsExplicitUndefined: false,
                 shape: { kind: 'primitive', type: 'number' },
               },
             },
@@ -205,6 +243,8 @@ export const TEST_SHAPE_REGISTRY = {
       status: {
         name: 'status',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: {
           kind: 'union',
           values: [
@@ -223,11 +263,15 @@ export const TEST_SHAPE_REGISTRY = {
       orderId: {
         name: 'orderId',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'primitive', type: 'string' },
       },
       items: {
         name: 'items',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: {
           kind: 'array',
           minLength: 0,
@@ -238,38 +282,52 @@ export const TEST_SHAPE_REGISTRY = {
               SKU: {
                 name: 'SKU',
                 optional: false,
+                requiresKeyPresence: true,
+                allowsExplicitUndefined: false,
                 shape: { kind: 'primitive', type: 'string' },
               },
               quantity: {
                 name: 'quantity',
                 optional: false,
+                requiresKeyPresence: true,
+                allowsExplicitUndefined: false,
                 shape: { kind: 'primitive', type: 'number' },
               },
               logistics: {
                 name: 'logistics',
                 optional: false,
+                requiresKeyPresence: true,
+                allowsExplicitUndefined: false,
                 shape: {
                   kind: 'object',
                   properties: {
                     warehouseCode: {
                       name: 'warehouseCode',
                       optional: false,
+                      requiresKeyPresence: true,
+                      allowsExplicitUndefined: false,
                       shape: { kind: 'primitive', type: 'string' },
                     },
                     dimensions: {
                       name: 'dimensions',
                       optional: false,
+                      requiresKeyPresence: true,
+                      allowsExplicitUndefined: false,
                       shape: {
                         kind: 'object',
                         properties: {
                           weight: {
                             name: 'weight',
                             optional: false,
+                            requiresKeyPresence: true,
+                            allowsExplicitUndefined: false,
                             shape: { kind: 'primitive', type: 'number' },
                           },
                           fragile: {
                             name: 'fragile',
                             optional: false,
+                            requiresKeyPresence: true,
+                            allowsExplicitUndefined: false,
                             shape: { kind: 'primitive', type: 'boolean' },
                           },
                         },
@@ -292,15 +350,21 @@ export const TEST_SHAPE_REGISTRY = {
         name: 'mandatoryId',
         optional: false,
         shape: { kind: 'primitive', type: 'number' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       optionalMeta: {
         name: 'optionalMeta',
         optional: true,
         shape: { kind: 'primitive', type: 'string' },
+        requiresKeyPresence: false,
+        allowsExplicitUndefined: false,
       },
       optionalData: {
         name: 'optionalData',
         optional: true,
+        requiresKeyPresence: false,
+        allowsExplicitUndefined: false,
         shape: {
           kind: 'object',
           properties: {
@@ -308,6 +372,8 @@ export const TEST_SHAPE_REGISTRY = {
               name: 'nestedFlag',
               optional: false,
               shape: { kind: 'primitive', type: 'boolean' },
+              requiresKeyPresence: true,
+              allowsExplicitUndefined: false,
             },
           },
         },
@@ -330,6 +396,8 @@ export const TEST_SHAPE_REGISTRY = {
             { kind: 'primitive', type: 'boolean' },
           ],
         },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
     },
   },
@@ -346,6 +414,8 @@ export const TEST_SHAPE_REGISTRY = {
           name: 'TUserId',
           base: { kind: 'primitive', type: 'string' },
         },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
     },
   },
@@ -356,11 +426,15 @@ export const TEST_SHAPE_REGISTRY = {
       id: {
         name: 'id',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'primitive', type: 'number' },
       },
       profileRef: {
         name: 'profileRef',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'reference', name: 'USER_TEST' },
       },
     },
@@ -372,11 +446,15 @@ export const TEST_SHAPE_REGISTRY = {
       id: {
         name: 'id',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'primitive', type: 'number' },
       },
       selfRef: {
         name: 'selfRef',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: { kind: 'reference', name: 'CIRCULAR_DEPTH_TEST' },
       },
     },
@@ -389,11 +467,15 @@ export const TEST_SHAPE_REGISTRY = {
         name: 'dateVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Date' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       regExpVal: {
         name: 'regExpVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'RegExp' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
 
       // === Collections ===
@@ -401,21 +483,29 @@ export const TEST_SHAPE_REGISTRY = {
         name: 'mapVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Map' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       setVal: {
         name: 'setVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Set' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       weakMapVal: {
         name: 'weakMapVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'WeakMap' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       weakSetVal: {
         name: 'weakSetVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'WeakSet' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
 
       // === Web Platform Data Frames ===
@@ -423,36 +513,50 @@ export const TEST_SHAPE_REGISTRY = {
         name: 'urlVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'URL' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       urlParamsVal: {
         name: 'urlParamsVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'URLSearchParams' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       headersVal: {
         name: 'headersVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Headers' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       requestVal: {
         name: 'requestVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Request' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       responseVal: {
         name: 'responseVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Response' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       blobVal: {
         name: 'blobVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Blob' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       fileVal: {
         name: 'fileVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'File' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
 
       // === Binary Data & Typed Array Buffers ===
@@ -460,66 +564,92 @@ export const TEST_SHAPE_REGISTRY = {
         name: 'arrayBufferVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'ArrayBuffer' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       dataViewVal: {
         name: 'dataViewVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'DataView' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       int8ArrayVal: {
         name: 'int8ArrayVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Int8Array' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       uint8ArrayVal: {
         name: 'uint8ArrayVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Uint8Array' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       uint8ClampedArrayVal: {
         name: 'uint8ClampedArrayVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Uint8ClampedArray' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       int16ArrayVal: {
         name: 'int16ArrayVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Int16Array' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       uint16ArrayVal: {
         name: 'uint16ArrayVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Uint16Array' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       int32ArrayVal: {
         name: 'int32ArrayVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Int32Array' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       uint32ArrayVal: {
         name: 'uint32ArrayVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Uint32Array' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       float32ArrayVal: {
         name: 'float32ArrayVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Float32Array' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       float64ArrayVal: {
         name: 'float64ArrayVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Float64Array' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       bigInt64ArrayVal: {
         name: 'bigInt64ArrayVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'BigInt64Array' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       bigUint64ArrayVal: {
         name: 'bigUint64ArrayVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'BigUint64Array' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
 
       // === Async & Streams ===
@@ -527,21 +657,30 @@ export const TEST_SHAPE_REGISTRY = {
         name: 'promiseVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'Promise' },
+        requiresKeyPresence: true,
+
+        allowsExplicitUndefined: false,
       },
       readableStreamVal: {
         name: 'readableStreamVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'ReadableStream' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       writableStreamVal: {
         name: 'writableStreamVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'WritableStream' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       transformStreamVal: {
         name: 'transformStreamVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'TransformStream' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
     },
   },
@@ -551,6 +690,8 @@ export const TEST_SHAPE_REGISTRY = {
       userRole: {
         name: 'userRole',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: {
           kind: 'array',
           minLength: 0,
@@ -562,15 +703,21 @@ export const TEST_SHAPE_REGISTRY = {
                 name: 'SKU',
                 optional: false,
                 shape: { kind: 'primitive', type: 'string' },
+                requiresKeyPresence: true,
+                allowsExplicitUndefined: false,
               },
               quantity: {
                 name: 'quantity',
                 optional: false,
                 shape: { kind: 'primitive', type: 'number' },
+                requiresKeyPresence: true,
+                allowsExplicitUndefined: false,
               },
               logistics: {
                 name: 'logistics',
                 optional: false,
+                requiresKeyPresence: true,
+                allowsExplicitUndefined: false,
                 shape: {
                   kind: 'object',
                   properties: {
@@ -578,6 +725,8 @@ export const TEST_SHAPE_REGISTRY = {
                       name: 'warehouseCode',
                       optional: false,
                       shape: { kind: 'primitive', type: 'string' },
+                      requiresKeyPresence: true,
+                      allowsExplicitUndefined: false,
                     },
                   },
                 },
@@ -590,10 +739,14 @@ export const TEST_SHAPE_REGISTRY = {
         name: 'transformStreamVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'TransformStream' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       executePipeline: {
         name: 'executePipeline',
         optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
         shape: {
           kind: 'function',
           parameters: [
@@ -601,10 +754,14 @@ export const TEST_SHAPE_REGISTRY = {
               name: 'inputData',
               optional: false,
               shape: { kind: 'primitive', type: 'string' },
+              requiresKeyPresence: true,
+              allowsExplicitUndefined: false,
             },
             {
               name: 'retryCount',
               optional: true,
+              requiresKeyPresence: false,
+              allowsExplicitUndefined: false,
               shape: { kind: 'primitive', type: 'number' },
             },
           ],
@@ -624,11 +781,15 @@ export const TEST_SHAPE_REGISTRY = {
         name: 'legacyRoleString',
         optional: false,
         shape: { kind: 'primitive', type: 'string' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
       transformStreamVal: {
         name: 'transformStreamVal',
         optional: false,
         shape: { kind: 'instanceof', name: 'TransformStream' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
       },
     },
   },

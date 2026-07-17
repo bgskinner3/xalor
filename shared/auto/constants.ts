@@ -34,7 +34,11 @@ export const TRANSFORM_MODE_TRIGGERS = ['xalor.merge', 'xalor.clone'] as const;
  * MASTER VALIDATION MODES CONFIGURATION
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
-export const VALIDATION_MODE_TRIGGERS = ['xalor.guard', 'xalor.parse'] as const;
+export const VALIDATION_MODE_TRIGGERS = [
+  'xalor.guard',
+  'xalor.parse',
+  'xalor.safeParse',
+] as const;
 
 /**
  * SENTRY_TRIGGER_NAMES
@@ -93,4 +97,4 @@ export const TRANSFORM_MODES = ['merge', 'clone'] as const;
  * RAW VALIDATION STRATEGY SPECIFICATION MODES
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
-export const VALIDATION_MODES = ['guard', 'parse'] as const;
+export const VALIDATION_MODES = ['guard', 'parse', 'safeParse'] as const;

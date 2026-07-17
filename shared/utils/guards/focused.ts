@@ -121,6 +121,7 @@ export function isRegistryKey<K extends TActiveRegistryKeys>(
   key: unknown,
 ): key is K {
   const vault = globalThis.__SOLID_VAULT__;
+
   return (
     typeof key === 'string' &&
     vault !== undefined &&

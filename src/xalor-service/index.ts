@@ -19,6 +19,7 @@ import type {
   TResolveDriftReturnConstraint,
   TReportErrorParams,
   TXalorAuditReport,
+  TXalorEvaluationResult,
 } from '../models/types';
 import { isRecord } from '../../shared/utils';
 export class XalethorService {
@@ -85,15 +86,14 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   // ============================================================
+  /* prettier-ignore */
   public static validateShapeByKey(data: unknown, key: string): boolean {
     return xalethorVaultValidation.validateShapeByKey(data, key);
   }
-  // public static validateShapeByKeyTest(
-  //   data: unknown,
-  //   key: string,
-  // ): TXalorEvaluationResult {
-  //   return xalethorVaultValidation.validateShapeByKeyTest(data, key);
-  // }
+  /* prettier-ignore */
+  public static validateShapeByKeySafe( data: unknown, key: string): TXalorEvaluationResult {
+    return xalethorVaultValidation.validateShapeByKeySafe(data, key);
+  }
   /* prettier-ignore */
   public static validateShape(data: unknown,  shape: TSolidShape, ctx: TValidationContext, blueprintId?: string,): boolean {
     return xalethorVaultValidation.validateShape(data, shape, ctx, blueprintId);
@@ -102,7 +102,7 @@ export class XalethorService {
     return xalethorVaultValidation.createInitialContext(key);
   }
   public static panic(key: string, customMessage?: string | undefined): never {
-    return xalethorVaultValidation.panic(key, customMessage);
+    return xalethorVaultDiagnostics.panic(key, customMessage);
   }
 
   // ============================================================

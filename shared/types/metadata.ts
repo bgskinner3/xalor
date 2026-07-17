@@ -80,4 +80,6 @@ export type TValidationContext = {
   readonly errors: TSolidError[];
   readonly currentKey: string;
   depth: number;
+  refStack: unknown[];
+  isInvalidCircular: boolean;
 };

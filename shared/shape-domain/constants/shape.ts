@@ -169,6 +169,3 @@ export const NATIVE_BUILTINS = new Set<string>([
   'Error',
   ...Object.keys(INSTANCE_REGISTRY_MAPPER),
 ]);
-// export const NATIVE_BUILTINS = new Set<
-//   keyof typeof INSTANCE_REGISTRY_MAPPER | 'Error'
-// >(['Error', ...ObjectUtils.keys(INSTANCE_REGISTRY_MAPPER)]);

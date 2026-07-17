@@ -37,7 +37,10 @@ function generateMasterConfig() {
       return;
     }
 
-    if (insideTargetClass && ts.isMethodDeclaration(node)) {
+    if (
+      insideTargetClass &&
+      (ts.isMethodDeclaration(node) || ts.isPropertyDeclaration(node))
+    ) {
       const fullText = sourceFile.getFullText();
       const ranges = ts.getLeadingCommentRanges(fullText, node.getFullStart());
       if (ranges) {

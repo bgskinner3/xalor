@@ -363,6 +363,11 @@ export const RUNTIME_SHAPE_VALIDATION_ERRORS: TRuntimeSHapeValidatorErrorMapper 
       message: 'Data is not an instance of the resolved constructor',
       expected: (_str) => `instanceof_${_str}`,
     },
+    ENGINE_FATAL_UNSUPPORTED_SHAPE_KIND: {
+      message:
+        'CRITICAL GRAPH FAILURE: Build-time blueprint metadata kind maps to an uninstantiated runtime executor block.',
+      expected: (_str) => 'supported_bunker_engine_shape_kind',
+    },
   } satisfies TRuntimeSHapeValidatorErrorMapper;
 
 /* prettier-ignore */
@@ -393,6 +398,6 @@ export const RULE_KIND_MAPPER: Record<TRuntimeShapeValidationErrorKey, TRuntimeA
   OBJECT_VALIDATION_TYPE_MISMATCH: 'primitive_mismatch',
   ARRAY_VALIDATION_TYPE_MISMATCH: 'primitive_mismatch',
   FUNCTION_VALIDATION_TYPE_MISMATCH: 'primitive_mismatch',
-  INSTANCEOF_VALIDATION_NIL_VALUE: 'primitive_mismatch'
-
+  INSTANCEOF_VALIDATION_NIL_VALUE: 'primitive_mismatch',
+  ENGINE_FATAL_UNSUPPORTED_SHAPE_KIND: 'primitive_mismatch'
 } satisfies Record<TRuntimeShapeValidationErrorKey, TRuntimeApiErrorRules>;

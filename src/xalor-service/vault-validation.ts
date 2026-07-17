@@ -13,7 +13,6 @@ import type {
   TReportErrorParams,
   TFastPathMetadata,
 } from '../models/types';
-import { xalethorVaultDiagnostics } from './vault-diagnostics';
 
 class XalethorVaultValidation {
   public STR_FAST_PATH_REGISTRY = new Map<string, TFastPathMetadata>();
@@ -43,6 +42,8 @@ class XalethorVaultValidation {
       errors: [],
       currentKey: key,
       depth: 0,
+      refStack: new Array(25),
+      isInvalidCircular: false,
     };
   }
 
@@ -88,20 +89,19 @@ class XalethorVaultValidation {
     this.clearErrors(key);
     return true;
   }
-  // public validateShapeByKeyTest(
-  //   data: unknown,
-  //   key: string,
-  // ): TXalorEvaluationResult {
-  //   const evaluation = this.evaluateShapeByKey(data, key);
+  /* prettier-ignore */
+  public validateShapeByKeySafe( data: unknown, key: string): TXalorEvaluationResult {
 
-  //   if (!evaluation.isValid) {
-  //     this.setErrors(key, [...evaluation.errors]);
-  //     return evaluation;
-  //   }
+    const evaluation = this.evaluateShapeByKey(data, key);
 
-  //   this.clearErrors(key);
-  //   return evaluation;
-  // }
+    if (!evaluation.isValid) {
+      this.setErrors(key, evaluation.errors ? [...evaluation.errors] : []);
+      return evaluation;
+    }
+
+    this.clearErrors(key);
+    return evaluation;
+  }
   /**
    * Recursive execution loop. Tracks depth limits and memory references.
    * COMPLIANCE: Zero runtime strategy allocations. Direct  lookup.
@@ -122,7 +122,6 @@ class XalethorVaultValidation {
           if (seenShapes.has(shape)) return true;
           seenShapes.add(shape);
         } else {
-          // Use a lightweight reusable token instead of allocating a fresh Set schema
           ctx.seen.set(data, new Set([shape]));
         }
       }
@@ -130,10 +129,12 @@ class XalethorVaultValidation {
 
     const validator = SHAPE_VALIDATION_MAPPER[shape.kind];
     if (!isFunction(validator)) {
-      throw new Error(
-        `[xalor] 🚨 Unsupported shape kind: "${shape.kind}". ` +
-          `Check your Bunker version against the current Engine.`,
-      );
+      return this.reportError({
+        ctx,
+        errorKey: 'ENGINE_FATAL_UNSUPPORTED_SHAPE_KIND',
+        received: shape.kind,
+        shapeContext: shape,
+      });
     }
 
     ctx.depth++;
@@ -142,36 +143,22 @@ class XalethorVaultValidation {
 
     return result;
   }
-
   /**
    * Captures validation failures instantly using flat data markers.
    * COMPLIANCE: Eliminates stack tracing, serialization, and string templates from the hot path.
    */
   public reportError(params: TReportErrorParams): false {
     const { ctx, errorKey, received, shapeContext } = params;
-    const snapshot = ctx.pathStack.slice(0, ctx.pathPointer);
 
     ctx.errors.push({
       key: ctx.currentKey,
-      pathSnapshot: snapshot,
+      pathSnapshot: ctx.pathStack.slice(0, ctx.pathPointer),
       errorKey,
       received,
       shapeContext,
     });
 
     return false;
-  }
-
-  /**
-   * Panic and crash mechanisms utilizing pure stream evaluations lazily on failure lanes.
-   */
-  public panic(key: string, customMessage?: string): never {
-    const errors = this.getErrors(key);
-    const report = xalethorVaultDiagnostics.formatReport(key, errors);
-    const finalMessage =
-      report ||
-      `[xalor] 🚨 ${customMessage || 'Assertion failure'} for key: ${key}`;
-    throw new Error(finalMessage);
   }
 
   public getErrors(key: string): TSolidError[] {
