@@ -280,13 +280,43 @@ class XalethorVaultDiagnostics {
 
     return { valid: issues.length === 0, issues };
   }
+  // public panic(key: string, customMessage?: string): never {
+  //   const errors = xalethorVaultValidation.getErrors(key);
+  //   const report = this.formatReport(key, errors);
+  //   const finalMessage =
+  //     report ||
+  //     `[xalor] 🚨 ${customMessage || 'Assertion failure'} for key: ${key}`;
+  //   throw new Error(finalMessage);
+  // }
   public panic(key: string, customMessage?: string): never {
-    const errors = xalethorVaultValidation.getErrors(key);
-    const report = this.formatReport(key, errors);
-    const finalMessage =
-      report ||
-      `[xalor] 🚨 ${customMessage || 'Assertion failure'} for key: ${key}`;
-    throw new Error(finalMessage);
+    // ✅ ARCHITECTURAL CORRECTION: Read directly from your framework's global flat error array stack reference.
+    // Replace this direct array look up to target your engine's true global errors array state (e.g., xalethorVaultValidation.errors)
+    const globalErrorsLedger = xalethorVaultValidation.getErrors(key);
+
+    // Extract the exact error that triggered this panic by looking at the top of the stack!
+    const primaryError: TSolidError | undefined =
+      globalErrorsLedger !== undefined && globalErrorsLedger.length > 0
+        ? globalErrorsLedger[globalErrorsLedger.length - 1]
+        : undefined;
+
+    if (primaryError !== undefined) {
+      // ⚡ LAZY STRING MATERIALIZATION: Only paid upon a concrete failure panic track!
+      // Joins the array snapshot path items using clean dot notation (e.g. "items.1.quantity")
+      const pathLocation = Array.isArray(primaryError.pathSnapshot)
+        ? primaryError.pathSnapshot.join('.')
+        : '$ROOT';
+
+      const finalMessage =
+        `[xalor] 🚨 Validation panic for key: "${primaryError.errorKey}". ` +
+        `Field location: "${pathLocation}" failed type/constraint checks with value payload: ${JSON.stringify(primaryError.received)}`;
+
+      throw new Error(finalMessage);
+    }
+
+    // Fallback if the global state stack was prematurely cleared or empty
+    throw new Error(
+      `[xalor] 🚨 ${customMessage || 'Assertion failure'} for key: ${key}`,
+    );
   }
 }
 

@@ -79,14 +79,15 @@ class XalethorVaultValidation {
    * Statefully tracks validation results inside global reference registries.
    */
   public validateShapeByKey(data: unknown, key: string): boolean {
+    this.clearErrors(key);
     const evaluation = this.evaluateShapeByKey(data, key);
 
     if (!evaluation.isValid) {
-      this.setErrors(key, evaluation.errors ? [...evaluation.errors] : []);
+      this.setErrors(key, [...evaluation.errors]);
+
       return false;
     }
 
-    this.clearErrors(key);
     return true;
   }
   /* prettier-ignore */

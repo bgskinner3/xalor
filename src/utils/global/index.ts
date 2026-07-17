@@ -3,6 +3,7 @@ import type {
   TSolidVaultMap,
   TSolidShape,
   TVaultDriftEntry,
+  TSolidError,
 } from '../../../shared';
 import { executeVaultSelfHealingSeeding } from './self-healing-seeding';
 let isVaultFullySeeded = false;
@@ -44,6 +45,7 @@ export function ensureGlobalVault(): TSolidVaultMap {
     references: new Map<string, string>(),
     manifest: new Map(),
     registry: new Map(),
+    errors: new Map<string, TSolidError[]>(),
   };
 
   globalThis.__SOLID_VAULT__ = rawMapVault;
