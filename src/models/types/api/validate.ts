@@ -1,4 +1,8 @@
-import type { TSolidError, TSolidBranded } from '../../../../shared';
+import type {
+  TSolidError,
+  TSolidBranded,
+  TExpandUnionStructure,
+} from '../../../../shared';
 
 /**
  * TITLE: SAFE PARSE DATA FLOW DISCRIMINATOR
@@ -12,14 +16,23 @@ import type { TSolidError, TSolidBranded } from '../../../../shared';
  *
  * @template K - The authoritative evolution tracking namespace token literal key.
  */
-export type TSolidSafeParseResult<K extends TActiveRegistryKeys> =
-  | {
-      readonly success: true;
-      readonly data: TSolidBranded<K, TResolveRegistryStructure<K>>;
-      readonly errors: null;
-    }
-  | {
-      readonly success: false;
-      readonly data: null;
-      readonly errors: readonly TSolidError[];
-    };
+/**
+ * 🟢 THE VALIDATED SUCCESS ENTRY bluePRINT
+ * Unrolls the concrete, branded payload structure explicitly inside the editor.
+ */
+export type TSolidSafeParseSuccess<K extends TActiveRegistryKeys> =
+  TExpandUnionStructure<{
+    readonly success: true;
+    readonly data: TSolidBranded<K, TResolveRegistryStructure<K>>;
+    readonly errors: null;
+  }>;
+
+/**
+ * 🔴 THE DIAGNOSTIC FAILURE RECORD
+ * Unrolls the strict tracking list error footprint explicitly inside the editor.
+ */
+export type TSolidSafeParseFailure = TExpandUnionStructure<{
+  readonly success: false;
+  readonly data: null;
+  readonly errors: readonly TSolidError[];
+}>;

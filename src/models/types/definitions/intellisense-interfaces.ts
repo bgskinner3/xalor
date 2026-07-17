@@ -90,7 +90,7 @@ declare global {
       : K extends keyof ISolidRegistry
         ? TExpandStructure<ISolidRegistry[K]>
         : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          { [P in keyof any]: any };
+          Record<string, any>;
 
   // ==================================================================
   // ==================================================================

@@ -1,12 +1,16 @@
 import { XalethorService } from '../../xalor-service';
 import { markAsSolid, ensureGlobalVault } from '../../utils';
 import { BRAND_SYMBOL } from '../../../shared';
-import type { TSolidSafeParseResult } from '../../models/types';
+import type {
+  TSolidSafeParseSuccess,
+  TSolidSafeParseFailure,
+} from '../../models/types';
 import {
   isDefined,
   isRecord,
   assertRegistryKey,
 } from '../../../shared/utils/guards';
+import type { TExpandUnionStructure } from '../../../shared';
 
 // 🏎️ THE ZERO-ALLOCATION BRAND CACHE MATRIX
 // Holds long-lived, pre-allocated memory pointers for your nominal tokens
@@ -38,7 +42,7 @@ const brandTokenCache = new Map<string, [string, string]>();
 export function validateXalorSafeParse<K extends TActiveRegistryKeys>(
   data: unknown,
   injectedKey?: K,
-): TSolidSafeParseResult<K> {
+): TExpandUnionStructure<TSolidSafeParseSuccess<K> | TSolidSafeParseFailure> {
   ensureGlobalVault();
   assertRegistryKey(injectedKey);
 
