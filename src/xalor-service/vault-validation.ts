@@ -11,14 +11,22 @@ import { SHAPE_VALIDATION_MAPPER } from '../mappers';
 import type {
   TXalorEvaluationResult,
   TReportErrorParams,
+  TFastPathMetadata,
 } from '../models/types';
 import { xalethorVaultDiagnostics } from './vault-diagnostics';
 
 class XalethorVaultValidation {
+  public STR_FAST_PATH_REGISTRY = new Map<string, TFastPathMetadata>();
+  public REF_FAST_PATH_REGISTRY = new WeakMap<object, TFastPathMetadata>();
+  public INSTANCE_VALIDATION_REGISTRY = new WeakMap<object, boolean>();
   /**
-   * Safe registry hook.
-   * COMPLIANCE: Eliminates mutations or local variable allocations on the class frame.
+   * Safe, public clean-up hook to execute during test hydration or re-seeding sweeps.
    */
+  public purgeRuntimeCache(): void {
+    this.STR_FAST_PATH_REGISTRY.clear();
+    this.REF_FAST_PATH_REGISTRY = new WeakMap<object, TFastPathMetadata>();
+  }
+
   private get vault(): TSolidVaultMap {
     return ensureGlobalVault();
   }
@@ -60,7 +68,7 @@ class XalethorVaultValidation {
     const ctx = this.createInitialContext(key);
     const isValid = this.validateShape(data, shape, ctx, injectedKey);
 
-    if (!isValid) {
+    if (!isValid || ctx.errors.length > 0) {
       return { isValid: false, errors: ctx.errors };
     }
 
@@ -73,13 +81,27 @@ class XalethorVaultValidation {
     const evaluation = this.evaluateShapeByKey(data, key);
 
     if (!evaluation.isValid) {
-      this.setErrors(key, [...evaluation.errors]);
+      this.setErrors(key, evaluation.errors ? [...evaluation.errors] : []);
       return false;
     }
 
     this.clearErrors(key);
     return true;
   }
+  // public validateShapeByKeyTest(
+  //   data: unknown,
+  //   key: string,
+  // ): TXalorEvaluationResult {
+  //   const evaluation = this.evaluateShapeByKey(data, key);
+
+  //   if (!evaluation.isValid) {
+  //     this.setErrors(key, [...evaluation.errors]);
+  //     return evaluation;
+  //   }
+
+  //   this.clearErrors(key);
+  //   return evaluation;
+  // }
   /**
    * Recursive execution loop. Tracks depth limits and memory references.
    * COMPLIANCE: Zero runtime strategy allocations. Direct  lookup.
@@ -94,14 +116,15 @@ class XalethorVaultValidation {
     if (ctx.depth > reifyLimit.maxDepth) return false;
 
     if (isObject(data) && !isNull(data)) {
-      let seenShapes = ctx.seen.get(data);
-      if (seenShapes?.has(shape)) return true;
-
-      if (!seenShapes) {
-        seenShapes = new Set([shape]);
-        ctx.seen.set(data, seenShapes);
-      } else {
-        seenShapes.add(shape);
+      if (ctx.depth > 1) {
+        const seenShapes = ctx.seen.get(data);
+        if (seenShapes !== undefined) {
+          if (seenShapes.has(shape)) return true;
+          seenShapes.add(shape);
+        } else {
+          // Use a lightweight reusable token instead of allocating a fresh Set schema
+          ctx.seen.set(data, new Set([shape]));
+        }
       }
     }
 
@@ -116,6 +139,7 @@ class XalethorVaultValidation {
     ctx.depth++;
     const result = validator(data, shape, ctx, blueprintId);
     ctx.depth--;
+
     return result;
   }
 

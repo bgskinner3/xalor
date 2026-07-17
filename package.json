@@ -67,7 +67,7 @@
     "README.md",
     "LICENSE"
   ],
-  "sideEffects": false,
+  "sideEffects": true,
   "dependencies": {
     "tslib": "^2.6.2"
   },

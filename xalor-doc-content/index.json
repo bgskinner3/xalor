@@ -216,7 +216,7 @@
       "subHeader": "See how Xalor stacks up against traditional validation approaches, transforming TypeScript contracts into efficient runtime systems and removing parsing overhead, file generation bloat, and repetitive validation boilerplate.",
       "benchmarkDocsLink": {
         "text": "Compilation & Benchmarks",
-        "href": "/xalor/docs/how-it-works#benchmarks"
+        "href": "/xalor/docs/benchmarks"
       },
       "comparisonHeaders": [
         "Core Engineering Capabilities",

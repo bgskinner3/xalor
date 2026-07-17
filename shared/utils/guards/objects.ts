@@ -336,3 +336,7 @@ export const matchesShape = <T extends object>(schema: {
     return true;
   };
 };
+
+export function isSafeRecord(value: unknown): value is Record<string, unknown> {
+  return isObject(value) && !isNull(value) && isRecord(value);
+}

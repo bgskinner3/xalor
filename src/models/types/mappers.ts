@@ -4,7 +4,7 @@ import type {
   TSolidMetadata,
   TValidationContext,
 } from '../../../shared';
-
+import type { TRuntimeShapeValidationErrorKey } from './error-types';
 /**
  * TSHAPE_DEFAULT_MATERIALIZE_MAP
  *
@@ -111,4 +111,10 @@ export type TCastingPrimitiveMapper = {
   [K in keyof TPrimitiveTypeMap]: (
     data: unknown,
   ) => TPrimitiveTypeMap[K] | unknown;
+};
+export type TFastPathMetadata = {
+  readonly check: (d: Record<string, unknown>) => boolean;
+  readonly keys: readonly string[];
+  readonly errorKeys: readonly TRuntimeShapeValidationErrorKey[];
+  readonly complexKeys?: readonly string[];
 };

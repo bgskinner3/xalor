@@ -88,6 +88,12 @@ export class XalethorService {
   public static validateShapeByKey(data: unknown, key: string): boolean {
     return xalethorVaultValidation.validateShapeByKey(data, key);
   }
+  // public static validateShapeByKeyTest(
+  //   data: unknown,
+  //   key: string,
+  // ): TXalorEvaluationResult {
+  //   return xalethorVaultValidation.validateShapeByKeyTest(data, key);
+  // }
   /* prettier-ignore */
   public static validateShape(data: unknown,  shape: TSolidShape, ctx: TValidationContext, blueprintId?: string,): boolean {
     return xalethorVaultValidation.validateShape(data, shape, ctx, blueprintId);
