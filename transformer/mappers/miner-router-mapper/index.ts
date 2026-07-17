@@ -25,7 +25,7 @@ export const XALOR_MINING_ROUTER_MAPPER: TXalorMinerRouterMap = {
   // GENERATION METHODS
   // ========================================================================
   /* prettier-ignore */ 'xalor.default':    (node, checker) => extractSingleKeyPayload<'xalor.default'>(node, checker, 'xalor.default'),
-
+  /* prettier-ignore */ 'xalor.mock':  (node, checker) => extractSingleKeyPayload<'xalor.mock'>(node, checker, 'xalor.mock'),
   // ========================================================================
   // VALIDATION METHODS
   // ========================================================================

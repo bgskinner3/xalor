@@ -119,8 +119,8 @@ export class XalethorService {
   }
   public static produceMock<K extends TActiveRegistryKeys>(
     key: K,
-  ): TSolidBranded<K, TResolveRegistryStructure<K>> {
-    return xalethorVaultGenerator.getMock(key);
+  ): TResolveRegistryStructure<K> {
+    return xalethorVaultGenerator.getMockRaw(key);
   }
 
   public static produceCast<K extends TActiveRegistryKeys>(

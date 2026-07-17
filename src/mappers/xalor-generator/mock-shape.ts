@@ -1,8 +1,14 @@
 import type { TShapeMockMapperMap } from '../../models/types';
-import { ObjectUtils } from '../../../shared';
+import {
+  yieldAllKeyValuePairs,
+  yieldItems,
+  isObject,
+  isRecord,
+  isUndefined,
+} from '../../../shared';
 import { generateRandomString } from '../../utils/transformers';
 import { xalethorVaultKeeper } from '../../xalor-service/vault-keeper';
-import type { TSolidShape } from '../../../shared';
+import type { TSolidShapePrimitiveKeys } from '../../../shared';
 import { shapeKindUtilsService } from '../../../shared/service';
 /**
  * ============================================================================
@@ -15,21 +21,29 @@ import { shapeKindUtilsService } from '../../../shared/service';
  *
  * @see produceMock
  */
-/* prettier-ignore */ const PRIMITIVE_MOCK_GENERATORS: Record<string,(shape: TSolidShape) => unknown> = {
-  string: () => generateRandomString(10),
-  number: () => Math.floor(Math.random() * 1000),
-  boolean: () => Math.random() > 0.5,
-  bigint: () => BigInt(Math.floor(Math.random() * 1000000)),
-  unknown: () => `unknown_val_${Math.random().toString(36).substring(7)}`,
-} satisfies Record<string,(shape: TSolidShape) => unknown>;
+
+/* prettier-ignore */
+const PRIMITIVE_MOCK_GENERATORS: Record<TSolidShapePrimitiveKeys, () => unknown> = {
+  string:    () => generateRandomString(10),
+  number:    () => Math.floor(Math.random() * 1000),
+  boolean:   () => Math.random() > 0.5,
+  bigint:    () => BigInt(Math.floor(Math.random() * 1000000)),
+  symbol:    () => Symbol(generateRandomString(4)),
+  null:      () => null,
+  undefined: () => undefined,
+  void:      () => undefined,
+  never:     () => undefined,
+  unknown:   () => `unknown_val_${Math.random().toString(36).substring(7)}`,
+  any:       () => `any_val_${Math.random().toString(36).substring(7)}`,
+} satisfies Record<TSolidShapePrimitiveKeys, () => unknown>;
 
 export const MOCK_SHAPE_MATERIALIZER: TShapeMockMapperMap = {
-  // TODO HANDLE UNKNWON
   primitive: (shape) => {
     const generator = PRIMITIVE_MOCK_GENERATORS[shape.type];
-    return generator
-      ? generator(shape)
-      : PRIMITIVE_MOCK_GENERATORS.unknown(shape);
+    if (generator) {
+      return generator();
+    }
+    return PRIMITIVE_MOCK_GENERATORS.unknown();
   },
 
   literal: (shape) => {
@@ -39,62 +53,62 @@ export const MOCK_SHAPE_MATERIALIZER: TShapeMockMapperMap = {
 
   object: (shape, depth, recurse) => {
     const obj: Record<string, unknown> = {};
-    const keys = ObjectUtils.keys(shape.properties);
 
-    for (const key of keys) {
-      const metadata = shape.properties[key];
-
+    for (const [key, metadata] of yieldAllKeyValuePairs(shape.properties)) {
       const shouldInclude = !metadata.optional || Math.random() > 0.5;
-
       if (shouldInclude) {
         const value = recurse(metadata.shape, depth + 1);
-        if (value !== undefined) {
-          obj[key] = value;
-        }
+        if (!isUndefined(value)) obj[key] = value;
       }
     }
     return obj;
   },
 
   array: (shape, depth, recurse) => {
+    const arr: unknown[] = [];
     const count = Math.floor(Math.random() * 3) + 1;
-    return Array.from({ length: count }, () => recurse(shape.items, depth + 1));
+
+    for (let i = 0; i < count; i++) {
+      arr.push(recurse(shape.items, depth + 1));
+    }
+    return arr;
   },
 
   union: (shape, depth, recurse) => {
+    if (shape.values.length === 0) return undefined;
+
     const randomIndex = Math.floor(Math.random() * shape.values.length);
     const targetBranch = shape.values[randomIndex];
     return targetBranch ? recurse(targetBranch, depth + 1) : undefined;
   },
-  //TODO: ircular reference test WILL eventually break mock generator
-  reference: (shape, depth, recurse) => {
-    if (depth > 20) return undefined;
 
+  reference: (shape, depth, recurse) => {
     const subShape = xalethorVaultKeeper.peek('blueprint', shape.name);
     return subShape ? recurse(subShape, depth + 1) : undefined;
   },
 
   branded: (shape, depth, recurse) => recurse(shape.base, depth + 1),
+
+  /* prettier-ignore */
   function: (shape, depth, recurse) => {
-    return (..._args: unknown[]) => {
-      return recurse(shape.returnType, depth + 1);
-    };
+    return (..._args: unknown[]): unknown => recurse(shape.returnType, depth + 1);
   },
+
   intersection: (shape, depth, recurse) => {
     const result: Record<string, unknown> = {};
 
-    for (const part of shape.values) {
+    // Commandment VIII: Stream-iterates part interfaces safely without mapping intermediate arrays
+    for (const part of yieldItems(shape.values)) {
       const value = recurse(part, depth + 1);
-
-      if (value && typeof value === 'object') {
-        for (const [k, v] of Object.entries(value)) {
-          if (result[k] === undefined) {
+      /* prettier-ignore */
+      if (value && isObject(value) && isRecord(value)) {
+        for (const [k, v] of yieldAllKeyValuePairs(value)) {
+          if (isUndefined(result[k])) {
             result[k] = v;
           }
         }
       }
     }
-
     return result;
   },
   instanceof: (shape) => {

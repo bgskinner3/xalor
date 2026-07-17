@@ -24,6 +24,8 @@ export const PROCESSOR_REWRITE_MAPPER: TProcessorRewriteMap = {
   // ========================================================================
   /* prettier-ignore */
   'xalor.default':    (raw, node, factory) => formatGenerationArgs('default', raw, node, factory),
+  /* prettier-ignore */
+  'xalor.mock': (raw, node, factory) => formatGenerationArgs('default', raw, node, factory),
 
   // ========================================================================
   // VALIDATION METHODS

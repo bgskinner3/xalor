@@ -63,11 +63,22 @@ export function preRegisterMetadata(
  * to back string primitive configurations during dynamic mock materialization.
  *
  */
-export const generateRandomString = (maxLength: number = 20): string => {
-  const chars =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ';
-  const length = Math.floor(Math.random() * Math.min(maxLength, 20)) + 5;
-  return Array.from({ length }, () =>
-    chars.charAt(Math.floor(Math.random() * chars.length)),
-  ).join('');
+const ALPHABET =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+export const generateRandomString = (maxLength = 20): string => {
+  // 1. Bound target layout scale deterministically
+  const maxSafeLength = maxLength > 20 ? 20 : maxLength;
+  const targetLength = Math.floor(Math.random() * (maxSafeLength - 5 + 1)) + 5;
+
+  let result = '';
+  const alphabetLength = ALPHABET.length;
+
+  // 2. High-speed scalar appending loop: bypasses intermediate closures and array instantiation
+  for (let i = 0; i < targetLength; i++) {
+    const randomIndex = Math.floor(Math.random() * alphabetLength);
+    result += ALPHABET.charAt(randomIndex);
+  }
+
+  return result;
 };

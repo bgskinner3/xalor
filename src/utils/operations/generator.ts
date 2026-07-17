@@ -11,7 +11,7 @@ import {
  *
  * ROLE:
  */
-export function produceDefault(shape: TSolidShape, depth = 0): unknown {
+export function executeDefaultBuild(shape: TSolidShape, depth = 0): unknown {
   if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) return null;
 
   if (!shape) return undefined;
@@ -21,7 +21,7 @@ export function produceDefault(shape: TSolidShape, depth = 0): unknown {
     targetShape: Extract<TSolidShape, { kind: K }>,
   ): unknown => {
     const materializer = DEFAULT_SHAPE_MATERIALIZER[kind];
-    return materializer(targetShape, depth, produceDefault);
+    return materializer(targetShape, depth, executeDefaultBuild);
   };
 
   // Pass the shape kind and target payload straight into the generic runner.
@@ -38,7 +38,7 @@ export function produceDefault(shape: TSolidShape, depth = 0): unknown {
  *
  * LAW: Zero 'any', Zero type assertions ('as'), and Zero 'switch' blocks.
  */
-export function produceMock(shape: TSolidShape, depth = 0): unknown {
+export function executeMockBuild(shape: TSolidShape, depth = 0): unknown {
   if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) return null;
 
   if (!shape) return undefined;
@@ -48,7 +48,7 @@ export function produceMock(shape: TSolidShape, depth = 0): unknown {
     targetShape: Extract<TSolidShape, { kind: K }>,
   ): unknown => {
     const normalizer = MOCK_SHAPE_MATERIALIZER[kind];
-    return normalizer(targetShape, depth, produceMock);
+    return normalizer(targetShape, depth, executeMockBuild);
   };
 
   return executeMockMaterializer(shape.kind, shape);

@@ -1,36 +1,23 @@
 import { xalethorVaultKeeper } from './vault-keeper';
 import {
-  produceDefault,
   markAsSolid,
-  produceMock,
+  // executeMockBuild,
   produceCast,
+  // executeDefaultBuild,
 } from '../utils';
 import { isValidSolidShape } from '../../shared';
 import type { TSolidBranded } from '../../shared/types/utility';
 import type { TSolidShape } from '../../shared/shape-domain';
 import { xalethorVaultDiagnostics } from './vault-diagnostics';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared/constants';
-import { DEFAULT_SHAPE_MATERIALIZER } from '../mappers';
+import {
+  DEFAULT_SHAPE_MATERIALIZER,
+  MOCK_SHAPE_MATERIALIZER,
+  // CAST_SHAPE_MAPPER,
+} from '../mappers';
 import { isRecord } from '../../shared';
 /**
- export function produceDefault(shape: TSolidShape, depth = 0): unknown {
-   if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) return null;
- 
-   if (!shape) return undefined;
- 
-   const executeMaterializer = <K extends TSolidShape['kind']>(
-     kind: K,
-     targetShape: Extract<TSolidShape, { kind: K }>,
-   ): unknown => {
-     const materializer = DEFAULT_SHAPE_MATERIALIZER[kind];
-     return materializer(targetShape, depth, produceDefault);
-   };
- 
-   // Pass the shape kind and target payload straight into the generic runner.
-   // This satisfies the compiler perfectly with 100% compile-time security.
-   return executeMaterializer(shape.kind, shape);
- }
-    const { reifyLimit } = IS_SOLID_CONFIG_ITEMS;
+;
  */
 function isTargetRegistryStructure<K extends TActiveRegistryKeys>(
   payload: unknown,
@@ -55,8 +42,6 @@ function isTargetRegistryStructure<K extends TActiveRegistryKeys>(
  * - NO Disk persistence.
  */
 class XalethorVaultGenerator {
-  private reifyLimit = IS_SOLID_CONFIG_ITEMS.reifyLimit;
-
   private requireShape<K extends TActiveRegistryKeys>(key: K, msg: string) {
     const shape = xalethorVaultKeeper.peek('blueprint', key);
 
@@ -65,9 +50,10 @@ class XalethorVaultGenerator {
     }
     return shape;
   }
-  private executeDefaultBuild(shape: TSolidShape, depth = 0): unknown {
-    if (depth >= this.reifyLimit.maxDepth) return null;
-
+  private executeDefaultBuild = (shape: TSolidShape, depth = 0): unknown => {
+    if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) {
+      return null;
+    }
     if (!shape) return undefined;
 
     const executeMaterializer = <K extends TSolidShape['kind']>(
@@ -75,13 +61,78 @@ class XalethorVaultGenerator {
       targetShape: Extract<TSolidShape, { kind: K }>,
     ): unknown => {
       const materializer = DEFAULT_SHAPE_MATERIALIZER[kind];
-      return materializer(targetShape, depth, produceDefault);
+      return materializer(targetShape, depth, this.executeDefaultBuild);
     };
 
-    // Pass the shape kind and target payload straight into the generic runner.
-    // This satisfies the compiler perfectly with 100% compile-time security.
     return executeMaterializer(shape.kind, shape);
-  }
+  };
+
+  /**
+   * executeMockBuild
+   *
+   *
+   *
+   * @param shape
+   * @param depth
+   * @returns
+   */
+  private executeMockBuild = (shape: TSolidShape, depth = 0): unknown => {
+    if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) {
+      return null;
+    }
+    if (!shape) return undefined;
+
+    const executeMaterializer = <K extends TSolidShape['kind']>(
+      kind: K,
+      targetShape: Extract<TSolidShape, { kind: K }>,
+    ): unknown => {
+      const materializer = MOCK_SHAPE_MATERIALIZER[kind];
+      return materializer(targetShape, depth, this.executeMockBuild);
+    };
+
+    return executeMaterializer(shape.kind, shape);
+  };
+  // export function produceCast(
+  //   shape: TSolidShape,
+  //   data: unknown,
+  //   depth = 0,
+  // ): unknown {
+  //   if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) {
+  //     return data;
+  //   }
+  //   if (!shape) return data;
+
+  //   const executeCastMaterializer = <K extends TSolidShape['kind']>(
+  //     kind: K,
+  //     targetShape: Extract<TSolidShape, { kind: K }>,
+  //   ): unknown => {
+  //     const caster = CAST_SHAPE_MAPPER[kind];
+  //     return caster(targetShape, data, depth, produceCast);
+  //   };
+
+  //   return executeCastMaterializer(shape.kind, shape);
+  // }
+  /* prettier-ignore */
+  // private executeCastBuild = (shape: TSolidShape,  data: unknown, depth = 0): unknown => {
+  //   if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) {
+  //     return null;
+  //   }
+  //   if (!shape) return undefined;
+
+  //   const executeMaterializer = <K extends TSolidShape['kind']>(
+  //     kind: K,
+  //     targetShape: Extract<TSolidShape, { kind: K }>,
+  //   ): unknown => {
+  //     const caster = CAST_SHAPE_MAPPER[kind];
+  //     return caster(targetShape, data, depth, produceCast);
+  //   };
+
+  //   return executeMaterializer(shape.kind, shape);
+  // };
+
+  // ============================================================
+  // ============================================================
+  // ============================================================
 
   public getDefaultRaw<K extends TActiveRegistryKeys>(
     key: K,
@@ -96,10 +147,6 @@ class XalethorVaultGenerator {
     /* prettier-ignore */
     return xalethorVaultDiagnostics.panic( key, `[xalor] Materialized payload did not conform to an object structure.`);
   }
-  // ============================================================
-  // ============================================================
-  // ============================================================
-  // DEPREACTEDD
 
   /**
    * GET MOCK
@@ -111,18 +158,27 @@ class XalethorVaultGenerator {
    * @param key - The unique identifier of the type in the Registry.
    * @returns {TResolveRegistryStructure<K>} - A randomized, branded instance of the type.
    */
-  public getMock<K extends TActiveRegistryKeys>(
+  public getMockRaw<K extends TActiveRegistryKeys>(
     key: K,
-  ): TSolidBranded<K, TResolveRegistryStructure<K>> {
-    /* prettier-ignore */ const shape = 
-    this.requireShape( key, 'Mocking failed: Blueprint missing from Vault.');
+  ): TResolveRegistryStructure<K> {
+    /* prettier-ignore */
+    const shape = this.requireShape<K>( key, 'Generation failed: Blueprint missing from Vault.');
 
-    const data = produceMock(shape);
+    const rawStructure = this.executeMockBuild(shape, 0);
 
-    if (markAsSolid<K, TResolveRegistryStructure<K>>(data)) return data;
-
-    throw new Error(`[xalor] Failed to brand mock object for ${key}`);
+    // Structural boundary check narrowing target generic output naturally via native type guards
+    if (isTargetRegistryStructure<K>(rawStructure)) {
+      return rawStructure;
+    }
+    /* prettier-ignore */
+    return xalethorVaultDiagnostics.panic( key, `[xalor] Materialized mock payload did not conform to an object structure for key: ${key}`);
   }
+
+  // ============================================================
+  // ============================================================
+  // ============================================================
+  // DEPREACTEDD
+
   /**
    * GET_CAST
    *
