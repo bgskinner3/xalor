@@ -9,7 +9,6 @@ import {
   assertRegistryKey,
 } from '../../../shared/utils/guards';
 
-// 🏎️ THE ZERO-ALLOCATION BRAND CACHE MATRIX
 // Holds long-lived, pre-allocated memory pointers for your nominal tokens
 const brandTokenCache = new Map<string, [string, string]>();
 

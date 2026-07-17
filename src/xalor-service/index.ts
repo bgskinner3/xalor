@@ -6,8 +6,8 @@ import type {
   TSolidShape,
   TValidationContext,
 } from '../../shared';
-import { XalethorVaultKeeper } from './vault-keeper';
-import { XalethorVaultGenerator } from './vault-generator';
+import { xalethorVaultKeeper } from './vault-keeper';
+import { xalethorVaultGenerator } from './vault-generator';
 import { XalethorVaultTransform } from './vault-transform';
 import { XalethorVaultMatch } from './vault-match';
 import { xalethorVaultValidation } from './vault-validation';
@@ -32,23 +32,23 @@ export class XalethorService {
   // ============================================================
   /* prettier-ignore */
   public static solidify(raw: TSolidMetadata): void {
-    XalethorVaultKeeper.solidify(raw);
+    xalethorVaultKeeper.solidify(raw);
   }
   /* prettier-ignore */
   public static solidifyDrifts(driftTracks: TTripleKV['driftTracking']): void {
-     XalethorVaultKeeper.solidifyDrifts(driftTracks);
+     xalethorVaultKeeper.solidifyDrifts(driftTracks);
   }
   public static blueprintVault(key: string) {
-    return XalethorVaultKeeper.peek('blueprint', key);
+    return xalethorVaultKeeper.peek('blueprint', key);
   }
   public static manifestVault(key: string) {
-    return XalethorVaultKeeper.peek('manifest', key);
+    return xalethorVaultKeeper.peek('manifest', key);
   }
   public static registryVault(key: string) {
-    return XalethorVaultKeeper.peek('registry', key);
+    return xalethorVaultKeeper.peek('registry', key);
   }
   public static inspectMetaData(key: string) {
-    return XalethorVaultKeeper.resolve(key);
+    return xalethorVaultKeeper.resolve(key);
   }
 
   // ============================================================
@@ -114,20 +114,20 @@ export class XalethorService {
   // ============================================================
   public static produceDefault<K extends TActiveRegistryKeys>(
     key: K,
-  ): TSolidBranded<K, TResolveRegistryStructure<K>> {
-    return XalethorVaultGenerator.getDefault(key);
+  ): TResolveRegistryStructure<K> {
+    return xalethorVaultGenerator.getDefaultRaw(key);
   }
   public static produceMock<K extends TActiveRegistryKeys>(
     key: K,
   ): TSolidBranded<K, TResolveRegistryStructure<K>> {
-    return XalethorVaultGenerator.getMock(key);
+    return xalethorVaultGenerator.getMock(key);
   }
 
   public static produceCast<K extends TActiveRegistryKeys>(
     data: unknown,
     key: K,
   ): TSolidBranded<K, TResolveRegistryStructure<K>> {
-    return XalethorVaultGenerator.getCast(data, key);
+    return xalethorVaultGenerator.getCast(data, key);
   }
   // ============================================================
   // ============================================================

@@ -3,7 +3,7 @@ import { isRecord, isFunction } from '../../shared/utils/guards';
 import type { TXalorMergeContext } from '../models/types';
 import type { TSolidBranded } from '../../shared';
 import { markAsSolid, produceClone } from '../utils';
-import { XalethorVaultKeeper } from './vault-keeper';
+import { xalethorVaultKeeper } from './vault-keeper';
 import { XalethorService } from '.';
 export class XalethorVaultTransform {
   // =================================================
@@ -87,7 +87,7 @@ export class XalethorVaultTransform {
   // =================================================
   /* prettier-ignore */
   private static requireShape<K extends keyof ISolidRegistry>(key: K, msg: string) {
-    const shape = XalethorVaultKeeper.peek('blueprint', key);
+    const shape = xalethorVaultKeeper.peek('blueprint', key);
 
     if (!shape) XalethorService.panic(key, msg);
 

@@ -13,7 +13,7 @@ import {
   isArray,
   ObjectUtils,
 } from '../../../shared';
-import { XalethorVaultKeeper } from '../../xalor-service/vault-keeper';
+import { xalethorVaultKeeper } from '../../xalor-service/vault-keeper';
 import { XalethorService } from '../../xalor-service';
 /**
  * CASTING_PRIMITIVE_GENERATORS
@@ -135,7 +135,7 @@ export const CAST_SHAPE_MAPPER: TShapeCastMapperMapper = {
   },
 
   reference: (shape, data, depth, recurse) => {
-    const resolvedBlueprint = XalethorVaultKeeper.peek('blueprint', shape.name);
+    const resolvedBlueprint = xalethorVaultKeeper.peek('blueprint', shape.name);
 
     if (!resolvedBlueprint) return data;
 

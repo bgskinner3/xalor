@@ -1,7 +1,7 @@
 import type { TShapeMockMapperMap } from '../../models/types';
 import { ObjectUtils } from '../../../shared';
 import { generateRandomString } from '../../utils/transformers';
-import { XalethorVaultKeeper } from '../../xalor-service/vault-keeper';
+import { xalethorVaultKeeper } from '../../xalor-service/vault-keeper';
 import type { TSolidShape } from '../../../shared';
 import { shapeKindUtilsService } from '../../../shared/service';
 /**
@@ -70,7 +70,7 @@ export const MOCK_SHAPE_MATERIALIZER: TShapeMockMapperMap = {
   reference: (shape, depth, recurse) => {
     if (depth > 20) return undefined;
 
-    const subShape = XalethorVaultKeeper.peek('blueprint', shape.name);
+    const subShape = xalethorVaultKeeper.peek('blueprint', shape.name);
     return subShape ? recurse(subShape, depth + 1) : undefined;
   },
 

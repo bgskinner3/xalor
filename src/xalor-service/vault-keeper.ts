@@ -28,15 +28,15 @@ import { IS_SOLID_CONFIG_ITEMS } from '../../shared';
  * - NO Disk I/O (Librarians don't build the building).
  * - NO Error formatting or panic logic.
  */
-export class XalethorVaultKeeper {
-  private static solidVersion = IS_SOLID_CONFIG_ITEMS.solidVersion;
-  public static get vault(): TSolidVaultMap {
+class XalethorVaultKeeper {
+  private solidVersion = IS_SOLID_CONFIG_ITEMS.solidVersion;
+  public get vault(): TSolidVaultMap {
     return ensureGlobalVault();
   }
   /**
    * Replaces 'Registry.registerShape'. ****
    */
-  public static solidify(rawMetadata: TSolidMetadata): void {
+  public solidify(rawMetadata: TSolidMetadata): void {
     const metadata = preRegisterMetadata(rawMetadata);
 
     /* prettier-ignore */
@@ -51,7 +51,7 @@ export class XalethorVaultKeeper {
     this.vault.manifest?.set(key, { area, filePath, anchor });
     this.vault.registry?.set(key, { symbolName, typeName });
   }
-  public static solidifyDrifts(driftTracking: TTripleKV['driftTracking']) {
+  public solidifyDrifts(driftTracking: TTripleKV['driftTracking']) {
     if (!driftTracking) return;
 
     for (const [evolutionTokenKey, driftEntry] of Object.entries(
@@ -69,7 +69,7 @@ export class XalethorVaultKeeper {
   /**
    * RETRIEVAL: Reconstructs the ghost-identity for the public API
    */
-  public static resolve(key: string): TStrictSolidMetaData | undefined {
+  public resolve(key: string): TStrictSolidMetaData | undefined {
     const shape = this.vault.blueprints.get(key);
     if (!shape) return undefined; // No shape means the type doesn't exist at all
     const manifest = this.vault.manifest?.get(key);
@@ -96,10 +96,10 @@ export class XalethorVaultKeeper {
    * A polymorphic gateway to the Triple-KV Vault.
    * It maps the variant request to the specific internal Map.
    */
-  /* prettier-ignore */ public static peek( variant: 'blueprint', key: string): TSolidShape | undefined;
-  /* prettier-ignore */ public static peek( variant: 'registry', key: string,): TVaultRegistryEntry | undefined;
-  /* prettier-ignore */ public static peek( variant: 'manifest', key: string,): TVaultManifestEntry | undefined;
-  public static peek(
+  /* prettier-ignore */ public  peek( variant: 'blueprint', key: string): TSolidShape | undefined;
+  /* prettier-ignore */ public  peek( variant: 'registry', key: string,): TVaultRegistryEntry | undefined;
+  /* prettier-ignore */ public  peek( variant: 'manifest', key: string,): TVaultManifestEntry | undefined;
+  public peek(
     variant: 'blueprint' | 'manifest' | 'registry',
     key: string,
   ): TSolidShape | TVaultManifestEntry | TVaultRegistryEntry | undefined {
@@ -111,3 +111,5 @@ export class XalethorVaultKeeper {
     return undefined;
   }
 }
+
+export const xalethorVaultKeeper = new XalethorVaultKeeper();

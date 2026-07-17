@@ -1,8 +1,12 @@
 import { XalethorService } from '../../xalor-service';
-import { markAsSolid } from '../../utils';
+import { markAsSolid, ensureGlobalVault } from '../../utils';
 import { isRecord, assertRegistryKey } from '../../../shared/utils/guards';
 import { BRAND_SYMBOL } from '../../../shared';
 import type { TSolidBranded } from '../../../shared';
+import { xalethorVaultDiagnostics } from '../../xalor-service/vault-diagnostics';
+
+// Holds long-lived, pre-allocated memory pointers for your nominal tokens
+const brandTokenCache = new Map<string, [string, string]>();
 
 /**
  * RUNTIME API: GENERATE XALOR DEFAULT (v0 MVP Clean Edition)
@@ -28,11 +32,18 @@ import type { TSolidBranded } from '../../../shared';
 export function generateXalorDefault<
   K extends TActiveRegistryKeys = TActiveRegistryKeys,
 >(injectedKey?: K): TSolidBranded<K, TResolveRegistryStructure<K>> {
+  ensureGlobalVault();
   assertRegistryKey(injectedKey);
 
-  const defaultTemplate = XalethorService.produceDefault(injectedKey);
+  const defaultTemplate = XalethorService.produceDefault<K>(injectedKey);
 
   if (isRecord(defaultTemplate)) {
+    let brandToken = brandTokenCache.get(injectedKey);
+    if (!brandToken) {
+      brandToken = ['Solid', injectedKey];
+      brandTokenCache.set(injectedKey, brandToken);
+    }
+
     Reflect.set(defaultTemplate, BRAND_SYMBOL, ['Solid', injectedKey]);
 
     if (markAsSolid<K, TResolveRegistryStructure<K>>(defaultTemplate)) {
@@ -40,7 +51,8 @@ export function generateXalorDefault<
     }
   }
 
-  throw new Error(
+  return xalethorVaultDiagnostics.panic(
+    injectedKey,
     `[xalor] 🚨 Fallback template generation failed structurally for contract key: ${injectedKey}`,
   );
 }

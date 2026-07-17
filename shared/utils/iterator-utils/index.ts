@@ -127,3 +127,20 @@ export function* yieldItems<T>(items: readonly T[]): Generator<T> {
     yield items[i];
   }
 }
+
+/**
+ * @utilType util
+ * @name yieldAllKeyValuePairs
+ * @category Iteration
+ * @description Streams flat [key, value] entries unconditionally from a structural mapping record.
+ * Replaces old, non-reusable 'iterateProperties' and 'iterateObjectEntries' artifacts.
+ */
+export function* yieldAllKeyValuePairs<T extends Record<string, unknown>>(
+  obj: T,
+): Generator<[keyof T, T[keyof T]], void, unknown> {
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      yield [key, obj[key]];
+    }
+  }
+}

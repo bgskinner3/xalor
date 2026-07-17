@@ -1,7 +1,7 @@
 import type { TApplyNominalBrand, IXalorDriftContext } from '../models/types';
 import { isRegistryKey, isRecord } from '../../shared/utils';
 import { isObjectShape } from '../../shared/shape-domain/guards';
-import { XalethorVaultKeeper } from './vault-keeper';
+import { xalethorVaultKeeper } from './vault-keeper';
 import { xalethorVaultValidation } from './vault-validation';
 import {
   markAsSolid,
@@ -25,7 +25,7 @@ export class XalethorVaultMatch {
     payload: Record<string, unknown>,
   ): void {
     /* prettier-ignore */
-    const activeBlueprint = XalethorVaultKeeper.peek('blueprint', targetBlueprintKey);
+    const activeBlueprint = xalethorVaultKeeper.peek('blueprint', targetBlueprintKey);
     if (!isRegistryKey(targetBlueprintKey)) return;
 
     if (!activeBlueprint || !isObjectShape(activeBlueprint)) return;
@@ -44,7 +44,7 @@ export class XalethorVaultMatch {
     payload: Record<string, unknown>,
   ): boolean {
     /* prettier-ignore */
-    const activeBlueprint = XalethorVaultKeeper.peek('blueprint', targetBlueprintKey);
+    const activeBlueprint = xalethorVaultKeeper.peek('blueprint', targetBlueprintKey);
 
     if (!activeBlueprint || !isObjectShape(activeBlueprint)) return false;
 

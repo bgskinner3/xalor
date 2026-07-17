@@ -1,8 +1,12 @@
 import type { TShapeDefaultMaterializeMap } from '../../models/types';
-import { ObjectUtils } from '../../../shared';
 import { PRIMITIVE_DEFAULTS } from '../../models/constants';
-import { XalethorVaultKeeper } from '../../xalor-service/vault-keeper';
-import { isObject } from '../../../shared';
+import { xalethorVaultKeeper } from '../../xalor-service/vault-keeper';
+import {
+  isObject,
+  yieldItems,
+  yieldAllKeyValuePairs,
+  isRecord,
+} from '../../../shared';
 import { shapeKindUtilsService } from '../../../shared/service';
 
 /**
@@ -22,13 +26,13 @@ export const DEFAULT_SHAPE_MATERIALIZER: TShapeDefaultMaterializeMap = {
 
   object: (shape, depth, recurse) => {
     const obj: Record<string, unknown> = {};
-    const keys = ObjectUtils.keys(shape.properties);
 
-    for (const key of keys) {
-      const metadata = shape.properties[key];
-
-      if (!metadata.optional) {
-        obj[key] = recurse(metadata.shape, depth + 1);
+    // Commandment VIII: Reusable lazy entry stream processing bypassing Object.keys()
+    for (const [key, propDescriptor] of yieldAllKeyValuePairs(
+      shape.properties,
+    )) {
+      if (!propDescriptor.optional) {
+        obj[key] = recurse(propDescriptor.shape, depth + 1);
       }
     }
     return obj;
@@ -42,15 +46,15 @@ export const DEFAULT_SHAPE_MATERIALIZER: TShapeDefaultMaterializeMap = {
   },
 
   reference: (shape, depth, recurse) => {
-    const subShape = XalethorVaultKeeper.peek('blueprint', shape.name);
+    const subShape = xalethorVaultKeeper.peek('blueprint', shape.name);
     return subShape ? recurse(subShape, depth + 1) : undefined;
   },
 
   branded: (shape, depth, recurse) => recurse(shape.base, depth + 1),
 
   function: (shape, depth, recurse) => {
-    const fn = (..._args: unknown[]) => recurse(shape.returnType, depth + 1);
-    return fn;
+    return (..._args: unknown[]): unknown =>
+      recurse(shape.returnType, depth + 1);
   },
   instanceof: (shape) => {
     const instanceKind = shapeKindUtilsService.getInstanceOfKind(shape.name);
@@ -58,19 +62,17 @@ export const DEFAULT_SHAPE_MATERIALIZER: TShapeDefaultMaterializeMap = {
   },
   intersection: (shape, depth, recurse) => {
     const result: Record<string, unknown> = {};
-
-    for (const part of shape.values) {
+    for (const part of yieldItems(shape.values)) {
       const value = recurse(part, depth + 1);
 
-      if (value && isObject(value)) {
-        for (const [k, v] of Object.entries(value)) {
+      if (value && isObject(value) && isRecord(value)) {
+        for (const [k, v] of yieldAllKeyValuePairs(value)) {
           if (result[k] === undefined) {
             result[k] = v;
           }
         }
       }
     }
-
     return result;
   },
 } satisfies TShapeDefaultMaterializeMap;

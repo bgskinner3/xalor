@@ -1,6 +1,6 @@
 import type { TShapeCloneMapperMap } from '../../models/types';
 import { isObject, isNull, isFunction } from '../../../shared/utils/guards';
-import { XalethorVaultKeeper } from '../../xalor-service/vault-keeper';
+import { xalethorVaultKeeper } from '../../xalor-service/vault-keeper';
 import { IS_SOLID_CONFIG_ITEMS } from '../../../shared';
 import { XalethorService } from '../../xalor-service';
 /**
@@ -81,7 +81,7 @@ export const CLONE_SHAPE_SANITIZER_MAPPER: TShapeCloneMapperMap = {
   },
 
   reference: (shape, data, seen, depth, recurse) => {
-    const subShape = XalethorVaultKeeper.peek('blueprint', shape.name);
+    const subShape = xalethorVaultKeeper.peek('blueprint', shape.name);
     return subShape ? recurse(data, subShape, seen, depth) : data;
   },
 
