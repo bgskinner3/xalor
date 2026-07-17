@@ -88,6 +88,22 @@ export const TEST_SHAPE_REGISTRY = {
       },
     },
   },
+
+  BROKEN_REF_TEST: {
+    kind: 'object',
+    properties: {
+      badLink: {
+        name: 'badLink',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: {
+          kind: 'reference',
+          name: 'MISSING_TARGET_KEY', // Missing from Vault lookup cache maps
+        },
+      },
+    },
+  },
   // ============================================================================
   // 🔒 STRICT OBJECTS (Enforces Extra Property Rejection Guards)
   // ============================================================================
@@ -681,6 +697,50 @@ export const TEST_SHAPE_REGISTRY = {
         shape: { kind: 'instanceof', name: 'TransformStream' },
         requiresKeyPresence: true,
         allowsExplicitUndefined: false,
+      },
+    },
+  },
+  COLLIDING_INTERSECTION_TEST: {
+    kind: 'intersection',
+    values: [
+      {
+        kind: 'object',
+        properties: {
+          conflictField: {
+            name: 'conflictField',
+            optional: false,
+            requiresKeyPresence: true,
+            allowsExplicitUndefined: false,
+            shape: { kind: 'primitive', type: 'string' }, // Branch A demands a string type skeleton
+          },
+        },
+      },
+      {
+        kind: 'object',
+        properties: {
+          conflictField: {
+            name: 'conflictField',
+            optional: false,
+            requiresKeyPresence: true,
+            allowsExplicitUndefined: false,
+            shape: { kind: 'primitive', type: 'number' }, // Branch B demands a numeric type skeleton
+          },
+        },
+      },
+    ],
+  },
+  INFINITE_LOOP_TEST: {
+    kind: 'object',
+    properties: {
+      selfRef: {
+        name: 'selfRef',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: {
+          kind: 'reference',
+          name: 'INFINITE_LOOP_TEST', // Points straight back to itself unconditionally
+        },
       },
     },
   },

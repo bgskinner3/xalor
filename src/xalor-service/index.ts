@@ -126,8 +126,8 @@ export class XalethorService {
   public static produceCast<K extends TActiveRegistryKeys>(
     data: unknown,
     key: K,
-  ): TSolidBranded<K, TResolveRegistryStructure<K>> {
-    return xalethorVaultGenerator.getCast(data, key);
+  ): TResolveRegistryStructure<K> {
+    return xalethorVaultGenerator.getCastRaw(data, key);
   }
   // ============================================================
   // ============================================================

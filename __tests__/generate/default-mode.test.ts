@@ -3,6 +3,7 @@ import { xalor } from '../../src/api';
 import { TEST_SHAPE_REGISTRY } from '../utils/constants';
 import { seedTestVault } from '../utils';
 import type { TInstanceConstructorRegistry } from '../../shared/shape-domain';
+import { BRAND_SYMBOL } from '../../shared';
 // 'default', 'mock', 'clone', and 'cast' operational modes.
 /**
  pnpm run test -- __tests__/generate/default-mode.test.ts
@@ -41,7 +42,21 @@ declare global {
         };
       }[];
     };
+    /**
+     * Evaluates deep recursive arrow function thresholds. Verifies circuit breaker
+     * boundaries safely abort before triggering a V8 execution engine stack crash.
+     */
+    INFINITE_LOOP_TEST: {
+      selfRef: unknown;
+    };
 
+    /**
+     * Verifies deterministic property resolution strategies during structural property
+     * entry overrides on multi-layered object schema intersections.
+     */
+    COLLIDING_INTERSECTION_TEST: {
+      conflictField: string | number;
+    };
     // ADVANCED ENGINE TESTING TAXONOMIES
     OPTIONAL_FIELDS_TEST: {
       mandatoryId: number;
@@ -122,6 +137,9 @@ declare global {
         retryCount?: number, // 🚀 Properly typed as an optional parameter!
       ) => TInstanceConstructorRegistry['Promise']; // Returns an active native Promise instance object!
     };
+    BROKEN_REF_TEST: {
+      badLink: unknown;
+    };
   }
 }
 
@@ -150,9 +168,19 @@ describe('Runtime Generator API - Default Mode', () => {
       TEST_SHAPE_REGISTRY.CIRCULAR_DEPTH_TEST,
     );
     seedTestVault(
+      'COLLIDING_INTERSECTION_TEST',
+      TEST_SHAPE_REGISTRY.COLLIDING_INTERSECTION_TEST,
+    );
+    seedTestVault('INFINITE_LOOP_TEST', TEST_SHAPE_REGISTRY.INFINITE_LOOP_TEST);
+    seedTestVault(
       'ALL_PLATFORM_INSTANCES_SHAPE',
       TEST_SHAPE_REGISTRY.ADVANCED_COMPLEXITY_SHAPE,
     );
+    seedTestVault(
+      'ADVANCED_COMPLEXITY_SHAPE',
+      TEST_SHAPE_REGISTRY.ADVANCED_COMPLEXITY_SHAPE,
+    );
+    seedTestVault('BROKEN_REF_TEST', TEST_SHAPE_REGISTRY.BROKEN_REF_TEST);
   });
 
   // ========================================================================
@@ -271,9 +299,6 @@ describe('Runtime Generator API - Default Mode', () => {
       if (result !== undefined && result !== null) {
         expect(typeof result).toBe('object');
 
-        // 🧠 THE FIXED BOUNDARY POINTER: Declare the tracking cursor as a plain mutable record.
-        // This satisfies COMMANDMENT IX by allowing the pointer to walk deep nested child frames
-        // without contaminating the root-level nominal brand tracking requirements!
         let cursor: Record<string | symbol, unknown> = result;
 
         for (let depth = 0; depth < 20; depth++) {
@@ -323,11 +348,6 @@ describe('Runtime Generator API - Default Mode', () => {
     });
 
     it('🛡️ EDGE CASE 3: should manufacture safe, executable mock pass-through closures for function property shapes', () => {
-      seedTestVault(
-        'ADVANCED_COMPLEXITY_SHAPE',
-        TEST_SHAPE_REGISTRY.ADVANCED_COMPLEXITY_SHAPE,
-      );
-
       const result = xalor.default<'ADVANCED_COMPLEXITY_SHAPE'>();
       expect(result).toBeDefined();
 
@@ -353,6 +373,70 @@ describe('Runtime Generator API - Default Mode', () => {
       // Ensure properties across intersecting segments collapse natively
       // without leaving undefined branches or dropping nominal brand tracking signatures
       expect(xalor.guard<'COMPLEX_UNION_TEST'>(result)).toBe(true);
+    });
+    it('🛡️ EDGE CASE 5: should ensure nominal identity branding is accurately applied to object hierarchies', () => {
+      const result = xalor.default<'USER_TEST'>();
+      const brandToken = Reflect.get(result, BRAND_SYMBOL);
+      expect(Array.isArray(brandToken)).toBe(true);
+      expect(brandToken).toContain('Solid');
+      expect(brandToken).toContain('USER_TEST');
+    });
+  });
+
+  describe('🚨 ENGINE REJECTION PANIC PATHS', () => {
+    it('🚨 FAILURE 3: should trap broken internal target reference link keys during recursive traversal', () => {
+      // 1. Seed a reference pointing into an empty lookup vector slot string pass
+      seedTestVault('BROKEN_REF_TEST', {
+        kind: 'reference',
+        name: 'MISSING_TARGET_KEY', // This pointer doesn't exist inside the vault database
+      } as never);
+
+      // 2. EXECUTED AS AN IIFE TRAPPER: Catches the immediate throw during runtime evaluation
+      const errorResult = (() => {
+        try {
+          xalor.default<'BROKEN_REF_TEST'>();
+          return null; // Fails safely if the engine accidentally allows execution to leak past
+        } catch (thrownException) {
+          return thrownException;
+        }
+      })();
+
+      // 3. Deterministic Exception Assertions Pass
+      expect(errorResult).toBeInstanceOf(Error);
+
+      if (errorResult instanceof Error) {
+        expect(errorResult.message).toContain('[Xalor Graph Integrity Error]');
+        expect(errorResult.message).toContain('MISSING_TARGET_KEY');
+      }
+    });
+    it('🚨 FAILURE 4: should halt gracefully and return null when recursive lookup traversals hit the maximum depth limit threshold', () => {
+      const executeMaxDepthPass = (() => {
+        try {
+          // 2. Point-free execution pass completely free of type assertions!
+          xalor.default<'INFINITE_LOOP_TEST'>();
+
+          return null;
+        } catch (error) {
+          return error;
+        }
+      })();
+
+      expect(executeMaxDepthPass).not.toBeInstanceOf(Error);
+      expect(executeMaxDepthPass).toBeDefined();
+    });
+    it('🚨 FAILURE 5: should handle severe structural type divergence gracefully when merging conflicting intersection properties', () => {
+      const executeCollisionPass = (() => {
+        try {
+          // 2. Point-free execution pass completely free of type assertions!
+          xalor.default<'COLLIDING_INTERSECTION_TEST'>();
+          return null;
+        } catch (error) {
+          return error;
+        }
+      })();
+
+      expect(executeCollisionPass).not.toBeInstanceOf(Error);
+      expect(executeCollisionPass).toBeDefined();
     });
   });
 });

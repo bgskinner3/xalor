@@ -1,11 +1,13 @@
 import type { TShapeDefaultMaterializeMap } from '../../models/types';
 import { PRIMITIVE_DEFAULTS } from '../../models/constants';
 import { xalethorVaultKeeper } from '../../xalor-service/vault-keeper';
+import { xalethorVaultDiagnostics } from '../../xalor-service/vault-diagnostics';
 import {
   isObject,
   yieldItems,
   yieldAllKeyValuePairs,
   isRecord,
+  isUndefined,
 } from '../../../shared';
 import { shapeKindUtilsService } from '../../../shared/service';
 
@@ -27,7 +29,6 @@ export const DEFAULT_SHAPE_MATERIALIZER: TShapeDefaultMaterializeMap = {
   object: (shape, depth, recurse) => {
     const obj: Record<string, unknown> = {};
 
-    // Commandment VIII: Reusable lazy entry stream processing bypassing Object.keys()
     for (const [key, propDescriptor] of yieldAllKeyValuePairs(
       shape.properties,
     )) {
@@ -41,13 +42,24 @@ export const DEFAULT_SHAPE_MATERIALIZER: TShapeDefaultMaterializeMap = {
   array: () => [],
 
   union: (shape, depth, recurse) => {
+    if (shape.values.length === 0) {
+      return undefined;
+    }
     const firstBranch = shape.values[0];
     return firstBranch ? recurse(firstBranch, depth + 1) : undefined;
   },
 
   reference: (shape, depth, recurse) => {
     const subShape = xalethorVaultKeeper.peek('blueprint', shape.name);
-    return subShape ? recurse(subShape, depth + 1) : undefined;
+
+    if (!subShape) {
+      return xalethorVaultDiagnostics.panic(
+        shape.name,
+        `[Xalor Graph Integrity Error]: Broken internal reference key "${shape.name}" detected during recursive traversal.`,
+      );
+    }
+
+    return recurse(subShape, depth + 1);
   },
 
   branded: (shape, depth, recurse) => recurse(shape.base, depth + 1),
@@ -67,9 +79,7 @@ export const DEFAULT_SHAPE_MATERIALIZER: TShapeDefaultMaterializeMap = {
 
       if (value && isObject(value) && isRecord(value)) {
         for (const [k, v] of yieldAllKeyValuePairs(value)) {
-          if (result[k] === undefined) {
-            result[k] = v;
-          }
+          if (isUndefined(result[k])) result[k] = v;
         }
       }
     }

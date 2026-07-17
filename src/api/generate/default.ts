@@ -35,19 +35,19 @@ export function generateXalorDefault<
   ensureGlobalVault();
   assertRegistryKey(injectedKey);
 
-  const defaultTemplate = XalethorService.produceDefault<K>(injectedKey);
+  const rawTemplate = XalethorService.produceDefault<K>(injectedKey);
 
-  if (isRecord(defaultTemplate)) {
+  if (isRecord(rawTemplate)) {
     let brandToken = brandTokenCache.get(injectedKey);
     if (!brandToken) {
       brandToken = ['Solid', injectedKey];
       brandTokenCache.set(injectedKey, brandToken);
     }
 
-    Reflect.set(defaultTemplate, BRAND_SYMBOL, ['Solid', injectedKey]);
+    Reflect.set(rawTemplate, BRAND_SYMBOL, ['Solid', injectedKey]);
 
-    if (markAsSolid<K, TResolveRegistryStructure<K>>(defaultTemplate)) {
-      return defaultTemplate;
+    if (markAsSolid<K, TResolveRegistryStructure<K>>(rawTemplate)) {
+      return rawTemplate;
     }
   }
 

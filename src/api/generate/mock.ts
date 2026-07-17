@@ -4,29 +4,10 @@ import { assertRegistryKey } from '../../../shared/utils/guards';
 import { BRAND_SYMBOL, isRecord, hasKey } from '../../../shared';
 import type { TSolidBranded } from '../../../shared';
 import { xalethorVaultDiagnostics } from '../../xalor-service/vault-diagnostics';
-// import { XalethorService } from '../../xalor-service';
 
 // Holds long-lived, pre-allocated memory pointers for nominal tokens to keep memory flat
 const brandTokenCache = new Map<string, [string, string]>();
-/**
- * STRATIFIED NOMINAL IDENTITY NARROWER
- * Bypasses error ts(2590) by checking the object's runtime brand footprint point-free.
- * Satisfies Commandment IX: 100% Free of any 'as' casting overrides.
- */
-// function verifyNominalOwnership<K extends TActiveRegistryKeys, T>(
-//   payload: unknown,
-//   targetKey: K
-// ): payload is TSolidBranded<K, T> {
-//   if (isRecord(payload)) {
-//     const activeBrand = Reflect.get(payload, BRAND_SYMBOL);
-//     if (Array.isArray(activeBrand) && activeBrand.length > 1) {
-//       const brandToken = activeBrand[1];
-//       // Narrows the union naturally by executing a primitive string comparison check
-//       return isLiteralMatch(brandToken, targetKey);
-//     }
-//   }
-//   return false;
-// }
+
 /**
  * RUNTIME API: GENERATE XALOR MOCK
  *

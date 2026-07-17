@@ -14,7 +14,11 @@ import {
   validateXalorParse,
   validateXalorSafeParse,
 } from './validate';
-import { generateXalorDefault, generateXalorMock } from './generate';
+import {
+  generateXalorDefault,
+  generateXalorMock,
+  // generateXalorCast,
+} from './generate';
 import { matchXalorDrift } from './match';
 
 class XalorCore {
@@ -74,6 +78,9 @@ class XalorCore {
 
   /** @Api generator  @mode mock */
   public mock = generateXalorMock;
+
+  // !! FUTURE
+  // public cast = generateXalorCast;
 
   // ========================================================================
   // ========================================================================
