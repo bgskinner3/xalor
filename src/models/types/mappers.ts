@@ -3,6 +3,8 @@ import type {
   TStrictSolidMetaData,
   TSolidMetadata,
   TValidationContext,
+  TSolidShapePrimitiveKeys,
+  TInstanceConstructorRegistry,
 } from '../../../shared';
 import type { TRuntimeShapeValidationErrorKey } from './error-types';
 /**
@@ -100,24 +102,14 @@ export type TShapeCastMapperMapper = {
     recurse: (shape: TSolidShape, data: unknown, depth: number) => unknown,
   ) => unknown;
 };
-type TPrimitiveTypeMap = {
-  string: string;
-  number: number;
-  boolean: boolean;
-  bigint: bigint;
-  unknown: unknown;
-};
+
 export type TCastingPrimitiveMapper = {
-  [K in keyof TPrimitiveTypeMap]: (
-    data: unknown,
-  ) => TPrimitiveTypeMap[K] | unknown;
+  [K in TSolidShapePrimitiveKeys]: (data: unknown) => unknown;
 };
-// export type TFastPathMetadata = {
-//   readonly check: (d: Record<string, unknown>) => boolean;
-//   readonly keys: readonly string[];
-//   readonly errorKeys: readonly TRuntimeShapeValidationErrorKey[];
-//   readonly complexKeys?: readonly string[];
-// };
+
+export type TInstanceCoercionRecord = {
+  [K in keyof TInstanceConstructorRegistry]: (input: unknown) => unknown | null;
+};
 
 export type TObjectFastPathChecker = (
   payload: Record<string, unknown>,
