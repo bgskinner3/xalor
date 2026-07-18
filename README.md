@@ -41,13 +41,6 @@
 <br/>
 <br/>
 
-> [!WARNING]
-> **Early Pre-Release Active Preview (`v0.0.1-alpha.1`)**
-> Xalor is currently undergoing intense build pipeline stress testing and active out-of-band development. Core API structures, compilation tokens, and vault serialization schemas may drift rapidly between canary pushes. **Do not deploy to mission-critical production environments.**
-
-<br/>
-<br/>
-
 ## ⚡ What is Xalor?
 
 Xalor is an **ahead-of-time (AOT) type reification engine** for JavaScript and TypeScript. It acts as a hybrid bridge between your build pipeline and your live production environment by treating native TypeScript interfaces as the single source of truth.
