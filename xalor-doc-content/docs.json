@@ -13,19 +13,20 @@
     "introduction": {
       "id": "introduction",
       "blockOne": {
-        "header": "Introduction",
-        "description": "Xalor is a build-time TypeScript engine that transforms native types into a live runtime system for validation, generation, and transformation — without duplicating schemas or shipping heavy validation libraries."
+        "header": "What is Xalor?",
+        "description": "Xalor is a build-time type reification engine that transforms your native TypeScript types into runtime metadata. Instead of writing validation schemas by hand or generating thousands of lines of boilerplate, Xalor treats your TypeScript definitions as the single source of truth and makes them available at runtime."
       },
       "blockTwo": {
-        "header": "Core Philosophy",
+        "header": "Why It Exists",
         "iconName": "brain-bulb",
-        "description": "Unlike **Zod** or **Yup** which require writing heavy runtime schemas, or macro generators like **Typia** which clutter your git history with generated files, Xalor uses a silent background compiler watcher to turn pristine TypeScript interfaces into optimized runtime maps.",
+        "description": "TypeScript erases every type during compilation, leaving production code unable to verify incoming data. Existing solutions either require duplicate runtime schemas or generate large validation files that clutter projects. Xalor solves both problems by extracting your types during the build and producing lightweight runtime metadata automatically.",
         "list": [
-          "_The Rule_ Write TypeScript types once.",
-          "_The Result_ Use them natively at runtime."
+          "_Write native TypeScript once._",
+          "_Use those same types safely at runtime._",
+          "_Power defaults, migrations, pattern matching, and more from the same metadata._"
         ]
       },
-      "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\n// 1. Write clean, standard TypeScript types\nexport interface User {\n  id: number;\n  name: string;\n  email?: string;\n}\n\n// 2. Map it to a string key identifier\nxalor.register<'USER'>();\n\n// 3. Narrow and guard data inline instantly\nconst data: unknown = { id: 101, name: 'Brennan' };\n\nif (xalor.guard<'USER'>(data)) {\n  console.log(data.name); // ✨ Fully typed automatically!\n}"
+      "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\nexport interface User {\n  id: number;\n  name: string;\n  email?: string;\n}\n\nxalor.register<'USER', User>();\n\nconst payload: unknown = {\n  id: 101,\n  name: 'Brennan'\n};\n\nif (xalor.guard<'USER'>(payload)) {\n  console.log(payload.name); // Fully typed\n}"
     },
     "features": {
       "id": "features",
@@ -34,28 +35,28 @@
       "isActive": true,
       "features": {
         "one": {
-          "header": "Robust Validation",
+          "header": "Native TypeScript Validation",
           "iconName": "shield-solid",
-          "description": "Handle external API inputs cleanly with flexible runtime safety boundaries.",
-          "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\n// Assert Mode: Throws explicit diagnostic exceptions if data fails validation\nconst profile = xalor.assert<'USER'>(payload);\n\n// Audit Mode: Non-throwing validation that returns a detailed ledger of all errors\nconst reportingLedger = xalor.audit<'USER'>(payload);"
+          "description": "Write your types once. Xalor turns them into runtime validation automatically during your build—no duplicate schemas or custom validation DSLs.",
+          "codeBlock": "type User = {\n  id: number;\n  name: string;\n};\n\nxalor.register<'USER', User>();\n\nconst user = xalor.assert<'USER'>(payload);"
         },
         "two": {
-          "header": "Structured Data Generation",
-          "iconName": "test-tube",
-          "description": "Generate type-safe mocks, staging state objects, or default templates out of thin air.",
-          "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\n// Instantly returns a zero-state template structure matching your interface\nconst newBlankForm = xalor.default<'USER'>();\n\n// Generates random mock datasets matching your type constraints for tests\nconst mockTestUser = xalor.mock<'USER'>();"
+          "header": "Zero Runtime Bundle Cost",
+          "iconName": "flash-bolt",
+          "description": "Heavy type analysis happens during compilation, not in production. Your application ships only lightweight runtime metadata instead of thousands of lines of schema code.",
+          "codeBlock": "// Build Time\ninterface User {\n  id: number;\n  name: string;\n}\n\n↓\n\n// Runtime\nconst user = xalor.assert<'USER'>(payload);"
         },
         "three": {
-          "header": "Structural Transformations",
-          "iconName": "shuffle",
-          "description": "Manipulate object shapes inline at runtime using type properties as commands.",
-          "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\n// Safely pluck precise properties at runtime while maintaining type alignment\nconst minimizedProfile = xalor.pick<'USER'>({\n  data: complexPayload,\n  action: 'pick',\n  keys: ['id', 'name']\n});"
+          "header": "Build-Time Intelligence",
+          "iconName": "cpu-duotone",
+          "description": "A background compiler continuously extracts, compresses, and synchronizes your types into a runtime metadata vault with no generated source files or manual build steps.",
+          "codeBlock": "Save File\n      ↓\nType Extraction\n      ↓\nBlueprint Generation\n      ↓\nMetadata Vault Updated\n      ↓\nReady Immediately"
         },
         "four": {
-          "header": "Zero-Maintenance Synchronization",
-          "iconName": "flash-bolt",
-          "description": "Eliminate the manual schema-updating workflow forever. When you modify your interface, your runtime behavior changes natively on the very next compilation step.",
-          "codeBlock": "// Before:\nexport interface User { id: number; name: string; }\n\n// After (Runtime automatically mirrors this modification on save):\nexport interface User { id: number; name: string; isAdmin: boolean; }"
+          "header": "Beyond Validation",
+          "iconName": "shuffle",
+          "description": "Runtime metadata powers much more than validation. Generate defaults, migrate legacy payloads, pattern match structures, and trace failures back to their original TypeScript source.",
+          "codeBlock": "xalor.default<'USER'>();\nxalor.drift<'USER'>(payload);\nxalor.match<'USER'>(payload);\nxalor.audit<'USER'>(payload);"
         }
       }
     },
@@ -84,19 +85,21 @@
     },
     "coreAdvantages": {
       "id": "core-advantages",
-      "header": "Core Advantages",
+      "header": "Why Xalor?",
       "iconName": "rocket-tilted",
       "isActive": true,
       "list": [
-        "Eliminates the _Dual-Source Tax_- Write your data definitions precisely once. Stop maintaining matching type interfaces and validation schemas concurrently.",
-        "Massive Client Bundle Reduction- Moves data model parsing completely to the build stage. Production apps inherit tiny metadata maps rather than thousands of lines of heavy validation parsing logic.",
-        "GPS Telemetry Traceability- When an object fails matching rules, Xalor flags the exact file path and line location of the target TypeScript source code instead of throwing unhelpful generic errors."
+        "**Single Source of Truth** — Define your data models once using native TypeScript. Xalor automatically transforms them into runtime metadata, eliminating duplicate validation schemas.",
+        "**Zero Runtime Schema Bloat** — Heavy type analysis happens during your build. Production applications ship only compact runtime metadata instead of thousands of lines of schema definitions.",
+        "**Production-Ready Diagnostics** — Validation failures point directly back to the original TypeScript file and line number, making runtime issues dramatically easier to investigate.",
+        "**No Compiler Patches or Generated Files** — Integrates with your existing build pipeline without `ts-patch`, generated schema files, or cluttering your source tree.",
+        "**Built for Scale** — Deep Graph Interning deduplicates shared structures into compact blueprints, keeping metadata small even across large monorepos and enterprise applications."
       ]
     },
     "bottomLinks": [
       {
         "id": "3d42b389-9a49-4cfa-9a16-a890a7709518",
-        "href": "/xalor/docs/xalor-explained",
+        "href": "/xalor/docs/whatIsXalor",
         "header": "What is Xalor?",
         "iconName": "layers-duotone",
         "description": "A deeper overview of Xalor — what it is, why it exists, and how it works under the hood.",
@@ -193,7 +196,7 @@
       },
       {
         "id": "e74d6610-7dc1-4bbe-bf77-4d4c123403ac",
-        "href": "/xalor/docs/getting-started",
+        "href": "/xalor/docs/gettingStarted",
         "header": "Getting Started",
         "iconName": "rocket-tilted",
         "description": "Get started with setting up simply, a dive into optional configuration and advanced settings.",
