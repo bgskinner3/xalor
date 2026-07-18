@@ -67,14 +67,12 @@ const ALPHABET =
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
 export const generateRandomString = (maxLength = 20): string => {
-  // 1. Bound target layout scale deterministically
   const maxSafeLength = maxLength > 20 ? 20 : maxLength;
   const targetLength = Math.floor(Math.random() * (maxSafeLength - 5 + 1)) + 5;
 
   let result = '';
   const alphabetLength = ALPHABET.length;
 
-  // 2. High-speed scalar appending loop: bypasses intermediate closures and array instantiation
   for (let i = 0; i < targetLength; i++) {
     const randomIndex = Math.floor(Math.random() * alphabetLength);
     result += ALPHABET.charAt(randomIndex);

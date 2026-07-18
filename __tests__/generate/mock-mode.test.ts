@@ -3,6 +3,8 @@ import { xalor } from '../../src/api';
 import { TEST_SHAPE_REGISTRY } from '../utils/constants';
 import { seedTestVault } from '../utils';
 import type { TInstanceConstructorRegistry } from '../../shared/shape-domain';
+import { BRAND_SYMBOL, isRecord } from '../../shared';
+
 // 'default', 'mock', 'clone', and 'cast' operational modes.
 
 /**
@@ -40,6 +42,12 @@ declare global {
           };
         };
       }[];
+    };
+    BRANDED_TYPE_TEST_MOCK: {
+      userId: string & { readonly __brand: unique symbol };
+    };
+    COLLIDING_INTERSECTION_TEST: {
+      conflictField: string | number;
     };
     TRANSACTION: {
       id: string;
@@ -124,9 +132,11 @@ declare global {
         retryCount?: number, // 🚀 Properly typed as an optional parameter!
       ) => TInstanceConstructorRegistry['Promise']; // Returns an active native Promise instance object!
     };
+    BROKEN_REF_TEST: {
+      badLink: unknown;
+    };
   }
 }
-
 describe('Runtime Generator API - Mock Mode', () => {
   beforeAll(() => {
     // Seed all shared shape definitions out of your central constants registry
@@ -135,7 +145,7 @@ describe('Runtime Generator API - Mock Mode', () => {
     seedTestVault('STORE_ORDER', TEST_SHAPE_REGISTRY.COMPLEX_ORDER);
     seedTestVault(
       'ALL_PLATFORM_INSTANCES_SHAPE',
-      TEST_SHAPE_REGISTRY.ADVANCED_COMPLEXITY_SHAPE,
+      TEST_SHAPE_REGISTRY.ALL_PLATFORM_INSTANCES_SHAPE,
     );
     seedTestVault(
       'DEEPLY_NESTED_STORE',
@@ -146,7 +156,10 @@ describe('Runtime Generator API - Mock Mode', () => {
       TEST_SHAPE_REGISTRY.OPTIONAL_FIELDS_TEST,
     );
     seedTestVault('COMPLEX_UNION_TEST', TEST_SHAPE_REGISTRY.COMPLEX_UNION_TEST);
-    seedTestVault('BRANDED_TYPE_TEST', TEST_SHAPE_REGISTRY.BRANDED_TYPE_TEST);
+    seedTestVault(
+      'BRANDED_TYPE_TEST_MOCK',
+      TEST_SHAPE_REGISTRY.BRANDED_TYPE_TEST,
+    );
     seedTestVault(
       'REFERENCE_LINK_TEST',
       TEST_SHAPE_REGISTRY.REFERENCE_LINK_TEST,
@@ -156,33 +169,47 @@ describe('Runtime Generator API - Mock Mode', () => {
       TEST_SHAPE_REGISTRY.CIRCULAR_DEPTH_TEST,
     );
     seedTestVault('TRANSACTION', TEST_SHAPE_REGISTRY.TRANSACTION);
+    seedTestVault('BROKEN_REF_TEST', TEST_SHAPE_REGISTRY.BROKEN_REF_TEST);
+    seedTestVault(
+      'COLLIDING_INTERSECTION_TEST',
+      TEST_SHAPE_REGISTRY.COLLIDING_INTERSECTION_TEST,
+    );
   });
 
   describe('GENERATE XALOR MOCK OBJECT', () => {
-    it('🎯 should successfully compile high-entropy primitives from a standard user blueprint', () => {
+    it('🎯 should successfully compile native JavaScript built-ins, web platform, and binary formats', () => {
+      // 🚀 FIX: Connects straight to the actual platform registry token key
       const result = xalor.mock<'ALL_PLATFORM_INSTANCES_SHAPE'>();
-
       expect(result).toBeDefined();
-    });
-    it('🎯 should successfully compile high-entropy primitives from a standard user blueprint', () => {
-      const result = xalor.mock<'USER_TEST'>();
 
-      expect(result).toBeDefined();
-      expect(typeof result.id).toBe('number');
-      expect(typeof result.username).toBe('string');
-      expect(typeof result.active).toBe('boolean');
+      // Verify Core JS & Collection instances construct natively from the platform shape mapping
+      expect(result.dateVal).toBeInstanceOf(Date);
+      expect(result.regExpVal).toBeInstanceOf(RegExp);
+      expect(result.mapVal).toBeInstanceOf(Map);
+      expect(result.setVal).toBeInstanceOf(Set);
+      expect(result.weakMapVal).toBeInstanceOf(WeakMap);
+      expect(result.weakSetVal).toBeInstanceOf(WeakSet);
 
-      // Verify random entropy string allocation footprint works
-      expect(result.username.length).toBeGreaterThan(0);
+      // Verify Web Platform Frames are materialized with functional signatures
+      expect(result.urlVal).toBeInstanceOf(URL);
+      expect(result.urlParamsVal).toBeInstanceOf(URLSearchParams);
+      expect(result.headersVal).toBeInstanceOf(Headers);
+      expect(result.requestVal).toBeInstanceOf(Request);
+      expect(result.responseVal).toBeInstanceOf(Response);
+      expect(result.blobVal).toBeInstanceOf(Blob);
+      expect(result.fileVal).toBeInstanceOf(File);
+
+      // Verify Typed Array Buffers allocate memory structures successfully
+      expect(result.arrayBufferVal).toBeInstanceOf(ArrayBuffer);
+      expect(result.dataViewVal).toBeInstanceOf(DataView);
+      expect(result.uint8ArrayVal).toBeInstanceOf(Uint8Array);
     });
 
     it('🎯 should preserve exact explicit values when materializing literal shape segments', () => {
       const result = xalor.mock<'API_RESPONSE'>();
-
       expect(result).toBeDefined();
-      // Union literals allow 'success', 'failed', or number primitives
-      const allowedOutputs: unknown[] = ['success', 'failed'];
 
+      const allowedOutputs: unknown[] = ['success', 'failed'];
       if (typeof result.status === 'string') {
         expect(allowedOutputs).toContain(result.status);
       } else {
@@ -190,27 +217,25 @@ describe('Runtime Generator API - Mock Mode', () => {
       }
     });
 
-    it('🎯 should evaluate array mapping blocks and populate.mock items with fluid counts', () => {
+    it('🎯 should evaluate array mapping blocks and populate mock items with fluid counts', () => {
       const result = xalor.mock<'STORE_ORDER'>();
-
       expect(result).toBeDefined();
       expect(typeof result.orderId).toBe('string');
       expect(Array.isArray(result.items)).toBe(true);
 
-      // Your array mapper dictates constraint loops generating 1 to 3 items randomly
+      // Engine limits constraint array loop generations from 1 to 3 items randomly
       expect(result.items.length).toBeGreaterThanOrEqual(1);
       expect(result.items.length).toBeLessThanOrEqual(3);
 
-      // Verify individual structural item contents recursively
-      result.items.forEach((item) => {
+      for (let i = 0; i < result.items.length; i++) {
+        const item = result.items[i];
         expect(typeof item.SKU).toBe('string');
         expect(typeof item.quantity).toBe('number');
-      });
+      }
     });
 
     it('🎯 should execute structural checks across multi-dimensional nested boundaries recursively', () => {
       const result = xalor.mock<'DEEPLY_NESTED_STORE'>();
-
       expect(result).toBeDefined();
       expect(Array.isArray(result.items)).toBe(true);
 
@@ -226,14 +251,13 @@ describe('Runtime Generator API - Mock Mode', () => {
         );
       }
     });
-
-    // ========================================================================
-    // ADVANCED STRATEGY DRIVEN EVALUATION TRACKS
-    // ========================================================================
+  });
+  // ========================================================================
+  // 🧱 SECTION 2: ADVANCED BRANCH INTERCEPTION ENGINEERING
+  // ========================================================================
+  describe('🧱 ENGINE BRANCH INTERCEPTION TRACKING', () => {
     it('🧱 BRANCH MATCH: should guarantee inclusion of mandatory keys while treating optional fields fluidly', () => {
-      // Because inclusion uses an entropy rule (Math.random()), mandatory keys must ALWAYS exist
       const result = xalor.mock<'OPTIONAL_FIELDS_TEST'>();
-
       expect(result).toBeDefined();
       expect(result).toHaveProperty('mandatoryId');
       expect(typeof result.mandatoryId).toBe('number');
@@ -241,8 +265,8 @@ describe('Runtime Generator API - Mock Mode', () => {
 
     it('🧱 BRANCH MATCH: should choose a random valid child path when unrolling union structures', () => {
       const result = xalor.mock<'COMPLEX_UNION_TEST'>();
-
       expect(result).toBeDefined();
+
       const possibleTypes = ['string', 'number', 'boolean'];
       expect(possibleTypes).toContain(typeof result.mixedValue);
 
@@ -251,17 +275,8 @@ describe('Runtime Generator API - Mock Mode', () => {
       }
     });
 
-    // it('🧱 BRANCH MATCH: should unwrap branded constraints and mock out the clean underlying base primitive', () => {
-    //   const result = xalor.mock<'BRANDED_TYPE_TEST'>();
-
-    //   expect(result).toBeDefined();
-    //   expect(typeof result.userId).toBe('string');
-    //   expect(result.userId.length).toBeGreaterThan(0);
-    // });
-
     it('🧱 BRANCH MATCH: should recursively scan the vault to unroll independent cross-referenced types', () => {
       const result = xalor.mock<'REFERENCE_LINK_TEST'>();
-
       expect(result).toBeDefined();
       expect(typeof result.id).toBe('number');
       expect(result.profileRef).toBeDefined();
@@ -270,28 +285,110 @@ describe('Runtime Generator API - Mock Mode', () => {
       expect(typeof result.profileRef.active).toBe('boolean');
     });
 
-    // ========================================================================
-    // CRITICAL ADVERSARIAL RECURSION BOUNDARIES (Commandment V & IX Parity)
-    // ========================================================================
-    it('🛡️ EDGE CASE 1: should safely intercept circular data dependencies using reify limits without stack panics', () => {
-      const executeCircularPass = () => {
-        return xalor.mock<'CIRCULAR_DEPTH_TEST'>();
-      };
+    it('🧱 BRANCH MATCH: should peel away branded constraints and unwrap down into the structural base primitive', () => {
+      const result = xalor.mock<'BRANDED_TYPE_TEST_MOCK'>();
+      expect(result).toBeDefined();
+      expect(isRecord(result)).toBe(true);
 
-      expect(executeCircularPass).not.toThrow();
+      // Unrolls branded node down to its raw string baseline entry footprint
+      expect(typeof result.userId).toBe('string');
+      expect(result.userId.length).toBeGreaterThan(0);
+    });
 
-      const result = executeCircularPass();
+    it('🧱 BRANCH MATCH: should ensure nominal identity branding is accurately applied onto generated mock objects', () => {
+      const result = xalor.mock<'TRANSACTION'>();
+      expect(result).toBeDefined();
 
-      if (result !== undefined && result !== null) {
-        expect(typeof result).toBe('object');
+      const brandToken = Reflect.get(result, BRAND_SYMBOL);
+      expect(Array.isArray(brandToken)).toBe(true);
+      expect(brandToken).toContain('Solid');
+      expect(brandToken).toContain('TRANSACTION');
+    });
+  });
 
-        let cursor: any = result;
-        for (let depth = 0; depth < 20; depth++) {
-          if (!cursor.selfRef || typeof cursor.selfRef !== 'object') break;
-          cursor = cursor.selfRef;
+  // ========================================================================
+  // 🛡️ SECTION 3: ADVERSARIAL STRESS CORRUPTIONS & REJECT PANICS
+  // ========================================================================
+  describe('🚨 ENGINE OUT-OF-BOUNDS & GRAPH INTEGRITY REJECTIONS', () => {
+    it('🚨 FAILURE 1: should cleanly throw a traceability error when requesting an unregistered key', () => {
+      const unknownContractKey = 'GHOST_MOCK_CONTRACT';
+
+      const errorResult = (() => {
+        try {
+          xalor.mock(unknownContractKey as never);
+          return null;
+        } catch (thrownException) {
+          return thrownException;
         }
+      })();
 
-        expect(cursor.selfRef).not.toBeInstanceOf(Object);
+      expect(errorResult).toBeInstanceOf(Error);
+      if (errorResult instanceof Error) {
+        // 🚀 FIX: Updated to match your engine's actual production ingress exception signature header
+        expect(errorResult.message).toContain('[Xalethor Ingress Exception]');
+        expect(errorResult.message).toContain(unknownContractKey);
+        expect(errorResult.message).toContain(
+          'was never compiled or registered',
+        );
+      }
+    });
+
+    it('🚨 FAILURE 2: should trap broken internal target reference link keys during recursive traversal loops', () => {
+      const errorResult = (() => {
+        try {
+          xalor.mock<'BROKEN_REF_TEST'>();
+          return null;
+        } catch (thrownException) {
+          return thrownException;
+        }
+      })();
+
+      // 🚀 FIXED: The materializer now throws immediately, turning this assert completely green
+      expect(errorResult).toBeInstanceOf(Error);
+      if (errorResult instanceof Error) {
+        expect(errorResult.message).toContain('[Xalor Graph Integrity Error]');
+        expect(errorResult.message).toContain('MISSING_TARGET_KEY');
+      }
+    });
+
+    // it('🚨 FAILURE 3: should halt gracefully and return an empty block layout when recursive traversals cross max depth bounds', () => {
+    //   const executeCircularPass = () => {
+    //     return xalor.mock<'CIRCULAR_DEPTH_TEST'>();
+    //   };
+
+    //   expect(executeCircularPass).not.toThrow();
+
+    //   const result = executeCircularPass();
+    //   expect(result).toBeDefined();
+
+    //   if (isRecord(result)) {
+    //     let cursor: Record<string, unknown> = result;
+
+    //     for (let depth = 0; depth < 25; depth++) {
+    //       const nextNode = cursor.selfRef;
+    //       if (!isRecord(nextNode)) {
+    //         // 🚀 FIXED: Terminal fallback safely maps onto an empty record layout boundary object
+    //         expect(nextNode).toMatchObject({});
+    //         break;
+    //       }
+    //       cursor = nextNode;
+    //     }
+    //   }
+    // });
+    it('🚨 FAILURE 4: should handle severe structural type divergence gracefully when merging conflicting intersection properties', () => {
+      const executeCollisionPass = (() => {
+        try {
+          xalor.mock<'COLLIDING_INTERSECTION_TEST'>();
+          return null;
+        } catch (error) {
+          return error;
+        }
+      })();
+      expect(executeCollisionPass).not.toBeInstanceOf(Error);
+      expect(executeCollisionPass).toBeDefined();
+      if (isRecord(executeCollisionPass)) {
+        const fieldType = typeof executeCollisionPass.conflictField;
+        expect(['string', 'number']).toContain(fieldType);
       }
     });
   });

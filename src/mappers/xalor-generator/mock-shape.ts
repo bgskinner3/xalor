@@ -5,11 +5,13 @@ import {
   isObject,
   isRecord,
   isUndefined,
+  IS_SOLID_CONFIG_ITEMS,
 } from '../../../shared';
 import { generateRandomString } from '../../utils/transformers';
 import { xalethorVaultKeeper } from '../../xalor-service/vault-keeper';
 import type { TSolidShapePrimitiveKeys } from '../../../shared';
 import { shapeKindUtilsService } from '../../../shared/service';
+import { xalethorVaultDiagnostics } from '../../xalor-service/vault-diagnostics';
 /**
  * ============================================================================
  * 🎲 DESIGN SYSTEM MAPPER: MOCK SHAPE MATERIALIZER
@@ -83,8 +85,20 @@ export const MOCK_SHAPE_MATERIALIZER: TShapeMockMapperMap = {
   },
 
   reference: (shape, depth, recurse) => {
+    if (depth > IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) {
+      return {};
+    }
+
     const subShape = xalethorVaultKeeper.peek('blueprint', shape.name);
-    return subShape ? recurse(subShape, depth + 1) : undefined;
+
+    if (!subShape) {
+      return xalethorVaultDiagnostics.panic(
+        shape.name,
+        `[Xalor Graph Integrity Error]: Broken internal reference key "${shape.name}" detected during recursive traversal loops.`,
+      );
+    }
+
+    return recurse(subShape, depth + 1);
   },
 
   branded: (shape, depth, recurse) => recurse(shape.base, depth + 1),

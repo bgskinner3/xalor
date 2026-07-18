@@ -69,10 +69,8 @@ class XalethorVaultGenerator {
    * @returns
    */
   private executeMockBuild = (shape: TSolidShape, depth = 0): unknown => {
-    if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) {
-      return null;
-    }
-    if (!shape) return undefined;
+    if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) return {};
+    if (!shape) return {};
 
     const executeMaterializer = <K extends TSolidShape['kind']>(
       kind: K,

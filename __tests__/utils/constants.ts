@@ -424,14 +424,16 @@ export const TEST_SHAPE_REGISTRY = {
       userId: {
         name: 'userId',
         optional: false,
-        shape: {
-          // 🎯 EXACT ALIGNMENT PASS: Fulfills both 'name' and 'base' criteria flawlessly
-          kind: 'branded',
-          name: 'TUserId',
-          base: { kind: 'primitive', type: 'string' },
-        },
         requiresKeyPresence: true,
         allowsExplicitUndefined: false,
+        shape: {
+          kind: 'branded',
+          name: 'userId', // The identifier string used by the compiler telemetry pass
+          base: {
+            kind: 'primitive',
+            type: 'string', // The underlying structural base data atom primitive
+          },
+        },
       },
     },
   },
