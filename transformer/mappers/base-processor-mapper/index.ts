@@ -26,7 +26,8 @@ export const PROCESSOR_REWRITE_MAPPER: TProcessorRewriteMap = {
   'xalor.default':    (raw, node, factory) => formatGenerationArgs('default', raw, node, factory),
   /* prettier-ignore */
   'xalor.mock': (raw, node, factory) => formatGenerationArgs('default', raw, node, factory),
-
+  /* prettier-ignore */
+  'xalor.cast':      (raw, node, factory) => formatGenerationArgs('cast', raw, node, factory),
   // ========================================================================
   // VALIDATION METHODS
   // ========================================================================
@@ -43,6 +44,7 @@ export const PROCESSOR_REWRITE_MAPPER: TProcessorRewriteMap = {
   'xalor.merge':      (raw, node, factory) => formatTransformationArgs('merge', raw, node, factory),
   /* prettier-ignore */
   'xalor.clone':      (raw, node, factory) => formatTransformationArgs('clone', raw, node, factory),
+
   // ========================================================================
   // MATCH METHODS
   // ========================================================================

@@ -99,8 +99,8 @@ export const castInstanceOfNode = (
       const repairedInstance = coercer(data);
       if (!isNull(repairedInstance)) return repairedInstance;
     }
-  } catch (executionPanic) {
-    console.error(executionPanic);
+  } catch (_executionPanic) {
+    // console.error(executionPanic);
   }
 
   return targetConfig.def();

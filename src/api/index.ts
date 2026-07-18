@@ -17,7 +17,7 @@ import {
 import {
   generateXalorDefault,
   generateXalorMock,
-  // generateXalorCast,
+  generateXalorCast,
 } from './generate';
 import { matchXalorDrift } from './match';
 
@@ -79,8 +79,8 @@ class XalorCore {
   /** @Api generator  @mode mock */
   public mock = generateXalorMock;
 
-  // !! FUTURE
-  // public cast = generateXalorCast;
+  /** @Api generator  @mode cast */
+  public cast = generateXalorCast;
 
   // ========================================================================
   // ========================================================================

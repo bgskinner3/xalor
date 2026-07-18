@@ -49,10 +49,11 @@ import { castInstanceOfNode } from './helpers';
       const cleaned = data.trim().toLowerCase();
       if (cleaned === 'true') return true;
       if (cleaned === 'false') return false;
-    }
-    return Boolean(data);
-  },
 
+      return PRIMITIVE_DEFAULTS.boolean;
+    }
+    return !!data;
+  },
   bigint: (data) => {
     if (isBigInt(data)) return data;
     if (isNull(data) || isUndefined(data)) return PRIMITIVE_DEFAULTS.bigint;
@@ -151,7 +152,6 @@ export const CAST_SHAPE_MAPPER: TShapeCastMapperMapper = {
   array: (shape, data, depth, recurse) => {
     const arr: unknown[] = [];
 
-    // Coerces standalone singular elements into a valid single-item collection naturally
     if (!isArray(data)) {
       if (data !== undefined && data !== null) {
         arr.push(recurse(shape.items, data, depth + 1));
@@ -160,7 +160,24 @@ export const CAST_SHAPE_MAPPER: TShapeCastMapperMapper = {
       return [];
     }
 
-    // Commandment VIII: Fast index loop pass replaces high-overhead array.map allocations
+    // TUPLE CAST PATTERN: If the shape defines elementShapes, map fields onto fixed position offsets
+    if (shape.elementShapes && shape.elementShapes.length > 0) {
+      const tupleLength = shape.elementShapes.length;
+
+      for (let i = 0; i < tupleLength; i++) {
+        const subBlueprint = shape.elementShapes[i];
+        const rawInputItem = data[i];
+
+        if (subBlueprint) {
+          arr.push(recurse(subBlueprint, rawInputItem, depth + 1));
+        }
+      }
+      // 🚀 FIX: Return the packed array tuple here immediately!
+      // This shields execution from running into shape.items which is mapped to 'never'
+      return arr;
+    }
+
+    // Standard Array Fallback Pass using your optimized zero-allocation iteration stream
     for (const rawItem of yieldItems(data)) {
       arr.push(recurse(shape.items, rawItem, depth + 1));
     }

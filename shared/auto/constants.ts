@@ -10,7 +10,11 @@ import type { TUnique } from '../types';
  * MASTER GENERATOR MODES CONFIGURATION
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
-export const GENERATOR_MODE_TRIGGERS = ['xalor.default', 'xalor.mock'] as const;
+export const GENERATOR_MODE_TRIGGERS = [
+  'xalor.default',
+  'xalor.mock',
+  'xalor.cast',
+] as const;
 
 /**
  * MASTER MATCH MODES CONFIGURATION
@@ -73,7 +77,7 @@ export const RUNTIME_TRIGGER_NAMES = ObjectUtils.keys(SENTRY_TRIGGER_MODES);
  * RAW GENERATOR STRATEGY SPECIFICATION MODES
  * @note AUTO-GENERATED FILE — DO NOT EDIT DIRECTLY
  */
-export const GENERATOR_MODES = ['default', 'mock'] as const;
+export const GENERATOR_MODES = ['default', 'mock', 'cast'] as const;
 
 /**
  * RAW MATCH STRATEGY SPECIFICATION MODES

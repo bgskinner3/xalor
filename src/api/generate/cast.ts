@@ -17,7 +17,6 @@ function verifyNominalOwnership<K extends TActiveRegistryKeys, T>(
     const activeBrand = Reflect.get(payload, BRAND_SYMBOL);
     if (Array.isArray(activeBrand) && activeBrand.length > 1) {
       const brandToken = activeBrand[1];
-      // Narrows the union naturally by executing a primitive string comparison check
       return isLiteralMatch(brandToken, targetKey);
     }
   }
@@ -47,8 +46,8 @@ function verifyNominalOwnership<K extends TActiveRegistryKeys, T>(
  * @see {@link RuntimeApiCoreDocs.generateXalorCast}
  */
 export function generateXalorCast<K extends TActiveRegistryKeys>(
-  injectedKey: K,
   data: unknown,
+  injectedKey?: K,
 ): TSolidBranded<K, TResolveRegistryStructure<K>> {
   ensureGlobalVault();
   assertRegistryKey(injectedKey);
@@ -56,22 +55,15 @@ export function generateXalorCast<K extends TActiveRegistryKeys>(
   const castPayload = xalethorVaultGenerator.getCastRaw(data, injectedKey);
 
   if (isRecord(castPayload)) {
-    // 2. Fetch or provision the long-lived nominal memory pointer token
     let brandToken = brandTokenCache.get(injectedKey);
     if (!brandToken) {
       brandToken = ['Solid', injectedKey];
       brandTokenCache.set(injectedKey, brandToken);
     }
 
-    // 3. Mount nominal branding symbols deterministically onto the layout structure
     Reflect.set(castPayload, BRAND_SYMBOL, brandToken);
 
     if (markAsSolid<K, TResolveRegistryStructure<K>>(castPayload)) {
-      // 4. FIRST-PASS VALIDATION CHECK: Run the coerced template through the live parsing pipeline
-      // This guarantees the runtime data perfectly satisfies your contract invariants before returning.
-      // const validationOutput = XalethorService.parse<K>(castPayload);
-
-      // 5. Safe, non-complex type narrowing utilizing our flat structural checker utility
       if (
         verifyNominalOwnership<K, TResolveRegistryStructure<K>>(
           castPayload,
