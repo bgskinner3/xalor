@@ -99,12 +99,7 @@ class XalorCore {
     return transformXalorMerge<K>(ctx, _compiledKeyReference);
   }
   /** @Api transform  @mode clone */
-  public clone<K extends keyof ISolidRegistry>(
-    data: unknown,
-    injectedKey?: K,
-  ): TSolidBranded<K, ISolidRegistry[K]> {
-    return generateXalorClone<K>(data, injectedKey);
-  }
+  public clone = generateXalorClone;
 
   // ========================================================================
   // ========================================================================
@@ -141,5 +136,8 @@ class XalorCore {
  * 5. merge      - High-Velocity Deep Object Mutation [Transform]
  * 6. clone      - Circular-Safe Structural Sanitation [Transform]
  * 7. drift      - Multi-Generation Upcast Migration Channel [Match]
+ * 8. mock.      -
+ * 9. cast       -
+ * 10.safeParse. -
  */
 export const xalor: XalorCore = new XalorCore();

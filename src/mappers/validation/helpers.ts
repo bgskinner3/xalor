@@ -19,8 +19,6 @@ export function validateNativeMapCollection(
   const fallbackTargetShape =
     valueMetadata['*']?.shape || valueMetadata['value']?.shape;
 
-  // ⚡ BARE-METAL LINEAR TRACK: Avoids Map.prototype.forEach functional scoping overhead!
-  // V8 compiles this destructuring iterator directly into flat, sequential register offsets.
   for (const [key, value] of data) {
     if (ctx.isInvalidCircular) {
       return false;
@@ -41,7 +39,6 @@ export function validateNativeMapCollection(
 
       ctx.pathPointer--;
 
-      // Early breakout — stops winding loop frames instantly if a sub-element fails
       if (!elementPass) {
         return false;
       }

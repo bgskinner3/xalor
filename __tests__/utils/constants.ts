@@ -477,6 +477,25 @@ export const TEST_SHAPE_REGISTRY = {
       },
     },
   },
+  CIRCULAR_DEPTH_TEST_CAST: {
+    kind: 'object',
+    properties: {
+      id: {
+        name: 'id',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'number' },
+      },
+      selfRef: {
+        name: 'selfRef',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'reference', name: 'CIRCULAR_DEPTH_TEST' },
+      },
+    },
+  },
   ALL_PLATFORM_INSTANCES_SHAPE: {
     kind: 'object',
     properties: {
@@ -742,6 +761,95 @@ export const TEST_SHAPE_REGISTRY = {
         shape: {
           kind: 'reference',
           name: 'INFINITE_LOOP_TEST', // Points straight back to itself unconditionally
+        },
+      },
+    },
+  },
+  ADVANCED_COMPLEXITY_SHAPE_CLONE: {
+    kind: 'object',
+    properties: {
+      userRole: {
+        name: 'userRole',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: {
+          kind: 'array',
+          minLength: 0,
+          hasRest: true,
+          items: {
+            kind: 'object',
+            properties: {
+              SKU: {
+                name: 'SKU',
+                optional: false,
+                shape: { kind: 'primitive', type: 'string' },
+                requiresKeyPresence: true,
+                allowsExplicitUndefined: false,
+              },
+              quantity: {
+                name: 'quantity',
+                optional: false,
+                shape: { kind: 'primitive', type: 'number' },
+                requiresKeyPresence: true,
+                allowsExplicitUndefined: false,
+              },
+              logistics: {
+                name: 'logistics',
+                optional: false,
+                requiresKeyPresence: true,
+                allowsExplicitUndefined: false,
+                shape: {
+                  kind: 'object',
+                  properties: {
+                    warehouseCode: {
+                      name: 'warehouseCode',
+                      optional: false,
+                      shape: { kind: 'primitive', type: 'string' },
+                      requiresKeyPresence: true,
+                      allowsExplicitUndefined: false,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      transformStreamVal: {
+        name: 'transformStreamVal',
+        optional: false,
+        shape: { kind: 'instanceof', name: 'TransformStream' },
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+      },
+      executePipeline: {
+        name: 'executePipeline',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: {
+          kind: 'function',
+          parameters: [
+            {
+              name: 'inputData',
+              optional: false,
+              shape: { kind: 'primitive', type: 'string' },
+              requiresKeyPresence: true,
+              allowsExplicitUndefined: false,
+            },
+            {
+              name: 'retryCount',
+              optional: true,
+              requiresKeyPresence: false,
+              allowsExplicitUndefined: false,
+              shape: { kind: 'primitive', type: 'number' },
+            },
+          ],
+          returnType: {
+            kind: 'instanceof',
+            name: 'Promise',
+          },
         },
       },
     },

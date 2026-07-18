@@ -734,13 +734,15 @@
       },
       "statusList": [
         { "id": "0636-44e3-8", "name": "guard", "status": "active" },
+        { "id": "0hdk6-44e3-8", "name": "safeParse", "status": "active" },
         { "id": "7b2a-412e-87d", "name": "parse", "status": "active" },
         { "id": "9f8d-4b53-a", "name": "default", "status": "active" },
         { "id": "4c2a-4573-a859", "name": "clone", "status": "active" },
         { "id": "18f5-4d56-bc94", "name": "merge", "status": "active" },
         { "id": "e395-47b2-9dfd", "name": "drift", "status": "active" },
         { "id": "4bf-f5ae-e3", "name": "composite", "status": "inProgress" },
-        { "id": "cfae-e3-b9", "name": "cast", "status": "inProgress" },
+        { "id": "cfae-e3-b9", "name": "cast", "status": "active" },
+        { "id": "cfkse-s3-b9", "name": "mock", "status": "active" },
         { "id": "52-49b-aef7", "name": "diff", "status": "research" }
       ],
       "contentList": [

@@ -1,9 +1,12 @@
 import { XalethorService } from '../../../xalor-service';
-import { markAsSolid } from '../../../utils';
-import { isRecord, assertRegistryKey } from '../../../../shared/utils/guards';
-import { BRAND_SYMBOL } from '../../../../shared';
+import { markAsSolid, ensureGlobalVault } from '../../../utils';
+import { assertRegistryKey } from '../../../../shared/utils/guards';
+import { isRecord, BRAND_SYMBOL } from '../../../../shared';
 import type { TSolidBranded } from '../../../../shared';
+import { xalethorVaultDiagnostics } from '../../../xalor-service/vault-diagnostics';
 
+// Holds long-lived, pre-allocated memory pointers for nominal tokens to keep memory flat
+const brandTokenCache = new Map<string, [string, string]>();
 /**
  * RUNTIME API: GENERATE XALOR CLONE
  *
@@ -18,26 +21,28 @@ import type { TSolidBranded } from '../../../../shared';
  *
  * @see {@link RuntimeApiCoreDocs.generateXalorClone}
  */
-export function generateXalorClone<K extends keyof ISolidRegistry>(
+export function generateXalorClone<K extends TActiveRegistryKeys>(
   data: unknown,
   injectedKey?: K,
-): TSolidBranded<K, ISolidRegistry[K]> {
+): TSolidBranded<K, TResolveRegistryStructure<K>> {
+  ensureGlobalVault();
   assertRegistryKey(injectedKey);
 
   const clonePayload = XalethorService.produceClone(data, injectedKey!);
-  if (!isRecord(clonePayload)) {
-    if (markAsSolid<K, ISolidRegistry[K]>(clonePayload)) {
+  if (isRecord(clonePayload)) {
+    let brandToken = brandTokenCache.get(injectedKey);
+    if (!brandToken) {
+      brandToken = ['Solid', injectedKey];
+      brandTokenCache.set(injectedKey, brandToken);
+    }
+
+    Reflect.set(clonePayload, BRAND_SYMBOL, brandToken);
+    if (markAsSolid<K, TResolveRegistryStructure<K>>(clonePayload)) {
       return clonePayload;
     }
   }
-
-  Reflect.set(clonePayload, BRAND_SYMBOL, ['Solid', injectedKey]);
-
-  if (markAsSolid<K, ISolidRegistry[K]>(clonePayload)) {
-    return clonePayload;
-  }
-
-  throw new Error(
+  return xalethorVaultDiagnostics.panic(
+    injectedKey,
     `[xalor] 🚨 Deep structural cloning failed for contract key: ${injectedKey}`,
   );
 }

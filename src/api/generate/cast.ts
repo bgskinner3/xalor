@@ -5,7 +5,6 @@ import { BRAND_SYMBOL } from '../../../shared';
 import type { TSolidBranded } from '../../../shared';
 import { assertRegistryKey } from '../../../shared/utils/guards';
 import { xalethorVaultDiagnostics } from '../../xalor-service/vault-diagnostics';
-// import { XalethorService } from '../../xalor-service';
 
 // Holds long-lived, pre-allocated memory pointers for nominal tokens to keep memory flat
 const brandTokenCache = new Map<string, [string, string]>();

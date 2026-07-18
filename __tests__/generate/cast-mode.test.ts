@@ -67,9 +67,9 @@ declare global {
       id: number;
       profileRef: ISolidRegistry['USER_TEST'];
     };
-    CIRCULAR_DEPTH_TEST: {
+    CIRCULAR_DEPTH_TEST_CAST: {
       id: number;
-      selfRef?: ISolidRegistry['CIRCULAR_DEPTH_TEST'];
+      selfRef?: ISolidRegistry['CIRCULAR_DEPTH_TEST_CAST'];
     };
     ALL_PLATFORM_INSTANCES_SHAPE: {
       // === Core JS Structural Objects ===

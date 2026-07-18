@@ -1,14 +1,13 @@
 import type {
   TSolidMetadata,
   TSolidError,
-  TSolidBranded,
   TTripleKV,
   TSolidShape,
   TValidationContext,
 } from '../../shared';
 import { xalethorVaultKeeper } from './vault-keeper';
 import { xalethorVaultGenerator } from './vault-generator';
-import { XalethorVaultTransform } from './vault-transform';
+import { xalethorVaultTransform } from './vault-transform';
 import { XalethorVaultMatch } from './vault-match';
 import { xalethorVaultValidation } from './vault-validation';
 import { xalethorVaultDiagnostics } from './vault-diagnostics';
@@ -140,13 +139,13 @@ export class XalethorService {
     ctx: TXalorMergeContext<ISolidRegistry[K]>,
   ): unknown {
     /* prettier-ignore */
-    return XalethorVaultTransform.transformMerge<K>(ctx);
+    return xalethorVaultTransform.transformMerge<K>(ctx);
   }
-  public static produceClone<K extends keyof ISolidRegistry>(
+  public static produceClone<K extends TActiveRegistryKeys>(
     data: unknown,
     key: K,
-  ): TSolidBranded<K, ISolidRegistry[K]> {
-    return XalethorVaultTransform.getClone(data, key);
+  ): TResolveRegistryStructure<K> {
+    return xalethorVaultTransform.getClone(data, key);
   }
   // ============================================================
   // ============================================================
