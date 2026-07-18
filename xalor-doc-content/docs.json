@@ -792,6 +792,18 @@
         {
           "name": "diff",
           "description": "Computes a flat **structural delta matrix** contrasting property discrepancies across two active shapes."
+        },
+        {
+          "name": "safeParse",
+          "description": ""
+        },
+        {
+          "name": "mock",
+          "description": ""
+        },
+        {
+          "name": "cast",
+          "description": ""
         }
       ]
     },

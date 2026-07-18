@@ -41,19 +41,100 @@
 <br/>
 <br/>
 
-## ⚡ What is Xalor?
 
-Xalor is an **ahead-of-time (AOT) type reification engine** for JavaScript and TypeScript. It acts as a hybrid bridge between your build pipeline and your live production environment by treating native TypeScript interfaces as the single source of truth.
+# ⚡ What is Xalor?
 
-A background compiler watcher silently parses your code during compilation, stripping out developer telemetry and baking your types into compressed, hidden runtime blueprints. Instead of just checking strings like a basic validation library, Xalor uses these live blueprints to handle advanced architectural patterns:
+Xalor is an **ahead-of-time (AOT) Type Metadata Engine** for TypeScript.
 
-- **Airtight Runtime Data Validation** with zero client-side engine overhead.
-- **Automated Data Sanitization** at high-traffic boundary ingress points.
-- **Functional Pattern Matching** executing at constant memory pointer speeds.
-- **Multi-Version Schema Upcasting** via native ancestral blueprint matching.
+It captures TypeScript's erased type information during compilation and transforms it into an optimized runtime structural graph of reusable blueprints.
+
+These blueprints become a runtime metadata layer that powers:
+
+- Runtime validation
+- Data normalization
+- Structural matching
+- Runtime generation
+- Schema evolution
+- Type-driven transformations
+
+without maintaining duplicate schemas or shipping runtime schema interpreters.
+
+Your TypeScript types become runtime-aware structural contracts.
 
 <br/>
 <br/>
+
+### The Problem
+
+TypeScript provides exceptional developer safety, but its type system disappears during compilation.
+
+```text
+Developer Types
+
+interface User {
+  id: number;
+  name: string;
+}
+
+        ↓
+
+TypeScript Compilation
+
+        ↓
+
+Production JavaScript
+
+(no knowledge of User)
+```
+After compilation, production systems lose access to the structural knowledge that existed during development.
+
+Applications must either:
+
+ - Maintain duplicate runtime schemas.
+ - Generate validation code.
+ - Ship runtime systems that reconstruct type information dynamically.
+
+Xalor takes a different approach.
+
+<br/>
+<br/>
+
+### The Xalor Approach
+
+Xalor captures type information **before compilation erasure** and converts it into compact runtime blueprints.
+
+```text
+TypeScript Source
+        ↓
+Compiler Extraction
+        ↓
+Structural Reification
+        ↓
+Canonical Fingerprinting
+        ↓
+CAS Blueprint Registry
+        ↓
+Runtime Metadata Vault
+        ↓
+Type Intelligence Operations
+```
+
+Your types remain the single source of truth.
+
+<br/>
+
+The resulting metadata powers:
+
+- ⚡ **Runtime Validation** — `safeParse`, `parse`, and `guard`
+- 🧹 **Data Sanitization** — Normalize and clean incoming payloads
+- 🧬 **Structural Matching** — Execute logic against known type layouts
+- 🔄 **Schema Evolution** — Upgrade historical payloads through `drift`
+- 🏗️ **Runtime Generation** — Create defaults, mocks, and transformations
+
+<br/>
+<br/>
+
+---
 
 ## 📦 Installation
 
@@ -61,79 +142,246 @@ A background compiler watcher silently parses your code during compilation, stri
 npm install @bgskinner2/xalor
 ```
 
-💡 **Looking for Vite or Next.js configurations?**
-View our [Bundler Integration & Getting Started Guide](http://masterofsum.dev/xalor/docs/gettingStarted).
+💡 **Looking for Vite, Next.js, or custom build configurations?**
+
+See the [Bundler Integration Guide](http://masterofsum.dev/xalor/docs/gettingStarted).
 
 <br/>
 <br/>
 
-## ⚡ The Happy Medium
+# ⚖️ Why Xalor Exists
 
-- **TypeScript** is completely erased at runtime, leaving production JavaScript blind to corrupt payloads.
-- **Zod** forces you to define schemas twice, leading to code duplication and larger client bundles.
-- **Typia** relies on fragile monkey-patches such as `ts-patch`, which can pollute your local Git files.
-- **Xalor** uses a custom build CLI pass to extract TypeScript interfaces into an immutable runtime validation vault.
+Modern TypeScript applications usually choose between three approaches:
 
-### The Result
+| Approach                   | Tradeoff                                  |
+| -------------------------- | ----------------------------------------- |
+| Handwritten schemas        | Your source of truth exists twice         |
+| Runtime validation engines | Production ships additional parsing logic |
+| Code generation            | Adds generated files and build complexity |
 
-You get:
+Xalor takes a different path:
 
-- ⚡ Macro-level performance
-- ✨ Rich validation features
-- 🚫 Zero code duplication
-
-<br/>
-<br/>
-
-## 📊 Performance Benchmark Wins
-
-Tested head-to-head against competing frameworks on an **Apple M2 Pro** running **Node.js 22**.
-
-### Valid Payloads
-
-- ⚡ **Sub-microsecond execution speeds** powered by monomorphic inline caches.
-
-### Malformed & Malicious Payloads
-
-- 🛡️ **Rejects malformed input in ~270 nanoseconds**, compared to **12+ microseconds** in many competing approaches.
-- 🚀 Xalor bypasses deep recursive evaluation loops entirely when processing malicious payloads, maintaining consistently fast rejection times.
-
-📈 **[View the Complete Raw Performance Metrics & Suite Benchmarks](http://masterofsum.dev/xalor/docs/benchmarks)**
+> Capture the type system once during compilation, then reuse that intelligence everywhere.
 
 <br/>
 <br/>
 
-## 📊 Ecosystem Comparison
+### Traditional Flow
 
-| Operational Feature                                             | Zod / Valibot | Typia | **Xalor** |
-| :-------------------------------------------------------------- | :-----------: | :---: | :-------: |
-| **Single Source of Truth** (Types are schemas)                  |      ❌       |  ✔️   |  **✔️**   |
-| **Zero Client Bundle Inflation** (0 KB runtime parser)          |      ❌       |  ✔️   |  **✔️**   |
-| **Ambient Project Integration** (Zero complex setup clutter)    |      ✔️       |  ❌   |  **✔️**   |
-| **GPS Diagnostic Tracing** (Traceability tracking rules)        |      ❌       |  ❌   |  **✔️**   |
-| **Distributed Contract Governance** (`matchDrift` Upcast Lanes) |      ❌       |  ❌   |  **✔️**   |
+```text
+TypeScript Type
+
+        +
+
+Runtime Schema
+
+        ↓
+
+Two Sources Of Truth
+```
+
+<br/>
+
+### Xalor Flow
+
+```text
+TypeScript Type
+
+        ↓
+
+Build-Time Extraction
+
+        ↓
+
+Runtime Blueprint
+
+        ↓
+
+Every Runtime Capability
+```
 
 <br/>
 <br/>
 
-## 🚀 Beyond Validation: What Else Can Your Types Do?
+---
 
-Because Xalor treats types as an active metadata layer, it unlocks capabilities that traditional validation libraries cannot provide.
+# 🧬 The Xalor Metadata Layer
 
-- **Automated Safe Fallbacks (`xalor.generateXalorDefault`)** – Automatically pre-populates forms and UI structures with primitive defaults (`""`, `0`, `false`) to prevent unexpected `undefined` property crashes.
-- **Multi-Version Schema Upcasting (`xalor.drift`)** – Detects legacy client payloads, matches historical schema signature hashes, and safely upcasts them in memory to support asynchronous microservice deployments.
-- **GPS-Style Error Traceability** – Pinpoints validation failures directly to their TypeScript source, such as `src/models/user.ts:42`, making issues easier to identify and fix.
+Xalor does not recreate TypeScript as handwritten runtime schemas.
+
+Instead, it converts structural type information into compact, deterministic metadata blueprints.
+
+Example:
+
+```ts
+interface User {
+  id: number;
+  name: string;
+  role: 'admin' | 'user';
+}
+```
+
+Becomes:
+
+```json
+{
+  "registryKey": "USER_PROFILE",
+  "blueprint": "sh_4vztgu",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "id": {
+        "kind": "primitive",
+        "type": "number"
+      },
+      "name": {
+        "kind": "primitive",
+        "type": "string"
+      },
+      "role": {
+        "kind": "union",
+        "values": [
+          "admin",
+          "user"
+        ]
+      }
+    }
+  }
+}
+```
+
+The runtime receives the optimized blueprint reference instead of shipping duplicate schema logic.
+
+<br/>
+
+Benefits:
+
+- Shared structures are automatically deduplicated.
+- Large projects avoid repeated schema payloads.
+- Runtime operations execute against compact metadata.
 
 <br/>
 <br/>
 
-## 📦 Quick Start
+---
 
-### 1. Register Your Type
+# 🚀 Beyond Validation
 
-Write pure TypeScript. No custom schema DSLs, no duplicate configurations, and no local file noise.
+Validation is simply the first consumer of Xalor's metadata layer.
 
-```typescript
+## 🛡 Runtime Validation
+
+```ts
+const result = xalor.safeParse<'USER_PROFILE'>(payload);
+
+if (result.success) {
+  console.log(result.data.username);
+}
+```
+
+---
+
+## 🏗 Runtime Generation
+
+Generate safe structures directly from your types:
+
+```ts
+xalor.default<'USER_PROFILE'>();
+
+xalor.mock<'USER_PROFILE'>();
+```
+
+Useful for:
+
+- Form initialization
+- Testing
+- UI scaffolding
+- Empty application states
+
+---
+
+## 🔄 Schema Evolution
+
+Distributed systems rarely deploy everything at once.
+
+Old clients, databases, and services continue sending historical structures.
+
+```ts
+xalor.drift<'USER_PROFILE'>(legacyPayload, context);
+```
+
+Xalor can identify previous structural versions and migrate payloads into the current contract.
+
+---
+
+## 🧩 Structural Operations
+
+Runtime metadata enables higher-level operations:
+
+```ts
+xalor.guard<'USER_PROFILE'>(payload);
+
+xalor.merge(context);
+
+xalor.clone(payload);
+```
+
+Your type system becomes a reusable runtime intelligence layer.
+
+<br/>
+<br/>
+
+---
+
+# 📊 Performance Characteristics
+
+Benchmarked on:
+
+- Apple M2 Pro
+- Node.js 22
+
+Because Xalor operates against precompiled metadata instead of interpreting schemas dynamically:
+
+- ⚡ Sub-microsecond validation paths
+- 🛡 Extremely fast malformed payload rejection
+- 🧠 Low allocation runtime behavior
+
+Full benchmark suite:
+
+[View Performance Benchmarks](http://masterofsum.dev/xalor/docs/benchmarks)
+
+<br/>
+<br/>
+
+---
+
+# 📊 Ecosystem Comparison
+
+| Capability                      | Runtime Schemas | Code Generation | Xalor |
+| ------------------------------- | --------------: | --------------: | ----: |
+| Types remain source of truth    |              ❌ |              ✔️ |    ✔️ |
+| No duplicate schema authoring   |              ❌ |              ✔️ |    ✔️ |
+| No runtime schema engine        |              ❌ |              ✔️ |    ✔️ |
+| Runtime metadata available      |              ❌ |         Limited |    ✔️ |
+| Schema evolution support        |              ❌ |         Limited |    ✔️ |
+| Generated source files required |       Sometimes |           Often |    ❌ |
+
+<br/>
+<br/>
+
+---
+
+# 📦 Quick Start
+
+## 1. Define Your Type
+
+Write normal TypeScript.
+
+No schemas.  
+No DSLs.  
+No duplicated validation objects.
+
+```ts
 import { xalor } from '@bgskinner2/xalor';
 
 export type TUser = {
@@ -145,30 +393,52 @@ export type TUser = {
 xalor.register<'USER_PROFILE', TUser>();
 ```
 
-<br/>
-<br/>
+During build:
 
-### 2. Parse Untrusted Data Instantly
-
-```typescript
-import { xalor } from '@bgskinner2/xalor';
-
-const parsedUser = xalor.parse<'USER_PROFILE'>(incomingPayload);
-console.log(`Verified data for: ${parsedUser.username}`);
+```text
+TypeScript
+    ↓
+Extraction
+    ↓
+Blueprint
+    ↓
+Runtime Metadata
 ```
 
----
-
-### 📖 Ready for full architecture maps, framework configurations, and complete benchmarks?
-
-👉 **[Explore the Official Xalor Documentation Portal](http://masterofsum.dev/xalor/docs)**
+<br/>
 
 ---
 
+## 2. Validate Runtime Data
+
+```ts
+const result = xalor.safeParse<'USER_PROFILE'>(payload);
+
+if (result.success) {
+  console.log(result.data.username);
+}
+```
+
+Your returned data is fully typed.
+
 <br/>
 <br/>
+
+---
+
+## 📖 Explore The Architecture
+
+Learn how Xalor's compiler pipeline, CAS storage, and runtime vault work:
+
+👉 [Documentation Portal](http://masterofsum.dev/xalor/docs)
+
+<br/>
+<br/>
+
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License.  
+MIT License
+
 © 2026 Brennan Skinner
