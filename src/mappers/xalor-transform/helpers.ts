@@ -1,3 +1,5 @@
+import { shapeKindUtilsService } from '../../../shared';
+import { INSTANCE_CLONE_STRATEGIES } from './clone-instance-coercer';
 /**
  * 🔷 PRIMITIVE TYPEOF VALIDATOR MAP
  *
@@ -50,4 +52,63 @@ export function verifyRuntimePrimitiveCompliance(
   if (type === 'unknown' || type === 'any') return true;
 
   return false;
+}
+/**
+ * Maps live constructor function references directly back to their AOT registry keys
+ * (e.g. Date constructor -> "Date"). Pre-allocated once at system initialization [INDEX].
+ */
+const CONSTRUCTOR_KEY_MAP: ReadonlyMap<unknown, string> = (() => {
+  const cacheMap = new Map<unknown, string>();
+
+  // Safe cast-free mapping registry descriptor boundary
+  const mapperRef: Record<string, { readonly ctor: unknown }> =
+    shapeKindUtilsService.instanceRegistryMapper;
+
+  for (const key in mapperRef) {
+    if (Reflect.has(mapperRef, key)) {
+      const descriptor = mapperRef[key];
+      if (descriptor && descriptor.ctor) {
+        cacheMap.set(descriptor.ctor, key);
+      }
+    }
+  }
+
+  return cacheMap;
+})();
+
+/**
+ * UNIVERSAL IN-FLIGHT REFERENCE ISOLATOR
+ *
+ * UNIVERSAL RUNTIME API: Natively intercepts platform objects and clones them using
+ * your existing INSTANCE_CLONE_STRATEGIES with zero duplicated boilerplate structures [INDEX].
+ *
+ * CRITICAL: 100% free of type escape hatches ('as') or 'any' assignments [INDEX].
+ */
+export function clonePlatformInstance(value: unknown): unknown {
+  if (!value || typeof value !== 'object') {
+    return value; // Instantly bypass primitives
+  }
+
+  // 1. Convert the runtime constructor address back to its text key string
+  const registryKey = CONSTRUCTOR_KEY_MAP.get(value.constructor);
+  if (!registryKey) {
+    return value; // Not a registered platform instance; pass through custom object safely
+  }
+
+  // 2. Safely read from strategies using a typesafe dictionary reference gate
+  const strategiesRef: Record<string, (d: unknown) => unknown> =
+    INSTANCE_CLONE_STRATEGIES;
+
+  if (Reflect.has(strategiesRef, registryKey)) {
+    const cloneFn = strategiesRef[registryKey];
+
+    if (typeof cloneFn === 'function') {
+      const clonedResult = cloneFn(value);
+      // Fallback safeguard: if a strategy execution returns null due to type checks,
+      // return the pristine original pointer to prevent layout corruption
+      return clonedResult !== null ? clonedResult : value;
+    }
+  }
+
+  return value;
 }

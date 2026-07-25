@@ -22,9 +22,6 @@ import type {
   TXalorMergeContexts,
   TCloneRecurseCallback,
   TRecurseMaterializer,
-  // TShapeDefaultMaterializeMap,
-  // TShapeMockMapperMap,
-  // TCalculateFinalMergeOutput,
 } from '../models/types';
 import type { TSolidShape } from '../../shared';
 import { xalethorVaultKeeper } from './vault-keeper';
@@ -33,6 +30,7 @@ import {
   CLONE_SHAPE_SANITIZER_MAPPER,
   DEFAULT_SHAPE_MATERIALIZER,
   MOCK_SHAPE_MATERIALIZER,
+  clonePlatformInstance,
 } from '../mappers';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared';
 
@@ -55,11 +53,8 @@ class XalethorVaultTransform {
     pickSet: Set<string> | null,
     omitSet: Set<string> | null,
   ): boolean {
-    // 1. If pick array is present, key MUST exist inside the whitelist
     if (pickSet && !pickSet.has(rawKey)) return false;
-
     if (omitSet && omitSet.has(rawKey)) return false;
-    // 3. Key passed all layout validation gates safely
     return true;
   }
   /**
@@ -146,6 +141,7 @@ class XalethorVaultTransform {
 
     return undefined;
   }
+
   public transformMerge<
     K extends TActiveRegistryKeys,
     const O extends TXalorMergeContexts<
@@ -266,7 +262,8 @@ class XalethorVaultTransform {
         }
       }
 
-      pristineOutput[evaluatedBlueprintKey] = targetValue;
+      pristineOutput[evaluatedBlueprintKey] =
+        clonePlatformInstance(targetValue);
     }
 
     return pristineOutput;

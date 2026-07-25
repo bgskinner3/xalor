@@ -16,5 +16,8 @@ export class ShapeKindUtils {
   public isKnownInstanceKey(key: string): key is InstanceRegistryKey {
     return Reflect.has(INSTANCE_REGISTRY_MAPPER, key);
   }
+  get instanceRegistryMapper() {
+    return INSTANCE_REGISTRY_MAPPER;
+  }
 }
 export const shapeKindUtilsService = new ShapeKindUtils();
