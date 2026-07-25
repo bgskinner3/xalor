@@ -41,7 +41,6 @@
 <br/>
 <br/>
 
-
 # ⚡ What is Xalor?
 
 Xalor is an **ahead-of-time (AOT) Type Metadata Engine** for TypeScript.
@@ -86,13 +85,14 @@ Production JavaScript
 
 (no knowledge of User)
 ```
+
 After compilation, production systems lose access to the structural knowledge that existed during development.
 
 Applications must either:
 
- - Maintain duplicate runtime schemas.
- - Generate validation code.
- - Ship runtime systems that reconstruct type information dynamically.
+- Maintain duplicate runtime schemas.
+- Generate validation code.
+- Ship runtime systems that reconstruct type information dynamically.
 
 Xalor takes a different approach.
 
@@ -240,10 +240,7 @@ Becomes:
       },
       "role": {
         "kind": "union",
-        "values": [
-          "admin",
-          "user"
-        ]
+        "values": ["admin", "user"]
       }
     }
   }
