@@ -5,6 +5,7 @@ import type {
   TStrictSolidMetaData,
 } from '../../../shared';
 // import { BRAND_SYMBOL } from '../../../shared';
+
 /**
  * 💎 MARK AS SOLID
  *
@@ -20,9 +21,10 @@ import type {
  *
  * @returns {true} - Always returns true, as validation happened prior.
  */
-export function markAsSolid<K extends TActiveRegistryKeys, T>(
-  _val: unknown,
-): _val is TSolidBranded<K, T> {
+export function markAsSolid<
+  K extends TActiveRegistryKeys | TActiveDriftRegistryKeys,
+  T,
+>(_val: unknown): _val is TSolidBranded<K, T> {
   return true;
 }
 

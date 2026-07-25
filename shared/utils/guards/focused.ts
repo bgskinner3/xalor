@@ -145,6 +145,7 @@ export function isDriftRegistryKey<K extends keyof ISolidDriftRegistry>(
   key: unknown,
 ): key is K {
   const vault = globalThis.__SOLID_VAULT__;
+
   return (
     typeof key === 'string' &&
     vault !== undefined &&

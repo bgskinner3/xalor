@@ -56,7 +56,7 @@ export function seedTestVault(
 export function seedTestDriftVault(
   tokenKey: string,
   currentKey: string,
-  ancestorKey?: string,
+  ancestorKey: string,
 ): TVaultDriftEntry {
   if (!globalThis.__SOLID_VAULT__) {
     globalThis.__SOLID_VAULT__ = {
@@ -69,7 +69,7 @@ export function seedTestDriftVault(
   const mockEntry: TVaultDriftEntry = { currentKey, ancestorKey };
 
   // Directly attach the schema evolutions tracking logs to global memory
-  globalThis.__SOLID_VAULT__.driftTracking[tokenKey] = mockEntry;
+  // globalThis.__SOLID_VAULT__.driftTracking[tokenKey] = mockEntry;
 
   const manualDriftSnapshotBlock: Record<string, TVaultDriftEntry> = {
     [tokenKey]: mockEntry,

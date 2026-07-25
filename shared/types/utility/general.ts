@@ -45,7 +45,15 @@ export type TDetermineInstance<CtorType> =
  *
  */
 export type TPrettify<T> = { [K in keyof T]: T[K] } & {};
-
+/**
+ * 🪐 INTELLISENSE STRUCTURAL FLATTENER
+ * Performance Profile: Erased completely at compile-time.
+ * Strategy: Forces the TypeScript compiler to aggressively evaluate and unroll
+ * nested intersections and mapped types into a single object literal block inside tooltips.
+ */
+export type TFlattenStructure<T> = T extends object
+  ? { [K in keyof T]: T[K] }
+  : T;
 /**
  * 🔗 REVERSE LOOKUP ENGINE
  *
@@ -61,24 +69,25 @@ export type TExtractRegistryKeyName<T> = {
     : never;
 }[keyof ISolidRegistry];
 /**
- * 🧬 TYPE REIFICATION GRAPH REALIGNMENT ENGINE
+ * 🧬 TYPE REIFICATION GRAPH REALIGNMENT ENGINE (IntelliSense Enhanced)
  *
  * Performance Profile: Erased completely at compile-time.
- * Strategy: Recursively converts system constructor tracking nodes into active
- * runtime execution instance formats, satisfying strict closure expectations.
  */
 export type TResolveInstanceGraph<T> = T extends (...args: unknown[]) => unknown
   ? T // Preserve closures exactly as declared
   : T extends { readonly [key: string]: unknown }
-    ? {
-        -readonly [K in keyof T]: T[K] extends { prototype: infer P }
-          ? P // Extract instance layout straight out of constructor signatures
-          : T[K] extends readonly (infer U)[]
-            ? TResolveInstanceGraph<U>[] // Flatten readonly arrays to mutable arrays for return blocks
-            : T[K] extends object
-              ? TResolveInstanceGraph<T[K]> // Recursively process child object structures
-              : T[K];
-      }
+    ? TFlattenStructure<
+        {
+          // 🎯 Wrapped in TFlattenStructure to unroll properties!
+          -readonly [K in keyof T]: T[K] extends { prototype: infer P }
+            ? P // Extract instance layout straight out of constructor signatures
+            : T[K] extends readonly (infer U)[]
+              ? TResolveInstanceGraph<U>[] // Flatten readonly arrays to mutable arrays
+              : T[K] extends object
+                ? TResolveInstanceGraph<T[K]> // Recursively process child object structures
+                : T[K];
+        }
+      >
     : T;
 
 /**

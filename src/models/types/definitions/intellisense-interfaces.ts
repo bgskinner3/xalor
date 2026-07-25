@@ -91,6 +91,14 @@ declare global {
         ? TExpandStructure<ISolidRegistry[K]>
         : // eslint-disable-next-line @typescript-eslint/no-explicit-any
           Record<string, any>;
+  /**
+   * 🪐 PRODUCTION-RESILIENT DRIFT KEY CHECKER
+   * Filters out prototype strings to prevent key lookup assignment pollution.
+   * Satisfies COMMANDMENT VI & IX: Enforces a strict, statically verifiable literal type union.
+   */
+  export type TActiveDriftRegistryKeys = object extends ISolidDriftRegistry
+    ? string
+    : Extract<keyof ISolidDriftRegistry, string>;
 
   // ==================================================================
   // ==================================================================

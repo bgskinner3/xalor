@@ -6,6 +6,7 @@ import type {
   TStrictSolidMetaData,
   TVaultRegistryEntry,
   TVaultManifestEntry,
+  TVaultDriftEntry,
   TTripleKV,
 } from '../../shared';
 import { preRegisterMetadata } from '../utils';
@@ -97,17 +98,20 @@ class XalethorVaultKeeper {
    * It maps the variant request to the specific internal Map.
    */
   /* prettier-ignore */ public  peek( variant: 'blueprint', key: string): TSolidShape | undefined;
+  /* prettier-ignore */ public  peek( variant: 'driftTracking', key: string): TVaultDriftEntry | undefined;
   /* prettier-ignore */ public  peek( variant: 'registry', key: string,): TVaultRegistryEntry | undefined;
   /* prettier-ignore */ public  peek( variant: 'manifest', key: string,): TVaultManifestEntry | undefined;
+  /* prettier-ignore */
   public peek(
-    variant: 'blueprint' | 'manifest' | 'registry',
+    variant: 'blueprint' | 'manifest' | 'registry' | 'driftTracking',
     key: string,
-  ): TSolidShape | TVaultManifestEntry | TVaultRegistryEntry | undefined {
+  ): TSolidShape | TVaultManifestEntry | TVaultRegistryEntry | TVaultDriftEntry | undefined {
+    if (variant === 'driftTracking') return this.vault.driftTracking.get(key);
+    if (variant === 'manifest') return this.vault.manifest?.get(key);
+    if (variant === 'registry') return this.vault.registry?.get(key);
     const injectedKey = this.vault.references.get(key);
     if (!injectedKey) return undefined;
     if (variant === 'blueprint') return this.vault.blueprints.get(injectedKey);
-    if (variant === 'manifest') return this.vault.manifest?.get(key);
-    if (variant === 'registry') return this.vault.registry?.get(key);
     return undefined;
   }
 }

@@ -1,11 +1,6 @@
 // /src/api/index.ts
 import type { TTypeGuard, TSolidBranded } from '../../shared';
 import { isRegistryKey } from '../../shared';
-import type {
-  IXalorDriftContext,
-  TApplyNominalBrand,
-  TResolveDriftReturnConstraint,
-} from '../models/types';
 import { registerXalor } from './register';
 import { transformXalorMerge, generateXalorClone } from './transform';
 import {
@@ -105,16 +100,7 @@ class XalorCore {
   // ========================================================================
   // ========================================================================
   /** @Api match @mode drift */
-  public drift<
-    /* prettier-ignore */ K extends keyof ISolidDriftRegistry,
-    /* prettier-ignore */ R extends TResolveDriftReturnConstraint<K> = TResolveDriftReturnConstraint<K>,
-  >(
-    payload: unknown,
-    ctx: IXalorDriftContext<K, R>,
-    injectedKey?: K,
-  ): TApplyNominalBrand<R> {
-    return matchXalorDrift<K, R>(payload, ctx, injectedKey);
-  }
+  public drift = matchXalorDrift;
 }
 
 /**

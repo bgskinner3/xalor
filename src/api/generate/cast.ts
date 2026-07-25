@@ -76,6 +76,6 @@ export function generateXalorCast<K extends TActiveRegistryKeys>(
 
   return xalethorVaultDiagnostics.panic(
     injectedKey,
-    `[xor] 🚨 Type coercion casting or validation pass failed structurally for contract key: ${injectedKey}`,
+    `[xalor] 🚨 Type coercion casting or validation pass failed structurally for contract key: ${injectedKey}`,
   );
 }

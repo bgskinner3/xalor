@@ -31,7 +31,7 @@ export type TVaultRegistryEntry = { symbolName: string; typeName: string };
  */
 export type TVaultDriftEntry = {
   readonly currentKey: string;
-  readonly ancestorKey?: string;
+  readonly ancestorKey: string;
 };
 
 /**

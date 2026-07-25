@@ -8,12 +8,12 @@ import type {
 import { xalethorVaultKeeper } from './vault-keeper';
 import { xalethorVaultGenerator } from './vault-generator';
 import { xalethorVaultTransform } from './vault-transform';
-import { XalethorVaultMatch } from './vault-match';
+import { xalethorVaultMatch } from './vault-match';
 import { xalethorVaultValidation } from './vault-validation';
 import { xalethorVaultDiagnostics } from './vault-diagnostics';
 import type {
   IXalorDriftContext,
-  TApplyNominalBrand,
+  // TApplyNominalBrand,
   TXalorMergeContexts,
   TResolveDriftReturnConstraint,
   TReportErrorParams,
@@ -21,7 +21,7 @@ import type {
   TXalorEvaluationResult,
   // TCalculateFinalMergeOutput,
 } from '../models/types';
-import { isRecord } from '../../shared/utils';
+// import { isRecord } from '../../shared/utils';
 export class XalethorService {
   // ============================================================
   // ============================================================
@@ -40,6 +40,9 @@ export class XalethorService {
   }
   public static blueprintVault(key: string) {
     return xalethorVaultKeeper.peek('blueprint', key);
+  }
+  public static driftTrackingVault(key: string) {
+    return xalethorVaultKeeper.peek('driftTracking', key);
   }
   public static manifestVault(key: string) {
     return xalethorVaultKeeper.peek('manifest', key);
@@ -158,39 +161,11 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   // ============================================================
-  /* prettier-ignore */
-  public static executeDriftMatcher<
-    K extends keyof ISolidDriftRegistry,
-    R extends TResolveDriftReturnConstraint<K> = TResolveDriftReturnConstraint<K>
-  >(payload: unknown, ctx: IXalorDriftContext<K, R>): TApplyNominalBrand<R> {
-    const { default: defaultHandler } = ctx;
-
-    // Direct O(1) Perimeter Guard: Reject immediately if payload is not a record object
-    if (!isRecord(payload)) {
-      return XalethorVaultMatch.executeDefaultFallback<K, R>(
-        defaultHandler,
-        'MALFORMED_NON_RECORD_PAYLOAD',
-      );
-    }
-
-    // PATH 1: THE ACTIVE GENERATION CHANNEL (The Hot Path Pass)
-    const activeGenerationResult =
-      XalethorVaultMatch.executeActiveGenerationLane<K, R>(payload, ctx);
-    if (activeGenerationResult !== false) {
-      return activeGenerationResult;
-    }
-
-    // PATH 2: THE ANCESTRAL MIGRATION CHANNEL (The Upcast Pass)
-    const ancestralMigrationResult =
-      XalethorVaultMatch.executeAncestralMigrationLane<K, R>(payload, ctx);
-    if (ancestralMigrationResult !== false) {
-      return ancestralMigrationResult;
-    }
-
-    //  TOTAL CIRCUIT BREAKER (Fallback Lane)
-    return XalethorVaultMatch.executeDefaultFallback<K, R>(
-      defaultHandler,
-      'UNEXPECTED_STREAM_COLLAPSE',
-    );
+  public static executeDriftMatcher<K extends TActiveDriftRegistryKeys>(
+    payload: unknown,
+    ctx: IXalorDriftContext<K>,
+    injectedKey: K,
+  ): TResolveDriftReturnConstraint<K> {
+    return xalethorVaultMatch.executeDriftMatcher<K>(payload, ctx, injectedKey);
   }
 }
