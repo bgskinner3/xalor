@@ -1,12 +1,19 @@
 import { mergeDeep } from '../../shared/utils/deep-operations';
 import {
   isRecord,
-  isFunction,
-  // isObject,
+  isObject,
   isNull,
-  // isUndefined,
+  isUndefined,
+  isObjectSimple,
+  isNumber,
+  isInstanceOf,
+  isFunction,
 } from '../../shared/utils/guards';
-import type { TXalorMergeContext } from '../models/types';
+import { isArrayShape, isShapeOfKind } from '../../shared';
+import type {
+  TXalorMergeContext,
+  TCloneRecurseCallback,
+} from '../models/types';
 import type { TSolidShape } from '../../shared';
 import { xalethorVaultKeeper } from './vault-keeper';
 import { xalethorVaultDiagnostics } from './vault-diagnostics';
@@ -14,11 +21,6 @@ import { CLONE_SHAPE_SANITIZER_MAPPER } from '../mappers';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared';
 
 class XalethorVaultTransform {
-  private isTargetRegistryStructure<K extends TActiveRegistryKeys>(
-    payload: unknown,
-  ): payload is TResolveRegistryStructure<K> {
-    return isRecord(payload);
-  }
   // =================================================
   // =================================================
   // MERGE METHODS
@@ -98,6 +100,22 @@ class XalethorVaultTransform {
   // CLONE METHODS
   // =================================================
   // =================================================
+  private isEvaluableArrayStructure(
+    payload: unknown,
+  ): payload is { readonly [index: number]: unknown; readonly length: number } {
+    if (isNull(payload) || !isObjectSimple(payload)) return false;
+
+    if (!Reflect.has(payload, 'length')) return false;
+
+    const rawLength = Reflect.get(payload, 'length');
+    return isNumber(rawLength);
+  }
+  private isTargetRegistryStructure<K extends TActiveRegistryKeys>(
+    payload: unknown,
+  ): payload is TResolveRegistryStructure<K> {
+    return isRecord(payload);
+  }
+
   /* prettier-ignore */
   private requireShape<K extends TActiveRegistryKeys>(key: K, msg: string) {
     const shape = xalethorVaultKeeper.peek('blueprint', key);
@@ -115,52 +133,80 @@ class XalethorVaultTransform {
    * physically scrubbing away any keys missing from the TSolidShape blueprint.
    *
    * LAW: Zero 'any', Zero type assertions ('as'), and Zero 'switch' blocks.
+   *
+   * STRATEGY:
+   * Uses an integrated multi-key cache ledger that isolates execution tracks by both
+   * object data reference and shape pointer reference. This achieves absolute safety
+   * across complex structural intersection branches and deep self-referencing graph cycles
+   * with zero runtime allocation overhead.
    */
-  /* prettier-ignore */
-  private executeProduceClone( targetData: unknown, shape: TSolidShape, seen = new Map<unknown, unknown>(), depth = 0): unknown {
-
-     if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) return null;
+  private executeProduceClone(
+    targetData: unknown,
+    shape: TSolidShape,
+    seen = new Map<unknown, unknown>(),
+    depth = 0,
+  ): unknown {
+    // ----------------==================================----------------
+    // I: DEPTH BOUNDARY & NULL TRAPS
+    // ----------------==================================----------------
+    if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) return null;
     if (isNull(targetData)) return targetData;
 
-    // Isolate caches strictly to true Records to avoid bleeding container footprints
-    if (typeof targetData === 'object' && targetData !== null && !Array.isArray(targetData)) {
-      const cached = seen.get(targetData);
-      if (cached !== undefined) return cached;
-    }
+    // ----------------==================================----------------
+    // II: HIGH-VELOCITY RECENT MATRIX CACHE CONTROLS 'OBJECT'
+    // ----------------==================================----------------
+    if (isObject(targetData)) {
+      const shapeCacheMap = seen.get(targetData);
 
-    if (!shape) {
-      return (typeof targetData === 'object' && targetData !== null) ? targetData : targetData;
+      if (isInstanceOf(shapeCacheMap, Map)) {
+        const cachedRecord = shapeCacheMap.get(shape);
+        if (!isUndefined(cachedRecord)) {
+          return cachedRecord;
+        }
+        if (isShapeOfKind('reference')(shape) && shapeCacheMap.size > 0) {
+          const firstAvailableAccumulator = shapeCacheMap.values().next().value;
+          if (!isUndefined(firstAvailableAccumulator)) {
+            return firstAvailableAccumulator;
+          }
+        }
+      }
     }
+    // ----------------==================================----------------
+    // III.: FALLBACK PROTECTION GATES
+    // --------------------------------==================----------------
+    if (!shape) return isObject(targetData) ? targetData : targetData;
 
-    // 🎯 RECOVERY GATE 1: If a blueprint explicitly expects an active 'instanceof' class,
-    // we MUST let it fall through to the sanitizer map, even if the wire payload is a corrupt string scalar!
-    if (shape.kind !== 'instanceof' && shape.kind !== 'primitive' && shape.kind !== 'literal') {
-      if (typeof targetData !== 'object' || targetData === null) {
+    /* prettier-ignore */
+    if (!isShapeOfKind('instanceof')(shape) && !isShapeOfKind('primitive')(shape) && !isShapeOfKind('literal')(shape)) {
+      if (!isObjectSimple(targetData) || isNull(targetData)) {
         return targetData;
       }
     }
-
-    // Handle proxies, arrays, and array-like objects authoritatively
-    const isArrayLikeStructure = Array.isArray(targetData) || 
-      (shape.kind === 'array') ||
-      (typeof targetData === 'object' && targetData !== null && 'length' in targetData && typeof (targetData as any).length === 'number');
-
-    if (isArrayLikeStructure && shape.kind === 'array') {
+    // ----------------==================================----------------
+    // VI. AUTHORITATIVE ARRAY REIFICATION FLOWS
+    // --------------------------------==================----------------
+    if (isArrayShape(shape)) {
       if (seen.has(targetData)) return seen.get(targetData);
-      
+
       const copy: unknown[] = [];
       seen.set(targetData, copy);
 
-      const rawArrayShape: any = shape;
-      const targetItemBlueprint = rawArrayShape.items?.shape || rawArrayShape.items || { kind: 'primitive' };
-      
-      const iterableData = targetData as Record<string, unknown> & { length: number };
-      const limit = Math.min(iterableData.length, IS_SOLID_CONFIG_ITEMS.reifyLimit.maxObjectProperties);
-      
-      for (let i = 0; i < limit; i++) {
-        const value = this.executeProduceClone(iterableData[i], targetItemBlueprint, seen, depth + 1);
-        if (value !== null && value !== undefined) {
-          copy[i] = value;
+      const targetItemBlueprint = shape.items;
+
+      if (this.isEvaluableArrayStructure(targetData)) {
+        const limit = Math.min(
+          targetData.length,
+          IS_SOLID_CONFIG_ITEMS.reifyLimit.maxObjectProperties,
+        );
+
+        for (let i = 0; i < limit; i++) {
+          const value = this.executeProduceClone(
+            targetData[i],
+            targetItemBlueprint,
+            seen,
+            depth + 1,
+          );
+          if (!isNull(value) && !isUndefined(value)) copy[i] = value;
         }
       }
       return copy;
@@ -173,25 +219,22 @@ class XalethorVaultTransform {
       const sanitizer = CLONE_SHAPE_SANITIZER_MAPPER[kind];
       if (!sanitizer) return targetData;
 
-      const boundRecurse = (
-        nextData: unknown, 
-        nextShape: any, 
-        nextSeen?: any, 
-        nextDepth?: number
-      ) => {
-        return this.executeProduceClone(
-          nextData, 
-          nextShape, 
-          nextSeen ?? seen, 
-          nextDepth ?? (depth + 1)
-        );
-      };
+      /* prettier-ignore */
+      const boundRecurse: TCloneRecurseCallback = (nextData, nextShape, nextSeen, nextDepth) => {
+    return this.executeProduceClone(
+      nextData,
+      nextShape,
+      nextSeen ?? seen,
+      nextDepth ?? (depth + 1),
+    );
+  };
 
       return sanitizer(targetShape, targetData, seen, depth, boundRecurse);
     };
 
     return executeCloneSanitizer(shape.kind, shape);
   }
+
   /**
    * GET CLONE (The Sanitizer)
    *

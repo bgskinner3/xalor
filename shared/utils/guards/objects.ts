@@ -22,7 +22,16 @@ export const isObject: TTypeGuard<object> = <T extends object, U>(
   term: T | U,
 ): term is NonNullable<T> =>
   !isNull(term) && !isArray(term) && typeof term === 'object';
-
+/**
+ * @utilType Guard
+ * @name isObject
+ * @category Guards Core
+ * @description Validates that a value is a non-null, non-array object.
+ * @link #isobject
+ */
+export const isObjectSimple: TTypeGuard<object> = <T extends object, U>(
+  term: T | U,
+): term is NonNullable<T> => !isNull(term) && typeof term === 'object';
 /**
  * @utilType Guard
  * @name isRecord

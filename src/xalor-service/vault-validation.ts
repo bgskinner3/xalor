@@ -34,15 +34,16 @@ class XalethorVaultValidation {
    * Instantiates a clean, transient evaluation tracking context.
    * COMPLIANCE: Pre-allocates a fixed array buffer of 256 structural tracking locations.
    */
-  public createInitialContext(key: string): TValidationContext {
+  public createInitialContext(key: string = '__ambient__'): TValidationContext {
     return {
       seen: new Map(),
-      pathStack: new Array(256),
+      // pathStack: new Array(256),
+      pathStack: new Array(IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth * 2),
       pathPointer: 0,
       errors: [],
       currentKey: key,
       depth: 0,
-      refStack: new Array(25),
+      refStack: new Array(IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth + 5),
       isInvalidCircular: false,
     };
   }

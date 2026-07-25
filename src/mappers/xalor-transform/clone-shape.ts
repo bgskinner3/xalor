@@ -1,27 +1,23 @@
 import type { TShapeCloneMapperMap } from '../../models/types';
 import {
-  isObject,
+  // isObject,
   isNull,
   isFunction,
   isArray,
   isSafeRecord,
-  // isUndefined,
+  isUndefined,
+  isKeyInObject,
+  isInstanceOf,
 } from '../../../shared/utils/guards';
 import { xalethorVaultKeeper } from '../../xalor-service/vault-keeper';
-// import {
-//   isObjectShape,
-//   isPrimitiveShape,
-//   isLiteralShape,
-// } from '../../../shared';
-import {
-  IS_SOLID_CONFIG_ITEMS,
-  // yieldItems,
-  yieldAllKeyValuePairs,
-} from '../../../shared';
+import { xalethorVaultValidation } from '../../xalor-service/vault-validation';
+import { INSTANCE_CLONE_STRATEGIES } from './clone-instance-coercer';
+import { IS_SOLID_CONFIG_ITEMS } from '../../../shared';
 import { xalethorVaultDiagnostics } from '../../xalor-service/vault-diagnostics';
 import { shapeKindUtilsService } from '../../../shared/service';
 import { XalethorService } from '../../xalor-service';
-const DEBUG = false;
+import type { TSolidShape } from '../../../shared';
+import { verifyRuntimePrimitiveCompliance } from './helpers';
 /**
  * ============================================================================
  * DESIGN SYSTEM MAPPER: CLONE SHAPE SANITIZER
@@ -34,47 +30,40 @@ const DEBUG = false;
  * @see produceClone
  */
 export const CLONE_SHAPE_SANITIZER_MAPPER: TShapeCloneMapperMap = {
-  primitive: (_shape, data) => {
-    return data;
+  primitive: (shape, data) => {
+    return verifyRuntimePrimitiveCompliance(shape.type, data) ? data : null;
   },
-
   literal: (shape, data) => {
+    if (!verifyRuntimePrimitiveCompliance(shape.type, data)) {
+      return null;
+    }
+
     return data === shape.value ? data : null;
   },
 
   union: (shape, data, seen, depth, recurse) => {
-    if (DEBUG)
-      console.log(
-        `[DEBUG UNION] Entry - Values Count: ${shape.values?.length}, Payload Type: ${typeof data}`,
+    const branches = shape.values;
+    const totalBranches = branches.length;
+
+    for (let i = 0; i < totalBranches; i++) {
+      const branch = branches[i];
+
+      const activeCtx = xalethorVaultValidation.createInitialContext(
+        branch.kind,
       );
-    const matchingBranch = shape.values.find((branch) =>
-      XalethorService.validateShape(
-        data,
-        branch,
-        XalethorService.createInitialContext(shape.kind),
-      ),
-    );
-    if (!matchingBranch) {
-      if (DEBUG)
-        console.log(
-          `[DEBUG UNION] Mismatch - No variant validly mapped this data snapshot.`,
-        );
-      return null;
+
+      if (XalethorService.validateShape(data, branch, activeCtx)) {
+        const scrubbedResult = recurse(data, branch, seen, depth);
+        if (!isNull(scrubbedResult) && !isUndefined(scrubbedResult)) {
+          return scrubbedResult;
+        }
+      }
     }
-    if (DEBUG)
-      console.log(
-        `[DEBUG UNION] Match Identified - Routing down variant kind: ${matchingBranch.kind}`,
-      );
-    const scrubbedResult = recurse(data, matchingBranch, seen, depth);
-    if (scrubbedResult === null || scrubbedResult === undefined) {
-      return null;
-    }
-    return scrubbedResult;
+
+    return null;
   },
 
   reference: (shape, data, seen, depth, recurse) => {
-    if (DEBUG)
-      console.log(`[DEBUG REFERENCE] Resolving link token: ${shape.name}`);
     const subShape = xalethorVaultKeeper.peek('blueprint', shape.name);
     if (!subShape) {
       return xalethorVaultDiagnostics.panic(
@@ -82,6 +71,7 @@ export const CLONE_SHAPE_SANITIZER_MAPPER: TShapeCloneMapperMap = {
         `[Xalor Graph Integrity Error]: Missing internal reference clone target: ${shape.name}`,
       );
     }
+
     return recurse(data, subShape, seen, depth + 1);
   },
 
@@ -94,183 +84,148 @@ export const CLONE_SHAPE_SANITIZER_MAPPER: TShapeCloneMapperMap = {
   },
 
   intersection: (shape, data, seen, depth, recurse) => {
-    if (!isSafeRecord(data)) {
+    if (!isSafeRecord(data)) return null;
+
+    const branches = shape.values || [];
+    const totalBranches = branches.length;
+    if (totalBranches === 0) {
       return null;
     }
 
-    const cleanMergedObj: Record<string, unknown> = {};
-    const branches = shape.values || [];
+    const cleanMergedObj: Record<string, unknown> = Object.create(null);
+    const propertyMatchCounts: Record<string, number> = Object.create(null);
 
-    if (branches.length === 0) return null;
+    for (let i = 0; i < totalBranches; i++) {
+      const branchOutput = recurse(data, branches[i], seen, depth + 1);
 
-    // Track how many branches explicitly process and output each property key
-    const propertyMatchCounts: Record<string, number> = {};
-
-    for (const branch of branches) {
-      // Clean the input data independently against the current branch contract
-      const branchOutput = recurse(data, branch, seen, depth + 1);
-
-      if (branchOutput === null || branchOutput === undefined) {
-        return null; // If a full branch layout rejects, the full intersection fails
+      if (isNull(branchOutput) || isUndefined(branchOutput)) {
+        return null;
       }
 
-      if (typeof branchOutput === 'object') {
-        for (const key of Object.keys(branchOutput)) {
+      if (isSafeRecord(branchOutput)) {
+        const activeKeys = Object.keys(branchOutput);
+        const totalKeys = activeKeys.length;
+
+        for (let j = 0; j < totalKeys; j++) {
+          const key = activeKeys[j];
           const val = Reflect.get(branchOutput, key);
 
-          if (val !== undefined && val !== null) {
+          if (!isNull(val) && !isUndefined(val)) {
             propertyMatchCounts[key] = (propertyMatchCounts[key] || 0) + 1;
-
-            // Shallow-merge properties. If types conflict, subsequent loops will overwrite or flag them.
             cleanMergedObj[key] = val;
           }
         }
       }
     }
 
-    // 🎯 CRITICAL RECOVERY GATE: A property is only valid if it successfully
-    // passed scrubbing across EVERY SINGLE BRANCH in the intersection union.
-    for (const key of Object.keys(cleanMergedObj)) {
-      if (propertyMatchCounts[key] !== branches.length) {
-        // If it failed to compile or validate in any branch, physically scrub it away!
+    const finalKeys = Object.keys(cleanMergedObj);
+    const totalFinalKeys = finalKeys.length;
+
+    for (let i = 0; i < totalFinalKeys; i++) {
+      const key = finalKeys[i];
+      if (propertyMatchCounts[key] !== totalBranches) {
         Reflect.deleteProperty(cleanMergedObj, key);
       }
     }
 
-    return cleanMergedObj;
-  },
+    const outputPayload = Object.create(Object.prototype);
 
-  instanceof: (shape, data) => {
-    const targetConfig = shapeKindUtilsService.getInstanceOfKind(shape.name);
-    if (!targetConfig) return null;
-
-    if (isObject(data) && !isNull(data)) {
-      if (data instanceof targetConfig.ctor) {
-        // 🎯 CRITICAL FIX: Explicitly clone properties into deep allocations instead of leaking original references
-        if (shape.name === 'Date') return new Date((data as Date).getTime());
-        if (shape.name === 'RegExp') return new RegExp(data as RegExp);
-        if (shape.name === 'Map') {
-          const freshMap = new Map();
-          for (const [k, v] of (data as Map<unknown, unknown>).entries()) {
-            freshMap.set(k, v);
-          }
-          return freshMap;
-        }
-        if (shape.name === 'Set') {
-          return new Set((data as Set<unknown>).values());
-        }
-        if (shape.name === 'ArrayBuffer') {
-          return (data as ArrayBuffer).slice(0);
-        }
-        // Fallback pass-through for naturally immutable streams or complex host targets
-        return data;
+    for (let i = 0; i < totalFinalKeys; i++) {
+      const key = finalKeys[i];
+      const finalValue = cleanMergedObj[key];
+      if (!isUndefined(finalValue)) {
+        outputPayload[key] = finalValue;
       }
     }
 
-    // Gateway fallback recovery mapping path for corrupt payloads
-    if (shape.name === 'Date') return new Date(0);
-    if (shape.name === 'URL') return new URL('http://localhost/');
-    if (shape.name === 'Map') return new Map();
-    if (shape.name === 'Set') return new Set();
+    return outputPayload;
+  },
 
-    return null;
+  instanceof: (shape, data) => {
+    if (
+      Reflect.has(INSTANCE_CLONE_STRATEGIES, shape.name) &&
+      isKeyInObject(shape.name)(INSTANCE_CLONE_STRATEGIES)
+    ) {
+      const cloneStrategy = INSTANCE_CLONE_STRATEGIES[shape.name];
+
+      if (cloneStrategy) {
+        const cleanClone = cloneStrategy(data);
+        if (!isNull(cleanClone)) return cleanClone;
+      }
+    }
+
+    const targetConfig = shapeKindUtilsService.getInstanceOfKind(shape.name);
+    if (!targetConfig) {
+      return null;
+    }
+    return targetConfig.def();
   },
 
   object: (shape, data, seen, depth, recurse) => {
-    if (DEBUG) console.log(`\n[DEBUG OBJECT] Entering - Depth: ${depth}`);
-    if (DEBUG)
-      console.log(
-        `  [Blueprint Expected Props]:`,
-        Object.keys(shape.properties || {}),
-      );
-    if (DEBUG)
-      console.log(
-        `  [Incoming Wire Keys]:`,
-        isSafeRecord(data) ? Object.keys(data) : typeof data,
-      );
-
     if (!isSafeRecord(data)) {
-      if (DEBUG)
-        console.log(`  [DEBUG OBJECT] Rejected - Not a safe record structure.`);
       return null;
     }
-    if (seen.has(data)) {
-      if (DEBUG)
-        console.log(
-          `  [DEBUG OBJECT] Short-circuiting - Hit circular cached map record reference.`,
-        );
-      return seen.get(data);
+
+    if (isInstanceOf(seen, Map)) {
+      const shapeCacheMap = seen.get(data);
+
+      if (shapeCacheMap instanceof Map) {
+        const cached = shapeCacheMap.get(shape);
+        if (cached !== undefined) {
+          return cached;
+        }
+      }
     }
 
     const proto = Object.getPrototypeOf(data);
-    const cleanObj = Object.create(proto) as Record<string, unknown>;
-    seen.set(data, cleanObj);
+    const cleanObj: Record<string, unknown> = Object.create(proto);
 
-    for (const [key, propDescriptor] of yieldAllKeyValuePairs(
-      shape.properties,
-    )) {
+    if (isInstanceOf(seen, Map)) {
+      const shapeCache = seen.get(data);
+
+      if (isInstanceOf(shapeCache, Map)) {
+        shapeCache.set(shape, cleanObj);
+      } else {
+        const newCacheMap = new Map<TSolidShape, unknown>();
+        newCacheMap.set(shape, cleanObj);
+        seen.set(data, newCacheMap);
+      }
+    }
+
+    const propKeys = Object.keys(shape.properties);
+    const totalKeys = propKeys.length;
+
+    for (let i = 0; i < totalKeys; i++) {
+      const key = propKeys[i];
+      const propDescriptor = shape.properties[key];
+      if (!propDescriptor) {
+        continue;
+      }
+
       const rawValue = Reflect.get(data, key);
-      if (DEBUG)
-        console.log(
-          `    -> Processing Key: "${key}" | Found Raw Value:`,
-          typeof rawValue === 'object' ? '{ object }' : rawValue,
-        );
-      if (DEBUG)
-        console.log(
-          `       Target Schema Kind for Key "${key}":`,
-          propDescriptor.shape?.kind || propDescriptor,
-        );
 
-      if (rawValue === undefined) {
-        if (propDescriptor.optional) {
-          if (propDescriptor.allowsExplicitUndefined) {
-            cleanObj[key] = undefined;
-          }
-          continue;
+      if (isUndefined(rawValue)) {
+        if (propDescriptor.optional && propDescriptor.allowsExplicitUndefined) {
+          cleanObj[key] = undefined;
         }
         continue;
       }
 
-      const cleanValue = recurse(
-        rawValue,
-        propDescriptor.shape || propDescriptor,
-        seen,
-        depth + 1,
-      );
+      const targetShape = propDescriptor.shape;
+      const cleanValue = recurse(rawValue, targetShape, seen, depth + 1);
 
-      if (cleanValue !== null && cleanValue !== undefined) {
+      if (!isNull(cleanValue) && !isUndefined(cleanValue)) {
         cleanObj[key] = cleanValue;
       }
     }
-    if (DEBUG)
-      console.log(
-        `[DEBUG OBJECT] Outbound Clean Object Keys:`,
-        Object.keys(cleanObj),
-      );
+
     return cleanObj;
   },
-
   array: (shape, data, seen, depth, recurse) => {
-    if (DEBUG) console.log(`\n[DEBUG ARRAY] Entering - Depth: ${depth}`);
-    if (DEBUG)
-      console.log(
-        `  [Incoming Data IsArray]:`,
-        Array.isArray(data),
-        `| Length:`,
-        Array.isArray(data) ? data.length : 0,
-      );
-    if (DEBUG) console.log(`  [Blueprint Items Spec]:`, shape.items);
+    if (!isArray(data)) return [];
 
-    if (!isArray(data)) {
-      if (DEBUG)
-        console.log(
-          `  [DEBUG ARRAY] Rejected - Input payload is not a valid array structure.`,
-        );
-      return [];
-    }
-    if (seen.has(data)) {
-      return seen.get(data);
-    }
+    const cached = seen.get(data);
+    if (!isUndefined(cached)) return cached;
 
     const copy: unknown[] = [];
     seen.set(data, copy);
@@ -278,20 +233,15 @@ export const CLONE_SHAPE_SANITIZER_MAPPER: TShapeCloneMapperMap = {
     const maxLimit = IS_SOLID_CONFIG_ITEMS.reifyLimit.maxObjectProperties;
     const limit = data.length > maxLimit ? maxLimit : data.length;
 
-    // Use shape.items if present, otherwise extract shape.items.shape if nested
-    const targetItemBlueprint = shape.items || { kind: 'primitive' };
-    if (DEBUG)
-      console.log(
-        `  [DEBUG ARRAY] Routing elements via child schema kind: ${targetItemBlueprint.kind || (targetItemBlueprint as any).shape?.kind}`,
-      );
+    const targetItemBlueprint = shape.items;
 
     for (let i = 0; i < limit; i++) {
-      if (DEBUG) console.log(`  [DEBUG ARRAY] Iterating Element Index [${i}]`);
       const value = recurse(data[i], targetItemBlueprint, seen, depth + 1);
-      if (value !== null && value !== undefined) {
+      if (!isNull(value) && !isUndefined(value)) {
         copy[i] = value;
       }
     }
+
     return copy;
   },
 } satisfies TShapeCloneMapperMap;

@@ -55,6 +55,59 @@ export const TEST_SHAPE_REGISTRY = {
       },
     },
   },
+  // ============================================================================
+  // 🛡️ SECURITY & CONFIG CAP BOUNDARY TESTS (The Final Hardening Pass)
+  // ============================================================================
+
+  // 🛡️ EXTRA BLUEPRINT 1: PROTOTYPE POLLUTION DEFENSE
+  // Structural blueprint containing known keys to cross-verify toxic __proto__ injection dropouts.
+  POISON_POLLUTION_TEST: {
+    kind: 'object' as const,
+    properties: {
+      id: {
+        name: 'id',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive' as const, type: 'number' as const },
+      },
+    },
+  },
+
+  // 🛡️ EXTRA BLUEPRINT 2: CUSTOM CLASS PROTO_CHAIN INHERITANCE
+  // Confirms that custom constructor definitions and method access blocks survive purification loops.
+  CLASS_INHERITANCE_TEST: {
+    kind: 'object' as const,
+    properties: {
+      title: {
+        name: 'title',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive' as const, type: 'string' as const },
+      },
+    },
+  },
+
+  // 🛡️ EXTRA BLUEPRINT 3: RADICAL CONFIG BOUNDARY TRUNCATION
+  // Validates that oversized payloads are truncated safely using internal config constraints.
+  BOUNDARY_LIMIT_TEST: {
+    kind: 'object' as const,
+    properties: {
+      items: {
+        name: 'items',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: {
+          kind: 'array' as const,
+          minLength: 0,
+          hasRest: true,
+          items: { kind: 'primitive' as const, type: 'number' as const },
+        },
+      },
+    },
+  },
   STORE_ORDER_V1_ANCESTOR: {
     kind: 'object',
     properties: {
@@ -721,30 +774,77 @@ export const TEST_SHAPE_REGISTRY = {
       },
     },
   },
+  COLLIDING_INTERSECTION_TEST_V2: {
+    kind: 'object' as const,
+    properties: {
+      conflictField: {
+        name: 'conflictField',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: {
+          kind: 'union' as const,
+          values: [
+            { kind: 'primitive' as const, type: 'string' as const },
+            { kind: 'primitive' as const, type: 'number' as const },
+          ],
+        },
+      },
+    },
+  },
+  // COLLIDING_INTERSECTION_TEST: {
+  //   kind: 'intersection',
+  //   values: [
+  //     {
+  //       kind: 'object',
+  //       properties: {
+  //         conflictField: {
+  //           name: 'conflictField',
+  //           optional: false,
+  //           requiresKeyPresence: true,
+  //           allowsExplicitUndefined: false,
+  //           shape: { kind: 'primitive', type: 'string' }, // Branch A demands a string type skeleton
+  //         },
+  //       },
+  //     },
+  //     {
+  //       kind: 'object',
+  //       properties: {
+  //         conflictField: {
+  //           name: 'conflictField',
+  //           optional: false,
+  //           requiresKeyPresence: true,
+  //           allowsExplicitUndefined: false,
+  //           shape: { kind: 'primitive', type: 'number' }, // Branch B demands a numeric type skeleton
+  //         },
+  //       },
+  //     },
+  //   ],
+  // },
   COLLIDING_INTERSECTION_TEST: {
-    kind: 'intersection',
+    kind: 'intersection' as const,
     values: [
       {
-        kind: 'object',
+        kind: 'object' as const,
         properties: {
           conflictField: {
             name: 'conflictField',
             optional: false,
             requiresKeyPresence: true,
             allowsExplicitUndefined: false,
-            shape: { kind: 'primitive', type: 'string' }, // Branch A demands a string type skeleton
+            shape: { kind: 'primitive' as const, type: 'string' as const },
           },
         },
       },
       {
-        kind: 'object',
+        kind: 'object' as const,
         properties: {
           conflictField: {
             name: 'conflictField',
             optional: false,
             requiresKeyPresence: true,
             allowsExplicitUndefined: false,
-            shape: { kind: 'primitive', type: 'number' }, // Branch B demands a numeric type skeleton
+            shape: { kind: 'primitive' as const, type: 'number' as const },
           },
         },
       },

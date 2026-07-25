@@ -2,7 +2,7 @@ import { xalor } from '../../src/api';
 import { TEST_SHAPE_REGISTRY } from '../utils/constants';
 import { seedTestVault } from '../utils';
 import { BRAND_SYMBOL } from '../../shared';
-import { isInstanceOf } from '../../shared';
+import { isInstanceOf, IS_SOLID_CONFIG_ITEMS } from '../../shared';
 import { TInstanceConstructorRegistry } from '../../shared';
 /**
   pnpm run test -- __tests__/transform/clone-mode.test.ts
@@ -107,14 +107,47 @@ declare global {
     BROKEN_REF_TEST: {
       badLink: unknown;
     };
-    COLLIDING_INTERSECTION_TEST: {
-      conflictField: string | number;
+
+    COLLIDING_INTERSECTION_TEST_V2: {
+      readonly conflictField: string | number;
+    };
+    COLLIDING_INTERSECTION_TEST_V3: {
+      readonly conflictField: string & number; // Collapses structurally into 'never'
+    };
+    POISON_POLLUTION_TEST: {
+      readonly id: number;
+    };
+
+    // 🛡️ EXTRA TYPE CONTRACT 2: CUSTOM CLASS PROTO_CHAIN INHERITANCE
+    // Statically bounds your custom constructor instance properties, proving that
+    // class methods and inheritance chains remain intact post-cloning.
+    CLASS_INHERITANCE_TEST: {
+      readonly title: string;
+    };
+
+    // 🛡️ EXTRA TYPE CONTRACT 3: RADICAL CONFIG BOUNDARY TRUNCATION
+    // Asserts an array of numbers that we will aggressively bloat at runtime
+    // to test that the cloner safely enforces your maxObjectProperties ceiling.
+    BOUNDARY_LIMIT_TEST: {
+      readonly items: readonly number[];
     };
   }
 }
 
 describe('Runtime Generator API - Clone Mode', () => {
   beforeAll(() => {
+    seedTestVault(
+      'POISON_POLLUTION_TEST',
+      TEST_SHAPE_REGISTRY.POISON_POLLUTION_TEST,
+    );
+    seedTestVault(
+      'CLASS_INHERITANCE_TEST',
+      TEST_SHAPE_REGISTRY.CLASS_INHERITANCE_TEST,
+    );
+    seedTestVault(
+      'BOUNDARY_LIMIT_TEST',
+      TEST_SHAPE_REGISTRY.BOUNDARY_LIMIT_TEST,
+    );
     // Seed definitions out of our central constants registry
     seedTestVault('USER_TEST', TEST_SHAPE_REGISTRY.STANDARD_USER);
     seedTestVault('API_RESPONSE', TEST_SHAPE_REGISTRY.UNION_RESPONSE);
@@ -163,7 +196,11 @@ describe('Runtime Generator API - Clone Mode', () => {
       TEST_SHAPE_REGISTRY.CIRCULAR_DEPTH_TEST_CAST,
     );
     seedTestVault(
-      'COLLIDING_INTERSECTION_TEST',
+      'COLLIDING_INTERSECTION_TEST_V2',
+      TEST_SHAPE_REGISTRY.COLLIDING_INTERSECTION_TEST_V2,
+    );
+    seedTestVault(
+      'COLLIDING_INTERSECTION_TEST_V3',
       TEST_SHAPE_REGISTRY.COLLIDING_INTERSECTION_TEST,
     );
     seedTestVault('INFINITE_LOOP_TEST', TEST_SHAPE_REGISTRY.INFINITE_LOOP_TEST);
@@ -431,6 +468,7 @@ describe('Runtime Generator API - Clone Mode', () => {
       const circularPayload: any = { id: 777 };
       circularPayload.selfRef = circularPayload;
       const result = xalor.clone<'CIRCULAR_DEPTH_TEST_CAST'>(circularPayload);
+      // console.log(result, 'RESULLTT');
       expect(result.id).toBe(777);
       expect(result.selfRef).toBe(result);
     });
@@ -438,11 +476,18 @@ describe('Runtime Generator API - Clone Mode', () => {
       const conflictingPayload = {
         conflictField: 'this_violates_intersection',
       };
+
+      // 🎯 TARGETS THE COLLIDING INTERSECTION BLUEPRINT (string & number -> never)
       const result =
-        xalor.clone<'COLLIDING_INTERSECTION_TEST'>(conflictingPayload);
-      // String & number intersection is an impossible constraint block, must resolve cleanly to empty/unmapped
+        xalor.clone<'COLLIDING_INTERSECTION_TEST_V3'>(conflictingPayload);
+
+      // Telemetry log shows: [Branch Output]: {} -> conflictField is completely eviscerated
+      // console.log('[COLLISION RESULT]:', result);
+
+      // Verified Guarantee: The impossible collision strips the field down to undefined natively!
       expect(result.conflictField).toBeUndefined();
     });
+
     it('🛡️ EDGE CASE 3: should guard unconditionally against deep schema-looped references', () => {
       const endlessPayload: any = {};
       endlessPayload.selfRef = endlessPayload;
@@ -450,5 +495,56 @@ describe('Runtime Generator API - Clone Mode', () => {
         xalor.clone<'INFINITE_LOOP_TEST'>(endlessPayload),
       ).not.toThrow();
     });
+  });
+});
+describe('🛡️ FINAL APPLICATION HARDENING TRACKS', () => {
+  it('🛡️ EXTRA EGDE 1: should absolutely insulate the engine against prototype pollution attacks', () => {
+    const maliciousPayload = JSON.parse(
+      '{"id": 99, "__proto__": {"polluted": "CRITICAL_BREACH"}}',
+    );
+
+    const result = xalor.clone<'POISON_POLLUTION_TEST'>(maliciousPayload);
+
+    expect(result.id).toBe(99);
+    expect((Object.prototype as any).polluted).toBeUndefined();
+    expect((result as any).polluted).toBeUndefined();
+  });
+
+  it('🛡️ EXTRA EDGE 2: should perfectly preserve custom prototype chain class inheritance hierarchies', () => {
+    class CustomEntity {
+      constructor(
+        public title: string,
+        public unmappedSecret: number,
+      ) {}
+      public executeMethod() {
+        return 'active';
+      }
+    }
+
+    const instancePayload = new CustomEntity('secure_node', 88123);
+    const result = xalor.clone<'CLASS_INHERITANCE_TEST'>(instancePayload);
+
+    expect(result).toBeInstanceOf(CustomEntity);
+    expect(result.title).toBe('secure_node');
+    expect(typeof (result as any).executeMethod).toBe('function');
+    expect((result as any).unmappedSecret).toBeUndefined(); // Scrubbing loop remains functional on classes!
+  });
+
+  it('🛡️ EXTRA EDGE 3: should enforce a hard, defensive truncation limit when structures violate config caps', () => {
+    // Construct a heavy mock data payload that violently violates the property limit caps
+    const bloatedData: number[] = [];
+    const excessiveCount =
+      IS_SOLID_CONFIG_ITEMS.reifyLimit.maxObjectProperties + 500;
+    for (let i = 0; i < excessiveCount; i++) {
+      bloatedData.push(i);
+    }
+
+    const result = xalor.clone<'BOUNDARY_LIMIT_TEST'>({ items: bloatedData });
+
+    expect(result.items).toBeDefined();
+    // Verifies that the internal loop index safely capped execution to avoid memory overflows!
+    expect(result.items.length).toBe(
+      IS_SOLID_CONFIG_ITEMS.reifyLimit.maxObjectProperties,
+    );
   });
 });

@@ -49,3 +49,20 @@ export type TShapeCloneMapperMap = {
     /* prettier-ignore */ recurse: (d: unknown, s: TSolidShape, seen: Map<unknown, unknown>, depth: number) => unknown,
   ) => unknown;
 };
+/**
+ * 🔄 T_CLONE_RECURSE_CALLBACK
+ *
+ * ROLE:
+ * The strict static contract for the structural recurrence function passed
+ * down to standalone sanitizer mapper nodes.
+ *
+ * DESIGN INVARIANTS:
+ * - Enforces Commandment IX: Statically bounded signatures with zero loose omissions or implicit 'any' traps.
+ * - Enforces Commandment IV: Isolates pure sequential traversal tracks point-free.
+ */
+export type TCloneRecurseCallback = (
+  nextData: unknown,
+  nextShape: TSolidShape,
+  nextSeen?: Map<unknown, unknown>,
+  nextDepth?: number,
+) => unknown;
