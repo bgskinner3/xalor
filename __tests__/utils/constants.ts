@@ -36,6 +36,94 @@ export const TEST_SHAPE_REGISTRY = {
       },
     },
   },
+  STANDARD_USER_CAMEL: {
+    kind: 'object',
+    properties: {
+      userId: {
+        name: 'userId',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'number' },
+      },
+      userName: {
+        name: 'userName',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'string', maxLength: 25 },
+      },
+      isActive: {
+        name: 'isActive',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'boolean' },
+      },
+      // 🚀 PROPERTY 1: Array Collection Primitive Graph (camelCased)
+      userRoles: {
+        name: 'userRoles',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: {
+          kind: 'array',
+          items: { kind: 'primitive', type: 'string' },
+          minLength: 0,
+          hasRest: false,
+        },
+      },
+      // 🚀 PROPERTY 2: Algebraic String Union Literal (camelCased)
+      accountTier: {
+        name: 'accountTier',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: {
+          kind: 'union',
+          values: [
+            { kind: 'literal', type: 'string', value: 'free' },
+            { kind: 'literal', type: 'string', value: 'premium' },
+            { kind: 'literal', type: 'string', value: 'enterprise' },
+          ],
+        },
+      },
+      // 🚀 PROPERTY 3: Deep Nested Sub-Object Structural Graph (camelCased)
+      userMetadata: {
+        name: 'userMetadata',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: {
+          kind: 'object',
+          properties: {
+            loginCount: {
+              name: 'loginCount',
+              optional: false,
+              requiresKeyPresence: true,
+              allowsExplicitUndefined: false,
+              shape: { kind: 'primitive', type: 'number' },
+            },
+            ipAddress: {
+              name: 'ipAddress',
+              optional: true,
+              requiresKeyPresence: false,
+              allowsExplicitUndefined: true,
+              shape: { kind: 'primitive', type: 'string' },
+            },
+          },
+        },
+      },
+      // 🚀 PROPERTY 4: Native Web Platform Class Instance Constructor (camelCased)
+      createdAt: {
+        name: 'createdAt',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'instanceof', name: 'Date' },
+      },
+    },
+  },
   USER_TEST_V1_ANCESTOR: {
     kind: 'object',
     properties: {

@@ -1,9 +1,13 @@
 import { XalethorService } from '../../../xalor-service';
-import { markAsSolid } from '../../../utils';
-import { isRecord, assertRegistryKey } from '../../../../shared/utils/guards';
-import type { TXalorMergeContext } from '../../../models/types';
-import { BRAND_SYMBOL } from '../../../../shared';
-import type { TSolidBranded } from '../../../../shared/types';
+import { markAsSolid, ensureGlobalVault } from '../../../utils';
+import { assertRegistryKey } from '../../../../shared/utils/guards';
+import type { TXalorMergeContexts } from '../../../models/types';
+import { isRecord, BRAND_SYMBOL } from '../../../../shared';
+import type { TSolidBranded } from '../../../../shared';
+import { xalethorVaultDiagnostics } from '../../../xalor-service/vault-diagnostics';
+
+// Holds long-lived, pre-allocated memory pointers for nominal tokens to keep memory flat
+const brandTokenCache = new Map<string, [string, string]>();
 
 /**
  * RUNTIME API: TRANSFORM XALOR MERGE
@@ -16,35 +20,48 @@ import type { TSolidBranded } from '../../../../shared/types';
  * @see {@link RuntimeApiCoreDocs.transformXalorMerge}
  *
  */
-export function transformXalorMerge<K extends keyof ISolidRegistry>(
-  ctx: TXalorMergeContext<ISolidRegistry[K]>,
+export function transformXalorMerge<K extends TActiveRegistryKeys>(
+  ctx: TXalorMergeContexts<TResolveRegistryStructure<K>>,
   injectedKey?: K,
-): TSolidBranded<K, ISolidRegistry[K]> {
+): TSolidBranded<K, TResolveRegistryStructure<K>> {
+  ensureGlobalVault();
   assertRegistryKey(injectedKey);
 
-  if (!ctx) {
-    throw new Error(
-      `[xalor] 🚨 GATEWAY BLOCK: 'transformXalorMerge' executed without compiled metadata properties.\n` +
-        `Ensure your build-time transformer plugin is active.`,
-    );
-  }
-
+  // 1. Commandment VI Compliance: Verify AOT metadata exists via your native vault service
   const activeShape = XalethorService.blueprintVault(injectedKey);
-  if (!activeShape) {
-    throw new Error(
-      `[xalor] 🚨 Transformation failed: Blueprint missing from Vault for key: ${injectedKey}`,
+
+  if (!ctx || !activeShape) {
+    return xalethorVaultDiagnostics.panic(
+      injectedKey,
+      `[xalor] 🚨 GATEWAY BLOCK: 'transformXalorMerge' executed without compiled metadata properties.\n` +
+        `Ensure your build-time transformer plugin is active for key: ${injectedKey}`,
     );
   }
 
-  const resultPayload = XalethorService.executeMergeSanitizer<K>(ctx);
+  // 2. Pass the options context down. Prune-and-fill fallbacks are resolved dynamically by the engine loop.
+  const resultPayload = XalethorService.executeMergeSanitizer<K>(
+    ctx,
+    injectedKey,
+  );
 
   if (isRecord(resultPayload)) {
-    Reflect.set(resultPayload, BRAND_SYMBOL, ['Solid', injectedKey]);
+    let brandToken = brandTokenCache.get(injectedKey);
+    if (!brandToken) {
+      brandToken = ['Solid', injectedKey];
+      brandTokenCache.set(injectedKey, brandToken);
+    }
 
-    if (markAsSolid<K, ISolidRegistry[K]>(resultPayload)) return resultPayload;
+    Reflect.set(resultPayload, BRAND_SYMBOL, brandToken);
+
+    if (markAsSolid<K, TResolveRegistryStructure<K>>(resultPayload)) {
+      /* prettier-ignore */
+      const finalBrandedPayload: TSolidBranded<K, TResolveRegistryStructure<K>> = resultPayload;
+      return finalBrandedPayload;
+    }
   }
 
-  throw new Error(
+  return xalethorVaultDiagnostics.panic(
+    injectedKey,
     `[xalor] 🚨 Evolution layer merge failed structurally for contract key: ${injectedKey}`,
   );
 }

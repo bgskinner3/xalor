@@ -3,7 +3,8 @@ import { xalor } from '../../src/api';
 import { TEST_SHAPE_REGISTRY } from '../utils/constants';
 import { seedTestVault } from '../utils';
 import type { TInstanceConstructorRegistry } from '../../shared/shape-domain';
-import type { TDetermineInstance } from '../../shared';
+import { BRAND_SYMBOL } from '../../shared';
+// import type { TDetermineInstance } from '../../shared';
 /**
  * TEST CONTROL
  *
@@ -18,6 +19,19 @@ declare global {
       username: string;
       active: boolean;
     };
+    USER_TEST_CAMEL: {
+      readonly userId: number;
+      readonly userName: string;
+      readonly isActive: boolean;
+      readonly userRoles: readonly string[];
+      readonly accountTier: 'free' | 'premium' | 'enterprise';
+      readonly userMetadata: {
+        readonly loginCount: number;
+        readonly ipAddress?: string;
+      };
+      readonly createdAt: Date;
+    };
+
     API_RESPONSE: {
       status: 'success' | 'failed' | number;
     };
@@ -122,12 +136,10 @@ declare global {
     };
   }
 }
-
-// pick, omit, rename, merge, flatten
 describe('Runtime Generator API', () => {
   beforeAll(() => {
     // Seed your mock blueprint registry definitions flatly straight into RAM memory
-    /* prettier-ignore */ seedTestVault('USER_TEST', TEST_SHAPE_REGISTRY.STANDARD_USER);
+    /* prettier-ignore */ seedTestVault('USER_TEST_CAMEL', TEST_SHAPE_REGISTRY.STANDARD_USER_CAMEL);
     /* prettier-ignore */ seedTestVault('API_RESPONSE', TEST_SHAPE_REGISTRY.UNION_RESPONSE);
     /* prettier-ignore */ seedTestVault('STORE_ORDER', TEST_SHAPE_REGISTRY.COMPLEX_ORDER);
     /* prettier-ignore */ seedTestVault('DEEPLY_NESTED_STORE', TEST_SHAPE_REGISTRY.DEEPLY_NESTED_STORE);
@@ -138,418 +150,423 @@ describe('Runtime Generator API', () => {
     /* prettier-ignore */ seedTestVault('ALL_PLATFORM_INSTANCES_SHAPE', TEST_SHAPE_REGISTRY.ALL_PLATFORM_INSTANCES_SHAPE);
     /* prettier-ignore */ seedTestVault('ADVANCED_COMPLEXITY_SHAPE', TEST_SHAPE_REGISTRY.ADVANCED_COMPLEXITY_SHAPE);
   });
-  describe('TRANSFORM XALOR MERGE CORE LAYOUTS', () => {
-    it('🛡️ TRACK 1: should successfully deep-merge flat object profiles using dataTwo as an absolute override patch', () => {
+  describe('BASE TRANSFORM XALOR MERGE CORE LAYOUTS', () => {
+    it('🛡️ TRACK 1: should successfully evaluate partial contract survival by dropping case-mismatched raw data keys', () => {
       const currentDatabaseState = {
-        id: 101,
-        username: 'XalethorOriginal',
-        active: false,
+        userId: 101, // Direct match against USER_TEST_CAMEL interface layout
+        username: 'xalethor_original', // Case mismatch ('username' vs 'userName')
+        isActive: false, // Direct match against USER_TEST_CAMEL interface layout
       };
 
       const incomingDeltaPatch = {
-        username: 'XalethorPatched', // Overrides baseline value
-        active: true, // Overrides baseline value
+        username: 'XALETHOR_PATCHED', // Overwrites baseline but still carries case mismatch
+        isActive: true, // Direct match against USER_TEST_CAMEL interface layout
       };
 
-      const result = xalor.merge<'USER_TEST'>({
+      // Execute the unified pipeline pass without any additional context configuration options
+      const cleanSession = xalor.merge<'USER_TEST_CAMEL'>({
         dataOne: currentDatabaseState,
         dataTwo: incomingDeltaPatch,
       });
 
-      expect(result).toBeDefined();
+      // === RUNTIME DATA ASSERTIONS ===
+      // 1. Verify case-aligned fields cleared your contract safety gates and were written to memory
+      expect(cleanSession).toHaveProperty('userId');
+      expect(cleanSession).toHaveProperty('isActive');
+      expect(cleanSession.userId).toBe(101);
+      expect(cleanSession.isActive).toBe(true); // Absolute override precedence of dataTwo verified!
 
-      // 1. Structural Match validation (ignores hidden nominal brand property metadata)
-      expect(result).toMatchObject({
-        id: 101, // Preserved from dataOne
-        username: 'XalethorPatched', // Overridden by dataTwo
-        active: true, // Overridden by dataTwo
-      });
+      // 2. Check that the mismatched 'username' key was strictly blocked and omitted from allocation passes
+      expect(cleanSession).not.toHaveProperty('username');
+      expect(cleanSession).not.toHaveProperty('userName');
 
-      // 2. Cryptographic Guard compliance test verification (Commandment I)
-      expect(xalor.guard<'USER_TEST'>(result)).toBe(true);
+      // === NOMINAL BRAND SECURITY CHECKS ===
+      expect(Reflect.has(cleanSession, BRAND_SYMBOL)).toBe(true);
+      expect(cleanSession[BRAND_SYMBOL]).toEqual(['Solid', 'USER_TEST_CAMEL']);
     });
-    it('🛡️ TRACK 2: should recursively step through arrays and merge collection elements symmetrically by index', () => {
-      const baseOrder = {
-        orderId: 'ORD-707',
-        items: [
-          { SKU: 'PROD-A', quantity: 1 },
-          { SKU: 'PROD-B', quantity: 5 },
-        ],
+
+    it('🛡️ TRACK 2: should perfectly preserve and merge the entire object graph when input records completely match the blueprint contract', () => {
+      const currentDatabaseState = {
+        userId: 202,
+        userName: 'xalethor_original_camel',
+        isActive: false,
       };
 
-      const patchOrder = {
-        items: [
-          { quantity: 3 },
-          { SKU: 'PROD-B-UPDATED' },
-          { SKU: 'PROD-C-NEW', quantity: 9 }, // Appends trailing elements seamlessly
-        ],
+      const incomingDeltaPatch = {
+        userName: 'XALETHOR_STABLE_CAMEL', // Overrides original string field signature
+        isActive: true, // Overrides original boolean field signature
       };
 
-      const result = xalor.merge<'STORE_ORDER'>({
-        dataOne: baseOrder,
-        dataTwo: patchOrder,
+      const cleanSession = xalor.merge<'USER_TEST_CAMEL'>({
+        dataOne: currentDatabaseState,
+        dataTwo: incomingDeltaPatch,
       });
 
-      expect(result).toMatchObject({
-        orderId: 'ORD-707',
-        items: [
-          { SKU: 'PROD-A', quantity: 3 },
-          { SKU: 'PROD-B-UPDATED', quantity: 5 },
-          { SKU: 'PROD-C-NEW', quantity: 9 },
-        ],
-      });
+      // === RUNTIME DATA ASSERTIONS ===
+      // All keys match the pre-compiled AOT specification precisely; entire payload passes safely
+      expect(cleanSession).toHaveProperty('userId');
+      expect(cleanSession).toHaveProperty('userName');
+      expect(cleanSession).toHaveProperty('isActive');
+
+      expect(cleanSession.userId).toBe(202);
+      expect(cleanSession.userName).toBe('XALETHOR_STABLE_CAMEL');
+      expect(cleanSession.isActive).toBe(true);
     });
-    it('🛡️ TRACK 3: should successfully update nested properties multiple layers deep across compound boundaries', () => {
-      const baseComplexStore = {
-        orderId: 'ORD-DEEP',
-        items: [
-          {
-            SKU: 'CHIP-V1',
-            quantity: 100,
-            logistics: {
-              warehouseCode: 'CENTRAL-01',
-              dimensions: { weight: 0.5, fragile: false },
-            },
-          },
-        ],
-      };
 
-      const patchComplexStore = {
-        items: [{ logistics: { dimensions: { fragile: true } } }],
-      };
-
-      const result = xalor.merge<'DEEPLY_NESTED_STORE'>({
-        dataOne: baseComplexStore,
-        dataTwo: patchComplexStore,
+    it('🛡️ TRACK 3: should handle empty or broken input data blocks gracefully without throwing execution errors', () => {
+      // Passing empty structures represents un-hydrated framework states or fallback network streams
+      const cleanSession = xalor.merge<'USER_TEST_CAMEL'>({
+        dataOne: {},
+        dataTwo: null as any, // Coreguards inside the setup will parse this safely down to an empty record {}
       });
 
-      expect(result).toMatchObject({
-        orderId: 'ORD-DEEP',
-        items: [
-          {
-            SKU: 'CHIP-V1',
-            quantity: 100,
-            logistics: {
-              warehouseCode: 'CENTRAL-01',
-              dimensions: { weight: 0.5, fragile: true },
-            },
-          },
-        ],
-      });
+      // === RUNTIME DATA ASSERTIONS ===
+      // Object properties index lookup remains completely flat and empty
+      expect(Object.keys(cleanSession).length).toBe(0);
+
+      // Nominals are still stamped cleanly to maintain structural continuous tracing metrics
+      expect(Reflect.has(cleanSession, BRAND_SYMBOL)).toBe(true);
+      expect(cleanSession[BRAND_SYMBOL]).toEqual(['Solid', 'USER_TEST_CAMEL']);
     });
   });
-  describe('🧩 ADVANCED MASKING & VALUE PROJECTIONS (V0 OPTION MATRIX)', () => {
-    it('🎯 TRACK 4: should merge object graphs and apply pick, omit, and map parameters simultaneously inside a single pass', () => {
-      const baselineState = {
-        id: 505,
-        username: 'SkinnerOriginal',
-        active: false,
+  describe('XALOR MERGE PICK AND OMIT', () => {
+    it('🪓 PICK TRACK: should restrict output allocation strictly to fields defined inside the pick whitelist', () => {
+      const currentDatabaseState = {
+        userId: 505,
+        userName: 'xalethor_pick_base',
+        isActive: true,
       };
-      const patchDelta = { username: 'SkinnerMorphed', active: true };
 
-      const result = xalor.merge<'USER_TEST'>({
-        dataOne: baselineState,
-        dataTwo: patchDelta,
-        pick: ['id', 'username', 'active'],
-        omit: ['active'],
-        map: {
-          id: (currentId) => currentId + 1000,
-          username: (name) => name.toUpperCase(),
+      const incomingDeltaPatch = {
+        userName: 'XALETHOR_PICK_PATCHED',
+      };
+
+      // Execute the merge payload while explicitly requesting ONLY the userName property
+      const cleanSession = xalor.merge<'USER_TEST_CAMEL'>({
+        dataOne: currentDatabaseState,
+        dataTwo: incomingDeltaPatch,
+
+        // Auto-fill works natively here! Whitelists userName exclusively
+        pick: ['userName'],
+      });
+
+      // === RUNTIME DATA ASSERTIONS ===
+      // 1. Check that your cased contract key whitelisted survived the permit gate
+      expect(cleanSession).toHaveProperty('userName');
+      expect(cleanSession.userName).toBe('XALETHOR_PICK_PATCHED'); // Absolute priority patch verified
+
+      // 2. Ensure non-whitelisted keys (even though they match the contract) are discarded cleanly
+      expect(cleanSession).not.toHaveProperty('userId');
+      expect(cleanSession).not.toHaveProperty('isActive');
+
+      // === NOMINAL BRAND SECURITY CHECKS ===
+      expect(Reflect.has(cleanSession, BRAND_SYMBOL)).toBe(true);
+      expect(cleanSession[BRAND_SYMBOL]).toEqual(['Solid', 'USER_TEST_CAMEL']);
+    });
+
+    it('🚫 OMIT TRACK: should successfully strip away blacklisted fields from the final allocated object payload', () => {
+      const currentDatabaseState = {
+        userId: 606,
+        userName: 'xalethor_omit_base',
+        isActive: false,
+      };
+
+      const incomingDeltaPatch = {
+        isActive: true,
+      };
+
+      // Execute the merge payload while explicitly blacklisting the isActive status property
+      const cleanSession = xalor.merge<'USER_TEST_CAMEL'>({
+        dataOne: currentDatabaseState,
+        dataTwo: incomingDeltaPatch,
+
+        // Auto-fill works natively here! Excludes isActive completely
+        omit: ['isActive'],
+      });
+
+      // === RUNTIME DATA ASSERTIONS ===
+      // 1. Ensure the non-blacklisted keys pass through the conveyor line seamlessly
+      expect(cleanSession).toHaveProperty('userId');
+      expect(cleanSession).toHaveProperty('userName');
+      expect(cleanSession.userId).toBe(606);
+      expect(cleanSession.userName).toBe('xalethor_omit_base');
+
+      // 2. Verify that the blacklisted key was caught and omitted from allocation passes
+      expect(cleanSession).not.toHaveProperty('isActive');
+    });
+
+    it('⚔️ CONFLICTING OVERLAP TRACK: should prioritize omit parameters over pick parameters if a structural key is supplied to both blocks', () => {
+      const currentDatabaseState = {
+        userId: 707,
+        userName: 'xalethor_clash_base',
+        isActive: true,
+      };
+
+      const cleanSession = xalor.merge<'USER_TEST_CAMEL'>({
+        dataOne: currentDatabaseState,
+        dataTwo: {},
+
+        // Intentional edge case: supplying 'userName' to BOTH whitelists and blacklists
+        pick: ['userId', 'userName'],
+        omit: ['userName'],
+      });
+
+      // === RUNTIME DATA ASSERTIONS ===
+      // 1. userId satisfies pick and passes omit evaluation safely
+      expect(cleanSession).toHaveProperty('userId');
+      expect(cleanSession.userId).toBe(707);
+
+      // 2. userName satisfies pick but fails omit blacklist evaluation; it must be dropped
+      expect(cleanSession).not.toHaveProperty('userName');
+      expect(cleanSession).not.toHaveProperty('isActive'); // Not in pick whitelist, dropped automatically
+    });
+  });
+  describe('XALOR MERGE PRUNE AND FILL', () => {
+    it('🧼 DEFAULTS STRATEGY TRACK: should prune out invalid placeholder items and dynamically heal values using true blueprint default layout primitives', () => {
+      const currentDatabaseState = {
+        userId: 808,
+        userName: 'xalethor_healed_base',
+        isActive: true,
+        userRoles: ['admin'],
+      };
+
+      const incomingDeltaPatch = {
+        // Intentionally passing corrupt runtime marker flags to trigger pruning
+        userName: 'N/A',
+        isActive: null,
+        userRoles: undefined,
+      };
+
+      const cleanSession = xalor.merge<'USER_TEST_CAMEL'>({
+        dataOne: currentDatabaseState,
+        dataTwo: incomingDeltaPatch,
+
+        // Target corrupt network and database strings/nulls for removal
+        pruneAndFill: {
+          values: [undefined, null, 'N/A'] as const,
+          strategy: 'defaults', // Delegates directly to your DEFAULT_SHAPE_MATERIALIZER!
         },
       });
 
-      expect(result).toBeDefined();
-      expect(result).toMatchObject({
-        id: 1505,
-        username: 'SKINNERMORPHED',
-      });
-      expect(Reflect.has(result, 'active')).toBe(false); // Verified omitted cleanly
-    });
-    it('🎯 TRACK 5: should preserve structural sibling field access within custom value projectors maps', () => {
-      const baselineState = { id: 711, username: 'Agent_Zero', active: true };
-      const patchDelta = { id: 999 };
+      // === RUNTIME DATA ASSERTIONS ===
+      expect(cleanSession.userId).toBe(808); // Untouched field survives normally
 
-      const result = xalor.merge<'USER_TEST'>({
-        dataOne: baselineState,
-        dataTwo: patchDelta,
+      // Check that your advanced materializers accurately restored true primitive defaults
+      expect(cleanSession.userName).toBe(''); // 'N/A' pruned -> Healed to string primitive default
+      expect(cleanSession.isActive).toBe(false); // null pruned -> Healed to boolean primitive default
+      expect(cleanSession.userRoles).toEqual([]); // undefined pruned -> Healed to array layout default []
+
+      // === NOMINAL BRAND SECURITY CHECKS ===
+      expect(Reflect.has(cleanSession, BRAND_SYMBOL)).toBe(true);
+      expect(cleanSession[BRAND_SYMBOL]).toEqual(['Solid', 'USER_TEST_CAMEL']);
+    });
+
+    it('🎲 MOCKS STRATEGY TRACK: should generate typesafe synthetic mock properties when matching a pruned placeholder', () => {
+      const currentDatabaseState = {
+        userId: 909,
+        userName: 'xalethor_mock_base',
+        isActive: false,
+      };
+
+      const incomingDeltaPatch = {
+        userName: 'PRUNE_ME', // Explicit token to trigger mock data generation
+      };
+
+      const cleanSession = xalor.merge<'USER_TEST_CAMEL'>({
+        dataOne: currentDatabaseState,
+        dataTwo: incomingDeltaPatch,
+
+        pruneAndFill: {
+          values: ['PRUNE_ME'] as const,
+          strategy: 'mocks', // Delegates directly to your MOCK_SHAPE_MATERIALIZER random value generator!
+        },
+      });
+
+      // === RUNTIME DATA ASSERTIONS ===
+      expect(cleanSession.userId).toBe(909);
+      expect(cleanSession.isActive).toBe(false);
+
+      // Verify that the string field was completely swapped with a random mock generation
+      expect(cleanSession.userName).not.toBe('PRUNE_ME');
+      expect(cleanSession.userName).not.toBe('xalethor_mock_base');
+      expect(typeof cleanSession.userName).toBe('string');
+      expect(cleanSession.userName.length).toBeGreaterThan(0); // Proves raw generator successfully synthesized string data
+    });
+
+    it('🕳️ COERCE NULLS STRATEGY TRACK: should smoothly enforce clean, unified null states when strategy is set to nulls', () => {
+      const currentDatabaseState = {
+        userId: 111,
+        userName: 'xalethor_null_base',
+        isActive: true,
+      };
+
+      const incomingDeltaPatch = {
+        userName: 'EMPTY_VAL',
+        isActive: undefined,
+      };
+
+      const cleanSession = xalor.merge<'USER_TEST_CAMEL'>({
+        dataOne: currentDatabaseState,
+        dataTwo: incomingDeltaPatch,
+
+        pruneAndFill: {
+          values: ['EMPTY_VAL', undefined] as const,
+          strategy: 'nulls', // Coerces all targeted data points straight to explicit null states
+        },
+      });
+
+      // === RUNTIME DATA ASSERTIONS ===
+      expect(cleanSession.userId).toBe(111);
+
+      // Confirm fields are forced to null cleanly without crashing your typesafe architecture
+      expect(cleanSession.userName).toBeNull();
+      expect(cleanSession.isActive).toBeNull();
+    });
+
+    it('🗑️ EXPLICIT DROP STRATEGY TRACK: should drop the key from allocation entirely when prune parameters match and strategy is drop', () => {
+      const currentDatabaseState = {
+        userId: 222,
+        userName: 'xalethor_drop_base',
+        isActive: true,
+      };
+
+      const incomingDeltaPatch = {
+        userName: 'DROP_ME_NOW',
+      };
+
+      const cleanSession = xalor.merge<'USER_TEST_CAMEL'>({
+        dataOne: currentDatabaseState,
+        dataTwo: incomingDeltaPatch,
+
+        pruneAndFill: {
+          values: ['DROP_ME_NOW'] as const,
+          strategy: 'drop', // Drops keys from existence rather than healing or coercing
+        },
+      });
+
+      // === RUNTIME DATA ASSERTIONS ===
+      expect(cleanSession).toHaveProperty('userId');
+      expect(cleanSession).toHaveProperty('isActive');
+
+      // Verify the matched pruned key is completely missing from property lookups
+      expect(cleanSession).not.toHaveProperty('userName');
+    });
+  });
+  describe('XALOR MERGE MAPPING', () => {
+    it('🎨 VALUE MAP TRACK: should successfully intercept surviving contract fields and transform values using custom callbacks', () => {
+      const currentDatabaseState = {
+        userId: 404,
+        userName: 'xalethor_mapping_base',
+        isActive: true,
+        userRoles: ['admin', 'manager'],
+      };
+
+      const incomingDeltaPatch = {
+        userName: 'XALETHOR_CONVEYOR_PASS', // absolute overwrite preference
+      };
+
+      // Execute the unified pipeline pass with an explicit map dictionary configuration
+      const cleanSession = xalor.merge<'USER_TEST_CAMEL'>({
+        dataOne: currentDatabaseState,
+        dataTwo: incomingDeltaPatch,
+
+        // 🪐 VALUE TRANSFORMATION PASS: Auto-fill triggers perfect key and value types here
         map: {
-          // Enforces strict verification. Sibling context data checked via parentGraph natively.
-          username: (name, parent) => {
-            return parent.id === 999 ? 'AGENT_UPGRADED' : name;
+          // Track A: Simple, ultra-clean single parameter modification
+          userName: (value) => value.toLowerCase(),
+
+          // Track B: Context-aware lookup reading sideways into the graph!
+          userRoles: (value, graph) => {
+            // Autocomplete works for both parameters!
+            if (graph.isActive === false) {
+              return []; // Strip roles if user account is flagged inactive
+            }
+            return value;
           },
         },
       });
 
-      expect(result).toMatchObject({
-        id: 999,
-        username: 'AGENT_UPGRADED',
-        active: true,
-      });
-    });
-  });
-  describe('🛡️ ADVANCED ADVERSARIAL BOUNDARY STRESS TESTS', () => {
-    it('🛡️ TRACK 6: should preserve native class prototypes layout contexts when patched via raw literals', () => {
-      class DatabaseUserRecord {
-        id = 808;
-        username = 'BaseClassInstance';
-        active = false;
-        logAccess(): boolean {
-          return true;
-        }
-      }
+      // === RUNTIME DATA ASSERTIONS ===
+      // 1. Ensure contract keys pass safely through your schema gates into the output container
+      expect(cleanSession).toHaveProperty('userId');
+      expect(cleanSession).toHaveProperty('userName');
+      expect(cleanSession).toHaveProperty('isActive');
+      expect(cleanSession).toHaveProperty('userRoles');
 
-      const activeInstance = new DatabaseUserRecord();
-      const rawDeltaPatch = {
-        username: 'UpgradedClassInstance',
-        active: true,
+      // 2. Verify that the custom mapper callback ran and updated the data fields precisely
+      expect(cleanSession.userId).toBe(404);
+      expect(cleanSession.userName).toBe('xalethor_conveyor_pass'); // Lowercased via map callback!
+      expect(cleanSession.isActive).toBe(true);
+      expect(cleanSession.userRoles).toEqual(['admin', 'manager']); // Active is true, so roles are preserved intact
+
+      // === NOMINAL BRAND SECURITY CHECKS ===
+      expect(Reflect.has(cleanSession, BRAND_SYMBOL)).toBe(true);
+      expect(cleanSession[BRAND_SYMBOL]).toEqual(['Solid', 'USER_TEST_CAMEL']);
+    });
+
+    it('🔍 SIDEWAYS GRAPH READING TRACK: should accurately read neighboring object values during a sideways evaluation pass', () => {
+      const currentDatabaseState = {
+        userId: 405,
+        userName: 'ACTIVE_USER',
+        isActive: false, // ⚠️ Account flagged as INACTIVE in baseline state
+        userRoles: ['engineer', 'tester'],
       };
 
-      const result = xalor.merge<'USER_TEST'>({
-        dataOne: activeInstance,
-        dataTwo: rawDeltaPatch,
+      const cleanSession = xalor.merge<'USER_TEST_CAMEL'>({
+        dataOne: currentDatabaseState,
+        dataTwo: {}, // No updates, baseline properties win deep merging
+
+        map: {
+          userRoles: (value, graph) => {
+            // Sideways verification reading: intercepts graph.isActive directly from rawMergedResult
+            if (graph.isActive === false) {
+              return []; // Force wipe roles if account is disabled
+            }
+            return value;
+          },
+        },
       });
 
-      expect(result).toMatchObject({
-        id: 808,
-        username: 'UpgradedClassInstance',
-        active: true,
-      });
-      // Verifies cross-over prototype maintenance (Commandment V)
-      expect(Object.getPrototypeOf(result)).toBe(DatabaseUserRecord.prototype);
+      // === RUNTIME DATA ASSERTIONS ===
+      expect(cleanSession.isActive).toBe(false);
+
+      // Confirm the sideways lookahead successfully evaluated the sibling property condition
+      expect(cleanSession.userRoles).toEqual([]); // Roles stripped entirely because isActive was false!
     });
 
-    it('🛡️ TRACK 7: should handle explicit null overrides as intentional states while ignoring undefined parameters', () => {
-      const activeState = {
-        id: 404,
-        username: 'PersistentUser',
-        active: true,
-      };
-      const customPatch = { username: null, active: undefined };
-
-      const result = xalor.merge<'USER_TEST'>({
-        dataOne: activeState,
-        dataTwo: customPatch,
-      });
-
-      expect(Reflect.get(result, 'username')).toBeNull();
-      expect(Reflect.get(result, 'active')).toBe(true);
-    });
-
-    it('🛡️ TRACK 8: should resolve dynamic polymorph union branch shifts seamlessly when a patch forces a type crossover', () => {
-      const currentResponseState = { status: 'success' };
-      const incomingDeltaErrorPatch = { status: 500 }; // Crossover from string literal to primitive number
-
-      const result = xalor.merge<'API_RESPONSE'>({
-        dataOne: currentResponseState,
-        dataTwo: incomingDeltaErrorPatch,
-      });
-
-      expect(result).toMatchObject({ status: 500 });
-      expect(xalor.guard<'API_RESPONSE'>(result)).toBe(true);
-    });
-
-    it('🛡️ TRACK 9: should isolate self-referencing circular dependency references safely using internal reify limits', () => {
-      const baseNode = { id: 1 };
-      const patchNode = { selfRef: baseNode };
-
-      // 1. First Pass: Verifies the engine creates a defined object structure out of cyclic references
-      const tests = xalor.merge<'CIRCULAR_DEPTH_TEST'>({
-        dataOne: { ...baseNode },
-        dataTwo: { ...patchNode },
-      });
-
-      expect(tests).toBeDefined();
-      expect(typeof tests).toBe('object');
-      expect(Reflect.get(tests, 'id')).toBe(1);
-
-      // 2. Second Pass: Verifies closures execute safely without exploding the V8 execution thread stack
-      const executeCircularMerge = () => {
-        return xalor.merge<'CIRCULAR_DEPTH_TEST'>({
-          dataOne: { ...baseNode },
-          dataTwo: { ...patchNode },
-        });
+    it('🛡️ DOUBLE-PRUNE SAFEGUARD TRACK: should safely trigger data healing if a custom mapping callback returns a corrupt placeholder', () => {
+      const currentDatabaseState = {
+        userId: 406,
+        userName: 'PRISTINE_DATA_USER',
+        isActive: true,
+        userRoles: ['guest'],
       };
 
-      // Executing a cyclic blueprint must never throw a stack depth crash
-      expect(executeCircularMerge).not.toThrow();
+      const cleanSession = xalor.merge<'USER_TEST_CAMEL'>({
+        dataOne: currentDatabaseState,
+        dataTwo: {},
 
-      const result = (() =>
-        xalor.merge<'CIRCULAR_DEPTH_TEST'>({
-          dataOne: baseNode,
-          dataTwo: patchNode,
-        }))();
-      expect(result).toBeDefined();
+        pruneAndFill: {
+          values: ['CORRUPT_NULL_MOCK', undefined, null] as const,
+          strategy: 'defaults', // Employs DEFAULT_SHAPE_MATERIALIZER
+        },
 
-      if (result !== undefined && result !== null) {
-        expect(typeof result).toBe('object');
-
-        const nestedReferenceCheck = Reflect.get(result, 'selfRef');
-
-        expect(nestedReferenceCheck).toBeDefined();
-        expect(nestedReferenceCheck).toBeInstanceOf(Object);
-
-        // 🚀 THE INTEGRITY MATCH: Confirms circular link resolution without infinite loop execution loops!
-        expect(nestedReferenceCheck).toBe(result);
-      }
-    });
-
-    it('🛡️ TRACK 10: should verify native, web platform, and binary buffer instances pass through un-corrupted', () => {
-      const baselineInstances = {
-        dateVal: new Date(0),
-        regExpVal: /(?:)/,
-        mapVal: new Map(),
-        setVal: new Set(),
-        weakMapVal: new WeakMap(),
-        weakSetVal: new WeakSet(),
-        urlVal: new URL('https://google.com'),
-        urlParamsVal: new URLSearchParams(),
-        headersVal: new Headers(),
-        requestVal: new Request('http://localhost'),
-        responseVal: new Response(),
-        blobVal: new Blob(),
-        fileVal: new File([], ''),
-        arrayBufferVal: new ArrayBuffer(0),
-        dataViewVal: new DataView(new ArrayBuffer(0)),
-        int8ArrayVal: new Int8Array(0),
-        uint8ArrayVal: new Uint8Array(0),
-        uint8ClampedArrayVal: new Uint8ClampedArray(0),
-        int16ArrayVal: new Int16Array(0),
-        uint16ArrayVal: new Uint16Array(0),
-        int32ArrayVal: new Int32Array(0),
-        uint32ArrayVal: new Uint32Array(0),
-        float32ArrayVal: new Float32Array(0),
-        float64ArrayVal: new Float64Array(0),
-        bigInt64ArrayVal: new BigInt64Array(0),
-        bigUint64ArrayVal: new BigUint64Array(0),
-        promiseVal: Promise.resolve(),
-        readableStreamVal: new ReadableStream(),
-        writableStreamVal: new WritableStream(),
-        transformStreamVal: new TransformStream(),
-      };
-
-      const customPatchInstances = {
-        dateVal: new Date(1000000),
-        urlVal: new URL('https://example.com'),
-      };
-
-      const result = xalor.merge<'ALL_PLATFORM_INSTANCES_SHAPE'>({
-        dataOne: baselineInstances,
-        dataTwo: customPatchInstances,
+        map: {
+          userRoles: (_value) => {
+            // ⚠️ BUG SIMULATION: A developer introduces custom logic that accidentally returns
+            // a forbidden corrupt value targeted by your prune and fill criteria
+            return null as any;
+          },
+        },
       });
 
-      type TActualDate = TDetermineInstance<
-        TInstanceConstructorRegistry['Date']
-      >;
-      type TActualUrl = TDetermineInstance<TInstanceConstructorRegistry['URL']>;
+      // === RUNTIME DATA ASSERTIONS ===
+      expect(cleanSession.userId).toBe(406);
+      expect(cleanSession.userName).toBe('PRISTINE_DATA_USER');
 
-      const finalDate = Reflect.get(result, 'dateVal');
-      const finalUrl = Reflect.get(result, 'urlVal');
-
-      // Enforce strict runtime guards to refine types natively (Commandment IX)
-      if (finalDate instanceof Date) {
-        // Enforce compilation verification checks over the strongly-typed instance pointer
-        const verifiedDate: TActualDate = finalDate;
-        expect(verifiedDate.getTime()).toBe(1000000);
-      } else {
-        fail(
-          'Expected dateVal to resolve to an active Date instance layout container.',
-        );
-      }
-
-      if (finalUrl instanceof URL) {
-        const verifiedUrl: TActualUrl = finalUrl;
-        // 🧠 FIXED SPECIFICATION MATCH: Native web URL instances automatically
-        // append a trailing slash to host root paths when building their href strings!
-        expect(verifiedUrl.href).toBe('https://example.com/');
-      } else {
-        fail(
-          'Expected urlVal to resolve to an active URL instance layout container.',
-        );
-      }
-
-      expect(Reflect.get(result, 'regExpVal')).toBeInstanceOf(RegExp);
-      expect(Reflect.get(result, 'uint8ArrayVal')).toBeInstanceOf(Uint8Array);
-    });
-    it('🛡️ TRACK 11: should explicitly protect against prototype pollution injections and drop rogue __proto__ overrides', () => {
-      const baselineState = { id: 101, username: 'safe_user' };
-
-      // Malicious payload attempting to poison the global Object runtime wrapper
-      const maliciousPayload = JSON.parse(
-        '{"username": "hacker", "__proto__": {"polluted": "EXPLOIT_SUCCESS"}}',
-      );
-
-      const result = xalor.merge<'USER_TEST'>({
-        dataOne: baselineState,
-        dataTwo: maliciousPayload,
-      });
-
-      expect(result).toBeDefined();
-      expect(Reflect.get(result, 'username')).toBe('hacker');
-
-      // 🚀 GLOBAL PROTECTION SECURITY ASSURANCE: Complete prototype pollution protection verified
-      expect((Object.prototype as any).polluted).toBeUndefined();
-
-      // 🧠 FIXED INVARIANT CHECK: Reflect.has checks inherited prototype linkages, which always returns true.
-      // Object.hasOwn checks for explicit malicious literal key replication on the output shell!
-      expect(Object.hasOwn(result, '__proto__')).toBe(false);
-      expect(Object.hasOwn(result, 'constructor')).toBe(false);
-    });
-
-    it('🛡️ TRACK 12: should successfully deep-merge properties onto recursively frozen or sealed object nodes without runtime crashes', () => {
-      const baselineState = Object.freeze({
-        id: 202,
-        username: 'frozen_baseline',
-        active: false,
-      });
-
-      const incomingPatch = { username: 'unfrozen_patch', active: true };
-
-      const executeFrozenMerge = () => {
-        return xalor.merge<'USER_TEST'>({
-          dataOne: baselineState,
-          dataTwo: incomingPatch,
-        });
-      };
-
-      // Merging onto explicitly locked runtime assets must never throw a V8 extension mutation error
-      expect(executeFrozenMerge).not.toThrow();
-
-      const result = (() =>
-        xalor.merge<'USER_TEST'>({
-          dataOne: baselineState,
-          dataTwo: incomingPatch,
-        }))();
-
-      expect(result).toMatchObject({
-        id: 202,
-        username: 'unfrozen_patch',
-        active: true,
-      });
-      expect(Object.isFrozen(result)).toBe(false); // The morphed result container remains mutable for application use
-    });
-
-    it('🛡️ TRACK 13: should handle asymmetric type crossover collisions when a primitive scalar encounters a structural sub-object patch', () => {
-      // Seed a mixed logical taxonomic structural blueprint definition
-      seedTestVault(
-        'OPTIONAL_FIELDS_TEST',
-        TEST_SHAPE_REGISTRY.OPTIONAL_FIELDS_TEST,
-      );
-
-      const baselineState = { mandatoryId: 303, optionalMeta: 'scalar_string' };
-      const structuralCrossoverPatch = { optionalMeta: { nestedFlag: true } }; // Shifting from primitive string to deep object tree
-
-      const result = xalor.merge<'OPTIONAL_FIELDS_TEST'>({
-        dataOne: baselineState,
-        dataTwo: structuralCrossoverPatch,
-      });
-
-      expect(result).toBeDefined();
-      expect(Reflect.get(result, 'mandatoryId')).toBe(303);
-
-      // The original string value must be completely overwritten by the incoming deep object structure
-      expect(Reflect.get(result, 'optionalMeta')).toMatchObject({
-        nestedFlag: true,
-      });
+      // Verify that your double-prune safeguard caught the corrupt return value from the callback
+      // and successfully forced it down into your native fallback defaults materializer!
+      expect(cleanSession.userRoles).toEqual([]); // null caught, healed back safely to default array []!
     });
   });
 });

@@ -1116,12 +1116,15 @@ declare global {
      * @api transformation
      * @mode merge
      * @description
+     * 🪐 THE UNIFIED MERGE TRANSFORMER ENGINE (GATEWAY API)
+     *
      * Public Category 3 Ingress Gate executing high-velocity, single-pass deep object mutations.
      * Resolves structural modifications by unrolling baseline graphs (`dataOne`), recursively
-     * overlaying incoming delta patches (`dataTwo`), and applying key selection modifiers natively.
+     * overlaying incoming delta patches (`dataTwo`), healing data gaps, mapping values, and restyling
+     * casings natively in a single continuous linear pass over properties.
      *
      * Enforces a strict, fail-fast boundary circuit breaker that intercepts layout collapse,
-     * hydrates runtime cryptographic tokens onto conforming structures, and drops type anomalies.
+     * hydrates nominal cryptographic tokens onto conforming structures, and drops type anomalies.
      *
      * DATA HIERARCHY PREFERENCE MATRIX:
      * - Object Two (`ctx.dataTwo`) acts as an absolute override patch layer over Object One (`ctx.dataOne`).
@@ -1130,38 +1133,49 @@ declare global {
      * - Arrays: Combines collection items item-by-item using strict index-aligned layout positioning.
      * - Null States: Explicit null declarations inside the patch act as deliberate fields nullification payloads.
      *
-     * GRAPH MANIPULATION ORDER OF OPERATIONS:
-     * - ➊ Ingress Inversion: Combines both graph layers safely via circular-safe utilities.
-     * - ➋ Selection Masks (`pick`): Retains only explicit white-listed keys at depth layer zero.
-     * - ➌ Exclusion Masks (`omit`): Prunes out black-listed property fields from the remaining keys.
-     * - ➍ Value Projectors (`map`): Executes functional mapping callbacks over fully-sanitized fields,
-     *     supplying the completed, masked asset object container context flatly as a parent reference.
+     * CONVEYOR BELT SINGLE-PASS ORDER OF OPERATIONS:
+     * - ➊ Look-Ahead Projection: Computes cosmetic key string names (`casing`) in flight before allocations.
+     * - ➋ Blueprint Anchored Guardrail: Implicitly blocks rogue database keys if they fail to exist on the AOT contract.
+     * - ➌ Selection Masks (`pick`): Retains only explicit whitelisted keys at depth layer zero.
+     * - ➍ Exclusion Masks (`omit`): Prunes out blacklisted property fields from the surviving contract set.
+     * - ➎ Absence-Only Healing (`pruneAndFill`): Triggers fallback `DEFAULT` or `MOCK` materializer generators
+     *      strictly if a field is explicitly intentfully undefined in the patch or absent across both objects.
+     * - ➏ Value Projectors (`map`): Executes functional mapping callbacks over fully-sanitized fields,
+     *      supplying BOTH the individual field value and the complete merged parent graph context natively for sideways lookups.
+     * - ➐ Double-Prune Safeguard: Instantly filters custom map outcomes through your materializers if callback code leaks corrupt inputs.
      *
      * DESIGN INVARIANTS:
-     * - Satisfies COMMANDMENT I & III: Resolves structural contracts exclusively via the pre-compiled Registry.
-     * - Satisfies COMMANDMENT IV: Performs a single, isolated semantic operation (Transformation / Merge).
-     * - Satisfies COMMANDMENT VIII: Zero runtime strategy allocations; tree-shakes fully from client profiles.
-     * - Satisfies COMMANDMENT IX: Zero 'any' variables, zero manual type assertions, zero type bleeding.
+     * - Satisfies COMMANDMENT I & III: Resolves structural contracts exclusively via the precompiled Global Registry.
+     * - Satisfies COMMANDMENT VI: Return type locks rigidly to the registry schema, providing predictable, un-collapsed DX tooltips.
+     * - Satisfies COMMANDMENT VII: Reuses native Materializer engines natively without creating parallel data-generation systems.
+     * - Satisfies COMMANDMENT VIII: Zero memory allocation waste; runs in linear constant time O(1) avoiding destructive Reflect deletions.
+     * - Satisfies COMMANDMENT IX: Absolute zero 'any' variables, zero manual type assertions (`as`), and zero type bleeding.
      *
      * @example
      * ```ts
-     * const updatedProfile = transformXalorMerge('USER_TEST', {
-     *   dataOne: currentDatabaseUserRecord,
-     *   dataTwo: { username: 'neo_patched', active: true },
-     *   pick: ['id', 'username', 'active'],
-     *   omit: ['active'],
-     *   map: { username: (name) => name.toUpperCase() }
+     * const cleanSession = xalor.merge<'USER_TEST_CAMEL'>({
+     *   dataOne: currentDatabaseState,
+     *   dataTwo: { username: 'XALETHOR_PATCHED', active: undefined },
+     *   pick: ['userName', 'active'],
+     *   pruneAndFill: {
+     *     values: [undefined, null] as const,
+     *     strategy: 'defaults' // Dynamic fallback healing to boolean false
+     *   },
+     *   map: {
+     *     userName: (value) => value.toLowerCase(),
+     *     userRoles: (value, graph) => graph.isActive ? value : [] // Contextual sideways lookup
+     *   },
+     *   casing: 'camel'
      * });
      *
-     * console.log(updatedProfile.username); // "NEO_PATCHED"
-     * console.log(Reflect.has(updatedProfile, 'active')); // false (Pruned out cleanly!)
+     * // Premium DX Hover Expansion:
+     * // cleanSession: TSolidBranded<"USER_TEST_CAMEL", { readonly userId: number; readonly userName: string; ... }>
      * ```
      *
-     * !! NOTE: Object Two (`ctx.dataTwo`) takes absolute overwrite preference over Object One.
-     *
-     * @param {keyof ISolidRegistry} injectedKey - The authoritative pre-compiled registry target key token.
-     * @param {IXalorMergeContext<ISolidRegistry[K]>} ctx - Structured parameters containing data nodes and execution filters.
-     * @returns {TSolidBranded<K, ISolidRegistry[K]>} An ironclad, nominally-branded, mutated data asset fulfilling the type contract.
+     * @template K - Authoritative registry target key bound strictly to your global `TActiveRegistryKeys`.
+     * @param {TXalorMergeContexts<TResolveRegistryStructure<K>>} ctx - Config parameters containing data nodes and functional maps.
+     * @param {K} [injectedKey] - Optional compilation runtime target key identifier injected by the AOT transformer plugin.
+     * @returns {TSolidBranded<K, TResolveRegistryStructure<K>>} An ironclad, nominally-branded data asset locked strictly to the contract.
      */
     static transformXalorMerge(): void;
 

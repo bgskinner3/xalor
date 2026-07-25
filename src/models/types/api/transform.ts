@@ -1,35 +1,76 @@
 import type { TSolidShape } from '../../../../shared';
+import type { TCamelCase, TSnakeCase, TKebabCase } from '../../../../shared';
 // ====================================================================
 // ====================================================================
 // MERGE TYPES
 // ====================================================================
 // ====================================================================
-/**
- * TXalorMergeContext
- *
- *
- * @key dataOne - The baseline target object graph retrieved from memory, state, or database storage
- * @key dataTwo - The incoming secondary partial delta payload patch containing property overrides
- * @key pick - Optional: Explicit root-field extraction retention list (Zod-like pick)
- * @key omit - Optional: Root property exclusion pruning list (Zod-like omit)
- * @key map -
- *
- */
-export type TXalorMergeContext<T> = {
+
+// ============================================================================
+// I. COSMETIC KEY CASING BRIDGE
+// ============================================================================
+/* prettier-ignore */
+export type TApplyKeyCasing<
+  K extends string, 
+  Style extends 'camel' | 'snake' | 'kebab' | undefined
+> = 
+  Style extends 'camel' ? TCamelCase<K> :
+  Style extends 'snake' ? TSnakeCase<K> :
+  Style extends 'kebab' ? TKebabCase<K> : K;
+// ============================================================================
+// II. STRUCTURAL PIPELINE LAYOUT CALCULATORS
+// ============================================================================
+
+export type TApplyFinalCasing<Mapped, CasingStyle> = {
+  [
+    K in keyof Mapped as K extends string
+      ? TApplyKeyCasing<
+          K,
+          CasingStyle & ('camel' | 'snake' | 'kebab' | undefined)
+        >
+      : K
+  ]: Mapped[K];
+};
+// ============================================================================
+// III. THE RUNTIME CONFIGURATION CONTEXT ARCHITECTURE
+// ============================================================================
+
+export interface TPruneAndFillOptions {
+  readonly values: readonly unknown[];
+  readonly strategy: 'defaults' | 'mocks' | 'nulls' | 'drop';
+}
+
+export type TXalorMergeContexts<
+  TargetType,
+  PickKeys extends readonly (keyof TargetType)[] =
+    readonly (keyof TargetType)[],
+  OmitKeys extends readonly (keyof TargetType)[] =
+    readonly (keyof TargetType)[],
+> = {
   readonly dataOne: unknown;
   readonly dataTwo: unknown;
-  readonly pick?: Array<keyof T | string>;
-  readonly omit?: Array<keyof T | string>;
+
+  readonly pick?: readonly [...PickKeys];
+  readonly omit?: readonly [...OmitKeys];
+
+  readonly pruneAndFill?: TPruneAndFillOptions;
+  readonly casing?: 'camel' | 'snake' | 'kebab';
+
   readonly map?: Partial<{
-    [K in keyof T]: (value: T[K], parentGraph: Readonly<Partial<T>>) => T[K];
+    [K in keyof TargetType]: (
+      value: TargetType[K],
+      parentGraph: Readonly<TargetType>,
+    ) => unknown;
   }>;
 };
 
-// ====================================================================
-// ====================================================================
-// CLONE TYPES
-// ====================================================================
-// ====================================================================
+export type TRecurseMaterializer = (s: TSolidShape, d: number) => unknown;
+
+// !!! ====================================================================
+// !!!====================================================================
+// !!! CLONE TYPES
+// !!!====================================================================
+// !!! ====================================================================
 /**
  * TSHAPE_CLONE_MAPPER_MAP
  *

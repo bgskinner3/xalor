@@ -14,11 +14,12 @@ import { xalethorVaultDiagnostics } from './vault-diagnostics';
 import type {
   IXalorDriftContext,
   TApplyNominalBrand,
-  TXalorMergeContext,
+  TXalorMergeContexts,
   TResolveDriftReturnConstraint,
   TReportErrorParams,
   TXalorAuditReport,
   TXalorEvaluationResult,
+  // TCalculateFinalMergeOutput,
 } from '../models/types';
 import { isRecord } from '../../shared/utils';
 export class XalethorService {
@@ -135,11 +136,14 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   // ============================================================
-  public static executeMergeSanitizer<K extends keyof ISolidRegistry>(
-    ctx: TXalorMergeContext<ISolidRegistry[K]>,
-  ): unknown {
+
+  public static executeMergeSanitizer<K extends TActiveRegistryKeys>(
+    ctx: TXalorMergeContexts<TResolveRegistryStructure<K>>,
+    injectedKey: K,
+  ): Record<string, unknown> {
+    const blueprintShape = XalethorService.blueprintVault(injectedKey);
     /* prettier-ignore */
-    return xalethorVaultTransform.transformMerge<K>(ctx);
+    return xalethorVaultTransform.transformMerge<K, typeof ctx>(ctx, blueprintShape);
   }
   public static produceClone<K extends TActiveRegistryKeys>(
     data: unknown,

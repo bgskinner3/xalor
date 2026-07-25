@@ -7,92 +7,269 @@ import {
   isObjectSimple,
   isNumber,
   isInstanceOf,
+  isKeyInObject,
   isFunction,
+  // isFunction,
 } from '../../shared/utils/guards';
 import { isArrayShape, isShapeOfKind } from '../../shared';
+import {
+  toCamelCase,
+  toSnakeCase,
+  toKebabCase,
+  ObjectUtils,
+} from '../../shared/utils';
 import type {
-  TXalorMergeContext,
+  TXalorMergeContexts,
   TCloneRecurseCallback,
+  TRecurseMaterializer,
+  // TShapeDefaultMaterializeMap,
+  // TShapeMockMapperMap,
+  // TCalculateFinalMergeOutput,
 } from '../models/types';
 import type { TSolidShape } from '../../shared';
 import { xalethorVaultKeeper } from './vault-keeper';
 import { xalethorVaultDiagnostics } from './vault-diagnostics';
-import { CLONE_SHAPE_SANITIZER_MAPPER } from '../mappers';
+import {
+  CLONE_SHAPE_SANITIZER_MAPPER,
+  DEFAULT_SHAPE_MATERIALIZER,
+  MOCK_SHAPE_MATERIALIZER,
+} from '../mappers';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared';
 
 class XalethorVaultTransform {
+  private PRUNE_DROP_SIGNAL = Symbol('__pruneDropSignal');
   // =================================================
   // =================================================
   // MERGE METHODS
   // =================================================
   // =================================================
-  private executeRootPick(
-    targetObj: Record<string | symbol, unknown>,
-    allowedKeys: Array<string | symbol | number>,
-  ): void {
-    const pickSet = new Set<string>();
+  /**
+   * PURE STRUCTURAL KEY CHECKER
+   * Evaluates whether a raw key is structurally permitted to survive the
+   * selection passes based on the configured pick and omit boundaries.
+   *
+   * CRITICAL: Zero allocations, zero mutations, zero hidden-class V8 degradation.
+   */
+  private isKeyPermitted(
+    rawKey: string,
+    pickSet: Set<string> | null,
+    omitSet: Set<string> | null,
+  ): boolean {
+    // 1. If pick array is present, key MUST exist inside the whitelist
+    if (pickSet && !pickSet.has(rawKey)) return false;
 
-    for (const key of allowedKeys) {
-      pickSet.add(String(key));
-    }
-
-    for (const key in targetObj) {
-      if (Reflect.has(targetObj, key) && !pickSet.has(key)) {
-        Reflect.deleteProperty(targetObj, key);
-      }
-    }
+    if (omitSet && omitSet.has(rawKey)) return false;
+    // 3. Key passed all layout validation gates safely
+    return true;
   }
-
-  private executeRootOmit(
-    targetObj: Record<string | symbol, unknown>,
-    bannedKeys: Array<string | symbol | number>,
-  ): void {
-    for (const key of bannedKeys) {
-      const keyStr = String(key);
-      if (Reflect.has(targetObj, keyStr)) {
-        Reflect.deleteProperty(targetObj, keyStr);
-      }
-    }
-  }
-  private executeRootMap(
-    targetObj: Record<string | symbol, unknown>,
-    mapRegistry: Record<string, unknown>,
-  ): void {
-    for (const key in mapRegistry) {
-      if (Reflect.has(mapRegistry, key)) {
-        const customTransformer = mapRegistry[key];
-
-        if (isFunction(customTransformer) && Reflect.has(targetObj, key)) {
-          /* prettier-ignore */ const executableProjector = customTransformer as (...args: unknown[]) => unknown;
-
-          /* prettier-ignore */ targetObj[key] = executableProjector(targetObj[key], targetObj);
-        }
-      }
-    }
-  }
-
-  public transformMerge<K extends keyof ISolidRegistry>(
-    ctx: TXalorMergeContext<ISolidRegistry[K]>,
+  /**
+   * ENCAPSULATED DATA-HEALING PASS
+   * Evaluates the prune strategy linearly and applies your advanced materializers
+   * cleanly without duplicated code blocks or nested if-else statements.
+   */
+  private applyPruneStrategy(
+    strategy: 'defaults' | 'mocks' | 'nulls' | 'drop' | undefined,
+    targetShapeNode: TSolidShape | undefined,
+    recurseDefault: TRecurseMaterializer,
+    recurseMock: TRecurseMaterializer,
   ): unknown {
-    // I. Refine loose incoming variables into mutable record tracking contexts safely
+    if (strategy === 'defaults' || strategy === 'mocks') {
+      return this.executePruneHealing(
+        strategy,
+        targetShapeNode,
+        recurseDefault,
+        recurseMock,
+      );
+    }
+    return strategy === 'nulls' ? null : this.PRUNE_DROP_SIGNAL;
+  }
+  /**
+   * COSMETIC KEY CASING MANAGER
+   * Restyles a surviving key string layout into its final configured aesthetic format.
+   * Maps natively to your TCamelCase, TSnakeCase, and TKebabCase definitions.
+   *
+   * CRITICAL: Completely zero-allocation fallback behavior if no style is matched.
+   */
+  private applyKeyCasing(
+    rawKey: string,
+    casingStyle?: 'camel' | 'snake' | 'kebab',
+  ): string {
+    if (casingStyle === 'camel') return toCamelCase(rawKey);
+    if (casingStyle === 'snake') return toSnakeCase(rawKey);
+    if (casingStyle === 'kebab') return toKebabCase(rawKey);
 
-    /* prettier-ignore */ const baseRecord: Record<string, unknown> = isRecord(ctx.dataOne) ? ctx.dataOne : {};
-    /* prettier-ignore */ const patchRecord: Record<string, unknown> = isRecord(ctx.dataTwo) ? ctx.dataTwo : {};
+    return rawKey;
+  }
+  private executeDefaultNode<K extends TSolidShape['kind']>(
+    kind: K,
+    shape: Extract<TSolidShape, { readonly kind: K }>,
+    depth: number,
+    recurse: TRecurseMaterializer,
+  ): unknown {
+    const runner = DEFAULT_SHAPE_MATERIALIZER[kind];
+    return runner(shape, depth, recurse);
+  }
+  private executeMockNode<K extends TSolidShape['kind']>(
+    kind: K,
+    shape: Extract<TSolidShape, { readonly kind: K }>,
+    depth: number,
+    recurse: TRecurseMaterializer,
+  ): unknown {
+    const runner = MOCK_SHAPE_MATERIALIZER[kind];
+    return runner(shape, depth, recurse);
+  }
+  /**
+   * IN-FLIGHT RECURSIVE DATA HEALER
+   *
+   * Leverages your native framework materializers to synthesize structurally perfect
+   * default primitives or random mocks whenever a field value matches prune constraints.
+   */
+  private executePruneHealing(
+    strategy: 'defaults' | 'mocks' | 'nulls',
+    propShape: TSolidShape | undefined,
+    recurseDefault: TRecurseMaterializer,
+    recurseMock: TRecurseMaterializer,
+  ): unknown {
+    if (strategy === 'nulls') {
+      return null;
+    }
+    if (!propShape) return undefined;
 
+    /* prettier-ignore */
+    if (strategy === 'defaults' && Reflect.has(DEFAULT_SHAPE_MATERIALIZER, propShape.kind)) {
+    return this.executeDefaultNode(propShape.kind, propShape, 0, recurseDefault);
+    }
+    /* prettier-ignore */
+    if (strategy === 'mocks' && Reflect.has(MOCK_SHAPE_MATERIALIZER, propShape.kind)) {
+      return this.executeMockNode(propShape.kind, propShape, 0, recurseMock);
+    }
+
+    return undefined;
+  }
+  public transformMerge<
+    K extends TActiveRegistryKeys,
+    const O extends TXalorMergeContexts<
+      TResolveRegistryStructure<K>,
+      readonly (keyof TResolveRegistryStructure<K>)[],
+      readonly (keyof TResolveRegistryStructure<K>)[]
+    >,
+  >(ctx: O, blueprintShape?: Record<string, unknown>): Record<string, unknown> {
+    if (!isShapeOfKind('object')(blueprintShape)) return {};
+
+    const blueprintShapeProperties = blueprintShape.properties;
+
+    // ============================================================================
+    // I. Parse initial objects safely using unknown boundaries rather than assertions
+    // ============================================================================
+    /* prettier-ignore */
+    const baseRecord = isRecord(ctx.dataOne) ? ctx.dataOne : {};
+    /* prettier-ignore */
+    const patchRecord = isRecord(ctx.dataTwo) ? ctx.dataTwo : {};
+
+    // ============================================================================
+    // II. O(1) SETS
+    // ============================================================================
+    /* prettier-ignore */
+    const pickSet = ctx.pick ? new Set<string>([...ctx.pick].map(String)) : null;
+    /* prettier-ignore */
+    const omitSet = ctx.omit ? new Set<string>([...ctx.omit].map(String)) : null;
+    /* prettier-ignore */
+    const pruneSet = ctx.pruneAndFill?.values ? new Set<unknown>([...ctx.pruneAndFill.values]) : null;
+
+    const mapRegistry: Record<string, unknown> = ctx.map || {};
+
+    /* prettier-ignore */
     const rawMergedResult: unknown = mergeDeep(baseRecord, patchRecord);
 
-    if (isRecord(rawMergedResult)) {
-      const resultPayload: Record<string | symbol, unknown> = rawMergedResult;
+    const pristineOutput: Record<string, unknown> = {};
 
-      /* prettier-ignore */ if (ctx.pick) this.executeRootPick(resultPayload, ctx.pick);
+    if (!isRecord(rawMergedResult)) return pristineOutput;
 
-      /* prettier-ignore */ if (ctx.omit) this.executeRootOmit(resultPayload, ctx.omit);
+    // ============================================================================
+    // RECURSE DEFAULT OR MOCK FUNCTIONS
+    // ============================================================================
+    const recurseDefault: TRecurseMaterializer = (s, d) => {
+      return this.executeDefaultNode(s.kind, s, d, recurseDefault);
+    };
 
-      /* prettier-ignore */ if (ctx.map) this.executeRootMap(resultPayload, ctx.map as Record<string, unknown>);
+    const recurseMock: TRecurseMaterializer = (s, d) => {
+      return this.executeMockNode(s.kind, s, d, recurseMock);
+    };
 
-      return resultPayload;
+    // IV. SINGLE-PASS ASSEMBLY LOOP (Commandment VIII & IX Compliance)
+    const objectKeys: string[] = ObjectUtils.keys(rawMergedResult);
+    for (let i = 0; i < objectKeys.length; i++) {
+      const rawKey = objectKeys[i];
+      if (!rawKey) continue;
+      const evaluatedBlueprintKey = this.applyKeyCasing(rawKey, ctx.casing);
+
+      // 1. SECURED CONTRACT GUARDRAIL: If the user omits a custom pick array,
+      // we automatically enforce absolute AOT registry contract protection.
+      if (!pickSet) {
+        /* prettier-ignore */
+        if (!blueprintShapeProperties || !Reflect.has(blueprintShapeProperties, evaluatedBlueprintKey)) {
+          continue;
+        }
+      }
+
+      /* prettier-ignore */
+      if (!this.isKeyPermitted(evaluatedBlueprintKey, pickSet, omitSet)) continue;
+
+      let targetValue: unknown = rawMergedResult[rawKey];
+
+      const explicitlyUndefinedInPatch =
+        Reflect.has(patchRecord, rawKey) && patchRecord[rawKey] === undefined;
+      const completelyMissingInBoth =
+        !Reflect.has(baseRecord, rawKey) && !Reflect.has(patchRecord, rawKey);
+
+      if (explicitlyUndefinedInPatch || completelyMissingInBoth) {
+        targetValue = undefined;
+      }
+
+      const propertyDescriptor = blueprintShapeProperties
+        ? blueprintShapeProperties[evaluatedBlueprintKey]
+        : undefined;
+      /* prettier-ignore */
+      const targetShapeNode: TSolidShape | undefined = isKeyInObject('shape')(propertyDescriptor) ? propertyDescriptor.shape : undefined;
+
+      // 3. STEP 4: Execute pruneAndFill Data Healing Pass
+      if (pruneSet && pruneSet.has(targetValue)) {
+        const strategy = ctx.pruneAndFill?.strategy;
+        const healedValue = this.applyPruneStrategy(
+          strategy,
+          targetShapeNode,
+          recurseDefault,
+          recurseMock,
+        );
+
+        if (healedValue === this.PRUNE_DROP_SIGNAL) {
+          continue;
+        }
+        targetValue = healedValue;
+      }
+
+      if (ctx.map && Reflect.has(ctx.map, evaluatedBlueprintKey)) {
+        const customTransformer: unknown = mapRegistry[evaluatedBlueprintKey];
+        if (isFunction(customTransformer)) {
+          targetValue = customTransformer(targetValue, rawMergedResult);
+
+          if (pruneSet && pruneSet.has(targetValue)) {
+            const strategy = ctx.pruneAndFill?.strategy;
+            /* prettier-ignore */
+            const healedValue = this.applyPruneStrategy(strategy, targetShapeNode, recurseDefault, recurseMock);
+
+            if (healedValue === this.PRUNE_DROP_SIGNAL) {
+              continue;
+            }
+            targetValue = healedValue;
+          }
+        }
+      }
+
+      pristineOutput[evaluatedBlueprintKey] = targetValue;
     }
-    return rawMergedResult;
+
+    return pristineOutput;
   }
 
   // =================================================

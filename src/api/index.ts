@@ -4,7 +4,6 @@ import { isRegistryKey } from '../../shared';
 import type {
   IXalorDriftContext,
   TApplyNominalBrand,
-  TXalorMergeContext,
   TResolveDriftReturnConstraint,
 } from '../models/types';
 import { registerXalor } from './register';
@@ -92,12 +91,7 @@ class XalorCore {
   // ========================================================================
   // ========================================================================
   /** @Api transform  @mode merge */
-  public merge<K extends keyof ISolidRegistry>(
-    ctx: TXalorMergeContext<ISolidRegistry[K]>,
-    _compiledKeyReference?: K,
-  ): TSolidBranded<K, ISolidRegistry[K]> {
-    return transformXalorMerge<K>(ctx, _compiledKeyReference);
-  }
+  public merge = transformXalorMerge;
   /** @Api transform  @mode clone */
   public clone = generateXalorClone;
 
