@@ -34,6 +34,9 @@ class XalethorVaultKeeper {
   public get vault(): TSolidVaultMap {
     return ensureGlobalVault();
   }
+  public get globalBlueprintList() {
+    return this.vault.blueprints;
+  }
   /**
    * Replaces 'Registry.registerShape'. ****
    */
@@ -97,21 +100,28 @@ class XalethorVaultKeeper {
    * A polymorphic gateway to the Triple-KV Vault.
    * It maps the variant request to the specific internal Map.
    */
-  /* prettier-ignore */ public  peek( variant: 'blueprint', key: string): TSolidShape | undefined;
+
   /* prettier-ignore */ public  peek( variant: 'driftTracking', key: string): TVaultDriftEntry | undefined;
   /* prettier-ignore */ public  peek( variant: 'registry', key: string,): TVaultRegistryEntry | undefined;
   /* prettier-ignore */ public  peek( variant: 'manifest', key: string,): TVaultManifestEntry | undefined;
+  /* prettier-ignore */ public  peek( variant: 'blueprint', key: string): TSolidShape | undefined;
+  /* prettier-ignore */ public  peek( variant: 'referenceKey', key: string): string | undefined;
   /* prettier-ignore */
   public peek(
-    variant: 'blueprint' | 'manifest' | 'registry' | 'driftTracking',
+    variant: 'blueprint' | 'manifest' | 'registry' | 'driftTracking' | 'referenceKey',
     key: string,
-  ): TSolidShape | TVaultManifestEntry | TVaultRegistryEntry | TVaultDriftEntry | undefined {
+  ): TSolidShape | TVaultManifestEntry | TVaultRegistryEntry | TVaultDriftEntry | string | undefined {
+    const injectedKey = this.vault.references.get(key);
+    if (variant === 'referenceKey') return injectedKey
+    if ( variant === 'blueprint') {
+    if (!injectedKey) return undefined;
+    if (variant === 'blueprint') return this.vault.blueprints.get(injectedKey);
+    }
+
     if (variant === 'driftTracking') return this.vault.driftTracking.get(key);
     if (variant === 'manifest') return this.vault.manifest?.get(key);
     if (variant === 'registry') return this.vault.registry?.get(key);
-    const injectedKey = this.vault.references.get(key);
-    if (!injectedKey) return undefined;
-    if (variant === 'blueprint') return this.vault.blueprints.get(injectedKey);
+
     return undefined;
   }
 }

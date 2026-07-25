@@ -1194,43 +1194,84 @@ declare global {
      * @description
      * Public Category 5 Ingress Gate executing high-velocity, single-pass backward-compatible type migrations.
      * Resolves structural version desynchronization across distributed networks by analyzing raw, unverified
-     * payload data formats, identifying matching timeline snapshots, and upcasting them to active contracts.
+     * payload data formats, identifying matching timeline snapshots, and upcasting them to active production contracts.
      *
-     * Enforces a strict multi-lane fallback circuit breaker that isolates out-of-sync schemas,
-     * hydrates runtime cryptographic tokens onto conforming structures, and drops type anomalies.
+     * Enforces a Consolidated Evolutionary Pipeline Matrix that routes data through a unified execution lane,
+     * automatically hydrates modern collection structures, and applies a zero-allocation egress pruner.
      *
-     * CONTROL STREAM ROUTING PATHWAY MATRIX:
-     * - Lane 1: Active Generation Pass (Hot Path) — Evaluates incoming assets against today's released schema contract.
-     *           If structural alignment matches, the pipeline brands the payload and dispatches it immediately.
-     * - Lane 2: Ancestral Migration Pass (Upcast Pass) — Intercepts payloads failing today's schema but matching
-     *           yesterday's baseline blueprint format. Fires user transformation closures to evolve the fields on the fly.
-     * - Lane 3: Total Circuit Breaker (Recovery Lane) — Activated under absolute fallback conditions if a data asset
-     *           violates both contemporary and historical blueprint signatures, routing control cleanly to recovery streams.
+     * THE CHAINED EVOLUTIONARY PIPELINE PATHWAY MATRIX:
+     * - Phase 1: Ancestral Bridge Pass ('ancestor') — Intercepts payloads failing today's schema but matching
+     *   yesterday's baseline blueprint format. Fires historical closures to mutate fields inside yesterday's strict types.
+     * - Phase 2: Active Release Pass ('current') — A sequential lane handshake that receives either native modern data
+     *   OR a freshly patched and inflated container. Evaluates the hybrid intersection layout to perform final verification.
+     * - Phase 3: Surgical Outlier Pruner (prune) — An unconditional, zero-allocation register loop that copies recognized
+     *   properties onto a fresh literal frame, automatically dropping any unmapped closure noise or lingering keys.
+     * - Phase 4: Circuit Breaker Fallback (default) — Activated under absolute anomaly conditions if a data asset
+     *   violates both contemporary and historical signatures, passing control to an optional recovery handler.
      *
      * GRAPH MANIPULATION ORDER OF OPERATIONS:
-     * - ➊ Perimeter Verification: Confirms raw incoming parameters conform to valid object reference profiles.
-     * - ➋ Hot Path Dispatch: Evaluates the asset against `currentKey` to discharge modern traffic under peak O(1) velocity.
-     * - ➌ Schema Lineage Lock: Validates historical contract registry alignment to block unmapped cross-collisions.
-     * - ➍ In-Memory Upcasting: Hands yesterday's data context into `v1_ancestor` to smoothly populate required modern fields.
-     * - ➎ In-Place Sanitation (`prune`): Shears obsolete, lingering legacy properties directly from RAM in-place.
-     * - ➏ Modern Hardening (`strict`): Runs direct structural keys length sizing validations over the fresh, upcasted frame.
+     * - ➊ Inbound Perimeter Guard: Runs a zero-allocation barrier check to verify payload records and token alignment.
+     * - ➋ Inline Type Guard Narrowing: Narrow types using `isRecord(payload)` to satisfy the compiler point-free.
+     * - ➌ Hybrid Matrix Synthesis: Compiles a single, unrolled cross-era blueprint snapshot exactly once per transaction.
+     * - ➍ Ancestral Bridge Pass: Routes legacy inputs through `v1_ancestor` to safely execute era-isolated modifications.
+     * - ➎ Non-Destructive Delta Patching: Merges yesterday's translated data onto the frame using zero-allocation loops.
+     * - ➏ Automated Collection Inflation: The framework bridge automatically injects safe, empty array/object stubs in RAM.
+     * - ➐ Chained Handshake: Pipes the padded object straight into `current()` for final verification and enrichment.
+     * - ➑ Surgical Outlier Pruning: Copies recognized fields onto a pristine frame, stripping lingering keys point-free.
+     * - ➒ Hybrid Validation Pass: Runs a final post-prune validation gate over the complete sanitized object.
+     * - ➓ Nominal Branding: Stamps your framework's internal cryptographic token descriptor onto the purified output.
      *
      * DESIGN INVARIANTS:
-     * - Satisfies COMMANDMENT I & III: Resolves evolution timelines exclusively via authoritative lineage registry links.
-     * - Satisfies COMMANDMENT IV: Performs a single, isolated semantic operation (Version-Matching / Migration).
-     * - Satisfies COMMANDMENT V & VI: Guarantees post-upcast structural integrity, throwing explicitly on corrupted mappers.
+     * - Satisfies COMMANDMENT I: Governs all evolution timelines exclusively via authoritative lineage registry links.
+     * - Satisfies COMMANDMENT IV: Performs an isolated semantic sequence (Version-Matching / Multi-Pass Upcasting).
+     * - Satisfies COMMANDMENT V & VI: Guarantees output structural integrity, throwing explicitly on corrupted mappers.
      * - Satisfies COMMANDMENT VIII: Bare-metal vertical early returns eliminate dynamic allocations or closure layer bloat.
-     * - Satisfies COMMANDMENT IX: Zero 'any' variables, zero type-bleeding, and full auto-complete parameter disclosure.
+     * - Satisfies COMMANDMENT IX: Zero 'any' variables, zero type-bleeding, and full asymmetric era property boundaries.
      * - Scope Ceiling Limitation: Strictly restricts backward drift tracking to maximum 1 generation back (v1_ancestor).
      *
-     * @example * ```ts * const synchronizedUser = xalor.drift<'USER_ACCOUNT_EVOLUTION'>(legacyIncomingPayload, { *   currentKey: 'USER_TEST', *   ancestralKey: 'USER_TEST_V1_ANCESTOR', *   strict: true, *   prune: true, *   current: (v2Data) => v2Data, *   v1_ancestor: (v1Data) => { *     // v1Data exposes complete code completion reflecting yesterday's properties natively! *     return { *       id: v1Data.id, *       username: v1Data.username, *       active: true // Backfills mandatory field required by today's active production release contract *     }; *   }, *   default: () => ({ id: 0, username: 'anonymous_recovery', active: false }) * }); * ```
+     * @example
+     * ```ts
+     * const synchronizedOrder = xalor.drift<'STORE_LEDGER_EVOLUTION'>(legacyIncomingPayload, {
+     *   currentKey: 'STORE_ORDER',
+     *   ancestralKey: 'STORE_ORDER_V1_ANCESTOR',
+     *   strict: true,
+     *
+     *   // UNCONDITIONAL SANITIZATION: Automatically strips out any lingering fields like 'key' at egress!
+     *   omit: ['internalTelemetryToken'],
+     *
+     *   // PHASE 1: Consumes strictly yesterday's types. Returns yesterday's full uncompromised layout.
+     *   v1_ancestor: (v1Data) => {
+     *     return {
+     *       orderId: v1Data.orderId,
+     *       legacySKU: v1Data.legacySKU,
+     *       legacyQty: v1Data.legacyQty
+     *     };
+     *   },
+     *
+     *   // PHASE 2: Receives the inflated modern structure. Locked strictly to return today's valid production layout.
+     *   current: (v2Data) => {
+     *     return {
+     *       orderId: v2Data.orderId,
+     *       items: v2Data.items
+     *     };
+     *   },
+     *
+     *   // PHASE 4: Catch-All Circuit Breaker. Must throw an exception OR return today's full modern layout shape.
+     *   default: (rawPayload) => {
+     *     return {
+     *       orderId: rawPayload.orderId ?? 'GEN-ORD',
+     *       items: rawPayload.items ?? []
+     *     };
+     *   }
+     * });
+     * ```
      *
      * @template K - Inferred centralized Evolution tracking namespace token literal key.
-     * @template R - Inferred custom return type boundary contract computing mutable, partial instance graphs.
+     * @template C - Inferred call-site context object literal configuration structure mapped to contravariant validators.
      * @param {unknown} payload - The raw, unverified data payload packet arriving from database or network streams.
-     * @param {IXalorDriftContext<K, R>} ctx - Structured parameters containing layout target identifiers, flags, and lane handlers.
+     * @param {C & TValidateStrictContext<K, C>} ctx - Structured parameters enforcing strict excess properties.
      * @param {K} [injectedKey] - The unique evolution tracking token positionally appended by the AOT compiler transformer.
-     * @returns {TApplyNominalBrand<R>} An ironclad, nominally-branded, modern data asset fulfilling current type specifications.
+     * @returns {TApplyNominalBrand<K, TResolveDriftReturnConstraint<K>>} An ironclad, nominally-branded modern data asset.
      */
     static matchXalorDrift(): void;
 
@@ -1248,11 +1289,7 @@ declare global {
      * 🎛️ XALOR DRIFT ARCHITECTURAL ARCHITECTURE MANUAL
      * ========================================================================================
      *
-     * @role
-     The "Upstream Versioning Bridge & Migration Gate." Provides a backward-compatible
-     runtime control-flow gate that allows distributed endpoints to safely process legacy
-     or out-of-sync incoming payloads by validating them against historical blueprint
-     ancestors and upcasting them to current structural specifications on the fly [Commandment IV, XII].
+     * @role The "Upstream Versioning Bridge & Migration Gate." Provides a backward-compatible runtime control-flow gate that allows distributed endpoints to safely process legacy or out-of-sync incoming payloads by validating them against historical blueprint ancestors and upcasting them to current structural specifications on the fly [Commandment IV, XII].
      *
      * @why
      * In an enterprise production environment, matchDrift solves the single most painful
@@ -1264,81 +1301,90 @@ declare global {
      * - The Setup: You rename user_phone to nested profile.contactNumber and deploy to production.
      * - The Crash: 40% of mobile users haven't updated yet, sending legacy payloads. Regular
      *   parsers (like Zod) reject the data, throwing validation errors and blocking checkouts.
-     * - The Rescue: matchDrift catches these old requests, detects they conform to the v1_ancestor
-     *   schema, intercepts them, and maps fields cleanly to the modern layout in-memory.
+     * - The Rescue: matchDrift catches these old requests, unrolls them via its ingress perimeter,
+     *   and invokes the unified lane conduit under 'ancestor' mode. The developer maps fields inside
+     *   yesterday's layout. The engine automatically inflates missing collection structures in RAM, and
+     *   chains execution directly into the 'current' lane handshake. Right before exit, the post-omit
+     *   outlier pruner copies recognized fields onto a pristine frame, stripping lingering closure keys
+     *   unconditionally to enforce absolute structural cleanliness downstream.
      *
      * 🪙 REAL-WORLD SCENARIO 2: FINANCIAL EVENT LEDGER TRACKING (Immutable Event Streams)
      * - The Setup: A permanent Kafka/RabbitMQ append-only ledger log holds old INVOICE_PAID events
-     *   using a flat taxRate. Today's code requires an expanded taxCalculations sub-object.
+     *   using a flat taxRate. Today's code requires an expanded taxCalculations sub-object array graph.
      * - The Crash: You must re-process logs from 2 years ago for audit compliance. The old events
      *   explicitly violate today's type structures and crash the modern processor.
-     * - The Rescue: matchDrift parses the stream. It instantly identifies historical events and
-     *   triggers the inline migration callback to upcast the flat taxRate into today's multi-tax
-     *   structure, allowing you to replay old financial ledgers across modern codebases natively.
+     * - The Rescue: matchDrift parses the stream. It isolates yesterday's parameters within `v1_ancestor()`,
+     *   lets the inflation bridge automatically scaffold the missing sub-object array layout point-free,
+     *   and forwards the result straight into `current()` for final financial audit calculations before
+     *   purging rogue keys and executing a final hybrid validation gate check.
      *
      * @features
      * - Centralized Contract Governance: Bins all ad-hoc, inline string fallback mappings. Your
      *   evolution timeline is governed entirely by an authoritative lineage registry schema,
      *   forcing absolute system-wide de-duplication [Commandment I].
-     * - Zero-Overhead Static Execution: The compiler entirely eliminates the dynamic token at
-     *   build-time. Your live runtime executes via flat, un-nested conditional string routing
-     *   branches (if/else) with hard-zero memory cache allocations [Commandment VIII].
-     * - In-Memory Structural Upcasting: The absolute millisecond an ancestor match is confirmed,
-     *   the engine hands that legacy data into your migration closure block. Missing fields are
-     *   populated with manual transformation logic paired with system defaults [Commandment XII].
-     * - 100% Strongly-Typed Upcasting: Your migration closures are fully type-safe. The legacy
-     *   parameters expose complete code completion reflecting yesterday's exact properties
-     *   automatically without type-bleeding [Commandment IX].
+     * - Deep Evolutionary Blueprint Matrix: Replaced messy runtime loops. Compiles an on-the-fly,
+     *   fully unrolled hybrid blueprint matrix exactly once per transaction. Today's fields are
+     *   marked required, while yesterday's deep references are unwrapped recursively and marked optional.
+     * - Consolidated Workload Lane: Erased parallel execution lanes. Implements a single, reusable
+     *   `executeEvolutionaryLane` conduit that manages both version eras using functional flag lookups,
+     *   ensuring complete architectural parity and eliminating code drift bugs.
+     * - Surgical Outlier Pruning Valve: Employs a pure, unconditional `for...in` register loop that
+     *   consumes your compiled hybrid matrix to filter away unknown parameters point-free with
+     *   hard-zero array heap allocations, protecting V8 hidden class shapes from being de-optimized.
      *
      * @limits
-     * - The Single-Generation Anchor (Scope Ceiling): To prevent architectural fragmentation,
-     *   the engine strictly restricts historical drift tracking to maximum 1 generation back
-     *   (v1_ancestor). Multi-generation chaining cascades are forbidden to protect the single-threaded
-     *   event loop from deep latency degradation.
-     * - Structural Lineage Lock (Identity Match): A legacy payload must pass 100% of the historical
-     *   blueprint shape it is being evaluated against to trigger the migration lane. If a payload
-     *   fails both today's schema and yesterday's ancestor schema, it drops straight to default.
-     * - Transient Memory Insulation (Zero Cache Retention): The upcasted object results and
-     *   intermediate transformation frames are treated as transient data entities. They exist inside
-     *   the executing block, yield the branded asset, and are garbage collected instantly upon function
-     *   exit to prevent memory bloat [Commandment VIII].
+     * - The Single-Generation Anchor (Scope Ceiling): To prevent architectural fragmentation, the engine
+     *   strictly restricts historical drift tracking to maximum 1 generation back (v1_ancestor). Multi-generation
+     *   chaining cascades are forbidden to protect the single-threaded event loop from deep latency degradation.
+     * - Structural Lineage Lock (Identity Match): A legacy payload must pass 100% of the historical blueprint
+     *   shape it is being evaluated against to trigger the migration pipeline. If a payload fails both today's
+     *   schema and yesterday's ancestor schema, it drops straight to the default circuit breaker fallback.
+     * - Transient Memory Insulation (Zero Cache Retention): The upcasted object results and intermediate
+     *   transformation frames are treated as transient data entities. They exist inside the executing block,
+     *   yield the branded asset, and are garbage collected instantly upon function exit to prevent memory bloat.
      *
      * @matrix
      * COMPLETE ARCHITECTURE TRACE MATRIX (BUILD-TIME TO RUNTIME LIFECYCLE)
      *
      * 1. DEVELOPMENT TIME (User DX)
-     *    Developer writes clear, declarative, fully autocompleted code blocks:
-     *    xalor.drift<'TOKEN'>(payload, { currentKey: 'V2_KEY', ancestralKey: 'V1_KEY', ... })
-     *       │
-     *       ▼
+     * Developer writes clear, declarative, fully autocompleted code blocks:
+     * xalor.drift<'TOKEN'>(payload, { currentKey: 'V2_KEY', ancestralKey: 'V1_KEY', omit: ['token'] })
+     * │
+     * ▼
      * 2. COMPILATION TIME (AOT Transformer & persistenceGate)
-     *    A. MATCH_PROCESSOR_MAPPER intercepts call expression node.
-     *    B. extractLiteralStringFromProperty() unrolls keys point-free from local memory.
-     *    C. xalorCentralContext.addDriftLineage() logs token mappings in-flight.
-     *    D. formatMatchArgs appends 'TOKEN' string literal into the AST parameters.
-     *    E. persistenceGate sweeps file sessions, purging dead tokens upon codebase cuts.
-     *    F. buildSnapshotFromRegistry serializes clean, pre-filtered lines to vault-snapshot.json.
-     *       │
-     *       ▼
-     * 3. GENERATION TIME (The Ghost Bridge)
-     *    temporalManifest() unrolls clean registries point-free. Outputs rigid structural
-     *    lookup types directly into ambient file boundaries:
-     *    'TOKEN': { activeKey: 'V2_KEY'; historicalKey: 'V1_KEY'; current: V2; v1_ancestor: V1 }
-     *       │
-     *       ▼
-     * 4. RUNTIME OPERATIONS (The Ingress Gate Engine Execution)
-     *    JavaScript bundle runs point-free from runtime file lookups or heavy closure layer bloat:
-     *    matchXalorDrift(payload, ctx, "TOKEN")
-     *       │
-     *       ├── Lane 1: xalor.guard("V2_KEY") ──► True ──► Execute ctx.current() ──► Exit
-     *       │
-     *       └── Lane 2: xalor.guard("V1_KEY") ──► True ──► Execute ctx.v1_ancestor()
-     *              │
-     *              ▼
-     *       [ UPCAST LANE ]
-     *       Mutates fields to modern shape.
-     *       Reflect.set() stamps V2_KEY brand.
-     *       Returns clean branded object downstream.
+     * A. MATCH_PROCESSOR_MAPPER intercepts call expression node.
+     * B. formatMatchArgs appends 'TOKEN' string literal into the AST parameters automatically.
+     * C. buildSnapshotFromRegistry serializes clean, pre-filtered lines to vault-snapshot.json.
+     * │
+     * ▼
+     * 3. RUNTIME OPERATIONS (The Ingress Gate Engine Multi-Pass Chain Execution)
+     * executeDriftMatcher(payload, ctx, "TOKEN")
+     * │
+     * ├── A. Synthesize Dynamic Drift Matrix Blueprint — Transpiles current and ancestral maps into a single flat snapshot.
+     * ├── B. Run Ingress Perimeter Security Guards — Fires firewall checks to block malformed data or un-synced tokens early.
+     * ├── C. Inline Type Guard Validation — Narrow variables via `isRecord(payload)` to clear object spread constraints.
+     * ├── D. Shallow Spread Tracking Frame — Creates volatile state register `{ ...payload }` to protect hidden class paths.
+     * │
+     * ├── E. [ ANCESTRAL EVOLUTION PHASE ]
+     * │      1. Invoke executeEvolutionaryLane(payload, ctx, 'ancestor').
+     * │      2. Check against yesterday's blueprint format. Execute ctx.v1_ancestor() inside legacy types.
+     * │      3. Run zero-allocation loop to patch translated fields non-destructively onto your working frame.
+     * │
+     * ├── F. [ AUTOMATED METADATA INFLATION BRIDGE ]
+     * │      1. Invoke hydrateMissingBlueprintStructures(activeHybridBlueprint, chronologicalWorkingFrame).
+     * │      2. Scan matrix requirements. Dynamically inject safe primitive defaults ([] and {}) in-place for missing nodes.
+     * │
+     * ├── G. [ CONTEMPORARY ENRICHMENT PHASE ]
+     * │      1. Invoke executeEvolutionaryLane(chronologicalWorkingFrame, ctx, 'current').
+     * │      2. Check against today's released contract. Execute ctx.current() for final enrichment operations.
+     * │      3. Run zero-allocation loop to patch enriched data on top of the ongoing timeline frame.
+     * │
+     * └── H. [ CENTRALIZED EGRESS SANITIZATION PIPELINE ]
+     *        1. Invoke executeEgressSanitizationPipeline(chronologicalWorkingFrame, activeHybridBlueprint, ctx).
+     *        2. Project Omit Properties — Filters out specified user-level privacy blacklist fields from memory.
+     *        3. Project Pruned Frame — Unconditionally scrubs any lingering closure anomalies or outlier parameters point-free.
+     *        4. Final Hybrid Validation Gate — Deep validates the pruned frame against your compiled cross-era matrix.
+     *        5. Branded Return Asset — Nominal token descriptor is attached, and the pristine modern object exits the gate!
      */
     static matchXalorDriftPlan(): void;
     /**

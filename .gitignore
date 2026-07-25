@@ -61,5 +61,6 @@ to-do-today.md
 # internal docs
 cli-build-docs.d.ts
 shared-items-docs.d.ts
+match-service-docs.d.ts
 types-docs.d.ts
 docs-reference

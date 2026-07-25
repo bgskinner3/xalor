@@ -8,7 +8,7 @@ import type {
 import { xalethorVaultKeeper } from './vault-keeper';
 import { xalethorVaultGenerator } from './vault-generator';
 import { xalethorVaultTransform } from './vault-transform';
-import { xalethorVaultMatch } from './vault-match';
+import { xalethorVaultMatchDrift } from './vault-match';
 import { xalethorVaultValidation } from './vault-validation';
 import { xalethorVaultDiagnostics } from './vault-diagnostics';
 import type {
@@ -166,6 +166,10 @@ export class XalethorService {
     ctx: IXalorDriftContext<K>,
     injectedKey: K,
   ): TResolveDriftReturnConstraint<K> {
-    return xalethorVaultMatch.executeDriftMatcher<K>(payload, ctx, injectedKey);
+    return xalethorVaultMatchDrift.executeDriftMatcher<K>(
+      payload,
+      ctx,
+      injectedKey,
+    );
   }
 }

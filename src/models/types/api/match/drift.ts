@@ -60,14 +60,19 @@ export interface IXalorDriftContext<D extends TActiveDriftRegistryKeys> {
       : keyof ISolidRegistry;
 
   readonly strict?: boolean;
-  readonly prune?: TDeepDotPaths<TResolveDriftReturnConstraint<D>>[];
+  readonly omit?: TDeepDotPaths<TResolveModernInstance<D>>[];
 
+  // 🎯 PHASE 1 / HOT PATH: Processes modern payloads cleanly
   readonly current: (
     value: TResolveModernInstance<D>,
   ) => TResolveModernInstance<D>;
+
+  // 🎯 PHASE 2 / ANCESTRAL PASS: Processes yesterday's layouts within yesterday's types
   readonly v1_ancestor: (
     value: TResolveAncestralInstance<D>,
   ) => TResolveAncestralInstance<D>;
+
+  // 🎯 PHASE 4 / CIRCUIT BREAKER: Receives the raw record, returns a valid modern shape
   readonly default?: (
     rawPayload: TResolveDriftReturnConstraint<D>,
   ) => TResolveDriftReturnConstraint<D>;

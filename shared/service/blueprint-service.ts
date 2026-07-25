@@ -1,4 +1,8 @@
-import type { TSolidShape } from '../shape-domain';
+import type {
+  TSolidShape,
+  TSolidObjectRawShape,
+  TSolidObjectShape,
+} from '../shape-domain';
 import type { TRebuildStrategyMap } from '../types';
 import {
   isUndefined,
@@ -8,7 +12,13 @@ import {
   isShapeOfKind,
 } from '../../shared';
 import { yieldItems } from '../../shared/utils';
-import { INSTANCE_REGISTRY_MAPPER, NATIVE_BUILTINS } from '../shape-domain';
+import {
+  INSTANCE_REGISTRY_MAPPER,
+  isArrayShape,
+  isObjectShape,
+  isReferenceShape,
+  NATIVE_BUILTINS,
+} from '../shape-domain';
 
 /**
  * ============================================================================================================
@@ -326,6 +336,146 @@ class BlueprintService {
     );
 
     return `export type ${symbolName} = ${coreShapeString};`;
+  }
+  /**
+   * DEEP HYBRID BLUEPRINT SYNTHESIS ENGINE
+   *
+   * @role Recursively unrolls, maps, and merges contemporary and historical blueprints
+   * into a single unified TSolidShape memory literal frame—safely resolving deep nested
+   * references, union blocks, and prototype fingerprint signatures point-free.
+   *
+   * @invariants
+   * - Satisfies COMMANDMENT I & III: Resolves structural keys exclusively via the pre-compiled registry pool.
+   * - Deep Reference Safety: Recursively flattens deeply nested pointer trees across both eras to any level of depth.
+   * - Satisfies COMMANDMENT IX: 100% type assertion-free and non-null override-free data mapping.
+   */
+  public synthesizeDeepHybridBlueprint(
+    currentBlueprintKey: string | undefined,
+    ancestralBlueprintKey: string | undefined,
+    blueprintsPool: Record<string, TSolidShape> | Map<string, TSolidShape>,
+  ): TSolidObjectShape | null {
+    if (!currentBlueprintKey || !ancestralBlueprintKey) return null;
+    const recursivelyUnwrapShape = (
+      shapeNode: TSolidShape,
+      visitedHashes: Set<string>,
+    ): TSolidShape => {
+      if (!shapeNode || typeof shapeNode !== 'object') return shapeNode;
+
+      // 1. Chasing down reference hash keys recursively
+      if (isReferenceShape(shapeNode)) {
+        if (visitedHashes.has(shapeNode.name)) {
+          return shapeNode; // Circular dependency shortcut safety valve protection
+        }
+
+        const nextShapeTarget = this.resolveBlueprint(
+          shapeNode.name,
+          blueprintsPool,
+        );
+        if (nextShapeTarget) {
+          const updatedVisited = new Set<string>(visitedHashes);
+          updatedVisited.add(shapeNode.name);
+          return recursivelyUnwrapShape(nextShapeTarget, updatedVisited);
+        }
+        return shapeNode;
+      }
+
+      // 2. Unroll child property bags inside object sub-shapes recursively
+      if (isObjectShape(shapeNode) && shapeNode.properties) {
+        const unwrappedProps: Record<string, TSolidObjectRawShape> = {};
+        const childProps = shapeNode.properties;
+
+        for (const propKey in childProps) {
+          if (Object.prototype.hasOwnProperty.call(childProps, propKey)) {
+            const descriptor = childProps[propKey];
+            unwrappedProps[propKey] = {
+              ...descriptor,
+              shape: recursivelyUnwrapShape(descriptor.shape, visitedHashes),
+            };
+          }
+        }
+
+        return {
+          ...shapeNode,
+          properties: unwrappedProps,
+        };
+      }
+
+      // 3. Unroll array item types recursively
+      if (isArrayShape(shapeNode) && shapeNode.items) {
+        return {
+          ...shapeNode,
+          items: recursivelyUnwrapShape(shapeNode.items, visitedHashes),
+        };
+      }
+
+      return shapeNode;
+    };
+
+    // ➊ Resolve and deeply unroll today's active required production blueprint (Required)
+    const modernShapeBase = this.resolveBlueprint(
+      currentBlueprintKey,
+      blueprintsPool,
+    );
+    if (
+      !modernShapeBase ||
+      modernShapeBase.kind !== 'object' ||
+      !modernShapeBase.properties
+    )
+      return null;
+
+    const modernShape = recursivelyUnwrapShape(
+      modernShapeBase,
+      new Set<string>(),
+    );
+    if (!isObjectShape(modernShape) || !modernShape.properties) return null;
+
+    // ➋ Resolve and deeply unroll yesterday's historical blueprint
+    const ancestralShapeBase = ancestralBlueprintKey
+      ? this.resolveBlueprint(ancestralBlueprintKey, blueprintsPool)
+      : undefined;
+
+    const ancestralShape = ancestralShapeBase
+      ? recursivelyUnwrapShape(ancestralShapeBase, new Set<string>())
+      : undefined;
+
+    const ancestralProps =
+      ancestralShape && ancestralShape.kind === 'object'
+        ? ancestralShape.properties
+        : null;
+
+    const combinedProperties: Record<string, TSolidObjectRawShape> = {};
+
+    // ➌ Ingest today's deeply unrolled production layout contracts exactly as declared (Required)
+    const modernProps = modernShape.properties;
+    for (const key in modernProps) {
+      if (Object.prototype.hasOwnProperty.call(modernProps, key)) {
+        combinedProperties[key] = modernProps[key];
+      }
+    }
+
+    if (ancestralProps) {
+      for (const key in ancestralProps) {
+        if (Object.prototype.hasOwnProperty.call(ancestralProps, key)) {
+          if (!Object.prototype.hasOwnProperty.call(combinedProperties, key)) {
+            const legacyDescriptor = ancestralProps[key];
+
+            combinedProperties[key] = {
+              shape: legacyDescriptor.shape,
+              optional: true, // FORCED OPTIONAL STATUS FOR DRIFT ANALYSIS
+              name: legacyDescriptor.name,
+              requiresKeyPresence: false,
+              allowsExplicitUndefined: true,
+            };
+          }
+        }
+      }
+    }
+
+    return {
+      kind: 'object',
+      properties: combinedProperties,
+      strict: modernShape.strict,
+    };
   }
 }
 export const blueprintService = new BlueprintService();

@@ -283,10 +283,13 @@ export const isLiteralMatch: <T extends string>(
  * @description A type-safe wrapper for Object.prototype.hasOwnProperty
  * that narrows the object type to include the specified key.
  */
-export const hasOwnProperty = <T extends object, K extends PropertyKey>(
+export const hasOwnProperty = <T, K extends PropertyKey>(
   obj: T,
   prop: K,
 ): obj is T & Record<K, unknown> => {
+  if (obj === null || typeof obj !== 'object') {
+    return false;
+  }
   return Object.prototype.hasOwnProperty.call(obj, prop);
 };
 
