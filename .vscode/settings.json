@@ -52,6 +52,7 @@
     "COOLDOWN",
     "debouncer",
     "delayable",
+    "Feistel",
     "ICLI",
     "Materializer",
     "Sharder",

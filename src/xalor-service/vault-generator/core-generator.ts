@@ -1,14 +1,14 @@
-import { xalethorVaultKeeper } from './vault-keeper';
-import { isValidSolidShape } from '../../shared';
-import type { TSolidShape } from '../../shared/shape-domain';
-import { xalethorVaultDiagnostics } from './vault-diagnostics';
-import { IS_SOLID_CONFIG_ITEMS } from '../../shared/constants';
+import { xalethorVaultKeeper } from '../vault-keeper';
+import { isValidSolidShape } from '../../../shared';
+import type { TSolidShape } from '../../../shared/shape-domain';
+import { xalethorVaultDiagnostics } from '../vault-diagnostics';
+import { IS_SOLID_CONFIG_ITEMS } from '../../../shared/constants';
 import {
   DEFAULT_SHAPE_MATERIALIZER,
   MOCK_SHAPE_MATERIALIZER,
   CAST_SHAPE_MAPPER,
-} from '../mappers';
-import { isTargetRegistryStructure } from '../utils';
+} from '../../mappers';
+import { isTargetRegistryStructure } from '../../utils';
 
 /**
  * XALETHOR VAULT GENERATOR
@@ -192,9 +192,3 @@ class XalethorVaultGenerator {
 }
 
 export const xalethorVaultGenerator = new XalethorVaultGenerator();
-/**
- default: executeDefaultBuild,
-mock: executeMockBuild,
-cast: executeCastBuild
-
- */
