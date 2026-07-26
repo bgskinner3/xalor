@@ -14,6 +14,7 @@ import {
   isKeyInObject,
   isInstanceOf,
   isArray,
+  isUndefined,
 } from '../../../shared/utils';
 import {
   isObjectShape,
@@ -294,6 +295,33 @@ class XalethorVaultMatchDrift {
     return null; // Soft failure alerts master loop to trigger fallback circuit breakers
   }
 
+  private executeEgressPipeline<K extends TActiveDriftRegistryKeys>(
+    workingFrame: Record<string, unknown>,
+    activeHybridBlueprint: TSolidObjectShape,
+    ctx: IXalorDriftContext<K>,
+  ): Record<string, unknown> | null {
+    const { omit: omitPathsList } = ctx;
+
+    // ➊ Filter privacy tokens via specified omit config parameter targets
+    const hasOmitPaths = isRecord(omitPathsList) || isArray(omitPathsList);
+    const cleanOutput = this.projectOmitProperties(
+      workingFrame,
+      hasOmitPaths ? omitPathsList : undefined,
+    );
+
+    // ➋ Prune out unknown outlier attributes point-free across both version eras
+    const pristineEgressFrame = this.projectPrunedFrame(
+      activeHybridBlueprint,
+      cleanOutput,
+    );
+
+    if (!isNull(pristineEgressFrame) && !isUndefined(pristineEgressFrame)) {
+      return pristineEgressFrame;
+    }
+
+    return null;
+  }
+
   /**
    * @see {@link xalorDriftClassDocs.executeDriftMatcher}
    */
@@ -349,17 +377,21 @@ class XalethorVaultMatchDrift {
         }
       }
     }
-
-    // =============================================================================
-    // STEP C: Centralized Surgical Egress Sanitization Pass
-    // =============================================================================
-    const finalEgressAsset = this.executeEgressSanitizationPipeline<K>(
+    const prunedEgressAsset = this.executeEgressPipeline<K>(
       chronologicalWorkingFrame,
       activeHybridBlueprint,
       ctx,
     );
+    // // =============================================================================
+    // // STEP C: Centralized Surgical Egress Sanitization Pass
+    // // =============================================================================
+    // const finalEgressAsset = this.executeEgressSanitizationPipeline<K>(
+    //   chronologicalWorkingFrame,
+    //   activeHybridBlueprint,
+    //   ctx,
+    // );
 
-    if (finalEgressAsset) return finalEgressAsset;
+    if (prunedEgressAsset) return prunedEgressAsset;
 
     // =============================================================================
     // STEP D: Circuit Breaker Fallback (Un-nested vertical fallback path)

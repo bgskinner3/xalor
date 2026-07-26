@@ -377,7 +377,13 @@ describe('Runtime MATCH API', () => {
             legacyQty: v1Data.legacyQty,
           };
         },
-
+        // default: {
+        //   mode: 'custom',
+        //   customFill: {
+        //     orderId: '',
+        //     items: [{ SKU: '', quantity: 0 }],
+        //   },
+        // },
         // default: (partialPayload) => {
         //   throw new Error(
         //     `Circuit breaker hit illegally: ${JSON.stringify(partialPayload)}`,

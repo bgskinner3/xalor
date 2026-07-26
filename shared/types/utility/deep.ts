@@ -191,6 +191,21 @@ export type TDeepDotPaths<
                 : K;
           }[keyof T & string]
         : never;
+
+/**
+ * 🛠️ DEEP COMPILER MATRICES TOOL
+ * Recursively sweeps a data schema to isolate strictly required properties,
+ * forcing structural completeness over deeply nested collection structures.
+ */
+export type TDeepRequiredFill<T> = T extends (infer U)[]
+  ? [TDeepRequiredFill<U>, ...TDeepRequiredFill<U>[]]
+  : T extends object
+    ? {
+        [
+          K in keyof T as object extends Pick<T, K> ? never : K
+        ]: TDeepRequiredFill<T[K]>;
+      }
+    : T;
 /**
  * 🎛️ TSOLID DEEP KEY PATH RESOLVER
  *
