@@ -1,4 +1,4 @@
-import { XalethorService } from '../../xalor-service';
+import { xalethorCoreService } from '../../xalor-service';
 import { markAsSolid, ensureGlobalVault } from '../../utils';
 import { isRecord, assertRegistryKey } from '../../../shared/utils/guards';
 import { BRAND_SYMBOL } from '../../../shared';
@@ -35,7 +35,7 @@ export function generateXalorDefault<
   ensureGlobalVault();
   assertRegistryKey(injectedKey);
 
-  const rawTemplate = XalethorService.produceDefault<K>(injectedKey);
+  const rawTemplate = xalethorCoreService.produceDefault<K>(injectedKey);
 
   if (isRecord(rawTemplate)) {
     let brandToken = brandTokenCache.get(injectedKey);

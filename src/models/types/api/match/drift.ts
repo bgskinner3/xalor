@@ -64,8 +64,8 @@ export interface IXalorDriftContext<D extends TActiveDriftRegistryKeys> {
 
   // 🎯 PHASE 1 / HOT PATH: Processes modern payloads cleanly
   readonly current: (
-    value: TResolveModernInstance<D>,
-  ) => TResolveModernInstance<D>;
+    value: TResolveDriftReturnConstraint<D>,
+  ) => TResolveDriftReturnConstraint<D>;
 
   // 🎯 PHASE 2 / ANCESTRAL PASS: Processes yesterday's layouts within yesterday's types
   readonly v1_ancestor: (
@@ -100,47 +100,3 @@ export type TTargetKeyName<K extends TActiveDriftRegistryKeys> =
     : K extends keyof ISolidDriftRegistry
       ? TExtractRegistryKeyName<ISolidDriftRegistry[K]['current']>
       : string;
-
-/**
- *
- *
- *
- *
- *
- *
- *
- *
- */
-// type TSealedPartial<T> = {
-//   [K in keyof T]?: T[K];
-// } & {
-//   [K in keyof T as never]: never;
-// };
-//  type TStrictEra<Expected, Actual> = Expected & {
-//   [K in keyof Actual]: K extends keyof Expected ? Actual[K] : never;
-// };
-// type TEnforceExact<Expected, Actual> = Expected & {
-//   [K in keyof Actual]: K extends keyof Expected ? Actual[K] : never;
-// };
-// type TStrictReturn<Expected, Actual> = Expected & {
-//   [K in keyof Actual]: K extends keyof Expected ? Actual[K] : never;
-// };
-/**
- * MATCH: DRIFT EXECUTOR PARAMETERS TUPLE
- * Explicit, positionally aligned array frame layout matching your Loop 2 rewriter output.
- */
-// export type TXalorDriftArgs<K extends TActiveDriftRegistryKeys> = [
-//   payload: unknown,
-//   ctx: IXalorDriftContext<K>,
-//   injectedKey?: K,
-// ];
-
-/**
- * MATCH: CENTRALIZED DRIFT EXECUTOR PUBLIC API SIGNATURE
- */
-// export type TXalorDriftExecutor = <K extends TActiveDriftRegistryKeys>(
-//   ...args: TXalorDriftArgs<K>
-// ) => TApplyNominalBrand<K, TResolveDriftReturnConstraint<K>>;
-// export type TEnforceContextPerimeter<T, ObjectLiteral> = {
-//   [K in keyof ObjectLiteral]: K extends keyof T ? ObjectLiteral[K] : never;
-// };

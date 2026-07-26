@@ -1,4 +1,4 @@
-import { XalethorService } from '../../src/xalor-service';
+import { xalethorCoreService } from '../../src/xalor-service';
 import type {
   TVaultSyncPayload,
   TSolidShape,
@@ -46,7 +46,7 @@ export function seedTestVault(
     ...overrides,
   };
 
-  XalethorService.solidify(mockPayload);
+  xalethorCoreService.solidify(mockPayload);
   return mockPayload;
 }
 
@@ -68,12 +68,12 @@ export function seedTestDriftVault(
 
   const mockEntry: TVaultDriftEntry = { currentKey, ancestorKey };
 
-  // Directly attach the schema evolutions tracking logs to global memory
-  // globalThis.__SOLID_VAULT__.driftTracking[tokenKey] = mockEntry;
+  // // Directly attach the schema evolutions tracking logs to global memory
+  // globalThis.__SOLID_VAULT__.driftTracking[tokenKey].set(mockEntry);
 
   const manualDriftSnapshotBlock: Record<string, TVaultDriftEntry> = {
     [tokenKey]: mockEntry,
   };
-  XalethorService.solidifyDrifts(manualDriftSnapshotBlock);
+  xalethorCoreService.solidifyDrifts(manualDriftSnapshotBlock);
   return mockEntry;
 }

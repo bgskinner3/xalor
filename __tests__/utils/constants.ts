@@ -36,6 +36,36 @@ export const TEST_SHAPE_REGISTRY = {
       },
     },
   },
+  // ============================================================================
+  // 🛡️ CUSTOM DEVELOPER CLASS SHAPE CONTRACT (The Ingress Catch-All Route)
+  // ============================================================================
+  CUSTOM_CLASS_TEST: {
+    kind: 'object',
+    properties: {
+      clientRef: {
+        name: 'clientRef',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'instanceof', name: 'CustomServiceSDK' as any },
+      },
+    },
+  },
+
+  // 🎯 FIXED: A symmetrical historical contract node mapping your class fields
+  CUSTOM_CLASS_V1_ANCESTOR: {
+    kind: 'object',
+    properties: {
+      oldClientRef: {
+        name: 'oldClientRef',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'instanceof', name: 'CustomServiceSDK' as any },
+      },
+    },
+  },
+
   STANDARD_USER_CAMEL: {
     kind: 'object',
     properties: {
@@ -598,7 +628,25 @@ export const TEST_SHAPE_REGISTRY = {
       },
     },
   },
-
+  CIRCULAR_DEPTH_V1_ANCESTOR: {
+    kind: 'object',
+    properties: {
+      legacyId: {
+        name: 'legacyId',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'number' },
+      },
+      legacyHierarchyToken: {
+        name: 'legacyHierarchyToken',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'string' },
+      },
+    },
+  },
   CIRCULAR_DEPTH_TEST: {
     kind: 'object',
     properties: {
@@ -618,6 +666,26 @@ export const TEST_SHAPE_REGISTRY = {
       },
     },
   },
+  CIRCULAR_DEPTH_TEST_DRIFT: {
+    kind: 'object',
+    properties: {
+      id: {
+        name: 'id',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'number' },
+      },
+      selfRef: {
+        name: 'selfRef',
+        optional: true,
+        requiresKeyPresence: false,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'reference', name: 'CIRCULAR_DEPTH_TEST_DRIFT' },
+      },
+    },
+  },
+
   CIRCULAR_DEPTH_TEST_CAST: {
     kind: 'object',
     properties: {

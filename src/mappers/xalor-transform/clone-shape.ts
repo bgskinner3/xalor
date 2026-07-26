@@ -15,7 +15,7 @@ import { INSTANCE_CLONE_STRATEGIES } from './clone-instance-coercer';
 import { IS_SOLID_CONFIG_ITEMS } from '../../../shared';
 import { xalethorVaultDiagnostics } from '../../xalor-service/vault-diagnostics';
 import { shapeKindUtilsService } from '../../../shared/service';
-import { XalethorService } from '../../xalor-service';
+import { xalethorCoreService } from '../../xalor-service';
 import type { TSolidShape } from '../../../shared';
 import { verifyRuntimePrimitiveCompliance } from './helpers';
 /**
@@ -52,7 +52,7 @@ export const CLONE_SHAPE_SANITIZER_MAPPER: TShapeCloneMapperMap = {
         branch.kind,
       );
 
-      if (XalethorService.validateShape(data, branch, activeCtx)) {
+      if (xalethorCoreService.validateShape(data, branch, activeCtx)) {
         const scrubbedResult = recurse(data, branch, seen, depth);
         if (!isNull(scrubbedResult) && !isUndefined(scrubbedResult)) {
           return scrubbedResult;

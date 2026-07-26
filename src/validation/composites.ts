@@ -9,7 +9,7 @@ import type {
 } from '../../shared';
 import { isFunction, isObject, isKeyInObject } from '../../shared';
 import { xalethorVaultValidation } from '../xalor-service/vault-validation';
-import { XalethorService } from '../xalor-service';
+import { xalethorCoreService } from '../xalor-service';
 
 /**
  * Validates Intersection types.
@@ -188,7 +188,7 @@ export function validateReference(
   shape: TSolidReferenceShape,
   ctx: TValidationContext,
 ): boolean {
-  const metadata = XalethorService.inspectMetaData(shape.name);
+  const metadata = xalethorCoreService.inspectMetaData(shape.name);
   if (!metadata) {
     return xalethorVaultValidation.reportError({
       ctx,

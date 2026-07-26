@@ -22,7 +22,7 @@ import type {
   // TCalculateFinalMergeOutput,
 } from '../models/types';
 // import { isRecord } from '../../shared/utils';
-export class XalethorService {
+class XalethorService {
   // ============================================================
   // ============================================================
   // ============================================================
@@ -31,26 +31,26 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   /* prettier-ignore */
-  public static solidify(raw: TSolidMetadata): void {
+  public  solidify(raw: TSolidMetadata): void {
     xalethorVaultKeeper.solidify(raw);
   }
   /* prettier-ignore */
-  public static solidifyDrifts(driftTracks: TTripleKV['driftTracking']): void {
+  public  solidifyDrifts(driftTracks: TTripleKV['driftTracking']): void {
      xalethorVaultKeeper.solidifyDrifts(driftTracks);
   }
-  public static blueprintVault(key: string) {
+  public blueprintVault(key: string) {
     return xalethorVaultKeeper.peek('blueprint', key);
   }
-  public static driftTrackingVault(key: string) {
+  public driftTrackingVault(key: string) {
     return xalethorVaultKeeper.peek('driftTracking', key);
   }
-  public static manifestVault(key: string) {
+  public manifestVault(key: string) {
     return xalethorVaultKeeper.peek('manifest', key);
   }
-  public static registryVault(key: string) {
+  public registryVault(key: string) {
     return xalethorVaultKeeper.peek('registry', key);
   }
-  public static inspectMetaData(key: string) {
+  public inspectMetaData(key: string) {
     return xalethorVaultKeeper.resolve(key);
   }
 
@@ -62,23 +62,23 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   /* prettier-ignore */
-  public static formatReport(key: string, errors?: readonly TSolidError[]): string {
+  public  formatReport(key: string, errors?: readonly TSolidError[]): string {
     return xalethorVaultDiagnostics.formatReport(key, errors);
   }
   /* prettier-ignore */
-  public static compileAuditReport(targetKey: string, isValid: boolean, rawErrors: readonly TSolidError[]): TXalorAuditReport {
+  public  compileAuditReport(targetKey: string, isValid: boolean, rawErrors: readonly TSolidError[]): TXalorAuditReport {
      return xalethorVaultDiagnostics.compileAuditReport(targetKey, isValid, rawErrors);
   }
-  public static getKeyErrors(key: string): TSolidError[] {
+  public getKeyErrors(key: string): TSolidError[] {
     return xalethorVaultValidation.getErrors(key);
   }
-  public static setErrors(key: string, errors: TSolidError[]): void {
+  public setErrors(key: string, errors: TSolidError[]): void {
     return xalethorVaultValidation.setErrors(key, errors);
   }
-  public static clearErrors(key?: string): void {
+  public clearErrors(key?: string): void {
     return xalethorVaultValidation.clearErrors(key);
   }
-  public static reportError(params: TReportErrorParams): false {
+  public reportError(params: TReportErrorParams): false {
     return xalethorVaultValidation.reportError(params);
   }
 
@@ -90,21 +90,21 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   /* prettier-ignore */
-  public static validateShapeByKey(data: unknown, key: string): boolean {
+  public  validateShapeByKey(data: unknown, key: string): boolean {
     return xalethorVaultValidation.validateShapeByKey(data, key);
   }
   /* prettier-ignore */
-  public static validateShapeByKeySafe( data: unknown, key: string): TXalorEvaluationResult {
+  public  validateShapeByKeySafe( data: unknown, key: string): TXalorEvaluationResult {
     return xalethorVaultValidation.validateShapeByKeySafe(data, key);
   }
   /* prettier-ignore */
-  public static validateShape(data: unknown,  shape: TSolidShape, ctx: TValidationContext, blueprintId?: string,): boolean {
+  public  validateShape(data: unknown,  shape: TSolidShape, ctx: TValidationContext, blueprintId?: string,): boolean {
     return xalethorVaultValidation.validateShape(data, shape, ctx, blueprintId);
   }
-  public static createInitialContext(key: string): TValidationContext {
+  public createInitialContext(key: string): TValidationContext {
     return xalethorVaultValidation.createInitialContext(key);
   }
-  public static panic(key: string, customMessage?: string | undefined): never {
+  public panic(key: string, customMessage?: string | undefined): never {
     return xalethorVaultDiagnostics.panic(key, customMessage);
   }
 
@@ -115,18 +115,18 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   // ============================================================
-  public static produceDefault<K extends TActiveRegistryKeys>(
+  public produceDefault<K extends TActiveRegistryKeys>(
     key: K,
   ): TResolveRegistryStructure<K> {
     return xalethorVaultGenerator.getDefaultRaw(key);
   }
-  public static produceMock<K extends TActiveRegistryKeys>(
+  public produceMock<K extends TActiveRegistryKeys>(
     key: K,
   ): TResolveRegistryStructure<K> {
     return xalethorVaultGenerator.getMockRaw(key);
   }
 
-  public static produceCast<K extends TActiveRegistryKeys>(
+  public produceCast<K extends TActiveRegistryKeys>(
     data: unknown,
     key: K,
   ): TResolveRegistryStructure<K> {
@@ -140,15 +140,15 @@ export class XalethorService {
   // ============================================================
   // ============================================================
 
-  public static executeMergeSanitizer<K extends TActiveRegistryKeys>(
+  public executeMergeSanitizer<K extends TActiveRegistryKeys>(
     ctx: TXalorMergeContexts<TResolveRegistryStructure<K>>,
     injectedKey: K,
   ): Record<string, unknown> {
-    const blueprintShape = XalethorService.blueprintVault(injectedKey);
+    const blueprintShape = this.blueprintVault(injectedKey);
     /* prettier-ignore */
     return xalethorVaultTransform.transformMerge<K, typeof ctx>(ctx, blueprintShape);
   }
-  public static produceClone<K extends TActiveRegistryKeys>(
+  public produceClone<K extends TActiveRegistryKeys>(
     data: unknown,
     key: K,
   ): TResolveRegistryStructure<K> {
@@ -161,15 +161,14 @@ export class XalethorService {
   // ============================================================
   // ============================================================
   // ============================================================
-  public static executeDriftMatcher<K extends TActiveDriftRegistryKeys>(
+  public executeDriftMatcher<K extends TActiveDriftRegistryKeys>(
     payload: unknown,
     ctx: IXalorDriftContext<K>,
     injectedKey: K,
   ): TResolveDriftReturnConstraint<K> {
-    return xalethorVaultMatchDrift.executeDriftMatcher<K>(
-      payload,
-      ctx,
-      injectedKey,
-    );
+    /* prettier-ignore */
+    return xalethorVaultMatchDrift.executeDriftMatcher<K>(payload, ctx, injectedKey);
   }
 }
+
+export const xalethorCoreService = new XalethorService();

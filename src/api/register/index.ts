@@ -1,4 +1,4 @@
-import { XalethorService } from '../../xalor-service';
+import { xalethorCoreService } from '../../xalor-service';
 import { isMetaData } from '../../../shared';
 /**
  * RUNTIME API: REGISTER XALOR
@@ -55,7 +55,7 @@ export function registerXalor<_K extends keyof ISolidRegistry | (string & {})>(
    * It has been rewritten into a TSolidMetadata object.
    */
   if (isMetaData(params)) {
-    return XalethorService.solidify(params);
+    return xalethorCoreService.solidify(params);
   }
 
   /**

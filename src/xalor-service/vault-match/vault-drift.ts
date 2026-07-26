@@ -24,6 +24,7 @@ import {
 } from '../../utils';
 import { XALOR_MATCH_ERROR_MESSAGES } from '../../models';
 import { blueprintService } from '../../../shared';
+// import { xalethorVaultTransform } from '../vault-transform';
 
 class XalethorVaultMatchDrift {
   /**
@@ -199,9 +200,10 @@ class XalethorVaultMatchDrift {
 
         if (isRecord(executionResult)) {
           /* prettier-ignore */
-          if (xalethorVaultValidation.validateShapeByKey(executionResult, currentKey)) {
-            return executionResult;
-          }
+          // if (xalethorVaultValidation.validateShapeByKey(executionResult, currentKey)) {
+          //   return executionResult;
+          // }
+          return executionResult;
         }
       }
     }
@@ -349,8 +351,9 @@ class XalethorVaultMatchDrift {
     /* prettier-ignore */ if (!isNull(perimeterGuardFailureResult)) return perimeterGuardFailureResult;
 
     /* prettier-ignore */ if (!isRecord(payload)) return xalethorVaultDiagnostics.panic(injectedKey, XALOR_MATCH_ERROR_MESSAGES['MALFORMED_NON_RECORD_PAYLOAD']);
-
+    // xalethorVaultTransform
     const chronologicalWorkingFrame: Record<string, unknown> = { ...payload };
+
     // =============================================================================
     // STEP A: Yesterday's Phase (Ancestral Evolution Pass)
     // =============================================================================

@@ -1,4 +1,4 @@
-import { XalethorService } from '../../../xalor-service';
+import { xalethorCoreService } from '../../../xalor-service';
 import { markAsSolid, ensureGlobalVault } from '../../../utils';
 import { assertRegistryKey } from '../../../../shared/utils/guards';
 import { isRecord, BRAND_SYMBOL } from '../../../../shared';
@@ -28,7 +28,7 @@ export function generateXalorClone<K extends TActiveRegistryKeys>(
   ensureGlobalVault();
   assertRegistryKey(injectedKey);
 
-  const clonePayload = XalethorService.produceClone(data, injectedKey!);
+  const clonePayload = xalethorCoreService.produceClone(data, injectedKey!);
   if (isRecord(clonePayload)) {
     let brandToken = brandTokenCache.get(injectedKey);
     if (!brandToken) {

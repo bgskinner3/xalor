@@ -4,7 +4,7 @@ import type {
   TResolveDriftReturnConstraint,
   TTargetKeyName,
 } from '../../../models/types';
-import { XalethorService } from '../../../xalor-service';
+import { xalethorCoreService } from '../../../xalor-service';
 import { assertDriftRegistryKey } from '../../../../shared';
 import { markAsSolid, ensureGlobalVault } from '../../../utils';
 import { BRAND_SYMBOL, isRecord } from '../../../../shared';
@@ -43,7 +43,7 @@ export function matchXalorDrift<K extends TActiveDriftRegistryKeys>(
     );
   }
 
-  const activeShape = XalethorService.driftTrackingVault(injectedKey!);
+  const activeShape = xalethorCoreService.driftTrackingVault(injectedKey!);
 
   if (!ctx || !activeShape) {
     return xalethorVaultDiagnostics.panic(
@@ -53,7 +53,7 @@ export function matchXalorDrift<K extends TActiveDriftRegistryKeys>(
     );
   }
 
-  const resultPayload = XalethorService.executeDriftMatcher<K>(
+  const resultPayload = xalethorCoreService.executeDriftMatcher<K>(
     payload,
     ctx,
     injectedKey!,

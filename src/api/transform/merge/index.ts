@@ -1,4 +1,4 @@
-import { XalethorService } from '../../../xalor-service';
+import { xalethorCoreService } from '../../../xalor-service';
 import { markAsSolid, ensureGlobalVault } from '../../../utils';
 import { assertRegistryKey } from '../../../../shared/utils/guards';
 import type { TXalorMergeContexts } from '../../../models/types';
@@ -28,7 +28,7 @@ export function transformXalorMerge<K extends TActiveRegistryKeys>(
   assertRegistryKey(injectedKey);
 
   // 1. Commandment VI Compliance: Verify AOT metadata exists via your native vault service
-  const activeShape = XalethorService.blueprintVault(injectedKey);
+  const activeShape = xalethorCoreService.blueprintVault(injectedKey);
 
   if (!ctx || !activeShape) {
     return xalethorVaultDiagnostics.panic(
@@ -39,7 +39,7 @@ export function transformXalorMerge<K extends TActiveRegistryKeys>(
   }
 
   // 2. Pass the options context down. Prune-and-fill fallbacks are resolved dynamically by the engine loop.
-  const resultPayload = XalethorService.executeMergeSanitizer<K>(
+  const resultPayload = xalethorCoreService.executeMergeSanitizer<K>(
     ctx,
     injectedKey,
   );

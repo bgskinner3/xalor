@@ -1,7 +1,7 @@
-import { XalethorService } from '../../xalor-service';
+import { xalethorCoreService } from '../../xalor-service';
 import type {
   TReturnValidationTools,
-  TResolveModernInstance,
+  // TResolveModernInstance,
 } from '../../models/types';
 import { makeAssert } from '../common';
 import type { TTypeGuard, TAssert } from '../../../shared/types';
@@ -15,7 +15,7 @@ export function buildValidationTools<
   const guard: TTypeGuard<TResolveRegistryStructure<K>> = (
     val: unknown,
   ): val is TResolveRegistryStructure<K> =>
-    XalethorService.validateShapeByKey(val, key);
+    xalethorCoreService.validateShapeByKey(val, key);
 
   const assert: TAssert<TResolveRegistryStructure<K>> = makeAssert(guard, key);
 
@@ -68,6 +68,9 @@ export function refineAncestralContract<K extends TActiveDriftRegistryKeys>(
 export function refineToCurrentModel<
   _K extends TActiveDriftRegistryKeys,
   T extends string,
->(_record: unknown, _targetKey: T): _record is TResolveModernInstance<_K> {
+>(
+  _record: unknown,
+  _targetKey: T,
+): _record is TResolveDriftReturnConstraint<_K> {
   return true;
 }

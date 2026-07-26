@@ -1,4 +1,4 @@
-import { XalethorService } from '../../xalor-service';
+import { xalethorCoreService } from '../../xalor-service';
 import { markAsSolid, ensureGlobalVault } from '../../utils';
 import { BRAND_SYMBOL } from '../../../shared';
 import type {
@@ -61,7 +61,10 @@ export function validateXalorSafeParse<K extends TActiveRegistryKeys>(
     };
   }
 
-  const evaluation = XalethorService.validateShapeByKeySafe(data, injectedKey);
+  const evaluation = xalethorCoreService.validateShapeByKeySafe(
+    data,
+    injectedKey,
+  );
 
   if (evaluation.isValid && isRecord(data)) {
     let brandToken = brandTokenCache.get(injectedKey);
