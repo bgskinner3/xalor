@@ -284,6 +284,48 @@ export const XALOR_MATCH_DRIFT_ERROR_MAPPER: TXalorMatchDriftErrorMapper = {
       `Reason: The reference identifier exists, but its compiled context layers or active vault snapshots are completely missing at runtime.\n` +
       `Action: Verify your build-time transformer plugin configuration, clean out build caches, and perform a full compile check.`,
   },
+  STRICT_FALLBACK_VIOLATION: {
+    errorArea: 'runtime_match_drift',
+    rule: XALOR_MATCH_DRIFT_RULE_KEYS.STRICT_FALLBACK_VIOLATION,
+    message: () =>
+      `STRICT FALLBACK VIOLATION: Strict mode execution barrier triggered by a structural payload breakdown.\n` +
+      `Reason: A data stream encountered severe version alignment drift and dropped required properties, but strict fallback rules ("none") explicitly blocked automated data inflation.\n` +
+      `Action: Inspect the originating source transaction payload, verify your modern production schema laws, or expand your evolutionary lane mapping coverage.`,
+  },
+
+  CUSTOM_FILL_OMISSION: {
+    errorArea: 'runtime_match_drift',
+    rule: XALOR_MATCH_DRIFT_RULE_KEYS.CUSTOM_FILL_OMISSION,
+    message: () =>
+      `CUSTOM FILL OMISSION: The recovery configuration block contains an invalid control mapping signature.\n` +
+      `Reason: Fallback parameters explicitly selected mode: "custom", but the mandatory "customFill" object data literal was completely omitted or left uninstantiated.\n` +
+      `Action: Locate the failing xalor.drift call-site context and supply a structurally complete fallback object satisfying today's required production layout keys.`,
+  },
+
+  CUSTOM_FILL_VALIDATION_FAIL: {
+    errorArea: 'runtime_match_drift',
+    rule: XALOR_MATCH_DRIFT_RULE_KEYS.CUSTOM_FILL_VALIDATION_FAIL, // 👈 Fixed: Now points to its unique rule key token!
+    message: () =>
+      `CUSTOM FILL VALIDATION FAILURE: The manual object recovery parameters failed post-merge schema verification checks.\n` +
+      `Reason: The user-defined "customFill" structure successfully injected values into the timeline frame, but the combined object still violated active layout blueprint constraints or type rules.\n` +
+      `Action: Audit the data types, required constraints, and nested structures provided inside your custom fill literal mapping block to ensure alignment with today's blueprint contract.`,
+  },
+  MALFORMED_REGISTRY_KEYS: {
+    errorArea: 'runtime_match_drift',
+    rule: XALOR_MATCH_DRIFT_RULE_KEYS.MALFORMED_REGISTRY_KEYS, // 👈 Pristine, isolated rule key mapping!
+    message: () =>
+      `MALFORMED REGISTRY KEYS: Detached metadata gateway violation intercepted at perimeter threshold.\n` +
+      `Reason: The runtime tracking tokens supplied at the call-site could not be verified or matched against active workspace configuration layout registries.\n` +
+      `Action: Verify your pre-compiled AOT evolution metadata keys, confirm both currentKey and ancestralKey match active vault snapshot JSON registries, and check compilation flags.`,
+  },
+  AUTOMATED_FILL_VALIDATION_FAIL: {
+    errorArea: 'runtime_match_drift',
+    rule: XALOR_MATCH_DRIFT_RULE_KEYS.AUTOMATED_FILL_VALIDATION_FAIL,
+    message: () =>
+      `AUTOMATED FILL VALIDATION FAILURE: Automated framework-driven recovery strategy failed post-merge verification.\n` +
+      `Reason: An automated recovery mode successfully built defaults, mocks, or type-coerced structures, but the resulting combined object still violated active layout blueprint constraints or validation rules.\n` +
+      `Action: Verify your vault configuration limits, audit the underlying xalethorVaultGenerator materialization mechanics, and check for schema definition regressions inside your target snapshots.`,
+  },
 } satisfies TXalorMatchDriftErrorMapper;
 
 /**

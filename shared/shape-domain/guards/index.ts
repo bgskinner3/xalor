@@ -4,6 +4,7 @@ import type {
   TSolidShapePrimitiveKeys,
   TSolidShapeLiteralKeys,
   InstanceRegistryKey,
+  TLeafShape,
 } from '../types';
 import type { TTypeGuard } from '../../types';
 import {
@@ -56,6 +57,18 @@ export const isShapeOfKind = <K extends TSolidShape['kind']>(
     return isObject(value) && !isNull(value) && isKeyInObject('kind')(value) && value.kind === kind;
   };
 };
+/**
+ * Runtime leaf-shape discriminator.
+ *
+ * Narrows generic solid shapes into terminal (non-object) shape variants.
+ * Used when recursive property traversal should stop.
+ */
+export const isLeafShape = (value: TSolidShape): value is TLeafShape =>
+  isIntersectionShape(value) ||
+  isUnionShape(value) ||
+  isArrayShape(value) ||
+  isPrimitiveShape(value) ||
+  isLiteralShape(value);
 /**
  * Runtime instanceof discriminator.
  *

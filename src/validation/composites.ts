@@ -41,7 +41,30 @@ export function validateIntersection(
   }
   return true;
 }
+// export function validateIntersection(
+//   data: unknown,
+//   shape: TSolidIntersectionShape,
+//   ctx: TValidationContext,
+// ): boolean {
+//   const parts = shape.values;
+//   const len = parts.length;
 
+//   for (let i = 0; i < len; i++) {
+//     const part = parts[i];
+//     if (part !== undefined) {
+//       // 🚀 Let the sub-error survive! Do not roll it back!
+//       if (!xalethorVaultValidation.validateShape(data, part, ctx)) {
+//         return xalethorVaultValidation.reportError({
+//           ctx,
+//           errorKey: 'INTERSECTION_VALIDATION_PART_FAILED',
+//           received: data,
+//           shapeContext: shape,
+//         });
+//       }
+//     }
+//   }
+//   return true;
+// }
 /**
  * Validates Literal value equations.
  * COMPLIANCE: Ultra-fast strict equality evaluation with flat metadata handoff.
@@ -62,35 +85,6 @@ export function validateLiteral(
   });
 }
 
-/**
- * Validates Union member branches.
- * COMPLIANCE: Zero allocations. Splices transient context errors point-free on branch failure.
- * SYNCHRONIZED: Consumes the new object-based TReportErrorParams payload interface.
- */
-// export function validateUnion(
-//   data: unknown,
-//   shape: Extract<TSolidShape, { kind: 'union' }>,
-//   ctx: TValidationContext,
-// ): boolean {
-//   const snapshotCount = ctx.errors.length;
-//   const len = shape.values.length;
-
-//   for (let i = 0; i < len; i++) {
-//     if (xalethorVaultValidation.validateShape(data, shape.values[i], ctx)) {
-//       if (ctx.errors.length > snapshotCount) {
-//         ctx.errors.length = snapshotCount;
-//       }
-//       return true;
-//     }
-//   }
-
-//   return xalethorVaultValidation.reportError({
-//     ctx,
-//     errorKey: 'UNION_VALIDATION_NO_MATCH',
-//     received: data,
-//     shapeContext: shape,
-//   });
-// }
 export function validateUnion(
   data: unknown,
   shape: Extract<TSolidShape, { kind: 'union' }> & {

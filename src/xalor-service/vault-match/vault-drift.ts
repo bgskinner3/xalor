@@ -1,10 +1,9 @@
 import type {
   IXalorDriftContext,
   TResolveDriftReturnConstraint,
-  // TXalorMatchDriftKeys,
   TDriftErrorInterceptor,
 } from '../../models/types';
-import { TSolidObjectShape } from '../../../shared';
+import type { TSolidShape } from '../../../shared';
 import {
   isRegistryKey,
   isRecord,
@@ -15,19 +14,16 @@ import {
   isInstanceOf,
   isArray,
   isUndefined,
+  // mergeDeep,
+  isFunction,
 } from '../../../shared/utils';
 import {
   isObjectShape,
   isArrayShape,
 } from '../../../shared/shape-domain/guards';
 import { xalethorVaultKeeper } from '../vault-keeper';
-import { xalethorVaultValidation } from '../vault-validation';
+// import { xalethorVaultValidation } from '../vault-validation';
 import { xalethorVaultDiagnostics } from '../vault-diagnostics';
-import {
-  refineAncestralContract,
-  refineToCurrentModel,
-  refinePayloadContract,
-} from '../../utils';
 import {
   XALOR_MATCH_DRIFT_ERROR_MAPPER,
   XALOR_MATCH_DRIFT_RULE_KEYS,
@@ -36,6 +32,12 @@ import {
   synthesizeDriftMatrixBlueprint,
   getMissingKeysMatrix,
   handleRecoveryStrategy,
+  // seedCurrentProductionFrame,
+  purgeMissingOptionalFields,
+  refineAncestralContract,
+  refineToCurrentModel,
+  refinePayloadContract,
+  executeSurgicalFallbackInflation,
 } from '../../utils';
 
 class XalethorVaultMatchDrift {
@@ -43,18 +45,15 @@ class XalethorVaultMatchDrift {
    * @see {@link xalorDriftClassDocs.projectPrunedFrame}
    */
   private projectPrunedFrame(
-    hybridBlueprint: TSolidObjectShape,
+    hybridBlueprint: TSolidShape,
     targetPayload: Record<string, unknown>,
   ): Record<string, unknown> {
-    if (!hybridBlueprint || !hybridBlueprint.properties) {
-      return targetPayload;
-    }
+    if (!isObjectShape(hybridBlueprint)) return targetPayload;
+    if (!hybridBlueprint || !hybridBlueprint.properties) return targetPayload;
 
-    // Cache the flat properties register dictionary for maximum microsecond lookup velocities
     const allowedProperties = hybridBlueprint.properties;
     const pristineEgressFrame: Record<string, unknown> = {};
 
-    // Satisfies COMMANDMENT VIII: Iterates direct memory references without Object.keys() heap clutter
     for (const currentKey in targetPayload) {
       if (hasOwnProperty(targetPayload, currentKey)) {
         /* prettier-ignore */
@@ -125,11 +124,9 @@ class XalethorVaultMatchDrift {
           hasOwnProperty(ancestralProps, currentKey)
         ) {
           projectedContainer[currentKey] = payload[currentKey];
-          // Lane C: Rigid structural gatekeeping
+          // Lane C: Rigid structural gatekeeper
         } else {
-          if (isStrictEnabled) {
-            return false;
-          }
+          if (isStrictEnabled) return false;
         }
       }
     }
@@ -154,14 +151,13 @@ class XalethorVaultMatchDrift {
 
     if (processedPayload === false) return false;
     if (laneMode === 'current') {
+      // const hydratedFrame = seedCurrentProductionFrame({
+      //   processedPayload,
+      //   currentKey,
+      // });
       if (refineToCurrentModel<K, string>(processedPayload, currentKey)) {
         const executionResult = ctx.current(processedPayload);
-
         if (isRecord(executionResult)) {
-          /* prettier-ignore */
-          // if (xalethorVaultValidation.validateShapeByKey(executionResult, currentKey)) {
-          //   return executionResult;
-          // }
           return executionResult;
         }
       }
@@ -169,12 +165,8 @@ class XalethorVaultMatchDrift {
     if (laneMode === 'ancestor') {
       if (refineAncestralContract<K>(processedPayload)) {
         const mutatedLegacyOutput = ctx.v1_ancestor(processedPayload);
-
         if (isRecord(mutatedLegacyOutput)) {
-          /* prettier-ignore */
-          if (xalethorVaultValidation.validateShapeByKey(mutatedLegacyOutput, ancestralKey)) {
-            return mutatedLegacyOutput;
-          }
+          return mutatedLegacyOutput;
         }
       }
     }
@@ -196,37 +188,42 @@ class XalethorVaultMatchDrift {
     payload: unknown,
     ctx: IXalorDriftContext<K>,
     injectedKey: K,
-  ): TResolveDriftReturnConstraint<K> | null {
+  ): Record<string, unknown> {
     const { ancestralKey, currentKey } = ctx;
 
-    // Guard 1: Verify inbound packet is a physical dynamic record collection dictionary
+    // =============================================================================
+    // GUARD 1: VERIFY INBOUND PACKET IS A VALID Object RECORD
+    // =============================================================================
     if (!isRecord(payload)) {
-      /* prettier-ignore */
-      const fallbackResult = this.executeDefaultFallback<K>(ctx, {}, injectedKey);
-      if (refinePayloadContract<K>(fallbackResult)) {
-        return fallbackResult;
-      }
-      /* prettier-ignore */
-      return this.driftErrorInterceptor({injectedKey, ruleKey: 'MALFORMED_NON_RECORD_PAYLOAD'})
+      return this.driftErrorInterceptor({
+        ctx,
+        injectedKey,
+        ruleKey: 'MALFORMED_NON_RECORD_PAYLOAD',
+        customContextMessage:
+          'The inbound network stream payload failed basic dictionary record layout checks. Traversal aborted.',
+      });
     }
 
-    // Guard 2: Verify both registry token identifiers are properly synchronized
+    // =============================================================================
+    // GUARD 2: VERIFY SYSTEM REGISTRY LOGISTICS IDENTIFIERS
+    // =============================================================================
     if (!isRegistryKey(currentKey) || !isRegistryKey(ancestralKey)) {
-      /* prettier-ignore */
-      const fallbackResult = this.executeDefaultFallback<K>(ctx, payload, injectedKey);
-      if (refinePayloadContract<K>(fallbackResult)) {
-        return fallbackResult;
-      }
+      return this.driftErrorInterceptor({
+        ctx,
+        injectedKey,
+        ruleKey: 'MALFORMED_REGISTRY_KEYS',
+        customContextMessage: `currentKey: "${String(currentKey)}", ancestralKey: "${String(ancestralKey)}".`,
+      });
     }
 
-    return null; // Both security perimeters cleared safely!
+    return payload;
   }
 
   /**
    * @see {@link xalorDriftClassDocs.hydrateMissingBlueprintStructures}
    */
   private hydrateMissingBlueprintStructures(
-    hybridBlueprint: TSolidObjectShape | null,
+    hybridBlueprint: TSolidShape | null,
     workingFrame: Record<string, unknown>,
   ): void {
     /* prettier-ignore */
@@ -254,70 +251,28 @@ class XalethorVaultMatchDrift {
   }
 
   /**
-   * @see {@link xalorDriftClassDocs.executeEgressSanitizationPipeline}
+   * @see {@link xalorDriftClassDocs.executeEgressSanitization}
    */
-  private executeEgressSanitizationPipeline<K extends TActiveDriftRegistryKeys>(
+  private executeEgressSanitization<K extends TActiveDriftRegistryKeys>(
     workingFrame: Record<string, unknown>,
-    activeHybridBlueprint: TSolidObjectShape,
-    ctx: IXalorDriftContext<K>,
-  ): TResolveDriftReturnConstraint<K> | null {
-    const { currentKey, omit: omitPathsList } = ctx;
-
-    // ➊ Filter privacy tokens via specified omit config parameter targets
-    const hasOmitPaths = isRecord(omitPathsList) || isArray(omitPathsList);
-    const cleanOutput = this.projectOmitProperties(
-      workingFrame,
-      hasOmitPaths ? omitPathsList : undefined,
-    );
-
-    // ➋ Prune out unknown outlier attributes point-free across both version eras
-    const pristineEgressFrame = this.projectPrunedFrame(
-      activeHybridBlueprint,
-      cleanOutput,
-    );
-
-    // ➌ Deep hybrid structural gatekeeper verification pass
-    const ctxValidation = xalethorVaultValidation.createInitialContext(
-      String(currentKey),
-    );
-    const isFinalHybridShapeValid = xalethorVaultValidation.validateShape(
-      pristineEgressFrame,
-      activeHybridBlueprint,
-      ctxValidation,
-    );
-
-    if (isFinalHybridShapeValid) {
-      if (refinePayloadContract<K>(pristineEgressFrame)) {
-        return pristineEgressFrame; // Clean, fully verified layout ready for asset exit!
-      }
-    }
-
-    return null; // Soft failure alerts master loop to trigger fallback circuit breakers
-  }
-
-  private executeEgressPipeline<K extends TActiveDriftRegistryKeys>(
-    workingFrame: Record<string, unknown>,
-    activeHybridBlueprint: TSolidObjectShape,
+    activeHybridBlueprint: TSolidShape,
     ctx: IXalorDriftContext<K>,
   ): Record<string, unknown> | null {
     const { omit: omitPathsList } = ctx;
 
-    // ➊ Filter privacy tokens via specified omit config parameter targets
     const hasOmitPaths = isRecord(omitPathsList) || isArray(omitPathsList);
     const cleanOutput = this.projectOmitProperties(
       workingFrame,
       hasOmitPaths ? omitPathsList : undefined,
     );
 
-    // ➋ Prune out unknown outlier attributes point-free across both version eras
     const pristineEgressFrame = this.projectPrunedFrame(
       activeHybridBlueprint,
       cleanOutput,
     );
 
-    if (!isNull(pristineEgressFrame) && !isUndefined(pristineEgressFrame)) {
-      return pristineEgressFrame;
-    }
+    /* prettier-ignore */
+    if (!isNull(pristineEgressFrame) && !isUndefined(pristineEgressFrame)) return pristineEgressFrame;
 
     return null;
   }
@@ -330,28 +285,30 @@ class XalethorVaultMatchDrift {
     ctx: IXalorDriftContext<K>,
     injectedKey: K,
   ): TResolveDriftReturnConstraint<K> {
-    const activeHybridBlueprint = synthesizeDriftMatrixBlueprint(ctx);
+    const activeHybridBlueprint = synthesizeDriftMatrixBlueprint(ctx, payload);
+    // console.dir(activeHybridBlueprint, {
+    //   depth: null,
+    //   colors: true,
+    // });
 
-    /* prettier-ignore */ const perimeterGuardFailureResult = this.executeIngressPerimeterGuards<K>(payload, ctx, injectedKey);
-    /* prettier-ignore */ if (!isNull(perimeterGuardFailureResult)) return perimeterGuardFailureResult;
+    /* prettier-ignore */
+    const guardedPayload = this.executeIngressPerimeterGuards<K>(payload, ctx, injectedKey);
 
-    /* prettier-ignore */ if (!isRecord(payload)) return this.driftErrorInterceptor({injectedKey, ruleKey: 'MALFORMED_NON_RECORD_PAYLOAD'})
-    // xalethorVaultTransform
-    const chronologicalWorkingFrame: Record<string, unknown> = { ...payload };
-    // const res = extractRequiredBlueprintMatrix(activeHybridBlueprint);
-
-    // console.log(res);
+    /* prettier-ignore */
+    const chronologicalWorkingFrame: Record<string, unknown> = { ...guardedPayload };
     // =============================================================================
     // STEP A: Yesterday's Phase (Ancestral Evolution Pass)
     // =============================================================================
     /* prettier-ignore */
-    const upCastedLegacyFields = this.executeEvolutionaryLane<K>(payload, ctx, 'ancestor');
+    const upCastedLegacyFields = this.executeEvolutionaryLane<K>(guardedPayload, ctx, 'ancestor');
 
     if (upCastedLegacyFields !== false) {
       for (const targetKey in upCastedLegacyFields) {
         if (hasOwnProperty(upCastedLegacyFields, targetKey)) {
-          chronologicalWorkingFrame[targetKey] =
-            upCastedLegacyFields[targetKey];
+          const upCastedValue = upCastedLegacyFields[targetKey];
+          if (!isUndefined(upCastedValue)) {
+            chronologicalWorkingFrame[targetKey] = upCastedValue;
+          }
         }
       }
     }
@@ -369,7 +326,6 @@ class XalethorVaultMatchDrift {
     const chainedPipelineResult = this.executeEvolutionaryLane<K>(chronologicalWorkingFrame, ctx, 'current');
 
     if (chainedPipelineResult !== false) {
-      // Non-destructive contemporary patch loop
       for (const targetKey in chainedPipelineResult) {
         if (hasOwnProperty(chainedPipelineResult, targetKey)) {
           chronologicalWorkingFrame[targetKey] =
@@ -377,36 +333,20 @@ class XalethorVaultMatchDrift {
         }
       }
     }
-    const prunedEgressAsset = this.executeEgressPipeline<K>(
+
+    // =============================================================================
+    // STEP C: Centralized Surgical Egress Sanitization Pass
+    // =============================================================================
+    const prunedEgressAsset = this.executeEgressSanitization<K>(
       chronologicalWorkingFrame,
       activeHybridBlueprint,
       ctx,
     );
-    // // =============================================================================
-    // // STEP C: Centralized Surgical Egress Sanitization Pass
-    // // =============================================================================
-    // const finalEgressAsset = this.executeEgressSanitizationPipeline<K>(
-    //   chronologicalWorkingFrame,
-    //   activeHybridBlueprint,
-    //   ctx,
-    // );
-
-    if (prunedEgressAsset) return prunedEgressAsset;
-
-    // =============================================================================
-    // STEP D: Circuit Breaker Fallback (Un-nested vertical fallback path)
-    // =============================================================================
-    const terminalFallback = this.executeDefaultFallback<K>(
-      ctx,
-      chronologicalWorkingFrame,
-      injectedKey,
-    );
-
-    if (refinePayloadContract<K>(terminalFallback)) {
-      return terminalFallback;
+    if (!isNull(prunedEgressAsset)) {
+      /* prettier-ignore */
+      return this.executeDefaultFallback<K>( ctx, prunedEgressAsset, injectedKey, activeHybridBlueprint);
     }
 
-    // Edge-case fallback panic log guarantees absolute single-threaded loop crash protection
     /* prettier-ignore */
     return this.driftErrorInterceptor({injectedKey, ruleKey: 'UNEXPECTED_STREAM_COLLAPSE'})
   }
@@ -419,13 +359,13 @@ class XalethorVaultMatchDrift {
   // ====================================================================================================
   // ====================================================================================================
   /**
-  //  * @see {@link xalorDriftClassDocs}
+   * @see {@link xalorDriftClassDocs.driftErrorInterceptor}
    */
   /* prettier-ignore */
   public driftErrorInterceptor: TDriftErrorInterceptor = ({
     ctx,
     injectedKey = 'fallback',
-    ruleKey = XALOR_MATCH_DRIFT_RULE_KEYS.DEFAULT_ERROR, // 'default_error'
+    ruleKey = 'DEFAULT_ERROR',
     customContextMessage,
     caughtError,
   }) => {
@@ -441,8 +381,13 @@ class XalethorVaultMatchDrift {
     if (isInstanceOf(caughtError, Error)) {
       finalDiagnosticMessage += `\n💥 ORIGINATING EXCEPTION: ${caughtError.message}`;
     }
-
-    // --- ➊ INTERNAL SYSTEM DIAGNOSTICS & TELEMETRY LOGGING ---
+    if (ctx && isFunction(ctx.onError)) {
+      ctx.onError({
+        rule: ruleKey,
+        customMessage: customContextMessage,
+      });
+    }
+  
     if (ctx?.strict && isKeyInObject(ruleKey)(XALOR_MATCH_DRIFT_RULE_KEYS)) {
       console.warn(
         `[XALOR INTERNAL] Cascade failure detected for key: ${String(injectedKey)}`,
@@ -453,7 +398,7 @@ class XalethorVaultMatchDrift {
       String(injectedKey),
       finalDiagnosticMessage,
     );
-  }
+  };
   /**
    * @see {@link xalorDriftClassDocs.executeDefaultFallback}
    */
@@ -461,73 +406,65 @@ class XalethorVaultMatchDrift {
     ctx: IXalorDriftContext<K>,
     workingFrame: Record<string, unknown>,
     injectedKey: K,
-    activeHybridBlueprint?: TSolidObjectShape | null,
+    activeHybridBlueprint: TSolidShape,
   ): TResolveDriftReturnConstraint<K> {
-    const { required: missingRequiredFields } = getMissingKeysMatrix(
-      workingFrame,
-      activeHybridBlueprint,
-    );
-
-    if (missingRequiredFields.length === 0) {
-      return workingFrame as TResolveDriftReturnConstraint<K>;
-    }
-
     const { mode = 'defaultFill', customFill } = ctx.default ?? {};
 
     if (mode === 'none') {
+      /* prettier-ignore */
+      const { required: missingRequiredFields, optional: missingOptionalFields } =
+      getMissingKeysMatrix(workingFrame, activeHybridBlueprint);
+
+      if (missingRequiredFields.length === 0) {
+        purgeMissingOptionalFields(workingFrame, missingOptionalFields);
+
+        if (refinePayloadContract<K>(workingFrame)) return workingFrame;
+      }
       return this.driftErrorInterceptor({
         ctx,
         injectedKey,
-        ruleKey: 'UNEXPECTED_STREAM_COLLAPSE',
-        customContextMessage: `Strict fallback mode ("none") activated. Automatic structure inflation and recovery bridges bypassed. Missing required production keys: [${missingRequiredFields.join(', ')}].`,
+        ruleKey: 'STRICT_FALLBACK_VIOLATION',
       });
     }
+
     if (mode === 'custom') {
-      if (!customFill) {
+      if (!customFill || !isObjectShape(activeHybridBlueprint)) {
         return this.driftErrorInterceptor({
           ctx,
           injectedKey,
-          ruleKey: 'DEFAULT_ERROR',
-          customContextMessage: `Mode was set to 'custom', but 'customFill' options object was completely omitted.`,
+          ruleKey: 'CUSTOM_FILL_OMISSION',
         });
       }
 
-      // Verify that their manual configuration contains the properties that are missing on the wire
-      for (const missingKey of missingRequiredFields) {
-        if (
-          !hasOwnProperty(customFill, missingKey) ||
-          customFill[missingKey] === undefined
-        ) {
-          return this.driftErrorInterceptor({
-            ctx,
-            injectedKey,
-            ruleKey: 'DEFAULT_ERROR',
-            customContextMessage: `The 'customFill' matrix is missing a mandatory default value for required property: "${missingKey}".`,
-          });
-        }
-      }
-
-      return {
-        ...customFill,
-        ...workingFrame,
-      } as TResolveDriftReturnConstraint<K>;
-    }
-
-    if (mode === 'defaultFill' || mode === 'mockFill' || mode === 'castFill') {
-      if (!activeHybridBlueprint) {
-        /* prettier-ignore */
-        return this.driftErrorInterceptor({ ctx, injectedKey, ruleKey: 'DETACHED_COMPILER_METADATA'});
-      }
-
-      const finalizedHealedFrame = handleRecoveryStrategy({
-        mode,
+      const { result, ctxContext: _ } = executeSurgicalFallbackInflation<K>({
         workingFrame,
         activeHybridBlueprint,
+        customFill: customFill as Record<string, unknown>,
+        injectedKey: String(injectedKey),
       });
-      if (!isNull(finalizedHealedFrame)) {
-        if (refinePayloadContract<K>(finalizedHealedFrame)) {
+      // console.dir(ctxContext);
+      if (isRecord(result) && refinePayloadContract<K>(result)) {
+        return result;
+      }
+
+      return this.driftErrorInterceptor({
+        ctx,
+        injectedKey,
+        ruleKey: 'CUSTOM_FILL_VALIDATION_FAIL',
+      });
+    }
+    if (isObjectShape(activeHybridBlueprint)) {
+      /* prettier-ignore */
+      if (mode === 'defaultFill' || mode === 'mockFill' || mode === 'castFill') {
+        /* prettier-ignore */
+        if (!activeHybridBlueprint) return this.driftErrorInterceptor({ ctx, injectedKey, ruleKey: 'DETACHED_COMPILER_METADATA'});
+        /* prettier-ignore */
+        const finalizedHealedFrame = handleRecoveryStrategy({ mode, workingFrame, activeHybridBlueprint });
+
+        /* prettier-ignore */
+        if (!isNull(finalizedHealedFrame) && refinePayloadContract<K>(finalizedHealedFrame)) {
           return finalizedHealedFrame;
-        }
+      }
       }
     }
 

@@ -28,3 +28,10 @@ export type TSolidFunctionShape = Extract<TSolidShape, { kind: 'function' }>;
 export type TSolidIntersectionShape = Extract<TSolidShape, { kind: 'intersection' }>;
 /* prettier-ignore */
 export type TSolidInstanceOfShape = Extract<TSolidShape, { kind: 'instanceof' }>;
+
+export type TLeafShape =
+  | TSolidIntersectionShape
+  | TSolidUnionShape
+  | TSolidArrayShape
+  | TSolidPrimitiveShape
+  | TSolidLiteralShape;

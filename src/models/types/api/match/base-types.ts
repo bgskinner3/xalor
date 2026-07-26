@@ -2,6 +2,7 @@ import type {
   TSolidBranded,
   TExtractRegistryKeyName,
   TSolidShape,
+  TSolidObjectShape,
 } from '../../../../../shared';
 import type { TXalorMatchDriftKeys } from '../../error-types';
 import type { IXalorDriftContext } from './drift';
@@ -45,7 +46,23 @@ export type TMissingKeysStructure = {
   readonly required: string[];
   readonly optional: string[];
 };
+export type TSurgicalFallbackParams<_K extends TActiveDriftRegistryKeys> = {
+  readonly workingFrame: Record<string, unknown>;
+  readonly activeHybridBlueprint: TSolidObjectShape;
+  readonly customFill: Record<string, unknown>;
+  readonly injectedKey: string;
+};
+export type TSeedFrameParams = {
+  readonly processedPayload: Record<string, unknown>;
+  readonly currentKey: string;
+  readonly mode?: Exclude<TDriftFillMode, 'none' | 'custom'>;
+};
 
+export type TRecoveryStrategyParams = {
+  readonly workingFrame: Record<string, unknown>;
+  readonly activeHybridBlueprint: TSolidObjectShape;
+  readonly mode: Exclude<TDriftFillMode, 'none' | 'custom'>; // Safely locks down to your 3 filling strategies
+};
 // ====================================================================
 // ====================================================================
 // ====================================================================

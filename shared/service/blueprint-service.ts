@@ -1,8 +1,4 @@
-import type {
-  TSolidShape,
-  TSolidObjectRawShape,
-  TSolidObjectShape,
-} from '../shape-domain';
+import type { TSolidShape, TSolidObjectRawShape } from '../shape-domain';
 import type { TRebuildStrategyMap } from '../types';
 import {
   isUndefined,
@@ -10,13 +6,18 @@ import {
   isInstanceOf,
   isString,
   isShapeOfKind,
+  isLeafShape,
+  isRecord,
+  hasOwnProperty,
 } from '../../shared';
 import { yieldItems } from '../../shared/utils';
 import {
   INSTANCE_REGISTRY_MAPPER,
   isArrayShape,
+  isIntersectionShape,
   isObjectShape,
   isReferenceShape,
+  isUnionShape,
   NATIVE_BUILTINS,
 } from '../shape-domain';
 
@@ -107,7 +108,6 @@ class BlueprintService {
       const elements = shape.elementShapes;
 
       if (!isUndefined(elements) && elements.length > 0) {
-        // FIX: Replaced tuple index loops with functional pipeline collectors
         const tupleContents = (yieldItems(elements) || [])
           .reduce((buffer: string[], element) => {
             if (!isUndefined(element)) {
@@ -136,7 +136,6 @@ class BlueprintService {
       const innerSpacing = ' '.repeat(nextDepth);
       const trailingSpacing = ' '.repeat(depth);
 
-      // FIX: Clean own-keys map conversion eradicating imperative loop declarations
       const linesBuffer = Object.keys(properties).reduce(
         (buffer: string[], key) => {
           const isDirect = Object.prototype.hasOwnProperty.call(
@@ -168,7 +167,6 @@ class BlueprintService {
       const { shape, pool, depth, visited, generate } = params;
       if (!isShapeOfKind('intersection')(shape)) return 'unknown';
 
-      // FIX: Functional map reduction pipeline eliminates the manual index array loop
       return (shape.values || [])
         .reduce((buffer: string[], variant) => {
           buffer.push(generate(variant, pool, depth, visited));
@@ -181,7 +179,6 @@ class BlueprintService {
       const { shape, pool, depth, visited, generate } = params;
       if (!isShapeOfKind('function')(shape)) return 'unknown';
 
-      // FIX: Clean point-free array map replaces the custom arguments builder loop
       const argsBuffer = (shape.parameters || []).map((param) => {
         const paramType = generate(param.shape, pool, depth, visited);
         return `${param.name}${param.optional ? '?' : ''}: ${paramType}`;
@@ -223,16 +220,13 @@ class BlueprintService {
         const mappingItem = INSTANCE_REGISTRY_MAPPER[key];
         if (!mappingItem || typeof mappingItem.def !== 'function') continue;
 
-        // 1. Fire your factory function to spin up a safe local runtime instance archetype
         const liveMockInstance = mappingItem.def();
         if (!liveMockInstance) continue;
 
-        // 2. Fetch the real method properties exposed on its prototype chain
         const prototypeKeys = Object.getOwnPropertyNames(
           Object.getPrototypeOf(liveMockInstance) || {},
         );
 
-        // 3. Filter out universal base-object overrides to create a unique fingerprint signature
         const coreArchetypeKeys = prototypeKeys.filter(
           (k) =>
             k !== 'constructor' && k !== 'toString' && k !== 'toLocaleString',
@@ -262,10 +256,9 @@ class BlueprintService {
           if (key === 'Blob' && !shapeKeys.includes('lastModified'))
             return 'Blob';
 
-          return key; // Instantly returns 'URLSearchParams', 'TransformStream', etc.
+          return key;
         }
       } catch {
-        // Structural safety catch boundary to prevent runtime context crashes
         continue;
       }
     }
@@ -295,10 +288,9 @@ class BlueprintService {
     const nativeInstanceMatchName =
       this.collapseKnownNativeInstanceShape(shape);
     if (nativeInstanceMatchName !== null) {
-      return nativeInstanceMatchName; // Returns "Error", "Headers", "Promise" cleanly!
+      return nativeInstanceMatchName;
     }
 
-    // Baseline mapper processing falls back to your static strategy table objects seamlessly
     const spacing = ' '.repeat(indentDepth);
     const handler = this.REBUILD_STRATEGY_MAPPER[shape.kind];
     if (!handler) return 'unknown';
@@ -337,6 +329,51 @@ class BlueprintService {
 
     return `export type ${symbolName} = ${coreShapeString};`;
   }
+  // =============================================================================
+  // =============================================================================
+  // =============================================================================
+  // =============================================================================
+  // DIFT BLUEPRINTS
+  // =============================================================================
+  // =============================================================================
+  // =============================================================================
+  // =============================================================================
+  /**
+   * 🛰️ UTILITY: RUNTIME WIRE-KEY REFLECTION EXTRACTOR
+   * Dynamically derives the authoritative top-level property container name from
+   * live incoming stream parameters. Falls back to pre-compiled AOT nominal tokens
+   * if the wire request payload is an empty buffer or a flat scalar primitive.
+   *
+   * Satisfies COMMANDMENT VIII (Internal Efficiency) and COMMANDMENT IX (No Escape Hatches).
+   */
+  private extractDerivedWireName(
+    currentBlueprintKey: string,
+    payload: unknown, // 👑 THE MISSING ARGUMENT CONTRACT SLOT!
+  ): string {
+    let derivedWireKeyName = '';
+
+    // ➊ Inspect the live payload keys to extract the authentic wire property node in real-time
+    if (isRecord(payload)) {
+      const payloadOwnKeys = Object.keys(payload);
+      if (payloadOwnKeys.length > 0 && payloadOwnKeys[0] !== undefined) {
+        derivedWireKeyName = payloadOwnKeys[0]; // Isolate the true active root wire key name
+      }
+    }
+
+    // ➋ Symmetrical Fallback: If the inbound payload is a flat primitive or empty stream buffer,
+    // dynamically derive the key name token from the precompiled AOT nominal registry string!
+    if (!derivedWireKeyName && currentBlueprintKey) {
+      derivedWireKeyName = currentBlueprintKey
+        .toLowerCase()
+        .replace(/_shape|_test|_evolution|_lane|_test_drift/gi, '');
+    }
+
+    // ➌ Final bulletproof backup protection shield
+    const finalVirtualKeyName = derivedWireKeyName || 'extractedField';
+
+    // 👑 FIXED: Returns the compiled string token straight back up to the parent engine!
+    return finalVirtualKeyName;
+  }
   /**
    * DEEP HYBRID BLUEPRINT SYNTHESIS ENGINE
    *
@@ -353,40 +390,47 @@ class BlueprintService {
     currentBlueprintKey: string | undefined,
     ancestralBlueprintKey: string | undefined,
     blueprintsPool: Record<string, TSolidShape> | Map<string, TSolidShape>,
-  ): TSolidObjectShape | null {
+    payload: unknown,
+  ): TSolidShape | null {
     if (!currentBlueprintKey || !ancestralBlueprintKey) return null;
+
     const recursivelyUnwrapShape = (
       shapeNode: TSolidShape,
       visitedHashes: Set<string>,
     ): TSolidShape => {
       if (!shapeNode || typeof shapeNode !== 'object') return shapeNode;
 
-      // 1. Chasing down reference hash keys recursively
+      // 1. Resolve references
       if (isReferenceShape(shapeNode)) {
-        if (visitedHashes.has(shapeNode.name)) {
-          return shapeNode; // Circular dependency shortcut safety valve protection
-        }
+        if (visitedHashes.has(shapeNode.name)) return shapeNode;
 
         const nextShapeTarget = this.resolveBlueprint(
           shapeNode.name,
           blueprintsPool,
         );
+
         if (nextShapeTarget) {
           const updatedVisited = new Set<string>(visitedHashes);
           updatedVisited.add(shapeNode.name);
+
           return recursivelyUnwrapShape(nextShapeTarget, updatedVisited);
         }
+        console.warn(
+          `[xalor] ⚠️  UNREGISTERED REFERENCE DETECTION: The blueprint symbol reference "${shapeNode.name}" ` +
+            `could not be located inside your active database registry pool. This missing dependency ` +
+            `will cause a structural blueprint collapse downstream!`,
+        );
         return shapeNode;
       }
 
-      // 2. Unroll child property bags inside object sub-shapes recursively
+      // 2. Objects
       if (isObjectShape(shapeNode) && shapeNode.properties) {
         const unwrappedProps: Record<string, TSolidObjectRawShape> = {};
-        const childProps = shapeNode.properties;
 
-        for (const propKey in childProps) {
-          if (Object.prototype.hasOwnProperty.call(childProps, propKey)) {
-            const descriptor = childProps[propKey];
+        for (const propKey in shapeNode.properties) {
+          if (hasOwnProperty(shapeNode.properties, propKey)) {
+            const descriptor = shapeNode.properties[propKey];
+
             unwrappedProps[propKey] = {
               ...descriptor,
               shape: recursivelyUnwrapShape(descriptor.shape, visitedHashes),
@@ -400,7 +444,6 @@ class BlueprintService {
         };
       }
 
-      // 3. Unroll array item types recursively
       if (isArrayShape(shapeNode) && shapeNode.items) {
         return {
           ...shapeNode,
@@ -408,31 +451,75 @@ class BlueprintService {
         };
       }
 
+      if (isIntersectionShape(shapeNode) && shapeNode.values) {
+        return {
+          ...shapeNode,
+          values: shapeNode.values.map((subShape) =>
+            recursivelyUnwrapShape(subShape, visitedHashes),
+          ),
+        };
+      }
+
+      if (isUnionShape(shapeNode) && shapeNode.values) {
+        return {
+          ...shapeNode,
+          values: shapeNode.values.map((subShape) =>
+            recursivelyUnwrapShape(subShape, visitedHashes),
+          ),
+        };
+      }
+
       return shapeNode;
     };
 
-    // ➊ Resolve and deeply unroll today's active required production blueprint (Required)
-    const modernShapeBase = this.resolveBlueprint(
-      currentBlueprintKey,
+    // =============================================================================
+    // PHASE 1: TODAY'S ACTIVE PRODUCTION SPECIFICATION UNROLLING
+    // =============================================================================
+    /* prettier-ignore */
+    const modernShapeBase = this.resolveBlueprint( currentBlueprintKey, blueprintsPool);
+
+    if (isUndefined(modernShapeBase)) return null;
+
+    /* prettier-ignore */
+    const modernShape = recursivelyUnwrapShape( modernShapeBase, new Set<string>());
+
+    // =============================================================================
+    // PHASE 2: UNIVERSAL SHAPE PASSTHROUGH GATEWAY (VIRTUAL OBJECT WRAPPING)
+    // =============================================================================
+    // eslint-disable-next-line no-useless-assignment
+    let modernProps: Record<string, TSolidObjectRawShape> = {};
+    let modernStrict = isObjectShape(modernShape) ? modernShape?.strict : true;
+
+    if (isLeafShape(modernShape)) {
+      const finalVirtualKeyName = this.extractDerivedWireName(
+        currentBlueprintKey,
+        payload,
+      );
+
+      modernProps = {
+        [finalVirtualKeyName]: {
+          shape: modernShape,
+          optional: false,
+          name: finalVirtualKeyName,
+          requiresKeyPresence: true,
+          allowsExplicitUndefined: false,
+        },
+      };
+
+      modernStrict = true;
+    } else if (isObjectShape(modernShape) && modernShape.properties) {
+      modernProps = modernShape.properties;
+    } else {
+      return null;
+    }
+
+    // =============================================================================
+    // PHASE 3: COMPLEX MULTI-ERA FIELD MATRIX MERGING
+    // =============================================================================
+    const ancestralShapeBase = this.resolveBlueprint(
+      ancestralBlueprintKey,
       blueprintsPool,
     );
-    if (
-      !modernShapeBase ||
-      modernShapeBase.kind !== 'object' ||
-      !modernShapeBase.properties
-    )
-      return null;
-
-    const modernShape = recursivelyUnwrapShape(
-      modernShapeBase,
-      new Set<string>(),
-    );
-    if (!isObjectShape(modernShape) || !modernShape.properties) return null;
-
-    // ➋ Resolve and deeply unroll yesterday's historical blueprint
-    const ancestralShapeBase = ancestralBlueprintKey
-      ? this.resolveBlueprint(ancestralBlueprintKey, blueprintsPool)
-      : undefined;
 
     const ancestralShape = ancestralShapeBase
       ? recursivelyUnwrapShape(ancestralShapeBase, new Set<string>())
@@ -442,26 +529,23 @@ class BlueprintService {
       ancestralShape && ancestralShape.kind === 'object'
         ? ancestralShape.properties
         : null;
-
     const combinedProperties: Record<string, TSolidObjectRawShape> = {};
 
-    // ➌ Ingest today's deeply unrolled production layout contracts exactly as declared (Required)
-    const modernProps = modernShape.properties;
+    // ➊ Ingest today's required or virtually-wrapped properties
     for (const key in modernProps) {
-      if (Object.prototype.hasOwnProperty.call(modernProps, key)) {
+      if (hasOwnProperty(modernProps, key)) {
         combinedProperties[key] = modernProps[key];
       }
     }
 
     if (ancestralProps) {
       for (const key in ancestralProps) {
-        if (Object.prototype.hasOwnProperty.call(ancestralProps, key)) {
+        if (hasOwnProperty(ancestralProps, key)) {
           if (!Object.prototype.hasOwnProperty.call(combinedProperties, key)) {
             const legacyDescriptor = ancestralProps[key];
-
             combinedProperties[key] = {
               shape: legacyDescriptor.shape,
-              optional: true, // FORCED OPTIONAL STATUS FOR DRIFT ANALYSIS
+              optional: true, // FORCED DRIFT STATUS
               name: legacyDescriptor.name,
               requiresKeyPresence: false,
               allowsExplicitUndefined: true,
@@ -474,7 +558,7 @@ class BlueprintService {
     return {
       kind: 'object',
       properties: combinedProperties,
-      strict: modernShape.strict,
+      strict: modernStrict,
     };
   }
 }

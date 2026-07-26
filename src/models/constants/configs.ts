@@ -64,6 +64,11 @@ export const XALOR_MATCH_DRIFT_RULE_KEYS = {
   UNKNOWN_DRIFT_TOKEN: 'unknown_drift_token',
   DETACHED_COMPILER_METADATA: 'detached_compiler_metadata',
   DEFAULT_ERROR: 'default_error',
+  STRICT_FALLBACK_VIOLATION: 'strict_fallback_violation',
+  CUSTOM_FILL_OMISSION: 'custom_fill_omission',
+  CUSTOM_FILL_VALIDATION_FAIL: 'custom_fill_validation_fail',
+  MALFORMED_REGISTRY_KEYS: 'malformed_registry_keys',
+  AUTOMATED_FILL_VALIDATION_FAIL: 'automated_fill_validation_fail',
 } as const;
 
 /**

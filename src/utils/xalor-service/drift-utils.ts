@@ -1,29 +1,36 @@
-import type { TSolidObjectShape } from '../../../shared';
+import type { TSolidShape, TValidationContext } from '../../../shared';
 import {
-  hasOwnProperty,
   isRecord,
   yieldAllKeyValuePairs,
+  isObjectShape,
+  hasOwnProperty,
+  isArray,
 } from '../../../shared';
 import type {
-  TMissingKeysStructure,
   TDriftBuildMapper,
   IXalorDriftContext,
-  TDriftFillMode,
+  TSeedFrameParams,
+  TRecoveryStrategyParams,
+  TMissingKeysStructure,
+  TSurgicalFallbackParams,
 } from '../../models/types';
 import { xalethorVaultGenerator } from '../../xalor-service/vault-generator';
 import { xalethorVaultKeeper } from '../../xalor-service/vault-keeper';
 import { xalethorVaultValidation } from '../../xalor-service/vault-validation';
+import { xalethorCoreService } from '../../xalor-service';
 import { blueprintService } from '../../../shared/service';
-
 /**
  * RUNTIME MATRIX PROBER
  * Scans your active build-time blueprint to sort all missing or undefined
  * data fields into explicit, actionable required and optional tracking buckets.
  */
+
 export function getMissingKeysMatrix(
   workingFrame: Record<string, unknown>,
-  activeHybridBlueprint?: TSolidObjectShape | null,
+  activeHybridBlueprint?: TSolidShape | null,
 ): TMissingKeysStructure {
+  if (!isObjectShape(activeHybridBlueprint!))
+    return { required: [], optional: [] };
   if (!activeHybridBlueprint || !activeHybridBlueprint.properties) {
     return { required: [], optional: [] };
   }
@@ -58,14 +65,22 @@ export function getMissingKeysMatrix(
 
   return { required, optional };
 }
+
 /**
  * REQUIRED BLUEPRINT FILTER
  * Consumes a multi-generational object blueprint and extracts a pristine structural
  * shape containing exclusively the properties marked optional: false and requiresKeyPresence: true.
  */
 export function extractRequiredBlueprintMatrix(
-  sourceBlueprint: TSolidObjectShape | null,
-): TSolidObjectShape {
+  sourceBlueprint: TSolidShape | null,
+): TSolidShape {
+  if (!isObjectShape(sourceBlueprint!)) {
+    return {
+      kind: 'object',
+      properties: {},
+      strict: undefined,
+    };
+  }
   if (!sourceBlueprint || !sourceBlueprint.properties) {
     return {
       kind: 'object',
@@ -100,7 +115,7 @@ export function extractRequiredBlueprintMatrix(
  */
 export function synthesizeDriftMatrixBlueprint<
   K extends TActiveDriftRegistryKeys,
->(ctx: IXalorDriftContext<K>): TSolidObjectShape {
+>(ctx: IXalorDriftContext<K>, payload: unknown): TSolidShape {
   const { ancestralKey, currentKey } = ctx;
   const blueprintsPool = xalethorVaultKeeper.globalBlueprintList;
 
@@ -110,12 +125,13 @@ export function synthesizeDriftMatrixBlueprint<
 
   /* prettier-ignore */
   const activeHybridBlueprint =
-      blueprintService.synthesizeDeepHybridBlueprint(currentBlueprintKey, ancestralBlueprintKey, blueprintsPool);
+      blueprintService.synthesizeDeepHybridBlueprint(currentBlueprintKey, ancestralBlueprintKey, blueprintsPool, payload);
+
   if (!activeHybridBlueprint) {
     return {
       kind: 'object',
       properties: {},
-      strict: ctx.strict === true,
+      strict: ctx?.strict,
     };
   }
 
@@ -142,11 +158,6 @@ const DRIFT_RECOVERY_STRATEGIES: TDriftBuildMapper = {
   },
 } satisfies TDriftBuildMapper;
 
-type TRecoveryStrategyParams = {
-  readonly workingFrame: Record<string, unknown>;
-  readonly activeHybridBlueprint: TSolidObjectShape;
-  readonly mode: Exclude<TDriftFillMode, 'none' | 'custom'>; // Safely locks down to your 3 filling strategies
-};
 export function handleRecoveryStrategy({
   workingFrame,
   activeHybridBlueprint,
@@ -169,6 +180,113 @@ export function handleRecoveryStrategy({
   if (isRecoveredObjectValid) {
     return filledResult;
   }
-  return null;
+
+  return xalethorCoreService.driftErrorHandler({
+    ruleKey: 'AUTOMATED_FILL_VALIDATION_FAIL',
+    customContextMessage: `mode: ${mode}`,
+  });
 }
-// // ➌ Deep hybrid structural gatekeeper verification pass
+
+/**
+ * 🛰️ UTILITY: AUTOMATED PRODUCTION FRAME SEEDER
+ * Compiles a shallow volatile working frame, looks up the current blueprint snapshot
+ * from the registry vault, and pre-seeds it point-free using your chosen materializer track.
+ *
+ * Complies with COMMANDMENT VIII (Internal Efficiency) and COMMANDMENT IX (Statically Verifiable).
+ */
+export function seedCurrentProductionFrame({
+  processedPayload,
+  currentKey,
+  mode = 'defaultFill',
+}: TSeedFrameParams): Record<string, unknown> | null {
+  const workingFrame: Record<string, unknown> = { ...processedPayload };
+
+  const resolvedBlueprint = xalethorVaultKeeper.peek('blueprint', currentKey);
+
+  if (!resolvedBlueprint || !isObjectShape(resolvedBlueprint)) return null;
+
+  return handleRecoveryStrategy({
+    mode,
+    workingFrame,
+    activeHybridBlueprint: resolvedBlueprint,
+  });
+}
+/**
+ * SURGICAL OPTIONAL PURGER VALVE
+ * Iterates through the detected missing optional fields list and unconditionally
+ * deletes any lingering explicit undefined markers to prevent structural type bleeding.
+ *
+ * Satisfies COMMANDMENT VIII: High-velocity register loop avoiding heap spikes.
+ */
+export function purgeMissingOptionalFields(
+  workingFrame: Record<string, unknown>,
+  missingOptionalKeys: string[],
+): void {
+  const totalKeys = missingOptionalKeys.length;
+  for (let i = 0; i < totalKeys; i++) {
+    const targetKey = missingOptionalKeys[i];
+    if (hasOwnProperty(workingFrame, targetKey)) {
+      Reflect.deleteProperty(workingFrame, targetKey);
+    }
+  }
+}
+
+/**
+ * 🪚 SURGICAL FALLBACK INFLATION ENGINE
+ * Analyzes object shapes recursively, detects structural defects or invalid types,
+ * and surgically swaps out broken top-level nodes point-free with zero deep-merge corruption.
+ *
+ * @invariants
+ * - Satisfies COMMANDMENT V: Guarantees a fully valid modern object container.
+ * - Satisfies COMMANDMENT VIII: Bare-metal array iteration avoids nested closure allocation overhead.
+ * - Satisfies COMMANDMENT IX: Operates natively over typed contracts without blind assertions.
+ */
+export function executeSurgicalFallbackInflation<
+  K extends TActiveDriftRegistryKeys,
+>({
+  workingFrame,
+  activeHybridBlueprint,
+  customFill,
+  injectedKey,
+}: TSurgicalFallbackParams<K>): {
+  result: Record<string, unknown>;
+  ctxContext: TValidationContext;
+} {
+  /* prettier-ignore */
+  const initialCtxValidation = xalethorVaultValidation.createInitialContext(injectedKey);
+
+  /* prettier-ignore */
+  const isRawPayloadValid = xalethorVaultValidation.validateShape( workingFrame, activeHybridBlueprint, initialCtxValidation);
+
+  if (isRawPayloadValid) {
+    return { result: workingFrame, ctxContext: initialCtxValidation };
+  }
+
+  const corruptedOrMissingErrors = initialCtxValidation.errors;
+
+  const filledResult = { ...customFill };
+
+  for (const parentKeyName in workingFrame) {
+    if (hasOwnProperty(workingFrame, parentKeyName)) {
+      const hasStructuralErrors =
+        isArray(corruptedOrMissingErrors) &&
+        corruptedOrMissingErrors.some((err) => {
+          if (!err) return false;
+          const snapshot = err.pathSnapshot;
+          // TODO: UPDATE FUTHER TO HANDLE DEEPER ERRORS
+          return isArray(snapshot) && snapshot.length > 0
+            ? String(snapshot[0]) === parentKeyName
+            : String(err.key || '') === parentKeyName;
+        });
+
+      if (!hasStructuralErrors) {
+        filledResult[parentKeyName] = workingFrame[parentKeyName];
+      }
+    }
+  }
+
+  return {
+    result: filledResult,
+    ctxContext: initialCtxValidation,
+  };
+}

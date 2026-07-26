@@ -135,7 +135,7 @@ function mergeHelper<T extends Record<string, unknown>>(
   if (assertValidMergeResult<T>(activeTarget)) return activeTarget;
 
   throw new Error(
-    `[axiom-kit] Critical Invariant: Failed to verify structural merge target integrity.`,
+    `[xalor] Critical Invariant: Failed to verify structural merge target integrity.`,
   );
 }
 
@@ -208,6 +208,6 @@ export function mergeDeep<T extends Record<string, unknown>[]>(
   if (assertIntersectionSafety<T>(rawMergedResult)) return rawMergedResult;
 
   throw new Error(
-    `[axiom-kit] Critical Invariant: Failed to verify multi-argument intersection state.`,
+    `[xalor] Critical Invariant: Failed to verify multi-argument intersection state.`,
   );
 }
