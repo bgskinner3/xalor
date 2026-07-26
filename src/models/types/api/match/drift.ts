@@ -116,7 +116,7 @@ export interface IXalorDriftContext<D extends TActiveDriftRegistryKeys> {
   /* prettier-ignore */ readonly ancestralKey: TResolveAncestralDriftKey<D>;
 
   /* prettier-ignore */ readonly strict?: boolean;
-  /* prettier-ignore */ readonly omit?: TDeepDotPaths<TResolveModernInstance<D>>[];
+  /* prettier-ignore */ readonly omit?: TDeepDotPaths<TResolveDriftReturnConstraint<D>>[];
 
   /* prettier-ignore */ readonly current: (value: TResolveDriftReturnConstraint<D>) => TResolveDriftReturnConstraint<D>;
   /* prettier-ignore */ readonly v1_ancestor: (value: TResolveAncestralInstance<D>) => Partial<TResolveAncestralInstance<D>>;
