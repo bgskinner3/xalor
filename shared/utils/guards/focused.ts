@@ -7,7 +7,6 @@ import type {
 } from '../../types';
 import { isObject, isKeyInObject, isRecord, matchesShape } from './objects';
 import { isNull, isString, isFunction, isOptional } from './primitives';
-import { XALOR_MATCH_ERROR_MESSAGES } from '../../../src/models';
 
 /**
  * 🛰️ IS METADATA

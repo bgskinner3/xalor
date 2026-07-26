@@ -112,10 +112,12 @@ class XalethorVaultKeeper {
     key: string,
   ): TSolidShape | TVaultManifestEntry | TVaultRegistryEntry | TVaultDriftEntry | string | undefined {
     const injectedKey = this.vault.references.get(key);
-    if (variant === 'referenceKey') return injectedKey
-    if ( variant === 'blueprint') {
-    if (!injectedKey) return undefined;
-    if (variant === 'blueprint') return this.vault.blueprints.get(injectedKey);
+    if (variant === 'referenceKey') return injectedKey;
+    
+    if (variant === 'blueprint') {
+      if (!injectedKey) return undefined;
+      if (variant === 'blueprint')
+        return this.vault.blueprints.get(injectedKey);
     }
 
     if (variant === 'driftTracking') return this.vault.driftTracking.get(key);

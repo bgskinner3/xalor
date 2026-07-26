@@ -33,7 +33,7 @@ import {
   clonePlatformInstance,
 } from '../mappers';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared';
-
+import { isTargetRegistryStructure } from '../utils';
 class XalethorVaultTransform {
   private PRUNE_DROP_SIGNAL = Symbol('__pruneDropSignal');
   // =================================================
@@ -284,11 +284,6 @@ class XalethorVaultTransform {
     const rawLength = Reflect.get(payload, 'length');
     return isNumber(rawLength);
   }
-  private isTargetRegistryStructure<K extends TActiveRegistryKeys>(
-    payload: unknown,
-  ): payload is TResolveRegistryStructure<K> {
-    return isRecord(payload);
-  }
 
   /* prettier-ignore */
   private requireShape<K extends TActiveRegistryKeys>(key: K, msg: string) {
@@ -434,7 +429,7 @@ class XalethorVaultTransform {
     const cleanData = this.executeProduceClone(data, shape, new Map());
 
     // Structural boundary check narrowing target generic output naturally via native type guards
-    if (this.isTargetRegistryStructure<K>(cleanData)) {
+    if (isTargetRegistryStructure<K>(cleanData)) {
       return cleanData;
     }
     /* prettier-ignore */

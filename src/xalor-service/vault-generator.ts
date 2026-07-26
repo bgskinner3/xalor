@@ -1,5 +1,5 @@
 import { xalethorVaultKeeper } from './vault-keeper';
-import { isValidSolidShape, isRecord } from '../../shared';
+import { isValidSolidShape } from '../../shared';
 import type { TSolidShape } from '../../shared/shape-domain';
 import { xalethorVaultDiagnostics } from './vault-diagnostics';
 import { IS_SOLID_CONFIG_ITEMS } from '../../shared/constants';
@@ -8,6 +8,7 @@ import {
   MOCK_SHAPE_MATERIALIZER,
   CAST_SHAPE_MAPPER,
 } from '../mappers';
+import { isTargetRegistryStructure } from '../utils';
 
 /**
  * XALETHOR VAULT GENERATOR
@@ -36,13 +37,7 @@ class XalethorVaultGenerator {
     return shape;
   }
 
-  private isTargetRegistryStructure<K extends TActiveRegistryKeys>(
-    payload: unknown,
-  ): payload is TResolveRegistryStructure<K> {
-    return isRecord(payload);
-  }
-
-  private executeDefaultBuild = (shape: TSolidShape, depth = 0): unknown => {
+  public executeDefaultBuild = (shape: TSolidShape, depth = 0): unknown => {
     if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) {
       return {};
     }
@@ -68,7 +63,7 @@ class XalethorVaultGenerator {
    * @param depth
    * @returns
    */
-  private executeMockBuild = (shape: TSolidShape, depth = 0): unknown => {
+  public executeMockBuild = (shape: TSolidShape, depth = 0): unknown => {
     if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) return {};
     if (!shape) return {};
 
@@ -84,7 +79,7 @@ class XalethorVaultGenerator {
   };
 
   /* prettier-ignore */
-  private executeCastBuild = (shape: TSolidShape,  data: unknown, depth = 0): unknown => {
+  public executeCastBuild = (shape: TSolidShape,  data: unknown, depth = 0): unknown => {
     if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) {
       return null;
     }
@@ -133,7 +128,7 @@ class XalethorVaultGenerator {
     const rawStructure = this.executeDefaultBuild(shape, 0);
 
     // Pure evaluation path checking; zero 'as' tokens used.
-    if (this.isTargetRegistryStructure<K>(rawStructure)) return rawStructure;
+    if (isTargetRegistryStructure<K>(rawStructure)) return rawStructure;
     /* prettier-ignore */
     return xalethorVaultDiagnostics.panic( key, `[xalor] Materialized payload did not conform to an object structure.`);
   }
@@ -163,7 +158,7 @@ class XalethorVaultGenerator {
     const rawStructure = this.executeMockBuild(shape, 0);
 
     // Structural boundary check narrowing target generic output naturally via native type guards
-    if (this.isTargetRegistryStructure<K>(rawStructure)) {
+    if (isTargetRegistryStructure<K>(rawStructure)) {
       return rawStructure;
     }
     /* prettier-ignore */
@@ -188,7 +183,7 @@ class XalethorVaultGenerator {
     const rawStructure = this.executeCastBuild(shape, data, 0);
 
     // Structural boundary check narrowing target generic output naturally via native type guards
-    if (this.isTargetRegistryStructure<K>(rawStructure)) {
+    if (isTargetRegistryStructure<K>(rawStructure)) {
       return rawStructure;
     }
     /* prettier-ignore */
@@ -197,3 +192,9 @@ class XalethorVaultGenerator {
 }
 
 export const xalethorVaultGenerator = new XalethorVaultGenerator();
+/**
+ default: executeDefaultBuild,
+mock: executeMockBuild,
+cast: executeCastBuild
+
+ */
