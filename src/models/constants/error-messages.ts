@@ -265,6 +265,54 @@ export const XALOR_MATCH_DRIFT_ERROR_MAPPER: TXalorMatchDriftErrorMapper = {
       `Reason: The Xalor compiler transformer did not emit the migration registry or the compiled snapshot could not be located at runtime.\n` +
       `Action: Enable the Xalor transformer plugin, perform a clean rebuild, and confirm the generated Blueprint Vault artifacts are available before execution.`,
   },
+  CURRENT_PHASE_VALIDATION_FAILED: {
+    errorArea: 'runtime_match_drift',
+    rule: XALOR_MATCH_DRIFT_RULE_KEYS.CURRENT_PHASE_VALIDATION_FAILED,
+    message: () =>
+      `HOT PATH VALIDATION FAILED: The modern phase execution failed to process the current payload cleanly.\n` +
+      `Reason: The current execution pipeline intercepted a structurally malformed modern instance that violates immediate runtime invariants or strict evaluation thresholds.\n` +
+      `Action: Audit the active data mutation layers upstream or loosen strict evaluation parameters if structural relaxation is intentional.`,
+  },
+  ANCESTRAL_TRANSFORM_TYPE_MISMATCH: {
+    errorArea: 'runtime_match_drift',
+    rule: XALOR_MATCH_DRIFT_RULE_KEYS.ANCESTRAL_TRANSFORM_TYPE_MISMATCH,
+    message: () =>
+      `ANCESTRAL LAYOUT INCOMPATIBILITY: The legacy pipeline execution produced an irreconcilable structural shape.\n` +
+      `Reason: Processing yesterday's layouts within ancestral types yielded an output that cannot be safely coerced or mapped into the modern schema configuration.\n` +
+      `Action: Adjust the ancestral layout transformer function to handle deprecated keys or map structural discrepancies explicitly before completion.`,
+  },
+  CIRCUIT_BREAKER_FALLBACK_INVALID: {
+    errorArea: 'runtime_match_drift',
+    rule: XALOR_MATCH_DRIFT_RULE_KEYS.CIRCUIT_BREAKER_FALLBACK_INVALID,
+    message: () =>
+      `CIRCUIT BREAKER FAILURE: The emergency default fallback mechanism failed to guarantee a valid modern shape.\n` +
+      `Reason: Phase 1 and Phase 2 drift states collapsed entirely, and the executed default fallback function returned a payload that violates the modern interface layout constraint.\n` +
+      `Action: Verify the default factory or fallback function is properly handling raw input records and returning a completely valid modern instance shape.`,
+  },
+  DEFAULT_ERROR: {
+    errorArea: 'runtime_match_drift',
+    rule: XALOR_MATCH_DRIFT_RULE_KEYS.DEFAULT_ERROR,
+    message: () =>
+      `UNCLASSIFIED PIPELINE EXCEPTION: An unexpected operational breakdown occurred within the drift engine runtime.\n` +
+      `Reason: A localized execution thread or third-party callback threw an unhandled exception outside of normal rule perimeters.\n` +
+      `Action: Review the attached runtime trace and originating stack trace to isolate and resolve the unexpected exception.`,
+  },
+  UNKNOWN_DRIFT_TOKEN: {
+    errorArea: 'runtime_match_drift',
+    rule: XALOR_MATCH_DRIFT_RULE_KEYS.UNKNOWN_DRIFT_TOKEN,
+    message: () =>
+      `GATEWAY BLOCK: matchXalorDrift executed without compiled metadata properties.\n` +
+      `Reason: The runtime ingress route intercepted an unrecognized tracking token or detached compiled state layer.\n` +
+      `Action: Ensure your build-time transformer plugin is active and your generated schema artifacts are compiled before execution.`,
+  },
+  DETACHED_COMPILER_METADATA: {
+    errorArea: 'runtime_match_drift',
+    rule: XALOR_MATCH_DRIFT_RULE_KEYS.DETACHED_COMPILER_METADATA,
+    message: () =>
+      `DETACHED COMPILER METADATA: matchXalorDrift executed without active lineage blueprints.\n` +
+      `Reason: The reference identifier exists, but its compiled context layers or active vault snapshots are completely missing at runtime.\n` +
+      `Action: Verify your build-time transformer plugin configuration, clean out build caches, and perform a full compile check.`,
+  },
 } satisfies TXalorMatchDriftErrorMapper;
 
 /**

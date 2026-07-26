@@ -5,6 +5,7 @@ import type {
   TFlattenStructure,
   TDeepDotPaths,
 } from '../../../../../shared';
+import type { TXalorMatchDriftKeys } from '../../error-types';
 // import { BRAND_SYMBOL } from '../../../../../shared';
 type TCollapseKeyTooltip<T> = keyof ISolidRegistry | T;
 
@@ -40,7 +41,49 @@ export type TResolveDriftReturnConstraint<K extends TActiveDriftRegistryKeys> =
   TFlattenStructure<
     TResolveModernInstance<K> & Partial<TResolveAncestralInstance<K>>
   >;
+// ====================================================================
+// DRIFT OnError Types
+// ====================================================================
+interface IXalorSystemDriftPayload {
+  readonly rule: TXalorMatchDriftKeys;
+  readonly customMessage?: string;
+}
 
+// 🎨 The Custom Override Shape: Rule is locked out. Custom message is mandatory.
+interface IXalorCustomDriftPayload {
+  readonly rule?: never;
+  readonly customMessage: string;
+}
+/**
+ * 🚨 DEFINITIVE DRIFT ERROR STRUCTURAL MATRIX
+ * Formats the strict, positional parameter payload blueprint for the error backbone.
+ */
+export interface IDriftErrorParams<K extends TActiveDriftRegistryKeys> {
+  readonly ctx?: IXalorDriftContext<K>;
+  readonly injectedKey?: K | string;
+  readonly ruleKey?: TXalorMatchDriftKeys;
+  readonly customContextMessage?: string;
+  readonly caughtError?: unknown;
+}
+
+/**
+ * 🛠️ CENTRALIZED ERROR INTERCEPTOR SIGNATURE
+ * Evaluates parameter objects point-free across standard dynamic gateways.
+ */
+export type TDriftErrorInterceptor = <
+  K extends TActiveDriftRegistryKeys = TActiveDriftRegistryKeys,
+>(
+  params: IDriftErrorParams<K>,
+) => never;
+
+/**
+ * 🎯 The Unified Payload Definition
+ * Defaults explicitly to the System ledger shape if no specific variant type parameter is passed.
+ */
+type TXalorDriftErrorPayload<
+  T extends IXalorSystemDriftPayload | IXalorCustomDriftPayload =
+    IXalorSystemDriftPayload,
+> = T;
 /**
  * MATCH: AUTOMATED DRIFT INFRASTRUCTURE PARAMETERS CONTRACT
  */
@@ -76,6 +119,13 @@ export interface IXalorDriftContext<D extends TActiveDriftRegistryKeys> {
   readonly default?: (
     rawPayload: TResolveDriftReturnConstraint<D>,
   ) => TResolveDriftReturnConstraint<D>;
+
+  readonly onError?: <
+    T extends IXalorSystemDriftPayload | IXalorCustomDriftPayload =
+      IXalorSystemDriftPayload,
+  >(
+    payload: TXalorDriftErrorPayload<T>,
+  ) => void;
 }
 
 export type TApplyNominalBrand<

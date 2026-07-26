@@ -1,6 +1,8 @@
 import type {
   IXalorDriftContext,
   TResolveDriftReturnConstraint,
+  TXalorMatchDriftKeys,
+  TDriftErrorInterceptor,
 } from '../../models/types';
 import { TSolidObjectShape } from '../../../shared';
 import {
@@ -9,6 +11,8 @@ import {
   isString,
   isNull,
   hasOwnProperty,
+  isKeyInObject,
+  isInstanceOf,
 } from '../../../shared/utils';
 import {
   isObjectShape,
@@ -22,7 +26,11 @@ import {
   refineToCurrentModel,
   refinePayloadContract,
 } from '../../utils';
-import { XALOR_MATCH_ERROR_MESSAGES } from '../../models';
+import {
+  XALOR_MATCH_ERROR_MESSAGES,
+  XALOR_MATCH_DRIFT_ERROR_MAPPER,
+  XALOR_MATCH_DRIFT_RULE_KEYS,
+} from '../../models';
 import { blueprintService } from '../../../shared';
 // import { xalethorVaultTransform } from '../vault-transform';
 
@@ -419,6 +427,48 @@ class XalethorVaultMatchDrift {
     // Edge-case fallback panic log guarantees absolute single-threaded loop crash protection
     /* prettier-ignore */
     return xalethorVaultDiagnostics.panic(injectedKey, XALOR_MATCH_ERROR_MESSAGES['UNEXPECTED_STREAM_COLLAPSE']);
+  }
+
+  // ====================================================================================================
+  // ====================================================================================================
+  // ====================================================================================================
+  // MATCH SERVICE DRIFT ERROR HANLDER
+  // ====================================================================================================
+  // ====================================================================================================
+  // ====================================================================================================
+
+  /* prettier-ignore */
+  public driftErrorInterceptor: TDriftErrorInterceptor = ({
+    ctx,
+    injectedKey = 'fallback',
+    ruleKey = XALOR_MATCH_DRIFT_RULE_KEYS.DEFAULT_ERROR, // 'default_error'
+    customContextMessage,
+    caughtError,
+  }) => {
+    const systemLedgerEntry = XALOR_MATCH_DRIFT_ERROR_MAPPER[ruleKey];
+    let finalDiagnosticMessage = systemLedgerEntry.message();
+
+    // Append dynamic contextual trace strings if supplied by the running lane manager
+    if (customContextMessage) {
+      finalDiagnosticMessage += `\n👉 RUNTIME TRACE: ${customContextMessage}`;
+    }
+
+    // Extract third-party or native execution stack traces safely using framework utilities
+    if (isInstanceOf(caughtError, Error)) {
+      finalDiagnosticMessage += `\n💥 ORIGINATING EXCEPTION: ${caughtError.message}`;
+    }
+
+    // --- ➊ INTERNAL SYSTEM DIAGNOSTICS & TELEMETRY LOGGING ---
+    if (ctx?.strict && isKeyInObject(ruleKey)(XALOR_MATCH_DRIFT_RULE_KEYS)) {
+      console.warn(
+        `[XALOR INTERNAL] Cascade failure detected for key: ${String(injectedKey)}`,
+      );
+    }
+
+    return xalethorVaultDiagnostics.panic(
+      String(injectedKey),
+      finalDiagnosticMessage,
+    );
   }
 }
 

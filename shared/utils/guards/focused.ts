@@ -212,13 +212,42 @@ export function assertDriftRegistryKey<K extends keyof ISolidDriftRegistry>(
   key: K | unknown,
 ): asserts key is K {
   if (!isDriftRegistryKey<K>(key)) {
+    const keyStr = String(key);
+    const vault = globalThis.__SOLID_VAULT__;
+
+    // Determine the exact structural failure reason for pinpoint diagnostics
+    let underlyingReason =
+      'The target tracking reference key is completely missing from the drift registry.';
+
+    if (!vault) {
+      underlyingReason =
+        'The global state bridge (__SOLID_VAULT__) is completely uninitialized.';
+    } else if (!vault.driftTracking) {
+      underlyingReason =
+        'The global state bridge is active, but the drift tracking vault registry is completely unhydrated.';
+    } else if (typeof key !== 'string') {
+      underlyingReason = `The requested key is an invalid type (${typeof key}). Drift tracking references must be strings.`;
+    } else if (!vault.driftTracking.has(keyStr)) {
+      underlyingReason = `The drift tracking map exists, but tracking token "${keyStr}" was never compiled or registered in this workspace tree.`;
+    }
+
+    const baseLedgerMessage =
+      `DETACHED COMPILER METADATA: matchXalorDrift executed without active lineage blueprints.\n` +
+      `Reason: The reference identifier exists, but its compiled context layers or active vault snapshots are completely missing at runtime.\n` +
+      `Action: Verify your build-time transformer plugin configuration, clean out build caches, and perform a full compile check.`;
+
     throw new Error(
-      `[Xalor Ingress Exception] ${XALOR_MATCH_ERROR_MESSAGES.MISSING_COMPILED_INFRASTRUCTURE}\n` +
-        `Received key context value: "${String(key)}"`,
+      `[Xalor Ingress Exception] Compilation Gateway Violation [Step ➌]:\n\n` +
+        `${baseLedgerMessage}\n\n` +
+        `Failed to locate a valid, hydrated drift blueprint token reference for key: "${keyStr}"\n` +
+        `Diagnostic Analysis: ${underlyingReason}\n\n` +
+        `🚀 Action Required:\n` +
+        `1. Ensure your files were processed using your project's custom Xalor CLI builder tool pipeline.\n` +
+        `2. Verify that the historical upcast and active contemporary configurations for this token were captured in your lineage registry.\n` +
+        `3. Confirm the drift matrix asset target wasn't cleared or corrupted during a hot-module reloading cycle.`,
     );
   }
 }
-
 /**
  * Validates whether a value conforms to a Webpack compiler instance shape.
  *

@@ -19,7 +19,7 @@ import type {
   TReportErrorParams,
   TXalorAuditReport,
   TXalorEvaluationResult,
-  // TCalculateFinalMergeOutput,
+  TDriftErrorInterceptor,
 } from '../models/types';
 // import { isRecord } from '../../shared/utils';
 class XalethorService {
@@ -161,6 +161,9 @@ class XalethorService {
   // ============================================================
   // ============================================================
   // ============================================================
+  public driftErrorHandler: TDriftErrorInterceptor = (...params) => {
+    return xalethorVaultMatchDrift.driftErrorInterceptor(...params);
+  };
   public executeDriftMatcher<K extends TActiveDriftRegistryKeys>(
     payload: unknown,
     ctx: IXalorDriftContext<K>,

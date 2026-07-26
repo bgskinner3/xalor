@@ -57,6 +57,13 @@ export const XALOR_MATCH_DRIFT_RULE_KEYS = {
   UNEXPECTED_STREAM_COLLAPSE: 'unexpected_stream_collapse',
   MIGRATION_MUTATION_VIOLATION: 'migration_mutation_violation',
   MISSING_COMPILED_INFRASTRUCTURE: 'missing_compiled_infrastructure',
+  // New keys mapped to Phase 1, Phase 2, and Phase 4 context functions:
+  CURRENT_PHASE_VALIDATION_FAILED: 'current_phase_validation_failed',
+  ANCESTRAL_TRANSFORM_TYPE_MISMATCH: 'ancestral_transform_type_mismatch',
+  CIRCUIT_BREAKER_FALLBACK_INVALID: 'circuit_breaker_fallback_invalid',
+  UNKNOWN_DRIFT_TOKEN: 'unknown_drift_token',
+  DETACHED_COMPILER_METADATA: 'detached_compiler_metadata',
+  DEFAULT_ERROR: 'default_error',
 } as const;
 
 /**

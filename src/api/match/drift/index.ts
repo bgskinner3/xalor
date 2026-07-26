@@ -36,21 +36,18 @@ export function matchXalorDrift<K extends TActiveDriftRegistryKeys>(
   assertDriftRegistryKey(injectedKey);
 
   if (!injectedKey) {
-    return xalethorVaultDiagnostics.panic(
-      'UNKNOWN_DRIFT_TOKEN',
-      `[xalor] 🚨 GATEWAY BLOCK: 'matchXalorDrift' executed without compiled metadata properties.\n` +
-        `Ensure your build-time transformer plugin is active.`,
-    );
+    return xalethorCoreService.driftErrorHandler({
+      ruleKey: 'UNKNOWN_DRIFT_TOKEN',
+    });
   }
 
   const activeShape = xalethorCoreService.driftTrackingVault(injectedKey!);
 
   if (!ctx || !activeShape) {
-    return xalethorVaultDiagnostics.panic(
-      injectedKey!,
-      `[xalor] 🚨 GATEWAY BLOCK: 'matchXalorDrift' executed without compiled metadata properties.\n` +
-        `Ensure your build-time transformer plugin is active for key: ${injectedKey!}`,
-    );
+    return xalethorCoreService.driftErrorHandler({
+      ruleKey: 'DETACHED_COMPILER_METADATA',
+      customContextMessage: `Ensure your build-time transformer plugin is active for key: ${injectedKey!}`,
+    });
   }
 
   const resultPayload = xalethorCoreService.executeDriftMatcher<K>(
