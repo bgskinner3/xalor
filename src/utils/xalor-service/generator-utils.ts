@@ -1,4 +1,3 @@
-import { isFunction } from '../../../shared';
 import type {
   IArchetypeStrategy,
   TXalorSimGeneratorArchTypes,
@@ -7,40 +6,41 @@ import type {
 export function isUserMutationCallback<Structure, Key extends keyof Structure>(
   rule: unknown,
 ): rule is (baseValue: Structure[Key]) => Structure[Key] {
-  return isFunction(rule);
+  return typeof rule === 'function';
 }
 
+// Strategy A: Unpacks known object wrapper properties to match positional parameters cleanly
 const pureStrategy: IArchetypeStrategy = Object.freeze({
-  executePure: (generatorFn, config) => {
-    return (generatorFn as (...args: readonly unknown[]) => string | number)(
-      ...config,
-    );
+  execute: (generatorFn, _, __, config) => {
+    // 🎯 FIX: Check if the config is an object wrapper container (like { length: 12 })
+    if (config && typeof config === 'object' && 'length' in config) {
+      const positionalLength = (config as Record<string, unknown>).length;
+      return generatorFn(positionalLength);
+    }
+
+    // Default fallback for pure object config shapes (currency, percentage, etc.)
+    const packedArgs =
+      config !== undefined ? Object.freeze([config]) : Object.freeze([]);
+    return generatorFn(...packedArgs);
   },
-  executeContextual: () => '',
-  executeTransformer: () => '',
 });
 
-// Strategy B: Only handles context injection natively
+// Strategy B: Injects the dynamic field key context parameter natively
 const contextualStrategy: IArchetypeStrategy = Object.freeze({
-  executePure: () => '',
-  executeContextual: (generatorFn, propertyName) => {
+  execute: (generatorFn, propertyName) => {
     return generatorFn(propertyName);
   },
-  executeTransformer: () => '',
 });
 
+// Strategy C: Passes the baseline mock primitive first, followed by custom configurations
 const transformerStrategy: IArchetypeStrategy = Object.freeze({
-  executePure: () => '',
-  executeContextual: () => '',
-  executeTransformer: (generatorFn, baselineValue, config) => {
+  execute: (generatorFn, _, baselineValue, config) => {
     const transformerArgs =
       config !== undefined
         ? Object.freeze([baselineValue, config])
         : Object.freeze([baselineValue]);
 
-    return (generatorFn as (...args: readonly unknown[]) => string)(
-      ...transformerArgs,
-    );
+    return generatorFn(...transformerArgs);
   },
 });
 

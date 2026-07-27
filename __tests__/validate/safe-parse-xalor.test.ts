@@ -1,7 +1,7 @@
 import { xalor } from '../../src/api';
 import { TEST_SHAPE_REGISTRY } from '../utils/constants';
 import { seedTestVault } from '../utils';
-// import { XalethorVaultCompliance } from '../../src/xalor-service/vault-compliance';
+
 /**
   pnpm run test -- __tests__/validate/safe-parse-xalor.test.ts
 

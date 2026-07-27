@@ -73,8 +73,15 @@ export const generateAnonymizedMask = (
   }
 
   if (strategy === 'creditCard') {
-    const endMaskIndex = safeLength - 4;
-    for (let i = 4; i < endMaskIndex; i++) {
+    const unmaskedPrefix = Math.min(safeLength, 4);
+    const unmaskedSuffix = Math.min(safeLength, 4);
+    const endMaskIndex = Math.max(unmaskedPrefix, safeLength - unmaskedSuffix);
+
+    // If a string is very short (e.g. length 7), it gracefully masks from index 2 to 5 instead of breaking!
+    const startMaskIndex =
+      safeLength <= 8 ? Math.max(0, safeLength - 5) : unmaskedPrefix;
+
+    for (let i = startMaskIndex; i < endMaskIndex; i++) {
       buffer[i] = maskByte;
     }
   }

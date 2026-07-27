@@ -36,6 +36,69 @@ export const TEST_SHAPE_REGISTRY = {
       },
     },
   },
+  USER_PROFILE: {
+    kind: 'object',
+    properties: {
+      profileId: {
+        name: 'profileId',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'string' },
+      },
+      displayName: {
+        name: 'displayName',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'string', maxLength: 50 },
+      },
+      // 🎯 NEW: High-Entropy Email Structural Node Parameter
+      email: {
+        name: 'email',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'string' },
+      },
+      avatarUrl: {
+        name: 'avatarUrl',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'string' },
+      },
+      bio: {
+        name: 'bio',
+        optional: true,
+        requiresKeyPresence: false,
+        allowsExplicitUndefined: true,
+        shape: { kind: 'primitive', type: 'string', maxLength: 160 },
+      },
+      followersCount: {
+        name: 'followersCount',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'number' },
+      },
+      followingCount: {
+        name: 'followingCount',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'number' },
+      },
+      verifiedStatus: {
+        name: 'verifiedStatus',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: { kind: 'primitive', type: 'boolean' },
+      },
+    },
+  },
+
   // ============================================================================
   // 🛡️ CUSTOM DEVELOPER CLASS SHAPE CONTRACT (The Ingress Catch-All Route)
   // ============================================================================
@@ -443,7 +506,24 @@ export const TEST_SHAPE_REGISTRY = {
       },
     },
   },
-
+  UNION_RESPONSE_BASIC: {
+    kind: 'object',
+    properties: {
+      status: {
+        name: 'status',
+        optional: false,
+        requiresKeyPresence: true,
+        allowsExplicitUndefined: false,
+        shape: {
+          kind: 'union',
+          values: [
+            { kind: 'literal', type: 'string', value: 'success' },
+            { kind: 'literal', type: 'string', value: 'failed' },
+          ],
+        },
+      },
+    },
+  },
   DEEPLY_NESTED_STORE: {
     kind: 'object',
     properties: {

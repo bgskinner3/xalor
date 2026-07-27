@@ -87,18 +87,21 @@ export const generateMockUserHandle = (propertyKey: string): string => {
 
   const firstSegmentLength = (seed % 3) + 4; // 4 to 6 characters
   const secondSegmentLength = (seed % 4) + 4; // 4 to 7 characters
-  const totalBytes = firstSegmentLength + secondSegmentLength;
 
+  // 🎯 FIXED: Allocate 1 extra byte to safely house the prefix token slot!
+  const totalBytes = 1 + firstSegmentLength + secondSegmentLength;
   const buffer = new Uint8Array(totalBytes);
+
   let cursor = 0;
+
+  // Inject the required structural corporate '@' identifier token at index 0 (ASCII 64)
+  buffer[cursor++] = 64;
 
   for (let i = 0; i < firstSegmentLength; i++) {
     const isEven = (i & 1) === 0;
     const pool = isEven ? CONSONANT_BYTES : VOWEL_BYTES;
     const poolLen = isEven ? C_LEN : V_LEN;
-
     const rawByte = pool[(seed + i) % poolLen];
-
     const isFirstChar = i === 0;
     buffer[cursor++] = isFirstChar ? rawByte - 32 : rawByte;
   }
@@ -107,14 +110,12 @@ export const generateMockUserHandle = (propertyKey: string): string => {
     const isEven = ((i + 1) & 1) === 0;
     const pool = isEven ? CONSONANT_BYTES : VOWEL_BYTES;
     const poolLen = isEven ? C_LEN : V_LEN;
-
     const rawByte = pool[(seed * 3 + i) % poolLen];
-
     const isFirstChar = i === 0;
     buffer[cursor++] = isFirstChar ? rawByte - 32 : rawByte;
   }
 
-  return String.fromCharCode.apply(null, buffer as unknown as number[]);
+  return new TextDecoder().decode(buffer);
 };
 
 // ================================================================================

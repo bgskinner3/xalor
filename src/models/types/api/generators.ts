@@ -12,15 +12,6 @@ export type TXalorSimGeneratorKeys = TKeys<typeof XALOR_SIM_GENERATOR_UTIL_KEYS>
 /* prettier-ignore */
 export type TXalorSimGeneratorArchTypes = TValues<typeof XALOR_SIM_GENERATOR_UTIL_KEYS>
 
-/* prettier-ignore */
-type KeysByCategory<T extends TXalorSimGeneratorArchTypes> = {
-  [ K in TXalorSimGeneratorKeys]: (typeof XALOR_SIM_GENERATOR_UTIL_KEYS)[K] extends T ? K : never;
-}[TXalorSimGeneratorKeys];
-
-export type TArchTypePureKeys = KeysByCategory<'pure'>;
-export type TArchTypeContextualKeys = KeysByCategory<'contextual'>;
-export type TArchTypeTransformerKeys = KeysByCategory<'transformer'>;
-
 // ================================================================================
 // ================================================================================
 // xalorSimGenerator BASE KEY TYPES
@@ -154,28 +145,11 @@ export type TXalorGeneratorValidatorMap = {
   readonly [K in TXalorSimGeneratorKeys]: IXalorSimGeneratorSuite[K];
 };
 
-/**
- * UNIFIED ARCHETYPE STRATEGY INTERFACE
- *
- * Provides highly targeted, distinct runner profiles for each execution family.
- *
- * Satisfies COMMANDMENT I: Statically derived from your single source of truth suite.
- * Satisfies COMMANDMENT IX: 100% free of 'any' tokens or uncallable structural holes.
- */
 export interface IArchetypeStrategy {
-  readonly executePure: (
-    generatorFn: IXalorSimGeneratorSuite[TArchTypePureKeys],
-    config: readonly unknown[],
-  ) => string | number;
-
-  readonly executeContextual: (
-    generatorFn: IXalorSimGeneratorSuite[TArchTypeContextualKeys],
+  readonly execute: (
+    generatorFn: (...args: readonly unknown[]) => unknown,
     propertyName: string,
-  ) => string;
-
-  readonly executeTransformer: (
-    generatorFn: IXalorSimGeneratorSuite[TArchTypeTransformerKeys],
-    baselineValue: string,
+    baselineValue: unknown,
     config: unknown,
-  ) => string;
+  ) => unknown;
 }

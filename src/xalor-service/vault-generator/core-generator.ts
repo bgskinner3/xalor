@@ -18,9 +18,6 @@ import {
 import type {
   TMockOverrides,
   TXalorSimGeneratorKeys,
-  TArchTypePureKeys,
-  TArchTypeContextualKeys,
-  TArchTypeTransformerKeys,
   TXalorTupleMapping,
 } from '../../models/types';
 import { XALOR_SIM_GENERATOR_UTIL_KEYS } from '../../models';
@@ -61,37 +58,29 @@ class XalethorVaultGenerator {
     const behavioralArchetype = XALOR_SIM_GENERATOR_UTIL_KEYS[utilKey];
     const strategyRunner = ARCHETYPE_STRATEGY_ROUTER[behavioralArchetype];
 
-    if (behavioralArchetype === 'pure') {
-      const fn = xalorSimGenerator[utilKey as TArchTypePureKeys];
+    const underlyingFn = xalorSimGenerator[utilKey] as (
+      ...args: readonly unknown[]
+    ) => unknown;
 
-      // Index 1 safely extracts the user configuration object from the tuple array if present
-      const userConfig = (tupleRule as readonly unknown[])[1];
+    const userConfig = (tupleRule as readonly unknown[])[1];
 
-      const packedArgs = (userConfig !== undefined
-        ? Object.freeze([userConfig])
-        : Object.freeze([])) as unknown as readonly unknown[];
+    const result = strategyRunner.execute(
+      underlyingFn,
+      propertyName,
+      baselineValue,
+      userConfig,
+    );
 
-      return strategyRunner.executePure(fn, packedArgs);
-    }
-
-    if (behavioralArchetype === 'contextual') {
-      const fn = xalorSimGenerator[utilKey as TArchTypeContextualKeys];
-      return strategyRunner.executeContextual(fn, propertyName);
-    }
-
-    if (behavioralArchetype === 'transformer') {
-      const fn = xalorSimGenerator[utilKey as TArchTypeTransformerKeys];
-      const stringBaseline =
-        typeof baselineValue === 'string' ? baselineValue : '';
-
-      // Index 1 contains your transformer configuration options payload natively
-      const userConfig = (tupleRule as readonly unknown[])[1];
-
-      return strategyRunner.executeTransformer(fn, stringBaseline, userConfig);
-    }
-
-    return '';
+    return result;
   }
+
+  /**
+   * APPLY SIM GENERATOR UTILS
+   *
+   * DESIGN INVARIANTS:
+   * - Satisfies COMMANDMENT VIII: Zero memory allocation or array slicing overhead.
+   * - Satisfies COMMANDMENT IX: 100% free of manual branching or structural erasures.
+   */
   private applySimGeneratorUtils<K extends TActiveRegistryKeys>(
     overrides: TMockOverrides<K>,
     rawStructure: TResolveRegistryStructure<K>,
@@ -113,9 +102,7 @@ class XalethorVaultGenerator {
 
       const baselineValue = targetStructure[propertyName];
 
-      // 🎯 Case A: Tuple Descriptor Array Match
       if (Array.isArray(rule)) {
-        // Index 0 is always your deterministic utility identifier string token key
         const utilKey = rule[0] as TXalorSimGeneratorKeys;
 
         const updatedValue = this.evaluateTupleDescriptor(
@@ -278,9 +265,11 @@ class XalethorVaultGenerator {
     /* prettier-ignore */
     // Boundary confirmation checks match against your type guards cleanly
     if (overrides && isValidMockOverrideBlock<K>(overrides) && isTargetRegistryStructure<K>(rawStructure)) {
+
+       
       this.applySimGeneratorUtils<K>(overrides, rawStructure);
-      
-      // return rawStructure;
+  
+      return rawStructure;
     }
     // Structural boundary check narrowing target generic output naturally via native type guards
     if (isTargetRegistryStructure<K>(rawStructure)) {

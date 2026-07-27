@@ -50,7 +50,9 @@ export const generateCompactId = (length = 10): string => {
   }
 
   // Exactly one external string allocation emitted via the global runtime decoder
-  return String.fromCharCode.apply(null, buffer as unknown as number[]);
+  const result = String.fromCharCode.apply(null, buffer as unknown as number[]);
+
+  return result;
 };
 /**
  * ============================================================================
