@@ -105,12 +105,12 @@ export const isGetProgram: TTypeGuard<TProgramContext> = (
   isFunction(context.getProgram);
 
 /**
- *  areShapesIdenticalStrings
+ *  isStringMirrored
  *
  * Compares two values inside a fixed tuple. It leverages V8 engine string interning
  * for sub-nanosecond pointer comparison before falling back to character matching.
  *
- * @see {@link TransformerDocs.areIdenticalStrings}
+ * @see {@link TransformerDocs.isStringMirrored}
  */
 export const isStringMirrored: TTupleGuard<TMirrorBrand, TMirrorBrand> = (
   vals: [unknown, unknown],

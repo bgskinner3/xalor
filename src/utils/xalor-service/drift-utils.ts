@@ -9,7 +9,6 @@ import {
 import type {
   TDriftBuildMapper,
   IXalorDriftContext,
-  TSeedFrameParams,
   TRecoveryStrategyParams,
   TMissingKeysStructure,
   TSurgicalFallbackParams,
@@ -187,30 +186,6 @@ export function handleRecoveryStrategy({
   });
 }
 
-/**
- * 🛰️ UTILITY: AUTOMATED PRODUCTION FRAME SEEDER
- * Compiles a shallow volatile working frame, looks up the current blueprint snapshot
- * from the registry vault, and pre-seeds it point-free using your chosen materializer track.
- *
- * Complies with COMMANDMENT VIII (Internal Efficiency) and COMMANDMENT IX (Statically Verifiable).
- */
-export function seedCurrentProductionFrame({
-  processedPayload,
-  currentKey,
-  mode = 'defaultFill',
-}: TSeedFrameParams): Record<string, unknown> | null {
-  const workingFrame: Record<string, unknown> = { ...processedPayload };
-
-  const resolvedBlueprint = xalethorVaultKeeper.peek('blueprint', currentKey);
-
-  if (!resolvedBlueprint || !isObjectShape(resolvedBlueprint)) return null;
-
-  return handleRecoveryStrategy({
-    mode,
-    workingFrame,
-    activeHybridBlueprint: resolvedBlueprint,
-  });
-}
 /**
  * SURGICAL OPTIONAL PURGER VALVE
  * Iterates through the detected missing optional fields list and unconditionally

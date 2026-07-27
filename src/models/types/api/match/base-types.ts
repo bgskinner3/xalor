@@ -52,11 +52,6 @@ export type TSurgicalFallbackParams<_K extends TActiveDriftRegistryKeys> = {
   readonly customFill: Record<string, unknown>;
   readonly injectedKey: string;
 };
-export type TSeedFrameParams = {
-  readonly processedPayload: Record<string, unknown>;
-  readonly currentKey: string;
-  readonly mode?: Exclude<TDriftFillMode, 'none' | 'custom'>;
-};
 
 export type TRecoveryStrategyParams = {
   readonly workingFrame: Record<string, unknown>;

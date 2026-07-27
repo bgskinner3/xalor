@@ -11,6 +11,7 @@
         { "id": "features", "text": "Key Features" },
         { "id": "installation", "text": "Installation Guide" },
         { "id": "requirements", "text": "System Requirements" },
+        { "id": "performance-teaser", "text": "Teaser" },
         { "id": "core-advantages", "text": "Core Advantages" }
       ]
     },
@@ -22,11 +23,11 @@
       "active": true,
       "sectionLinks": [
         { "id": "intro", "text": "Core Concept" },
-        { "id": "single-source-truth", "text": "Source Of Truth" },
-        { "id": "phantom-build-clean", "text": "Structural Eradication" },
-        { "id": "compiler-lifecycle-audit", "text": "Lifecycle Audit" },
-        { "id": "type-graph-telemetry", "text": "Type-Graph Telemetry" },
-        { "id": "empirical-benchmarks", "text": "Benchmarks" }
+        { "id": "single-source-truth", "text": "Single Source of Truth" },
+        { "id": "aot-pipeline", "text": "5-Phase AOT Pipeline" },
+        { "id": "cas-fingerprinting", "text": "CAS Fingerprinting" },
+        { "id": "phantom-build-clean", "text": "The Hybrid Build Split" },
+        { "id": "type-graph-telemetry", "text": "Type-Graph Telemetry" }
       ]
     },
     {
@@ -241,7 +242,7 @@
     },
     {
       "id": "2c2ac0da-356b-4a04-8762-0cc59dcf922d",
-      "iconName": "shipping-box",
+      "iconName": "magic-wand",
       "text": "Generate",
       "subText": "generate mock data and more ...",
       "active": true,

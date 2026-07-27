@@ -9,7 +9,7 @@ import type { TXalorSimTypeMap } from '../../models/types';
 /**
  * @see {@link simulacrumGeneratorDocs.generateMockJwt}
  */
-export const generateMockJwt = (_payloadShape?: unknown): string => {
+export const generateMockJwt = (): string => {
   const { JWT_HEADER_BYTES, DEFAULT_PAYLOAD_BYTES, MOCK_SIGNATURE_BYTES } =
     SIMULACRUM_ASCII_TABLES;
   const PERIOD_BYTE = 46; // '.'

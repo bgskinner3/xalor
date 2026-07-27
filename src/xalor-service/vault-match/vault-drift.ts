@@ -22,7 +22,6 @@ import {
   isArrayShape,
 } from '../../../shared/shape-domain/guards';
 import { xalethorVaultKeeper } from '../vault-keeper';
-// import { xalethorVaultValidation } from '../vault-validation';
 import { xalethorVaultDiagnostics } from '../vault-diagnostics';
 import {
   XALOR_MATCH_DRIFT_ERROR_MAPPER,
@@ -32,7 +31,6 @@ import {
   synthesizeDriftMatrixBlueprint,
   getMissingKeysMatrix,
   handleRecoveryStrategy,
-  // seedCurrentProductionFrame,
   purgeMissingOptionalFields,
   refineAncestralContract,
   refineToCurrentModel,
@@ -286,10 +284,6 @@ class XalethorVaultMatchDrift {
     injectedKey: K,
   ): TResolveDriftReturnConstraint<K> {
     const activeHybridBlueprint = synthesizeDriftMatrixBlueprint(ctx, payload);
-    // console.dir(activeHybridBlueprint, {
-    //   depth: null,
-    //   colors: true,
-    // });
 
     /* prettier-ignore */
     const guardedPayload = this.executeIngressPerimeterGuards<K>(payload, ctx, injectedKey);

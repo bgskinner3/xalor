@@ -13,7 +13,9 @@ import type { TXalorSimTypeMap } from '../../models/types';
 /**
  * @see {@link simulacrumGeneratorDocs.generateSemanticEmail}
  */
-export const generateSemanticEmail = (propertyKey: string): string => {
+export const generateSemanticEmail = (
+  propertyKey: string = 'email',
+): string => {
   const { CONSONANT_BYTES, VOWEL_BYTES, TLD_POOL_BYTES } =
     SIMULACRUM_ASCII_TABLES;
   const C_LEN = CONSONANT_BYTES.length;
@@ -73,7 +75,9 @@ export const generateSemanticEmail = (propertyKey: string): string => {
 /**
  * @see {@link simulacrumGeneratorDocs.generateMockUserHandle}
  */
-export const generateMockUserHandle = (propertyKey: string): string => {
+export const generateMockUserHandle = (
+  propertyKey: string = 'handle',
+): string => {
   const { CONSONANT_BYTES, VOWEL_BYTES } = SIMULACRUM_ASCII_TABLES;
   const C_LEN = CONSONANT_BYTES.length;
   const V_LEN = VOWEL_BYTES.length;

@@ -1,7 +1,7 @@
 {
   "introduction": {
     "hero": {
-      "overline": "BUILD-TIME TYPE REIFICATION ENGINE",
+      "overline": "Ahead-of-Time Type Reification Platform",
       "subText": "Type-First Build Compilation with Runtime Orchestration",
       "description": "Pristine TypeScript types compiled into live runtime blueprints. Zero schema duplication, zero bundle inflation.",
       "image": {
@@ -14,19 +14,19 @@
       "id": "introduction",
       "blockOne": {
         "header": "What is Xalor?",
-        "description": "Xalor is a build-time type reification engine that transforms your native TypeScript types into runtime metadata. Instead of writing validation schemas by hand or generating thousands of lines of boilerplate, Xalor treats your TypeScript definitions as the single source of truth and makes them available at runtime."
+        "description": "Xalor is an ahead-of-time (AOT) type metadata engine for TypeScript. Instead of forcing you to write complex runtime validation schemas by hand or generating messy boilerplate files that clutter your project, Xalor extracts your native TypeScript definitions during compilation and makes them instantly available at runtime."
       },
       "blockTwo": {
         "header": "One Source of Truth",
         "iconName": "brain-bulb",
-        "description": "TypeScript erases every type during compilation, leaving production code unable to verify incoming data. Existing solutions either require duplicate runtime schemas or generate large validation files that clutter projects. Xalor solves both problems by extracting your types during the build and producing lightweight runtime metadata automatically.",
+        "description": "TypeScript erases every type definition during compilation. This leaves your production code blind, unable to verify incoming network data. Existing tools try to fix this by forcing you to maintain duplicate runtime schemas or by outputting large, auto-generated files that slow down your code editors.  \n Xalor solves both problems automatically by capturing your types during your standard build pass.",
         "list": [
-          "_Write native TypeScript once_ — no duplicate schemas or custom validation DSLs.",
-          "_Reuse the same types at runtime_ for validation, parsing, and type-safe operations.",
-          "_Unlock runtime type intelligence_ for defaults, migrations, transformations, and more."
+          "_Write native TypeScript once_ —  Eliminate duplicate schemas, manual syncing errors, and custom validation languages.",
+          "_Reuse the same types at runtime_ Enforce clean structural contracts natively for instant validation, type-guards, and parsing gates.",
+          "_Unlock runtime type intelligence_ Go beyond validation to power automated data normalization, safe default populating, and legacy schema updates."
         ]
       },
-      "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\nexport interface User {\n  id: number;\n  name: string;\n  email?: string;\n}\n\nxalor.register<'USER', User>();\n\nconst payload: unknown = {\n  id: 101,\n  name: 'Brennan'\n};\n\nif (xalor.guard<'USER'>(payload)) {\n  console.log(payload.name); // Fully typed\n}"
+      "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\n// 1. Define your pristine, native TypeScript model\nexport interface User {\n  id: number;\n  name: string;\n  role: 'user' | 'admin';\n}\n\n// 2. Register your contract (Intercepted entirely at build-time)\nxalor.register<'USER_PROFILE', User>();\n\n// 3. Process raw, untrusted network payloads synchronously\ntry {\n  const verifiedUser = xalor.parse<'USER_PROFILE'>(incomingPayload);\n  \n  // ✅ Data is fully validated, cast, and nominally branded!\n  console.log(verifiedUser.name);\n} catch (error) {\n  console.error(\"Traceable GPS Diagnostics:\", error.message);\n}"
     },
     "features": {
       "id": "features",
@@ -37,34 +37,26 @@
         "one": {
           "header": "Native TypeScript Validation",
           "iconName": "shield-solid",
-          "description": "Write your types once. Xalor transforms them into runtime validation automatically during your build—no duplicate schemas or custom validation DSLs.",
-          "codeBlock": "// Define your type normally\n\ntype User = {\n  id: number;\n  name: string;\n};\n\n\n// Validate runtime data\n\nconst result = xalor.safeParse<'USER'>(payload);\n\nif (result.success) {\n  result.data.name; // string\n}"
+          "description": "_Write your data models once_ using native, pristine TypeScript. Xalor transforms them into **ironclad runtime contracts** automatically during your `build pass`—completely eliminating duplicate schema authoring or non-native validation languages.",
+          "codeBlock": "// Define your data models natively\ntype User = {\n  id: number;\n  name: string;\n};\n\n// Enforce perimeter security gates\nconst result = xalor.safeParse<'USER'>(payload);\nif (result.success) {\n  console.log(result.data.name); // Fully typed string\n}"
         },
         "two": {
-          "header": "Zero Runtime Bundle Cost",
+          "header": "Zero Runtime Bundle Inflation",
           "iconName": "flash-bolt",
-          "description": "Heavy type analysis happens during compilation, not in production. Your application ships only lightweight runtime metadata instead of thousands of lines of schema code.",
-          "codeBlock": "`// TypeScript Source\ninterface User {\n  id: number;\n  name: string;\n}\n\n        ↓\n\n// CAS Blueprint\n{\n  \"USER\": \"sh_4vztgu\",\n  \"sh_4vztgu\": {\n    \"kind\": \"object\",\n    \"properties\": {\n      \"id\": \"number\",\n      \"name\": \"string\"\n    }\n  }\n}\n\n        ↓\n\n// Runtime\nxalor.parse<'USER'>(payload);\nxalor.safeParse<'USER'>(payload);"
+          "description": "Heavy `Abstract Syntax Tree (AST)` analysis happens entirely during compilation, never in production. Your application ships only with compact, **content-addressed metadata maps** instead of thousands of lines of heavy validation source code.",
+          "codeBlock": "// TypeScript Source Interface\ninterface User {\n  id: number;\n  name: string;\n}\n\n//  ↓ (Build-Time CAS Compaction Sweep)\n\n// Pre-Compiled Invariant Blueprint\n{\n  \"USER\": \"sh_4vztgu\",\n  \"sh_4vztgu\": {\n    \"kind\": \"object\",\n    \"properties\": {\n      \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"number\" } },\n      \"name\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } }\n    }\n  }\n}\n\n//  ↓ (Linear Pass At Hardware Velocity)\n\nxalor.parse<'USER'>(payload);"
         },
         "three": {
-          "header": "Build-Time Intelligence",
+          "header": "Build-Time Structural Intelligence",
           "iconName": "cpu-duotone",
-          "description": "Xalor transforms your TypeScript types during the build process into optimized runtime blueprints. No generated files, no manual syncing, and no changes to your existing development workflow.",
-          "codeBlock": "[ Developer Writes TypeScript ]\n\ninterface User {\n  id: number;\n  name: string;\n}\n\n          ↓\n\n┌──────────────────────────┐\n│ XALOR COMPILER PIPELINE  │\n├──────────────────────────┤\n│ AST Type Extraction      │\n│        ↓                 │\n│ Shape Reification        │\n│        ↓                 │\n│ CAS Blueprint Creation   │\n│        ↓                 │\n│ Vault Synchronization    │\n└──────────────────────────┘\n\n          ↓\n\n[ Runtime Metadata Ready ]\n\nxalor.safeParse<'USER'>(payload)",
-          "link": {
-            "text": "About the Build",
-            "link": "/xalor/docs/whatIsXalor"
-          }
+          "description": "Xalor mines your code's type topology out-of-band during your toolchain's standard compilation window. Enjoy _zero-maintenance syncing freedom_ with **hard-zero local folder pollution**, generated files, or editor save lag.",
+          "codeBlock": "[ Developer Writes Native TypeScript ]\ninterface User {\n  id: number;\n  name: string;\n}\n\n      ↓\n\n┌─────────────────────────────┐\n│   XALOR COMPILER WATCHER    │\n├─────────────────────────────┤\n│  In-Memory AST Extraction   │\n│              ↓              │\n│  Stable Shape Reification   │\n│              ↓              │\n│  CAS Blueprint Interning    │\n│              ↓              │\n│  Atomic Shield Sync Pass    │\n└─────────────────────────────┘\n\n      ↓\n\n[ O(1) Boot Hydration Ready ]\nxalor.safeParse<'USER'>(payload);"
         },
         "four": {
           "header": "Beyond Validation",
           "iconName": "shuffle",
-          "description": "Runtime blueprints unlock more than validation. Generate safe defaults, create typed mocks, transform data, clone structures, and migrate legacy payloads using the same TypeScript source.",
-          "codeBlock": "// Generate safe values\nxalor.default<'USER'>();\n\n\n// Create test data\nxalor.mock<'USER'>();\n\n\n// Migrate old payloads\nxalor.drift<'USER'>(payload);\n\n\n// Transform structures\nxalor.merge<'USER'>(ctx);",
-          "link": {
-            "text": "See All APIS",
-            "link": "/xalor/docs/api"
-          }
+          "description": "Pre-compiled structural blueprints unlock capabilities **far beyond simple data validation**. Generate safe zero-state templates via `xalor.default()`, create strongly-typed mocks using `xalor.mock()`, and upcast legacy payloads with `xalor.drift()`.",
+          "codeBlock": "// Hydrate fallback models safely\nxalor.default<'USER'>();\n\n// Generate randomized test fixtures\nxalor.mock<'USER'>();\n\n// Upcast legacy service versions\nxalor.drift<'USER'>(historicalPayload, ctx);\n\n// Execute single-pass deep mutations\nxalor.merge<'USER'>(mergeContext);"
         }
       }
     },
@@ -73,21 +65,39 @@
       "header": "Installation Guide",
       "iconName": "shipping-box",
       "isActive": true,
-      "description": "Install the core package using your preferred package manager. Xalor is designed to integrate naturally with modern TypeScript build pipelines, and we're continuously expanding first-class support across bundlers, frameworks, and development environments.",
-      "footnote": "> _Getting Started:_ Some environments require a small build-time transformer configuration to enable type extraction. Our setup guides provide framework-specific instructions for Vite, Next.js, Bun, Node.js, and more. Follow the _Getting Started Guide_ below for the latest integration steps.",
+      "description": "Deploy the core contract governance engine using your native package manager. Xalor integrates natively with **modern TypeScript build pipelines** to enforce edge-level perimeter security with zero runtime parsing overhead.",
+      "footnote": "> _Getting Started:_ Some environments require a brief, one-time bundler setup to coordinate type mining passes out-of-band. Follow the `Full Setup Guide` below for step-by-step instructions across Vite, Next.js, and Webpack ecosystems.",
       "codeBlock": "npm install @bgskinner2/xalor\n\npnpm add @bgskinner2/xalor\n\nyarn add @bgskinner2/xalor"
     },
     "requirements": {
       "id": "requirements",
-      "header": "System Requirements",
-      "description": "You must register the transformation plugin inside your _tsconfig.json_ file. For advanced environment configurations, see the Full Setup Guide.",
+      "header": "Toolchain Activation",
       "iconName": "cog-duotone",
       "isActive": true,
-      "codeBlock": "{\n// tsconfig.json\n{\n  // ...\n  \"compilerOptions\": {\n    // ...\n    \"plugins\": [\n      {\n        \"transform\": \"@bgskinner2/xalor/transformer\",\n        \"type\": \"program\"\n      }\n    ]\n  }\n}\n}",
+      "description": "To allow the background watcher to extract your static type layouts before erasure, you must register our AOT plugin directly inside your project's `tsconfig.json` file:",
+      "codeBlock": "{\n  \"compilerOptions\": {\n    \"plugins\": [\n      {\n        \"transform\": \"@bgskinner2/xalor/transformer\",\n        \"type\": \"program\"\n      }\n    ]\n  }\n}",
       "links": {
         "seeMore": {
           "text": "Full Setup Guide",
           "href": "/xalor/docs/gettingStarted#configuration"
+        }
+      }
+    },
+    "performanceTeaser": {
+      "id": "performance-teaser",
+      "header": "Bare-Metal Predictability",
+      "iconName": "activity-solid",
+      "isActive": true,
+      "description": "Traditional validation engines collapse when a network payload is malformed because they stop execution to build complex error objects in the heap. Xalor utilizes a **Hybrid Architecture Split** that executes a fail-fast linear check at raw hardware velocity, delivering an identical runtime performance budget regardless of data quality.",
+      "bulletPoints": [
+        "**O(1) Boot Hydration** — Bypasses the heavy `1.21 ms` macro ingestion tax entirely, settling into memory in an astonishing **356 nanoseconds** on system boot.",
+        "**Fail-Fast Rejections** — Rejects corrupted data packets or malicious API surges in **284 nanoseconds**, outperforming alternative runtimes by over **4,000%**.",
+        "**Transient Memory Preservation** — Processes complex schema upgrades in a single pass without holding long-lived memory allocations or de-optimizing V8 class shapes."
+      ],
+      "links": {
+        "seeMore": {
+          "text": "View Full Performance Dashboard",
+          "href": "/xalor/docs/benchmarks"
         }
       }
     },
@@ -97,13 +107,14 @@
       "iconName": "rocket-tilted",
       "isActive": true,
       "list": [
-        "_Single Source of Truth_ — Define your data models once using native TypeScript. Xalor automatically transforms them into runtime metadata, eliminating duplicate validation schemas.",
-        "_Zero Runtime Schema Bloat_ — Heavy type analysis happens during your build. Production applications ship only compact runtime metadata instead of thousands of lines of schema definitions.",
-        "_Production-Ready Diagnostics_ — Validation failures point directly back to the original TypeScript file and line number, making runtime issues dramatically easier to investigate.",
-        "_No Compiler Patches or Generated Files_ — Integrates with your existing build pipeline without `ts-patch`, generated schema files, or cluttering your source tree.",
-        "_Built for Scale_ — Deep Graph Interning deduplicates shared structures into compact blueprints, keeping metadata small even across large monorepos and enterprise applications."
+        "_Single Source of Truth_ — Write native TypeScript types once to completely eliminate the double-maintenance tax of duplicate schemas.",
+        "_Zero Client Bundle Bloat_ — Heavy structural evaluation rules live in your build-time CLI layer, shipping zero validation lines to production.",
+        "_Line-Precise GPS Diagnostics_ — Validation breaches point back to the exact source code file and coordinate path, saving development hours.",
+        "_Zero Folder Pollution_ — Connects to your ecosystem out-of-band without using `ts-patch` or outputting messy auto-generated files.",
+        "_Built for Scale_ — Deep Graph Interning hashes and deduplicates nested shapes into compact blueprints, keeping memory budgets small."
       ]
     },
+
     "bottomLinks": [
       {
         "id": "3d42b389-9a49-4cfa-9a16-a890a7709518",
@@ -127,26 +138,60 @@
     "singleSourceOfTruth": {
       "id": "single-source-truth",
       "active": true,
-      "header": "Eliminating the Dual-Source Schema Tax",
-      "description": "Every other validation framework forces you into a _double-maintenance tax_ You have to manually write a custom runtime validation schema language blocks (like a Zod schema) and then write a mirrored TypeScript interface right next to it just to get autocompletion.",
-      "subDescription": "Xalor treats your standard, everyday TypeScript types as the absolute, **single source of truth**. You write a standard type, pass it to Xalor's proxy handle, and the engine takes over. If you modify or delete a type property, your workspace data layers adapt instantly with **hard-zero duplication overhead**.",
+      "header": "Eradicating the Dual-Source Schema Tax",
+      "description": "Every other validation framework forces you into a _double-maintenance tax_. You have to manually write custom runtime validation schema language blocks (like a Zod schema) and then write a mirrored TypeScript interface right next to it just to get basic editor autocompletion.",
+      "subDescription": "Xalor treats your standard, everyday TypeScript types as the absolute, **single source of truth**. You write a standard type, pass its token to Xalor's execution perimeters, and the engine takes over. If you modify or delete a type property, your workspace data layers adapt instantly with **hard-zero duplication overhead**.",
       "visuals": {
         "image": {
-          "alt": "graph-s-s-o-t",
+          "alt": "Xalor Pipeline Overview: Eradicating the Dual-Source Schema Tax",
           "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/xalor/single-source-of-truth.png"
         },
         "codeBlock": {
-          "code": "// ❌ THE COMPETITOR METHOD (The Dual-Source Tax)\n// You are forced to maintain a runtime schema AND a separate compiled type\nconst ZUserSchema = z.object({\n id: z.string().uuid(),\n email: z.string().email(),\n profile: z.object({\n firstName: z.string(),\n lastName: z.string()\n })\n});\ntype TZUser = z.infer<typeof ZUserSchema>; // ◄ Secondary inferred abstraction layer\n\n\n// THE XALOR METHOD (Pure Native TypeScript)\n// One pristine source of truth. No runtime duplication. No inferred boilerplate.\nexport type TUser = {\n id: string;\n email: string;\n profile: {\n firstName: string;\n lastName: string;\n };\n};\n\n// Xalor processes the native type directly in-memory via the proxy handle\nconst clientData = xalor.parse<TUser>(incomingPayload);",
-          "note": "By evaluating the native TypeScript _Abstract Syntax Tree (AST)_ directly in memory, Xalor allows your actual development types to serve as your operational enforcement gates. There are no secondary validation libraries to import into your source files, no runtime parsing definitions to synchronize, and zero opportunities for **manual drift** between your compile-time contracts and runtime validation bounds."
+          "code": "// ❌ THE COMPETITOR METHOD (The Dual-Source Tax)\n// You are forced to maintain a runtime schema AND a separate compiled type\nconst ZUserSchema = z.object({\n  id: z.string().uuid(),\n  email: z.string().email(),\n  profile: z.object({\n    firstName: z.string(),\n    lastName: z.string()\n  })\n});\ntype TZUser = z.infer<typeof ZUserSchema>; // ◄ Secondary inferred abstraction layer\n\n\n// ⚡ THE XALOR METHOD (Pure Native TypeScript)\n// One pristine source of truth. No runtime duplication. No inferred boilerplate.\nexport type TUser = {\n  id: string;\n  email: string;\n  profile: {\n    firstName: string;\n    lastName: string;\n  };\n};\n\n// Xalor processes the native type directly in-memory via the proxy handle\nconst clientData = xalor.parse<TUser>(incomingPayload);",
+          "note": "Study the programmatic lifecycle flow in the diagram. When you save a type declaration (`Step I`), our background watcher intercepts the pass. The **Ghost Emitter** (`Step II`) deploys an `Atomic Shield` to stream your layout keys safely to autocomplete maps, while the engine triggers an in-memory **Vault Compaction** pass (`Step III`). When raw production data hits your `Boundary Gate` (`Step IV`), lookups run at bare-metal velocity via hard $O(1)$ pointer assignments."
+        }
+      }
+    },
+    "aotPipeline": {
+      "id": "aot-pipeline",
+      "active": true,
+      "header": "The 5-Phase Extraction Pipeline",
+      "description": "Xalor permanently eliminates runtime type erasure by mining your code's type topology *before compilation erasure* takes place. The engine hooks directly into the native TypeScript Compiler API pass, routing nodes point-free through a cascade of specialized, self-cleaning type-predicate reifiers.",
+      "subDescription": "This functional extraction loop guarantees **absolute zero structural mutation** or unsafe type-casting (`as any`). It evaluates your code's raw geometric layout entirely inside an isolated, volatile in-memory scratchpad, preparing the types to be serialized into invariant blueprints with zero folder pollution.",
+      "visuals": {
+        "codeBlock": {
+          "code": "[ AST Node Pass ] ──► Analyzed by theMiner loop\n        │\n        ▼\n[ Pre-Reification Gates ] ──► Lineage verification via Symbol IDs\n        │\n        ▼\n[ Deep Shape Unroller ] ──► Extracted into un-normalized TSolidShape\n        │\n        ▼\n[ Canonical Serialization ] ──► Flattened by serializeCanonicalFingerprint\n        │\n        ▼\n[ Content-Addressable Pool ] ──► Deduplicated into invariant sh_ entries",
+          "note": "Every type registration passes through this single-entry funnel (`transformer/index.ts`). Before structural exploration occurs, the orchestrator routes nodes through our **Purity and Recursion Radars**. Sibling paths allocate completely isolated tracking frames, ensuring that parallel horizontal evaluation lines never leak memory references into one another or trigger false-positive compiler locks."
+        },
+        "image": {
+          "alt": "",
+          "href": ""
+        }
+      }
+    },
+    "casFingerprinting": {
+      "id": "cas-fingerprinting",
+      "active": true,
+      "header": "Content-Addressable Token Compaction",
+      "description": "Standard compiler macros duplicate checking structures repeatedly across your application source files. Xalor implements an immutable, zero-dependency **Content-Addressable Storage (CAS)** system driven by a stable bitwise `FNV-1a` hashing engine that treats structural signatures exactly like a Git repository committing code changes.",
+      "subDescription": "By passing reified nodes into `serializeCanonicalFingerprint()`, the engine runs an allocation-free flattening sweep that strips nominal data to isolate absolute geometric layouts. Properties are sorted alphabetically, circular stacks are defused via a transient `visited` cache frame, and the resulting invariant DNA string is compressed into an **8-character footprint** prefixed with `sh_`.",
+      "visuals": {
+        "codeBlock": {
+          "code": "// 🚀 RAW DEVELOPER DATA INTERFACE CONTRACT\ninterface IUser {\n  role: 'user' | 'admin';\n  email: string;\n  id: number;\n}\n\n// 🧬 INVARIANT CANONICAL FINGERPRINT OUTPUT STRING\n// Systematically ordered and unrolled point-free into a flat text footprint:\n'o:{email:p:string[l:4096],id:p:number,role:u:[l:string:admin|l:string:user]}'\n\n// 🗲 BITWISE TRANSFORM ➔ OPTIMIZED STORAGE TAG ADDRESS\nconst stableHashKey = computeStableShapeHash(canonicalString); // ──► \"sh_4vztgu\"",
+          "note": "Look at the compaction ratio. If an interface pattern (like `Address` or `UserMetadata`) is referenced across 500 separate endpoints, it is compiled and loaded into your RAM exactly once inside `blueprints[\"sh_4vztgu\"]`. The other 500 parent records simply store a tiny reference string pointer token, completely flattening your application's overall memory footprint budget curve."
+        },
+        "image": {
+          "alt": "",
+          "href": ""
         }
       }
     },
     "phantomBuild": {
       "id": "phantom-build-clean",
       "active": true,
-      "header": "Structural Eradication & Tree-Shaking Purity",
-      "description": "Legacy validation frameworks ruin client performance by shipping thousands of lines of heavy, nested JavaScript schema definitions directly to the browser. As your application models scale from **10 to 500**, your production bundles bloat with un-tree-shakable validation logic that crushes your _Google Lighthouse scores_.",
-      "subDescription": "Xalor solves this using a _Hybrid Architecture Split_: a background watcher extracts and hashes your TypeScript AST into an isolated server-side **CAS map**, completely erasing the type telemetry to guarantee **absolute zero bundle inflation**.",
+      "header": "The Hybrid Build Split",
+      "description": "Traditional validation frameworks force production systems to ingest, compile, and execute thousands of lines of heavy, nested JavaScript schema code. As your application models scale from **10 to 500** complex definitions, your client-facing build scripts bloat with un-tree-shakable validation logic that directly degrades your _Google Lighthouse scores_.",
+      "subDescription": "Xalor eliminates this performance degradation through an automated **Parallel Production Split**. Our ahead-of-time (AOT) toolchain watcher strips away all development type telemetry from your client-side application scripts, moving the raw type configurations into a decoupled, server-side `CAS blueprint vault`.",
       "visuals": {
         "image": {
           "alt": "phantomBuild",
@@ -154,43 +199,59 @@
         },
         "codeBlock": {
           "code": "// 📂 dist/server/xalor.blueprints.json\n{\n  \"blueprints\": {\n    \"sh_16c0mbs\": {\n      \"kind\": \"object\",\n      \"properties\": {\n        \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"status\": { \"shape\": { \"kind\": \"union\", \"values\": [\"pending\", \"completed\"] } },\n        \"amount\": { \"shape\": { \"kind\": \"reference\", \"name\": \"sh_1cr65y8\" } }\n      }\n    },\n    \"sh_1nculbp\": {\n      \"kind\": \"object\",\n      \"properties\": {\n        \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"currency\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"amount\": { \"shape\": { \"kind\": \"reference\", \"name\": \"sh_1cr65y8\" } }\n      }\n    }\n  },\n  \"references\": {\n    \"TRANSACTION_SAFE\": \"sh_16c0mbs\",\n    \"BASE_TRANSACTION\": \"sh_1nculbp\"\n  }\n}",
-          "note": "Look closely at the `amount` rows inside **both** `sh_16c0mbs` and `sh_1nculbp`. Instead of copy-pasting duplicate structural logic across thousands of endpoints, the engine maps both parent configurations directly to a single shared layout vault token (`sh_1cr65y8`). Your project pays the memory assignment tax exactly once."
-        }
-      }
-    },
-    "compilerAudit": {
-      "id": "compiler-lifecycle-audit",
-      "active": true,
-      "header": "The Operational Profiler & Ghost Emitter",
-      "description": "Traditional frameworks leave you blind to your application's actual data footprint, allowing dead type schemas and silent contract drift to pile up. Xalor exposes this layer completely via a native background toolchain watcher—protecting your machine from local process collisions while delivering bare-metal terminal diagnostics.",
-      "subDescription": "While the _Ghost Emitter_ dynamically streams updated tracking keys directly into your IDE autocomplete maps behind the scenes using **Atomic Shield OS rename protections**, running `npx xalor audit` forces complete architectural visibility. This profiler outputs a real-time ledger tracking structural compaction data, **metadata evaporation deltas**, and exact call-site orphan locations.",
-      "visuals": {
-        "image": {
-          "alt": "terminal display",
-          "href": "",
-          "note": "High-fidelity rendering of the Xalor Operational Profiler Report. The dark-mode graphical card maps out real-time compiler telemetry: storage compaction ratios, lifecycle metadata evaporation metrics demonstrating 56.9% fat stripped away from production distribution files, and a clean API contract drift ledger state."
-        },
-        "codeBlock": {
-          "code": "// 📡 Terminal Window A: Active Local Background Process\n// bgskinner2@Mac xalor-production-sandbox %\n// npx xalor watch --daemon\n//\n// [Xalor CLI] Watcher successfully bound to fs.events inside /src/models\n// [Ghost Emitter] Ambient types securely streamed to node_modules/.xalor/cache/\n// [Atomic Shield] Database file transaction completed via atomic OS rename\n\nimport { xalor } from '@bgskinner2/xalor';\n\n// 💻 Your Code Editor IDE:\n// Autocomplete maps read 'TRANSACTION_SAFE' instantly from the ghost cache.\n// You write native code, while the disk avoids all concurrent write collisions.\nconst clientData = xalor.parse<'TRANSACTION_SAFE'>(payload);",
-          "note": "Xalor handles workspace scaling challenges behind the scenes. While traditional compiler plugins constantly crash local language servers by rewriting messy, bloated physical code structures into your working project folders, Xalor locks down your caching files with isolated atomic OS rename updates. It pipes autocomplete metadata straight into ambient memory modules, keeping your source repository pristine and your local save cycles completely collision-free."
+          "note": "Trace the lifecycle across the infographic. When you declare multiple source models (`Step I`), Xalor triggers an `AOT Compaction Sweep` (`Step II`) that erases identical nested shapes. Notice how the `amount` fields inside both `sh_16c0mbs` and `sh_1nculbp` point directly to a single shared leaf cell inside the `Decoupled Vault` (`Step III`). On system boot, your application skips recursive graph parsing entirely, achieving instant **O(1) pointer hydration**."
         }
       }
     },
     "typeGraphTelemetry": {
       "id": "type-graph-telemetry",
       "active": true,
-      "header": "Isomorphic Type-Graph Telemetry (Beyond Validation)",
-      "description": "Validation is just a beneficial side-effect. By extracting deep, structural compile-time metadata, Xalor answers the ultimate question: 'What else can you do with types?' It unlocks an entire ecosystem of **live code tracking**, automated mock simulations, and real-time visual infrastructure analytics.",
-      "subDescription": "While our local orchestration web console is finalizing, running `npx xalor studio` forces your background toolchain to map out your entire structural schema network. The background compiler serializes your internal contract dependencies into an isomorphic graph matrix—ready to pipe directly into live **3D relationship lineages** or instant mock data factories.",
+      "header": "Isomorphic Type-Graph Telemetry",
+      "description": "Validation is merely a beneficial runtime side-effect. By extracting deep, structural compile-time metadata blueprints, Xalor answers the ultimate engineering question: `What else can you do with types?` It transforms your static contracts into an active infrastructure layer that powers automated mock simulation, live graph tracing, and cross-era schema transformations.",
+      "subDescription": "While our local orchestration web dashboard is finalizing, invoking `npx xalor studio` forces the background compiler toolchain to map out your application's complete structural schema network. The background watcher flattens your codebase dependencies into an **isomorphic shared edge topology matrix**, ready to be visualized as live 3D relationship lineages or piped natively into runtime strategy engines.",
       "visuals": {
         "codeBlock": {
-          "code": "       ┌────────────────────────────────────────────────────────┐\n       │     NATIVE AST ENTRY TRACK: src/models/registry.ts     │\n       └───────────────────────────┬────────────────────────────┘\n                                   │\n                     ┌─────────────┴─────────────┐\n                     ▼                           ▼\n        ┌─────────────────────────┐ ┌─────────────────────────┐\n        │  NODE A: TRANSACTION    │ │   NODE B: USER_PROFILE  │\n        │  Hash: sh_16c0mbs       │ │   Hash: sh_pnaa6g       │\n        └────────────┬────────────┘ └────────────┬────────────┘\n                     │                           │\n                     └─────────────┬─────────────┘\n                                   │ (Isomorphic Shared Edge Vector)\n                                   ▼\n                    ┌──────────────────────────────┐\n                    │   CONVERGENT CAS LEAF CELL   │\n                    │   Vault Key: sh_1cr65y8      │\n                    │   • value     ➔ [string]\n                    │   • exponent  ➔ [number]\n                    └──────────────┬───────────────┘\n                                   │\n  ═════════════════════════════════▼═════════════════════════════════\n                XALOR RUNTIME INFRASTRUCTURE INJECTION MATRIX\n  ═══════════════════════════════════════════════════════════════════\n        │                  │                  │                  │\n        ▼                  ▼                  ▼                  ▼\n┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐\n│ xalor.parse  │   │ xalor.guard  │   │ xalor.match  │   │ xalor.default│\n│ Fast O(1)    │   │ Bare-Metal   │   │ Polymorphic  │   │ Test Suite   │\n│ Structural   │   │ Assertive    │   │ Pattern-Match│   │ Mock Data    │\n│ Validation   │   │ Type Gates   │   │ Closure Handl│   │ Hydrator DTO │\n└───────┬──────┘   └───────┬──────┘   └───────┬──────┘   └───────┬──────┘\n        │                  │                  │                  │\n        └──────────────────┼──────────────────┼──────────────────┘\n                           ▼                  ▼\n                   ┌──────────────┐   ┌──────────────┐\n                   │ xalor.merge  │   │ xalor.clone  │\n                   │ Polymorphic  │   │ Deep Copy    │\n                   │ AST Combine  │   │ Identity     │\n                   │ Node Utility │   │ Preservation │\n                   └──────────────┘   └──────────────┘",
-          "note": "Because Xalor has already extracted and compiled your complete codebase type topology into content-addressed primitive objects, your types unlock an extensible infrastructure layer. Pass your reference keys natively into our 6 core runtime strategy vectors:\n\n• _xalor.parse_: Executes high-velocity structural verification returning typed data.\n• _xalor.guard_: Functions as a bare-metal assertive inline type gate passing unknown objects safely.\n• _xalor.match_: Evaluates polymorphic payload webhooks directly into strongly-typed closure handlers.\n• _xalor.default_: Instantly hydrates local unit test suites using clean, zero-config factory data records.\n• _xalor.merge_: Combines separate, pre-compiled AST structural blueprints together on the fly in memory.\n• _xalor.clone_: Performs deep memory object duplication while fully preserving internal structural type identity."
+          "code": " ┌────────────────────────────────────────────────────────┐\n │    NATIVE AST ENTRY TRACK: src/models/registry.ts      │\n └───────────────────────────┬────────────────────────────┘\n                             │\n                ┌────────────┴────────────┐\n                ▼                         ▼\n   ┌─────────────────────────┐  ┌─────────────────────────┐\n   │   NODE A: TRANSACTION   │  │  NODE B: USER_PROFILE   │\n   │    Hash: sh_16c0mbs     │  │    Hash: sh_pnaa6g      │\n   └────────────┬────────────┘  └────────────┬────────────┘\n                │                            │\n                └─────────────┬──────────────┘\n                              │ (Isomorphic Shared Edge Vector)\n                              ▼\n               ┌──────────────────────────────┐\n               │   CONVERGENT CAS LEAF CELL   │\n               │    Vault Key: sh_1cr65y8     │\n               │    • value ➔ [string]        │\n               │    • exponent ➔ [number]     │\n               └──────────────┬───────────────┘\n                              │\n ═════════════════════════════▼═════════════════════════════════════\n          XALOR RUNTIME INFRASTRUCTURE INJECTION MATRIX\n ═══════════════════════════════════════════════════════════════════\n    │                │                │                │\n    ▼                ▼                ▼                ▼\n┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐\n│ xalor.parse  │ │ xalor.guard  │ │ xalor.match  │ │ xalor.default│\n│  Fast O(1)   │ │  Bare-Metal  │ │ Polymorphic  │ │  Test Suite  │\n│  Structural  │ │  Assertive   │ │ Pattern-Match│ │  Mock Data   │\n│  Validation  │ │  Type Gates  │ │ Closure Handl│ │  Hydrator DTO│\n└───────┬──────┘ └───────┬──────┘ └───────┬──────┘ └───────┬──────┘\n        │                │                │                │\n        └────────────────┼────────────────┼────────────────┘\n                         ▼                ▼\n                 ┌──────────────┐ ┌──────────────┐\n                 │ xalor.merge  │ │ xalor.clone  │\n                 │ Polymorphic  │ │  Deep Copy   │\n                 │ AST Combine  │ │   Identity   │\n                 │ Node Utility │ │ Preservation │\n                 └──────────────┘ └──────────────┘",
+          "note": "Because your codebase geometry is pre-compiled into an optimized key-value mapping, your types unlock an extensible runtime intelligence layer. Pass your reference keys natively into our 6 core strategy vectors:\n\n• `xalor.parse` — Executes high-velocity structural verification returning nominally-branded variables.\n• `xalor.guard` — Functions as an assertive inline type-guard function passing unknown objects safely.\n• `xalor.match` — Evaluates polymorphic payload webhooks directly into strongly-typed closure handlers.\n• `xalor.default` — Instantly hydrates zero-state fallback models using safe system primitive values.\n• `xalor.merge` — Combines separate, pre-compiled structural blueprints together on the fly in memory.\n• `xalor.clone` — Performs circular-safe object duplication while fully preserving internal structural identity."
         },
-        "video": {
-          "gif-alt": "video of something working in the studio",
-          "gif": ""
-        }
+        "strategyVectorsRegistry": [
+          {
+            "vector": "`xalor.parse`",
+            "responsibility": "Ingress Security",
+            "allocation": "Hard zero heap additions",
+            "impact": "Executes high-speed structural payload verification, attaching an immutable nominal cryptographic brand token using `Reflect.set()` to permanently protect downstream application state."
+          },
+          {
+            "vector": "`xalor.guard`",
+            "responsibility": "Perimeter Narrowing",
+            "allocation": "Near-zero footprint",
+            "impact": "Generates a stateless, highly reusable type predicate closure or executes an instant inline check to pass unknown object payloads across edge servers or serverless routing components safely."
+          },
+          {
+            "vector": "`xalor.match`",
+            "responsibility": "Pattern Resolution",
+            "allocation": "Linear O(1) matching",
+            "impact": "Evaluates complex polymorphic payroad webhooks directly against your precompiled content-addressed relational matrix, routing data into strongly-typed execution handlers automatically."
+          },
+          {
+            "vector": "`xalor.default`",
+            "responsibility": "Boilerplate Seeding",
+            "allocation": "Zero strategy overhead",
+            "impact": "Manufactures clean, pristine zero-state object models pre-populated exclusively with system primitives (`\"\"`, `0`, `false`) to completely shield local workflows from undefined property crashes."
+          },
+          {
+            "vector": "`xalor.merge`",
+            "responsibility": "Deep Graph Mutation",
+            "allocation": "Single-pass linear loops",
+            "impact": "Fuses separate blueprints, overlays incoming delta patches, processes selection filters (`pick` / `omit`), and adjusts property casings on the fly without causing hidden class de-optimization."
+          },
+          {
+            "vector": "`xalor.clone`",
+            "responsibility": "Malicious Purging",
+            "allocation": "Zero-allocation dispatch",
+            "impact": "Performs a deep, circular-safe copy of an input object while completely scrubbing away lingering keys, unmapped attributes, or trailing closure noise not explicitly permitted by the type contract."
+          }
+        ]
       }
     },
     "bottomLinks": [
@@ -217,68 +278,67 @@
       "id": "intro",
       "active": true,
       "header": "Get Started",
-      "description": "Well help you get the basics down and run through registering your first type, validating data and explore some other available APIs. ",
       "overline": "Environment Ingress",
-      "iconName": "rocket-tilted"
+      "iconName": "rocket-tilted",
+      "description": "Learn the foundational workflow loops of the Xalor engine. We will walk through **toolchain activation**, registering your first native type model, enforcing security parsing gates, and exploring ecosystem plugins."
     },
     "installationConfig": {
       "id": "installation",
       "active": true,
       "header": "Installation & Toolchain Activation",
-      "description": "Deploy the core contract governance engine via your native package manage",
+      "description": "Deploy the core contract governance engine into your local application workspace using your native package manager choice:",
       "installation": {
         "code": "npm install @bgskinner2/xalor\npnpm add @bgskinner2/xalor\nyarn add @bgskinner2/xalor",
-        "footnote": "Note: Because Xalor handles type extraction in the background, your environment needs to include our bundler transformer setup during your normal _pnpm build_ or _vite build_ process."
+        "footnote": "Note: Because Xalor handles type extraction ambiently out-of-band, your environment needs to include our build-time transformer configuration during your normal compilation cycles."
       },
       "registerAst": {
         "header": "Register the Core AST Transformer",
-        "description": "Xalor intercepts your types out-of-band during your toolchain's standard compilation window. You must register the transformation plugin directly inside your project's tsconfig.json file",
+        "description": "To instruct the underlying compiler to mine your static data shapes before erasure, register our AOT plugin directly inside your project's `tsconfig.json` file:",
         "codeBlock": {
           "code": "{\n  \"compilerOptions\": {\n    \"plugins\": [\n      {\n        \"transform\": \"@bgskinner2/xalor/transformer\",\n        \"type\": \"program\"\n      }\n    ]\n  }\n}",
-          "note": ""
-        },
-        "footnote": "You must register the transformation plugin inside your _tsconfig.json_ file. For advanced environment configurations, see the Full Setup Guide."
+          "note": "The compiler plugin intercepts your type parameters silently in memory, erasing 100% of the developer telemetry to guarantee **absolute zero client bundle inflation**."
+        }
       },
       "configureHooks": {
         "header": "Configure the Production Lifecycle Hook",
-        "description": "Because Xalor operates as an ahead-of-time (AOT) schema evolution pipeline, your environment requires a vacuum pass to run right before your primary bundler compiles your production chunks.",
-        "subDescription": "Update your project's package.json scripts block to activate the implicit validation and telemetry amputation gates automatically:",
+        "description": "Before your bundler packages your production code chunks, your shell environment requires a vacuum pass to strip development dead weight and lock remaining keys into their tightest footprints.",
+        "subDescription": "Update your project's `package.json` scripts block to activate the implicit validation and telemetry amputation gates automatically:",
         "codeBlock": {
-          "code": "{\n  \"scripts\": {\n    \"prebuild\": \"xalor vacuum\",\n    \"build\": \"tsc\",\n    \"reset\": \"rm -rf .xalor src/vault-snapshot.json dist node_modules/.cache/xalor\"\n  }\n}",
-          "node": ""
+          "code": "{\n  \"scripts\": {\n    \"prebuild\": \"xalor vacuum\",\n    \"build\": \"tsc && vite build\",\n    \"reset\": \"rm -rf .xalor src/vault-snapshot.json dist node_modules/.cache/xalor\"\n  }\n}",
+          "note": "**The Gatekeeper Protection:** If a duplicate contract key registration or critical type rule infraction is caught during `xalor vacuum`, the process triggers an immediate hard crash (`process.exit(1)`). This snaps the shell script loop, safely blocking compilation and protecting live servers from deployment corruption."
         },
-        "footnote": "The Gatekeeper Protection: If a duplicate contract key registration or critical type infraction is detected during prebuild, the execution pass triggers an immediate hard crash (process.exit(1)). This snaps the shell loop, safely blocking your primary builder and protecting live servers from deployment corruption."
+        "footnote": ""
       },
 
       "environmentConfig": {
         "header": "Local Development Watch Integrations",
-        "description": "During local development, Xalor uses zero-dependency plug-and-play watch modules to keep your editor's Intellisense and ghost bridges synchronized in-memory on every file save.",
+        "description": "During local development, Xalor utilizes zero-dependency watch plugins to synchronize your editor's Intellisense and ghost bridges in-memory on every file save pass.",
         "environments": {
           "vite": {
             "overline": "Supports Vite Serve, React-Vite Sandboxes, Nuxt 3, SvelteKit, and Vitest",
             "header": "Vite-Based Ecosystems",
-            "description": "Register the function call directly inside your toolchain's active plugins array. The hook couples dynamically during local hot-reloads (apply: 'serve'), adding zero computational overhead to production bundle generation:",
+            "fileName": "vite.config.ts",
+            "description": "Mount the watch plugin function directly inside your toolchain's active plugins configuration array to synchronize type layouts safely in memory during local dev saves:",
             "codeBlock": {
-              "code": "import { defineConfig } from 'vite';\nimport { xalorViteWatchPlugin } from '@bgskinner2/xalor/plugins';\n\nexport default defineConfig({\n  plugins: [\n    xalorViteWatchPlugin()\n  ]\n});",
-              "node": ""
+              "code": "import { defineConfig } from 'vite';\nimport { xalorViteWatchPlugin } from '@bgskinner2/xalor/plugins';\n\nexport default defineConfig({\n  plugins: [\n    xalorViteWatchPlugin() // ◄ Ambient, out-of-band in-memory updates\n  ]\n});"
             }
           },
           "nextJs": {
-            "overline": "Supports Next.js (Pages/App Routers utilizing Webpack) and standalone Webpack microservices.",
+            "overline": "Supports Next.js (Pages/App Routers utilizing Webpack) and standalone Webpack microservices",
             "header": "Next.js & Webpack Toolchains",
-            "description": "Isolate the plugin injection with a development flag condition to ensure it runs strictly inside your local development servers:",
+            "fileName": "next.config.js",
+            "description": "Isolate the plugin injection with a local development flag condition to guarantee your ambient watch runs strictly inside local development servers:",
             "codeBlock": {
-              "code": "const { XalorWebpackWatchPlugin } = require('@bgskinner2/xalor/plugins');\n\n/** @type {import('next').NextConfig} */\nconst nextConfig = {\n  webpack: (config, { dev }) => {\n    if (dev) {\n      config.plugins.push(new XalorWebpackWatchPlugin());\n    }\n    return config;\n  }\n};\n\nmodule.exports = nextConfig;",
-              "note": ""
+              "code": "const { XalorWebpackWatchPlugin } = require('@bgskinner2/xalor/plugins');\n\n/** @type {import('next').NextConfig} */\nconst nextConfig = {\n  webpack: (config, { dev }) => {\n    if (dev) {\n      config.plugins.push(new XalorWebpackWatchPlugin());\n    }\n    return config;\n  }\n};\n\nmodule.exports = nextConfig;"
             }
           },
           "nextTurbo": {
-            "overline": "Supports Next.js App layouts operating under our cutting-edge native Rust bundler.",
-            "header": "Next.js Turbopack Toolchains",
-            "description": "Mount the specialized wrapper inside your next configuration block to safely intercept background telemetry passes before compilation trees serialize:",
+            "overline": "Supports Next.js App layouts operating under the native Rust-based compiler",
+            "header": "Next.js Turbopack Pipelines",
+            "fileName": "next.config.js",
+            "description": "Mount the specialized experimental wrapper inside your Next configuration block to safely intercept background telemetry passes before compilation trees serialize:",
             "codeBlock": {
-              "code": "const { xalorNextTurboWatchPlugin } = require('@bgskinner2/xalor/plugins');\n\n/** @type {import('next').NextConfig} */\nconst nextConfig = {\n  experimental: {\n    turbo: {\n      plugins: [\n        xalorNextTurboWatchPlugin()\n      ]\n    }\n  }\n};\n\nmodule.exports = nextConfig;",
-              "note": ""
+              "code": "const { xalorNextTurboWatchPlugin } = require('@bgskinner2/xalor/plugins');\n\n/** @type {import('next').NextConfig} */\nconst nextConfig = {\n  experimental: {\n    turbo: {\n      plugins: [\n        xalorNextTurboWatchPlugin() // ◄ Turbopack native Rust asset bridge\n      ]\n    }\n  }\n};\n\nmodule.exports = nextConfig;"
             }
           }
         }
@@ -287,41 +347,55 @@
     "registerType": {
       "id": "typeRegistration",
       "active": true,
-      "header": "Register Your First Type",
-      "description": "Registration can happen in one of two ways. Either through a simple type declaration and injection or through simply passing the data object you'd like to register as a type.",
-      "codeBlock": {
-        "code": "import { xalor } from '@bgskinner2/xalor';\n\n// 1. Write clean, standard TypeScript types\ntype TUser = {\n  id: number;\n  username: string;\n  email: string;\n  displayName: string;\n  avatarUrl: string;\n  active: boolean;\n  role: 'user' | 'moderator' | 'admin';\n  createdAt: Date;\n  lastLoginAt: string;\n  preferences: {\n    theme: 'light' | 'dark';\n    notifications: boolean;\n    locale: string;\n  };\n  stats: {\n    posts: number;\n    followers: number;\n    following: number;\n  };\n};\n\n// 2. Map it to a string key identifier\nxalor.register<'USER_ACCOUNT', TUser>();\n\n// 3. Narrow and guard data inline instantly\nconst data: unknown = { id: 101, username: 'brennan' };\n\nif (xalor.guard<'USER_ACCOUNT'>(data)) {\n  console.log(data.username); // ✨ Fully typed automatically!\n}\n",
-        "note": ""
-      },
-      "subDescription": "Whether using explicit generic bindings or inline object inferences, Xalor’s compile-time scanner intercepts the target structural graph and provisions a unique Content-Addressable Storage (CAS) pointer hash inside your shadow type registry. This completely separates developer-facing type telemetry from the production-ready application distribution assets.",
+      "header": "Register Your First Contract",
+      "description": "Registration bridges your development types into the live metadata layer. Xalor allows you to map your data structures in **two distinct ways** natively during your standard compiler passes.",
       "link": {
         "text": "Deep Diver",
         "href": "/xalor/docs/api#register",
         "active": true
+      },
+      "subDescription": "",
+      "tracks": {
+        "trackOne": {
+          "header": "Track 1: Explicit Type Binding",
+          "description": "Extracts structural blueprints straight out of native TypeScript generic arguments, erasing the type telemetry post-save:",
+          "codeBlock": {
+            "code": "import { xalor } from '@bgskinner2/xalor';\n\ntype TUser = {\n  id: number;\n  username: string;\n  role: 'user' | 'admin';\n};\n\n// Maps the static type layout to a global string literal key\nxalor.register<'USER_ACCOUNT', TUser>();",
+            "note": "The compiler plugin intercepts the generic parameter tokens, unrolls the complete `Abstract Syntax Tree (AST)` structure, and completely strips the developer telemetry from your client-facing build file."
+          }
+        },
+        "trackTwo": {
+          "header": "Track 2: Implicit Value Inference",
+          "description": "Bypasses manual interface typing entirely by dynamically inferring your structural layout from a concrete JavaScript object instantiation:",
+          "codeBlock": {
+            "code": "import { xalor } from '@bgskinner2/xalor';\n\nconst productionConfig = {\n  host: \"localhost\",\n  port: 8080\n};\n\n// The background toolchain analyzes the properties of the data shape natively\nxalor.register<'APP_CONFIG'>(productionConfig);",
+            "note": "Xalor mines the layout constraints straight out of live values on save. This generates a **self-healing contract manifest mapping** natively without dirtying your directory with messy auto-generated interface files."
+          }
+        }
       }
     },
     "validateWithParse": {
       "id": "dataValidation",
       "active": true,
-      "header": "Validate Your Data, Not Like Everyone Else",
-      "description": "Traditional packages execute heavy, recursive graph traversals over human-maintained validation sheets at runtime. Xalor bypasses runtime graph generation entirely by utilizing the pre-compiled build blueprints. Unknown payloads pass through a strict, linear properties assessment using lightning-fast property matches and direct pointer evaluation.",
+      "header": "Validate Your Data Natively",
+      "description": "Traditional frameworks execute heavy, recursive graph traversals over runtime schemas. Xalor bypasses runtime graph generation entirely, using your pre-compiled build blueprints to evaluate unknown payloads via **lightning-fast linear property checks** and direct pointer verification.",
       "codeBlock": {
-        "code": "import { xalor } from '@bgskinner2/xalor';\n\nconst exampleUser: unknown = {\n  id: 1,\n  username: \"brennan_dev\",\n  email: \"brennan@example.com\",\n  displayName: \"Brennan Dev\",\n  avatarUrl: \"https://example.com/avatar.jpg\",\n  active: true,\n  role: \"admin\",\n  createdAt: new Date(\"2025-01-10T12:00:00Z\"),\n  lastLoginAt: \"2026-06-30T09:15:00Z\",\n  preferences: {\n    theme: \"dark\",\n    notifications: true,\n    locale: \"en-US\",\n  },\n};\n\nconst parsedUser = xalor.parse<'USER_ACCOUNT'>(exampleUser);\n",
-        "note": ""
+        "code": "import { xalor } from '@bgskinner2/xalor';\n\nconst rawPayload: unknown = {\n  id: 101,\n  username: \"brennan_dev\",\n  role: \"admin\"\n};\n\n// Execute perimeter security checking with zero side-effects\nconst result = xalor.safeParse<'USER_ACCOUNT'>(rawPayload);\n\nif (result.success) {\n  // ✅ result.data is officially verified, cast, and branded!\n  console.log(result.data.username);\n}",
+        "note": "When an incoming payload violates a structural layout boundary, the parsing pass aborts instantly without allocating complex error subgraphs in the RAM heap. The exception loops directly into the Auditor Telemetry Pipeline, identifying the exact file and line coordinates of your original TypeScript contract."
       },
-      "subDescription": "When an incoming payload violates a structural layout boundary, the parsing phase aborts instantly without allocating unnecessary error objects in RAM. The execution flow automatically routes the validation exception directly into the Auditor Telemetry Pipeline, identifying the exact line file origin of the target TypeScript contract.",
       "link": {
-        "text": "More Validations",
+        "text": "Explore All Validation Subsystems",
         "href": "/xalor/docs/api#validate",
         "active": true
-      }
+      },
+      "subDescription": ""
     },
     "exploreOtherApis": {
       "id": "exploreMore",
       "active": true,
       "header": "Extend Your Type Ecosystem Architecture",
-      "description": "Validation is merely the entry gate. Leverage the unified type-graph infrastructure to trigger automated client SDK generation, orchestrate instant zero-maintenance test seed factories, or spin up live schema drift monitors using the local developer dashboard framework.",
-      "subDescription": "Xalor breaks away from the industry-wide misconception that types are disposable, build-only artifacts or simple guardrails for validation rules. We treat your TypeScript architecture as a rich, multi-dimensional source of system intelligence. By saving and content-addressing the deep Abstract Syntax Tree relationships, a single source type model shifts from a static text file into a dynamic runtime primitive capable of generating self-healing infrastructure, deterministic simulation pools, and automated client layers."
+      "description": "Validation is merely the entry gate. Xalor treats your standard types as a multi-dimensional source of system intelligence to power safe structural cloning, automated test seed factories, or legacy schema drift monitors.",
+      "subDescription": "By content-addressing the deep Abstract Syntax Tree relationships, a single source type shifts from a static text file into a dynamic runtime primitive capable of generating **self-healing infrastructure** natively."
     },
     "bottomLinks": [
       {
@@ -346,309 +420,644 @@
     "header": {
       "id": "intro",
       "active": true,
-      "header": "Runtime APIs",
-      "description": "Explore the stateless client-side type-proxies and runtime utilities designed to securely intercept, validate, and serialize type layouts with absolute zero performance overhead.",
+      "header": "Runtime APIs Reference",
+      "description": "Explore the stateless client-side proxies and high-velocity utilities configured to validate, transform, and evolve payload data streams using **pre-compiled content-addressed blueprints** with hard-zero runtime compilation overhead.",
       "overline": "Client Subsystems",
       "iconName": "cpu-duotone"
     },
 
     "xalorRegister": {
       "id": "register",
+      "header": "Register (xalor.register)",
+      "description": "Centralized **build-time ingress gateway** that intercepts static type contracts or data instances during compilation and flattens them into pre-compiled JSON schema blueprints on disk.",
+      "subDescription": "By executing this entire graph traversal out-of-band, the AOT watcher embeds line-precise **GPS file coordinates** for instant diagnostics while completely stripping type telemetry from your distribution files to preserve an absolute zero compilation boot tax.",
+      "codeTabs": [
+        {
+          "tabName": "Explicit Types",
+          "code": {
+            "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nexport type TUser = {\n  id: string;\n};\n\nxalor.register<'User', TUser>();",
+            "returnValue": "xalor.register({\n  key: \"User\",\n  shape: { kind: \"object\", properties: { id: \"string\" } },\n  area: \"src/models/user.ts:12:1\",\n  filePath: \"src/models/user.ts\",\n  symbolName: \"TUser\",\n  typeName: \"User\",\n  hash: \"sh_4vztgu\"\n});"
+          },
+          "note": "The compiler plugin intercepts the generic parameter tokens, processes the underlying tree layout in memory, and erases 100% of the type telemetry from your client-facing build file."
+        },
+        {
+          "tabName": "Implicit Inference",
+          "code": {
+            "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nconst appConfig = { host: \"localhost\", port: 8080 };\n\nxalor.register<'AppConfig'>(appConfig);",
+            "returnValue": "xalor.register({\n  key: \"AppConfig\",\n  shape: { kind: \"object\", properties: { host: { shape: { kind: \"string\" } } } },\n  area: \"src/config/app.ts:4:1\",\n  filePath: \"src/config/app.ts\",\n  symbolName: \"AppConfig\",\n  typeName: \"AppConfig\",\n  hash: \"sh_1cr65y8\"\n});"
+          },
+          "note": "Xalor analyzes raw values natively on save. This generates an invariant metadata blueprint without forcing you to write duplicate interfaces or clogging your directories with messy auto-generated files."
+        }
+      ],
+
+      "parametersList": [
+        {
+          "id": "f133939e-44b7-45c6-b448-6d60be69d37f",
+          "name": "key",
+          "type": "`String`",
+          "required": true,
+          "description": "The authoritative registry key identifying this distinct contract across the workspace."
+        },
+        {
+          "id": "00bda5e0-0411-431b-a78a-2325a9808816",
+          "name": "target",
+          "type": "`Type` | `Object`",
+          "required": true,
+          "description": "The native TypeScript interface definition (via Generic Binding) or a concrete JavaScript data instance (via Value Inference)."
+        }
+      ]
+    },
+    "xalorGenerate": {
+      "id": "generate",
       "intro": {
-        "header": "Compile-Time Type Registration",
-        "description": "Centralized initialization gateway that intercepts static type contracts during compilation and maps them directly into physical server-side blueprints, leaving **absolute zero runtime compilation cost** inside your production bundle.",
-        "subDescription": "The primary, zero-overhead automated extraction channel. When a developer registers a contract using explicit TypeScript definitions, the background compiler plugin intercepts the generic parameter tokens, extracts the complete Abstract Syntax Tree (AST) layout, and completely strips the type telemetry from the executable bundle file. It transforms the expression into a pre-compiled JSON schema blueprint on disk while logging **line-precise GPS file coordinates** for instant runtime trace diagnostics.",
-        "apiList": [
-          { "id": "register", "name": "registerXalor", "status": "active" }
-        ]
+        "iconName": "magic-wand",
+        "header": "The Generation Pillar",
+        "description": "Standardized runtime subsystem configured to materialize schema-valid fallback templates, strict structural type coercions, and high-entropy mock fixtures natively out of your **pre-compiled Vault blueprints**.",
+        "subDescription": "By reading raw type configurations flatly out of the main registry with hard-zero dynamic strategy allocations, this suite shields downstream applications from property crashes while maintaining a **100% tree-shakable client footprint**."
       },
-      "typeRegistration": {
-        "header": "Register With Types",
-        "description": "Extracts native TypeScript generic parameters at build time, converting the static interface into a pre-compiled JSON schema while erasing 100% of the type telemetry from your client bundle.",
-        "codeBlock": {
-          "code": "// 🚀 DESIGN-TIME INVOCATION (What developers write in their source files)\nregisterXalor<\"User\", IUser>();\n\n// ⚙️ TRANSPILED COMPILATION OUTPUT (The Scout rewrites this expression behind the scenes)\n// The compiler completely erases the heavy generic type parameters to protect client bundle size\n// It injects line-precise GPS code coordinates linked straight to your source code directory map\nregisterXalor({\n  key: \"User\",\n  shape: { kind: \"object\", properties: { ... } },\n  area: \"src/models/user.ts:12:1\",\n  filePath: \"src/models/user.ts\",\n  symbolName: \"IUser\",\n  typeName: \"User\"\n});",
-          "note": "Look at the transpiled output string. The compiler completely erases the heavy generic block and embeds line-precise _GPS code coordinates_ and a pre-compiled structural layout map directly into the artifact, giving your runtime engine a **hard-zero compilation boot tax**."
+      "apis": {
+        "default": {
+          "header": "Default (xalor.default)",
+          "description": "Manufactures clean, pristine zero-state object models pre-populated exclusively with guaranteed schema-valid default primitive values.",
+          "subDescription": "By reading type geometries flatly out of your vacuum-pruned snapshot registry at compile time, this engine completely shields downstream workflows from unexpected **undefined property exceptions**.",
+          "codeTabs": [
+            {
+              "tabName": "Standard Invocation",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\n// 1. Your native TypeScript contract\nexport type TUserAccount = {\n  accountId: string;\n  meta: {\n    securityChecksum: number;\n    isSystemEncrypted: boolean;\n  };\n};\n\n// 2. Materialize your blank-slate template\nconst emptyForm = xalor.default<'USER_ACCOUNT'>();",
+                "returnValue": "{\n  \"accountId\": \"\",\n  \"meta\": {\n    \"securityChecksum\": 0,\n    \"isSystemEncrypted\": false\n  }\n}"
+              },
+              "note": "Pre-populates primitive leaf properties exclusively with zero-value system primitives (`\"\"`, `0`, `false`)."
+            }
+          ],
+          "parametersList": [
+            {
+              "id": "f133939e-44b7-45c6-b448-6d60be69d37f",
+              "name": "injectedKey",
+              "type": "`K extends TActiveRegistryKeys`",
+              "required": true,
+              "description": "The pre-compiled registry target key identifier token appended positionally by the AOT transformer plugin."
+            }
+          ]
+        },
+        "mock": {
+          "header": "Mock (xalor.mock)",
+          "description": "Converts a pre-compiled `TSolidShape` blueprint contract into a randomized, high-entropy mock object payload natively in memory.",
+          "subDescription": "Leverages a **discriminated mapping tuple matrix** that allows you to selectively lock individual properties down to your active _Simulacrum utility suites_ or custom transformation closures while fully preserving complete surrounding type fidelity.",
+          "codeTabs": [
+            {
+              "tabName": "Automatic Mocks",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\n// 1. Your native TypeScript contract\nexport type TTransaction = {\n  id: number;\n  amount: number;\n  status: 'pending' | 'completed';\n};\n\n// 2. Call the generator utilizing the generic token\nconst result = xalor.mock<'TRANSACTION'>();",
+                "returnValue": "{\n  \"id\": 48512,\n  \"amount\": 1250.50,\n  \"status\": \"completed\"\n}"
+              },
+              "note": "Recursively scans your vault registry to unroll independent, cross-referenced shapes and automatically embeds your nominal identity branding tokens."
+            },
+            {
+              "tabName": "Tuple Overrides",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\n// 1. Your native TypeScript contract\nexport type TUserProfile = {\n  id: number;\n  username: string;\n  avatarUrl: string;\n};\n\n// 2. Pass high-entropy overrides via the matrix tuple\nconst result = xalor.mock<'USER_PROFILE'>({\n  avatarUrl: ['timestamp', { pattern: 'YYYY-MM-DD', allowDrift: false }]\n});",
+                "returnValue": "{\n  \"id\": 101,\n  \"username\": \"brennan_dev\",\n  \"avatarUrl\": \"2026-07-27T11:03:00.000Z\"\n}"
+              },
+              "note": "Leverages your pre-computed matrix to provide 100% type-safe parameter overrides on hover, preventing structural drift between your test fixtures and production contracts."
+            }
+          ],
+          "parametersList": [
+            {
+              "id": "00bda5e0-0411-431b-a78a-2325a9808816",
+              "name": "injectedKey",
+              "type": "`K extends TActiveRegistryKeys`",
+              "required": true,
+              "description": "The pre-compiled registry target key identifier token appended positionally by the AOT transformer plugin."
+            },
+            {
+              "id": "7c126d4a-39f1-4db5-b82b-6c6d0db9e2a1",
+              "name": "overrides",
+              "type": "`TMockOverrides<K>`",
+              "required": false,
+              "description": "Optional mapping dictionary. For details on tuple-locking your fields directly to automated mock primitives, see the built-in _Simulacrum Generators Suite_ catalog below."
+            }
+          ]
+        },
+        "cast": {
+          "header": "Cast (xalor.cast)",
+          "description": "Coerces loose external payload structures cleanly into the exact structural and primitive types demanded by your type blueprint contracts.",
+          "subDescription": "Pipelines raw network data through specialized inline type coercers with **zero-allocation strategy dispatch**, attaching a nominal identity protection brand tag while remaining 100% free of unsafe `as` type-casting leaks.",
+
+          "codeTabs": [
+            {
+              "tabName": "Type Coercion",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\n// 1. Your native TypeScript contract\nexport type TUserAccount = {\n  id: number;\n  username: string;\n  active: boolean;\n};\n\n// 2. Loose external network input data\nconst loosePayload = { id: \"404\", username: \"selina\", active: \"true\" };\n\n// 3. Force loose items through primitive coercers\nconst castedAsset = xalor.cast<'USER_ACCOUNT'>(loosePayload);",
+                "returnValue": "{\n  \"id\": 404,       // ◄ Safely coerced to a number literal\n  \"username\": \"selina\",\n  \"active\": true   // ◄ Safely coerced to a boolean literal\n}"
+              },
+              "note": "Under the hood, the engine forces the untrusted payload through hardware-velocity type sanitization, welding an immutable nominal brand symbol onto the record object map natively using `Reflect.set()`."
+            }
+          ],
+          "parametersList": [
+            {
+              "id": "2ba8a721-b02b-447e-a807-3c31c62ff5b0",
+              "name": "data",
+              "type": "`unknown`",
+              "required": true,
+              "description": "The raw, unverified external network input data structure to filter, sanitize, and cast."
+            },
+            {
+              "id": "a721fb02-b02b-447e-a807-3c31c62ff5b0",
+              "name": "injectedKey",
+              "type": "`K extends TActiveRegistryKeys`",
+              "required": true,
+              "description": "The pre-compiled registry target key identifier token appended positionally by the AOT transformer plugin."
+            }
+          ]
         }
       },
-      "dataRegistration": {
-        "header": "Register With Data",
-        "description": "Infers structural data metadata implicitly from a concrete JavaScript object shape, dynamically generating a validated contract manifest without requiring a pre-existing TypeScript interface definition.",
-        "codeBlock": {
-          "code": "// 🚀 DESIGN-TIME INVOCATION (What developers write in their source files)\n// Bypasses manual typing overhead completely by extracting layout structures dynamically\nconst configInstance = { host: \"localhost\", port: 8080 };\nregisterXalor<\"AppConfig\">(configInstance);\n\n// ⚙️ TRANSPILED COMPILATION OUTPUT (The Scout rewrites this expression behind the scenes)\n// The background toolchain analyzes the properties of the data shape natively on save\nregisterXalor({\n  key: \"AppConfig\",\n  shape: { kind: \"object\", properties: { host: { shape: { kind: \"string\" } }, port: { shape: { kind: \"number\" } } } },\n  area: \"src/config/app.ts:4:1\",\n  filePath: \"src/config/app.ts\",\n  symbolName: \"AppConfig\",\n  typeName: \"AppConfig\"\n});",
-          "note": "When evaluating raw values, Xalor bypasses manual typing overhead entirely. The background toolchain analyzes the properties of the object shape during compilation, generating a **self-healing contract manifest mapping** natively on save with zero folder pollution."
-        }
+      "simulacrumUtilities": {
+        "id": "simulacrum-utilities",
+        "iconName": "cpu-duotone",
+        "header": "Built-in Simulacrum Generators Suite",
+        "description": "Select a generator pill below to inspect its configuration signature. Pass these keys natively inside your `xalor.mock()` property override tuples.",
+        "subDescription": "Every utility operates under a strict **zero-middleware allocation budget**. Instead of importing heavy external formatting packages that bloat production targets, our engines manipulate pre-allocated buffers point-free via static ASCII lookup arrays—delivering blazing-fast, cross-platform simulation data at raw hardware velocities."
       }
     },
     "xalorValidate": {
       "id": "validate",
       "intro": {
-        "header": "Runtime Enforcement Gates",
-        "description": "High-velocity runtime execution channels that validate incoming payloads using flat, fast `O(1)` memory pointer matching—completely bypassing traditional recursive graph evaluation.",
-        "apiList": [
-          { "id": "0636-44e3-8", "name": "guard", "status": "active" },
-          { "id": "7b2a-412e-87d", "name": "parse", "status": "active" }
-        ]
+        "iconName": "shield-solid",
+        "header": "The Validation Pillar",
+        "description": "High-velocity runtime execution channels configured to intercept and verify unknown data streams using **pre-compiled blueprint memory pointer matching**.",
+        "subDescription": "By bypassing traditional recursive object tree traversals entirely, this suite evaluates payloads via a flat, strict linear properties assessment at raw hardware velocity—delivering an identical performance budget for both valid assets and malformed rejections."
       },
-      "guard": {
-        "header": "Guard (xalor.guard)",
-        "description": "Operates as a dual-mode enforcement gateway: returns a stateless type predicate closure when curried, or executes an immediate boolean inline narrowing pass when a runtime payload is passed directly.",
-        "codeBlock": {
-          "code": "// 🪐 TRACK A: TYPE PREDICATE CLOSURE GENERATION (Functional Ingress Pipeline)\n// Curries the execution block to compile an isolated, highly reusable type-guard function.\n// Highly optimized for streaming network arrays, array filters, or upstream serverless router loops.\nconst isUserProfile = xalor.guard('USER_ACCOUNT');\n\nif (isUserProfile(rawPayload)) {\n  // ✅ Invariant: rawPayload is safely narrowed and nominally branded to ISolidRegistry['USER_ACCOUNT']\n  console.log(rawPayload.meta.securityChecksum);\n}\n\n// 🪐 TRACK B: DIRECT INLINE NARROWING (Zero-Boilerplate Execution Pass)\n// Bypasses closure factory allocation to execute an instant structural evaluation over data.\nif (xalor.guard('USER_ACCOUNT', rawPayload)) {\n  // The engine intercepts the key token parameter string at the microsecond of execution\n  // and validates the property layout against the content-addressed relational matrix.\n  console.log(rawPayload.meta.isSystemEncrypted);\n}",
-          "note": "Because all structural type geometry is unrolled ahead-of-time, xalor.guard contains exactly 0 KB of client-side parsing code. It performs flat property lookup checks at raw hardware velocity, making it thousands of times faster than traditional schema parsing engines."
+      "apis": {
+        "guard": {
+          "header": "Guard (xalor.guard)",
+          "description": "Operates as a dual-mode narrowing gateway that returns a stateless type-predicate closure or executes an immediate boolean inline validation pass.",
+          "subDescription": "Because all structural type layouts are unrolled ahead of time, this engine performs checks at raw hardware velocity with **hard-zero runtime allocation overhead** under invalid payload surges.",
+          "codeTabs": [
+            {
+              "tabName": "Curried Closure (Track A)",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nexport type TUserAccount = {\n  id: number;\n  username: string;\n};\n\n// 1. Compile an isolated, reusable type-guard function closure\nconst isUserProfile = xalor.guard<'USER_ACCOUNT'>();\n\n// 2. Stream network arrays or upstream payloads safely\nif (isUserProfile(rawPayload)) {\n  console.log(rawPayload.username);\n}",
+                "returnValue": "true // (Safely narrows rawPayload context natively)"
+              },
+              "note": "Highly optimized for streaming array filters, network message routers, or functional ingress pipelines."
+            },
+            {
+              "tabName": "Direct Inline Pass (Track B)",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nexport type TUserAccount = {\n  id: number;\n  username: string;\n};\n\n// Execute an instant zero-boilerplate evaluation check\nif (xalor.guard<'USER_ACCOUNT'>(rawPayload)) {\n  console.log(rawPayload.username);\n}",
+                "returnValue": "false // (If payload violates blueprint structural boundaries)"
+              },
+              "note": "Bypasses closure factory allocation to execute an instant structural verification over transient data packets."
+            }
+          ],
+          "parametersList": [
+            {
+              "id": "073dfa49-6f98-4043-9bf1-c8e7bcfa8825",
+              "name": "injectedKey",
+              "type": "`K extends TActiveRegistryKeys`",
+              "required": true,
+              "description": "The pre-compiled registry target key identifier token appended positionally by the AOT transformer plugin."
+            },
+            {
+              "id": "54a2df54-1b54-4d45-a2c6-cc89c2d3a8d4",
+              "name": "payload",
+              "type": "`unknown`",
+              "required": false,
+              "description": "The raw data payload instance to evaluate against the matching contract. Required exclusively when executing Direct Mode inline passes."
+            }
+          ]
         },
-        "parametersList": [
-          {
-            "name": "keyOrPayload",
-            "type": "String | Object",
-            "required": true,
-            "description": "Polymorphic primary argument. In Currying Mode (Track A), pass the String blueprint token key. In Direct Mode (Track B), pass the raw, untrusted incoming runtime object payload instance."
-          },
-          {
-            "name": "dataKey",
-            "type": "String",
-            "required": true,
-            "description": "The target key token identifying your precompiled registry contract definition. Required exclusively when executing Direct Mode (Track B) inline enforcement passes."
-          }
-        ]
-      },
-      "parse": {
-        "header": "Parse (xalor.parse)",
-        "description": "Synchronously processes data ingress contracts, enforcing a strict, fail-fast boundary gate that intercepts malformed streams.",
-        "codeBlock": {
-          "code": "// 🪐 SYNCHRONOUS FAIL-FAST BOUNDARY GATE (Ingress Integrity Pass)\n// Synchronously validates an unknown payload, throwing a structured error on contract breach.\ntry {\n  const verifiedUser = xalor.parse('USER_ACCOUNT', rawPayload);\n  \n  // ✅ Success: Data is verified, structure is cast, and the object receives its permanent brand symbol.\n  console.log(verifiedUser.accountId);\n} catch (error) {\n  // Captures and prints out exact coordinate locations and mutation trace details [Commandment VI]\n  console.error('🚨 [Xalor Governance Breach]:', error.message);\n}",
-          "note": "When a contract successfully passes xalor.parse, the engine welds an immutable cryptographic brand symbol onto the record object map natively using Reflect.set(). This protects your down-stream application state, ensuring that un-validated payloads can never accidentally leak into your internal workflow layers."
+        "parse": {
+          "header": "Parse (xalor.parse)",
+          "description": "Synchronously evaluates incoming shapes against pre-compiled blueprints, enforcing an ironclad, fail-fast boundary gate that throws on contract breach.",
+          "subDescription": "When a payload satisfies the blueprint contract, the engine welds an immutable nominal cryptographic brand symbol onto the record map natively using `Reflect.set()` to protect your down-stream application state.",
+          "codeTabs": [
+            {
+              "tabName": "Success Pass",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nexport type TUserAccount = {\n  id: number;\n  username: string;\n};\n\nconst rawPayload = { id: 101, username: 'brennan_dev' };\nconst verifiedUser = xalor.parse<'USER_ACCOUNT'>(rawPayload);",
+                "returnValue": "{\n  \"id\": 101,\n  \"username\": \"brennan_dev\"\n}"
+              },
+              "note": "Returns a fully validated, deeply cast, and nominally-branded data asset running lookups at raw hardware velocity."
+            },
+            {
+              "tabName": "Contract Breach",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nconst corruptedPayload = { id: 'not-a-number', username: 'malicious_actor' };\n\ntry {\n  xalor.parse<'USER_ACCOUNT'>(corruptedPayload);\n} catch (error) {\n  console.error(error.message);\n}",
+                "returnValue": "Error: [Xalor Governance Breach] Invalid property type at 'id'. Expected 'number', received 'string'. Origin: src/models/user.ts:12:1"
+              },
+              "note": "Aborts execution instantly without allocating unnecessary error objects in RAM, outputting precise coordinate paths pointing back to the original TypeScript file location."
+            }
+          ],
+          "parametersList": [
+            {
+              "id": "17c67ee3-38f1-493b-bc05-3d28d6b8b9fa",
+              "name": "injectedKey",
+              "type": "`K extends TActiveRegistryKeys`",
+              "required": true,
+              "description": "The pre-compiled registry target key identifier token appended positionally by the AOT transformer plugin."
+            },
+            {
+              "id": "e44b7f13-6d60-45c6-b448-be69d37ff133",
+              "name": "payload",
+              "type": "`unknown`",
+              "required": true,
+              "description": "The raw, unverified incoming external network or database object payload instance to evaluate against the target Vault registry contract."
+            }
+          ]
         },
-        "parametersList": [
-          {
-            "name": "dataKey",
-            "type": "String",
-            "required": true,
-            "description": "The target key token identifying your precompiled registry contract definition. Required exclusively when executing Direct Mode (Track B) inline enforcement passes."
-          },
-          {
-            "name": "data",
-            "type": "unknown",
-            "required": true,
-            "description": "The raw incoming, untrusted runtime object payload instance to evaluate against the matching Vault registry map."
-          }
-        ]
-      }
-    },
-    "xalorGenerate": {
-      "id": "generate",
-      "intro": {
-        "header": "The Generation Pillar Layer",
-        "description": "Standardized polymorphic runtime gateway that materializes safe, baseline object structures out of precompiled Vault registry blueprints using zero runtime strategy allocations.",
-        "apiList": [
-          { "id": "9f8d-4b53-a", "name": "default", "status": "active" },
-          { "id": "cfae-e3-b9", "name": "cast", "status": "inProgress" }
-        ]
-      },
-      "default": {
-        "header": "Default (xalor.default)",
-        "description": "Manufactures clean, pristine zero-state object models with guaranteed schema-valid default primitive leaf values to shield downstream code from undefined property crashes.",
-        "codeBlock": {
-          "code": "// 🪐 INSTANT TEMPLATE SPECIFICATION (Automated Boilerplate Seeding Pass)\n// Pre-populates primitive leaf properties exclusively with system primitives (\"\", 0, false).\n// Eagerly unrolled for flawless local editor hover autocomplete and code-completion DX.\nconst emptyUserForm = xalor.default('USER_ACCOUNT');\n\n// emptyUserForm is safely manufactured, pre-hydrated, and nominally branded!\nconsole.log(emptyUserForm.accountId); // \"\"\nconsole.log(emptyUserForm.meta.securityChecksum); // 0\nconsole.log(emptyUserForm.meta.isSystemEncrypted); // false\n\n// ✅ Invariant: Zero manual boilerplate seeding, zero type escape assertions, zero undefined property crashes [Commandment VIII]",
-          "note": "By reading type geometries straight out of the vacuum-pruned snapshot registry at compile time, the default engine manufactures concrete object representations immediately on application boot with hard-zero computational overhead or middleman runtime traversal tax."
-        },
-        "parametersList": [
-          {
-            "name": "dataKey",
-            "type": "String",
-            "required": true,
-            "description": "The target key token identifying your precompiled registry contract definition. Required exclusively when executing Direct Mode (Track B) inline enforcement passes."
-          }
-        ]
-      },
-      "cast": {
-        "header": "Cast (xalor.cast)",
-        "description": "Coerces loose runtime data values cleanly into the exact structural and primitive types demanded by your type blueprint contracts with zero-allocation inline strategy dispatch.",
-        "codeBlock": {
-          "code": "// 🪐 SYNCHRONOUS COERCION ENGINE (Type-Safe Data Normalization)\n// Coerces string-encoded primitives safely without introducing 'any' leaks [Commandment IX].\nconst loosePayload = { id: \"404\", username: \"selina\", active: \"true\" };\nconst castedAsset = xalor.cast('USER_ACCOUNT', loosePayload);\n\n// Under the hood, the engine forces the untrusted payload through primitive type coercers\nconsole.log(castedAsset.id);      // 404  -> Safely normalized to a literal number!\nconsole.log(castedAsset.active);  // true -> Safely normalized to a literal boolean!\n\n// ✅ Invariant: The resulting object is safely branded and returned with absolute structural type-safety",
-          "note": "The cast utility functions as an inline strategy dispatcher. It completely bypasses dynamic evaluation hooks, executing raw hardware-velocity type sanitization and structural conversions driven natively by your pre-compiled, content-addressed blueprints."
-        },
-        "parametersList": [
-          {
-            "name": "dataKey",
-            "type": "String",
-            "required": true,
-            "description": "The target key token identifying your precompiled registry contract definition. Required exclusively when executing Direct Mode (Track B) inline enforcement passes."
-          }
-        ]
+        "safeParse": {
+          "header": "Safe Parse (xalor.safeParse)",
+          "description": "Isolates execution side-effects by synchronously evaluating payloads against blueprints, returning a clean discriminated union result block instead of throwing runtime errors.",
+          "subDescription": "Highly optimized for perimeter routers, background queue workers, or forms workflows where you need to gracefully collect structural mismatches without interrupting the execution thread loop.",
+          "codeTabs": [
+            {
+              "tabName": "Success Pass",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nexport type TUserAccount = {\n  id: number;\n  username: string;\n};\n\nconst rawPayload = { id: 101, username: 'brennan_dev' };\nconst result = xalor.safeParse<'USER_ACCOUNT'>(rawPayload);\n\nif (result.success) {\n  console.log(result.data.username);\n}",
+                "returnValue": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 101,\n    \"username\": \"brennan_dev\"\n  },\n  \"errors\": null\n}"
+              },
+              "note": "Returns a strict success wrapper where the underlying data container is fully verified, cast, and natively stamped with your identity brand tokens via `Reflect.set()`."
+            },
+            {
+              "tabName": "Failure Collection",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nconst corruptedPayload = { id: 'invalid-string', username: 'brennan_dev' };\nconst result = xalor.safeParse<'USER_ACCOUNT'>(corruptedPayload);\n\nif (!result.success) {\n  console.log(result.errors);\n}",
+                "returnValue": "{\n  \"success\": false,\n  \"data\": null,\n  \"errors\": [\n    {\n      \"key\": \"USER_ACCOUNT\",\n      \"pathSnapshot\": [\"id\"],\n      \"errorKey\": \"OBJECT_VALIDATION_TYPE_MISMATCH\",\n      \"received\": \"invalid-string\"\n    }\n  ]\n}"
+              },
+              "note": "Gracefully traps structural discrepancies, outputting a read-only list of error tracking snapshots mapping back to your target contract coordinates."
+            }
+          ],
+          "parametersList": [
+            {
+              "id": "717e1195-d86d-4cfd-ad5e-7a88dc392fbc",
+              "name": "injectedKey",
+              "type": "`K extends TActiveRegistryKeys`",
+              "required": true,
+              "description": "The pre-compiled registry target key identifier token appended positionally by the AOT transformer plugin."
+            },
+            {
+              "id": "87d7b2a-412e-4db5-b82b-6c6d0db9e2a1",
+              "name": "payload",
+              "type": "`unknown`",
+              "required": true,
+              "description": "The raw, unverified incoming external network or database object payload instance to evaluate against the target Vault registry contract."
+            }
+          ]
+        }
       }
     },
     "xalorTransform": {
       "id": "transform",
       "intro": {
-        "header": "Structural Transformation Suite",
-        "description": "High-velocity data manipulation engines that clone, sanitize, or fuse pre-compiled structural trees on the fly in memory with zero middleware overhead.",
-        "apiList": [
-          { "id": "4c2a-4573-a859", "name": "clone", "status": "active" },
-          { "id": "18f5-4d56-bc94", "name": "merge", "status": "active" }
-        ]
+        "iconName": "arrow-right-left",
+        "header": "The Transformation Pillar",
+        "description": "High-velocity structural manipulation utilities configured to deeply duplicate, sanitize, or fuse runtime object matrices on the fly with **zero middleware overhead**.",
+        "subDescription": "By processing graph adjustments, filtering rules, and mutation constraints through single-pass inline strategy loops, this suite enforces total contract purity while maintaining absolute performance parity across high-throughput data paths."
       },
-      "clone": {
-        "header": "Clone (xalor.clone)",
-        "description": "Performs a deep, circular-safe duplicate copy of an input object while physically scrubbing away any properties or keys not explicitly defined in the target blueprint contract.",
-        "codeBlock": {
-          "code": "// 🪐 SYNCHRONOUS DEEP CLEANSE & CLONE (Malicious Attribute Purge Pass)\n// Strips out-of-bounds keys natively to eliminate type injection vulnerabilities [Commandment IX].\nconst dirtyPayload = { id: 101, username: 'neo', untrackedHackerKey: 'exploit' };\nconst cleanClone = xalor.clone('USER_ACCOUNT', dirtyPayload);\n\n// ✅ Invariant: Zero-allocation inline strategy dispatch; tree-shakes fully from client profiles\nconsole.log(cleanClone.username); // \"neo\"\nconsole.log(Reflect.has(cleanClone, 'untrackedHackerKey')); // false -> Scrubbed completely by contract!",
-          "note": "Unlike traditional deep clone utilities that blindly duplicate object topologies, xalor.clone processes internal object matrices exclusively against precompiled type singletons to automatically neutralize malicious reverse-engineering vectors and prototype pollution threats."
+      "apis": {
+        "clone": {
+          "header": "Clone (xalor.clone)",
+          "description": "Performs a deep, circular-safe duplicate copy of an input object while physically scrubbing away any properties or keys not explicitly defined in the target blueprint contract.",
+          "subDescription": "Strips out-of-bounds keys natively to eliminate type injection vulnerabilities with **zero-allocation inline strategy dispatch**, protecting your downstream application runtime state from malicious payload mutations.",
+          "codeTabs": [
+            {
+              "tabName": "Deep Copy & Sanitize",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\n// 1. Your native TypeScript contract\nexport type TUserTest = {\n  id: number;\n  username: string;\n  active: boolean;\n};\n\n// 2. Data payload containing unmapped stray fields\nconst sourcePayload = {\n  id: 501,\n  username: 'clone_scrub_pass',\n  active: true,\n  strayHackerAttribute: 'MALICIOUS_INJECTION_VECTOR',\n  maliciousToken: 99123\n};\n\n// 3. Execute deep copy and absolute property purge\nconst result = xalor.clone<'USER_TEST'>(sourcePayload);",
+                "returnValue": "{\n  \"id\": 501,\n  \"username\": \"clone_scrub_pass\",\n  \"active\": true\n}"
+              },
+              "note": "Unlike standard shallow object cloning utilities, the engine parses parameters point-free to systematically remove extraneous variables while applying an immutable nominal brand signature tag."
+            }
+          ],
+          "parametersList": [
+            {
+              "id": "e45b87d7-412e-4db5-b82b-6c6d0db9e2a1",
+              "name": "payload",
+              "type": "`unknown`",
+              "required": true,
+              "description": "The raw input data object to duplicate, sanitize, and strip of any properties not explicitly permitted by your blueprint contract configuration."
+            },
+            {
+              "id": "4c2a4573-a859-4db5-b82b-6d60be69d37f",
+              "name": "injectedKey",
+              "type": "`K extends TActiveRegistryKeys`",
+              "required": true,
+              "description": "The pre-compiled registry target key identifier token appended positionally by the AOT transformer plugin."
+            }
+          ]
         },
-        "parametersList": [
-          {
-            "name": "dataKey",
-            "type": "String",
-            "required": true,
-            "description": "The target key token identifying your precompiled registry contract definition. Required exclusively when executing Direct Mode (Track B) inline enforcement passes."
-          },
-          {
-            "name": "data",
-            "type": "unknown",
-            "required": true,
-            "description": "The raw incoming object payload stream to deeply duplicate and sanitize against your structural contract."
-          }
-        ]
-      },
-      "merge": {
-        "header": "Merge (xalor.merge)",
-        "description": "Executes single-pass deep object mutations by unrolling baseline graphs, recursively overlaying delta patches, and processing functional filter masks natively while maintaining class prototypes.",
-        "codeBlock": {
-          "code": "// 🪐 TRACK 1: FLAT OVERRIDE (Absolute Patch Layering Pass)\nconst result1 = xalor.merge('USER_TEST', { \n  dataOne: { id: 101, username: 'XalethorOriginal', active: false }, \n  dataTwo: { username: 'XalethorPatched', active: true }\n}); // Returns: { id: 101, username: 'XalethorPatched', active: true }\n\n// 🪐 TRACK 2: ARRAY COLLECTION SYMMETRY (Index-Aligned Upcast Operations)\nconst result2 = xalor.merge('STORE_ORDER', {\n  dataOne: { orderId: 'ORD-707', items: [{ SKU: 'PROD-A', quantity: 1 }, { SKU: 'PROD-B', quantity: 5 }] },\n  dataTwo: { items: [{ quantity: 3 }, { SKU: 'PROD-B-UPDATED' }, { SKU: 'PROD-C-NEW', quantity: 9 }] }\n}); // Returns index-aligned updates and seamlessly appends trailing items\n\n// 🪐 TRACK 3: COMPOUND DEPTH MUTATION (Deep-Boundary Leaf Resolution)\nconst result3 = xalor.merge('DEEPLY_NESTED_STORE', {\n  dataOne: { orderId: 'ORD-DEEP', items: [{ SKU: 'CHIP-V1', logistics: { warehouseCode: 'CENTRAL-01', dimensions: { weight: 0.5, fragile: false } } }] },\n  dataTwo: { items: [{ logistics: { dimensions: { fragile: true } } }] }\n}); // Safely mutates nested 'fragile' flag without wiping adjacent warehouse metadata\n\n// 🪐 TRACK 4: PIPELINE FILTER MATRIX (Atomic Merge ➔ Pick ➔ Omit ➔ Map Pipeline)\nconst result4 = xalor.merge('USER_TEST', {\n  dataOne: { id: 505, username: 'SkinnerOriginal', active: false },\n  dataTwo: { username: 'SkinnerMorphed', active: true },\n  pick: ['id', 'username', 'active'],\n  omit: ['active'],\n  map: { id: (currentId) => currentId + 1000, username: (name) => name.toUpperCase() }\n}); // Returns: { id: 1505, username: 'SKINNERMORPHED' } (active field is pruned cleanly)\n\n// 🪐 TRACK 5: SIBLING CONTEXT MAPPING (Parent Graph State Evaluation)\nconst result5 = xalor.merge('USER_TEST', {\n  dataOne: { id: 711, username: 'Agent_Zero', active: true },\n  dataTwo: { id: 999 },\n  map: { username: (name, parent) => parent.id === 999 ? 'AGENT_UPGRADED' : name }\n}); // Returns: { id: 999, username: 'AGENT_UPGRADED', active: true }\n\n// 🪐 TRACK 6: ADVERSARIAL PROTOTYPE RETENTION (Prototype Class Integrity Preservation)\nclass DatabaseUserRecord { id = 808; username = 'BaseClassInstance'; }\nconst result6 = xalor.merge('USER_TEST', { dataOne: new DatabaseUserRecord(), dataTwo: { username: 'UpgradedClassInstance' } });\nObject.getPrototypeOf(result6) === DatabaseUserRecord.prototype; // ✅ true (Commandment V Compliance)\n\n// 🪐 TRACK 7: INTENTIONAL STATE NULLIFICATION (Strict Overwrite Rules)\nconst result7 = xalor.merge('USER_TEST', {\n  dataOne: { id: 404, username: 'PersistentUser', active: true },\n  dataTwo: { username: null, active: undefined }\n}); // Returns: { id: 404, username: null, active: true }",
-          "note": "The merge engine scales cleanly across complex application topologies. By executing graph transitions, filtering configurations, and schema mutations inside a single-pass loop architecture, it enforces hard contract boundaries while maintaining absolute performance parity on high-throughput serverless edge request paths."
-        },
-        "parametersList": [
-          {
-            "name": "dataOne",
-            "type": "Object",
-            "required": true,
-            "description": "The authoritative, baseline object structure to mutate. Reads static type specifications flatly out of the main Vault Registry."
-          },
-          {
-            "name": "dataTwo",
-            "type": "Object",
-            "required": true,
-            "description": "The incoming delta patch layer. Object Two acts as an absolute override patch layer over Object One."
-          },
-          {
-            "name": "pick",
-            "type": "Array",
-            "required": false,
-            "description": "Explicit whitelist of property keys to retain at depth layer zero. Selection masks prune out unnamed fields."
-          },
-          {
-            "name": "omit",
-            "type": "Array",
-            "required": false,
-            "description": "Blacklist of property fields to prune completely from the remaining keys. Exclusion masks handle deep pruning."
-          },
-          {
-            "name": "map",
-            "type": "Object",
-            "required": false,
-            "description": "Functional mapping callbacks executed over fully-sanitized target fields. Supplies the parent context graph flatly as an available callback parameter."
-          }
-        ]
+        "merge": {
+          "header": "Merge (xalor.merge)",
+          "description": "Executes single-pass deep object mutations by symmetrically fusing baseline graphs, recursively overlaying delta patches, and evaluating functional selection filters natively.",
+          "subDescription": "Utilizes optimized $O(1)$ Sets and pre-compiled structural node materializers to trap missing fields or invalid keys, resolving schema discrepancies instantly via a zero-allocation assembly loop.",
+          "codeTabs": [
+            {
+              "tabName": "Graph Fusion",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nexport type TUserCamel = {\n  userId: number;\n  userName: string;\n  isActive: boolean;\n};\n\nconst ctx = {\n  dataOne: { userId: 202, userName: 'xalethor_original_camel', isActive: false },\n  dataTwo: { userName: 'XALETHOR_STABLE_CAMEL', isActive: true }\n};\n\nconst result = xalor.merge<'USER_TEST_CAMEL'>(ctx);",
+                "returnValue": "{\n  \"userId\": 202,\n  \"userName\": \"XALETHOR_STABLE_CAMEL\",\n  \"isActive\": true\n}"
+              },
+              "note": "Symmetrically fuses your database records and delta patches, executing immediate field overrides while maintaining structural type safety."
+            },
+            {
+              "tabName": "Conflict Pruning",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nexport type TUserCamel = {\n  userId: number;\n  userName: string;\n  isActive: boolean;\n};\n\nconst ctx = {\n  dataOne: { userId: 707, userName: 'xalethor_clash_base', isActive: true },\n  dataTwo: {},\n  pick: ['userId'],\n  omit: ['userName']\n};\n\nconst result = xalor.merge<'USER_TEST_CAMEL'>(ctx);",
+                "returnValue": "{\n  \"userId\": 707\n}"
+              },
+              "note": "Evaluates whitelists and blacklists through O(1) Sets. Keys missing from your `pick` array or captured by your `omit` filter are automatically dropped."
+            },
+            {
+              "tabName": "Data Healing",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nexport type TUserCamel = {\n  userId: number;\n  userName: string;\n  isActive: boolean;\n  userRoles: string[];\n};\n\nconst ctx = {\n  dataOne: { userId: 808, userName: 'xalethor_healed_base', isActive: true, userRoles: ['admin'] },\n  dataTwo: { userName: 'N/A', isActive: null, userRoles: undefined },\n  pruneAndFill: {\n    values: ['N/A', null, undefined],\n    strategy: 'defaults'\n  }\n};\n\nconst result = xalor.merge<'USER_TEST_CAMEL'>(ctx);",
+                "returnValue": "{\n  \"userId\": 808,\n  \"userName\": \"\",\n  \"isActive\": false,\n  \"userRoles\": []\n}"
+              },
+              "note": "Traps corrupt runtime marker flags or missing fields, delegating straight to your internal structural materializer to restore pristine primitive defaults."
+            },
+            {
+              "tabName": "Sideways Lookahead",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nexport type TUserCamel = {\n  userId: number;\n  userName: string;\n  isActive: boolean;\n  userRoles: string[];\n};\n\nconst ctx = {\n  dataOne: { userId: 405, userName: 'ACTIVE_USER', isActive: false, userRoles: ['engineer', 'tester'] },\n  dataTwo: {},\n  map: {\n    userRoles: (value, graph) => graph.isActive === false ? [] : value\n  }\n};\n\nconst result = xalor.merge<'USER_TEST_CAMEL'>(ctx);",
+                "returnValue": "{\n  \"userId\": 405,\n  \"userName\": \"ACTIVE_USER\",\n  \"isActive\": false,\n  \"userRoles\": []\n}"
+              },
+              "note": "Intercepts values during a sideways pass. The `map` callback reads the sibling state (`graph.isActive`) to dynamically compute structural mutations."
+            }
+          ],
+          "parametersList": [
+            {
+              "id": "f133939e-44b7-45c6-b448-6d60be69d37f",
+              "name": "injectedKey",
+              "type": "`K extends TActiveRegistryKeys`",
+              "required": true,
+              "description": "The pre-compiled registry target key identifier token appended positionally by the AOT transformer plugin."
+            },
+            {
+              "id": "18f54d56-bc94-4db5-b82b-6c6d0db9e2a1",
+              "name": "ctx",
+              "type": "`TXalorMergeContexts<T>`",
+              "required": true,
+              "description": "The authoritative configuration context block containing data input payloads, trimming filters, property casing transformations, and dynamic mapping handlers."
+            },
+            {
+              "id": "56bc9418-f54d-4db5-b82b-c66d0db9e2a1",
+              "name": "ctx.dataOne",
+              "type": "`unknown`",
+              "required": true,
+              "description": "The authoritative, baseline data layer structure to mutate, unrolling static type specifications out of the vault."
+            },
+            {
+              "id": "9418f56b-c918-4db5-b82b-c66d0db9e2a1",
+              "name": "ctx.dataTwo",
+              "type": "`unknown`",
+              "required": true,
+              "description": "The incoming delta patch layer configured to overlay absolute property overrides on top of dataOne."
+            },
+            {
+              "id": "c9418f56-bd45-4db5-b82b-2a1c66d0db9e",
+              "name": "ctx.pick",
+              "type": "`readonly (keyof T)[]`",
+              "required": false,
+              "description": "Optional whitelist filter array. Explicitly retains named property keys at depth layer zero while stripping all unlisted fields."
+            },
+            {
+              "id": "45bd457e-3c31-4db5-b82b-0db9e2a1c66d",
+              "name": "ctx.omit",
+              "type": "`readonly (keyof T)[]`",
+              "required": false,
+              "description": "Optional blacklist filter array. Explicitly shears away targeted property rows completely out of the resulting object container."
+            },
+            {
+              "id": "bd457e45-3c31-4db5-b82b-c66d0db9e2a1",
+              "name": "ctx.casing",
+              "type": "`'camel' | 'snake' | 'kebab'`",
+              "required": false,
+              "description": "Optional layout formatter. Remaps output property keys structurally on the fly matching selected cosmetic formats."
+            },
+            {
+              "id": "457e3c31-7ff1-4db5-b82b-6c6d0db9e2a1",
+              "name": "ctx.pruneAndFill",
+              "type": "`TPruneAndFillOptions`",
+              "required": false,
+              "description": "Optional data healer. Catches targeted invalidations like `null` or `undefined` values and automatically resolves them via four runtime strategies (`'defaults'`, `'mocks'`, `'nulls'`, or `'drop'`)."
+            },
+            {
+              "id": "7ff13393-9e44-4db5-b82b-6d60be69d37f",
+              "name": "ctx.map",
+              "type": "`Partial<Record<keyof T, Function>>`",
+              "required": false,
+              "description": "Optional mapping callback schema passing the individual field value and the live, read-only parent context graph simultaneously."
+            }
+          ]
+        }
       }
     },
+
     "xalorMatch": {
       "id": "match",
       "intro": {
-        "header": "Advanced Toolchain Diagnostics & Integrity Gates",
-        "description": "Validation is just a baseline side-effect. This suite houses Xalor’s advanced runtime platform capabilities—delivering hyper-optimized engines configured to trace schema evolutions, evaluate deep compound anomalies, and enforce cryptographic infrastructure boundaries in real time.",
-        "subDescription": "By analyzing your application's data models as an interconnected isomorphic network topology, these gates protect your distributed system boundaries against unexpected drift, structural degradation, and upstream API contract failures.",
-        "apiList": [
-          { "id": "e395-47b2-9dfd", "name": "drift", "status": "active" },
-          { "id": "4bf-f5ae-e3", "name": "composite", "status": "inProgress" },
-          { "id": "52-49b-aef7", "name": "diff", "status": "research" }
-        ]
+        "iconName": "target",
+        "header": "Advanced Diagnostics & Integrity Gates",
+        "description": "Validation is merely a baseline side-effect. This suite houses Xalor’s advanced runtime capabilities—delivering hyper-optimized engines configured to trace schema evolutions, evaluate deep compound anomalies, and enforce cryptographic infrastructure boundaries in real time.",
+        "subDescription": "By analyzing your application's data models as an interconnected isomorphic network topology, these gates protect your distributed system boundaries against unexpected **version deployment desynchronization** and structural data drift."
       },
-      "drift": {
-        "header": "xalor.drift()",
-        "description": "An Ahead-of-Time (AOT) compiled upstream versioning bridge and migration gate designed to resolve Version Deployment Desynchronization. It provides an inline, backward-compatible control-flow gateway that catches legacy or out-of-sync distributed payloads, matches them against historical blueprint ancestors, and dynamically upcasts them to current structural type specifications on the fly with zero runtime memory cache retention.",
-        "subDescription": "By combining fast multi-track primitive branch evaluation with selective in-place field sanitization, it completely decouples your microservice, mobile, and append-only event stream lifecycles:",
-        "parametersList": [
-          {
-            "name": "payload",
-            "type": "unknown",
-            "required": true,
-            "description": "The raw, untrusted incoming runtime object payload instance to evaluate."
-          },
-          {
-            "name": "ctx.currentKey",
-            "type": "String",
-            "required": true,
-            "description": "The target key mapping identifying today's active modern model schema definition."
-          },
-          {
-            "name": "ctx.ancestralKey",
-            "type": "String",
-            "required": true,
-            "description": "The target key mapping identifying yesterday's historical blueprint ancestor schema definition."
-          },
-          {
-            "name": "ctx.strict",
-            "type": "Boolean",
-            "required": false,
-            "description": "When true, forces rigid validation checks across all ancestral fields."
-          },
-          {
-            "name": "ctx.prune",
-            "type": "Boolean",
-            "required": false,
-            "description": "When true, instructs the sanitation engine to destructively shear obsolete or untracked properties in-place out of physical memory layout grids."
-          },
-          {
-            "name": "ctx.current",
-            "type": "Function",
-            "required": true,
-            "description": "The primary execution lane triggered when the payload perfectly satisfies today's modern schema definition."
-          },
-          {
-            "name": "ctx.v1_ancestor",
-            "type": "Function",
-            "required": true,
-            "description": "The fallback upcast lane triggered when data matches yesterday's schema. Provides a fully type-safe, legacy-typed mutation closure."
-          },
-          {
-            "name": "ctx.default",
-            "type": "Function",
-            "required": true,
-            "description": "The recovery channel circuit breaker triggered when data fails both today's schema and yesterday's ancestor schema layout. Handles network anomalies gracefully without throwing unhandled exceptions."
-          }
-        ],
-        "codeBlock": {
-          "code": "// 🪐 TRACK 1: ACTIVE GENERATION LANE (Pristine Modern Payload Routing Pass)\n// If the payload completely satisfies today's modern definition, it skips upcasting and hits current()\nconst result1 = xalor.drift('USER_ACCOUNT_EVOLUTION', modernPayload, {\n  currentKey: 'USER_TEST',\n  ancestralKey: 'USER_TEST_V1_ANCESTOR',\n  strict: true,\n  current: (v2Data) => v2Data, // Returns pristine data; Nominally branded to V2 natively via xalor.guard\n  v1_ancestor: () => { throw new Error('Invariant Breach: Legacy upcaster fired on native modern shape.'); },\n  default: () => { throw new Error('Invariant Breach: Baseline layout engine tripped into default.'); }\n});\n\n// 🪐 TRACK 2: ANCESTRAL UPCAST & PRUNE (Intercepts legacy shapes, runs mappers, shears remnants)\n// If data matches yesterday's layout, v1_ancestor() provides full type safety and IDE autocomplete for yesterday's exact fields\nconst result2 = xalor.drift('STORE_LEDGER_EVOLUTION', legacyPayload, {\n  currentKey: 'STORE_ORDER',\n  ancestralKey: 'STORE_ORDER_V1_ANCESTOR',\n  strict: false,\n  prune: true,\n  current: () => { throw new Error('Invariant Breach: Modern release channel intercepted corrupted historical data.'); },\n  v1_ancestor: (v1Data) => {\n    return { orderId: v1Data.orderId, items: [{ SKU: v1Data.legacySKU, quantity: v1Data.legacyQty }] };\n  },\n  default: () => { throw new Error('Invariant Breach: Valid migration timeline dropped down to recovery loops.'); }\n}); // If prune: true, obsolete properties (e.g., rogue client telemetry metrics) are sheared in-place out of physical RAM\n\n// 🪐 TRACK 3: CIRCUIT BREAKER RECOVERY (Clean fall-through when data matches nothing)\n// If a malformed payload violates both today's and yesterday's schemas, the default() fallback lane handles the structural error natively\nconst result3 = xalor.drift('USER_ACCOUNT_EVOLUTION', corruptedPayload, {\n  currentKey: 'USER_TEST',\n  ancestralKey: 'USER_TEST_V1_ANCESTOR',\n  strict: true,\n  current: (v2Data) => v2Data,\n  v1_ancestor: (v1Data) => ({ id: v1Data.id, username: v1Data.username, active: false }),\n  default: () => ({ id: 0, username: 'system_anonymous_recovery_fallback', active: false }) // Returns a valid fallback interface\n}); // Prevents unhandled processing crashes while explicitly branding the recovery output as a valid USER_TEST entity\n\n// 🪐 TRACK 4: NATIVE WEB-PLATFORM STREAMING (Validates complex native interfaces, closures, and streams)\n// The background AOT transformer intercepts call expressions and appends trailing tokens positionally\nconst result4 = xalor.drift('ADVANCED_PIPELINE_EVOLUTION', complexPayload, {\n  currentKey: 'ADVANCED_COMPLEXITY_SHAPE',\n  ancestralKey: 'ADVANCED_COMPLEXITY_V1_ANCESTOR',\n  strict: true,\n  current: (v2Data) => v2Data, // Handles native platform class instances, instances of TransformStream, and closure functions seamlessly\n  v1_ancestor: () => { throw new Error('Invariant Breach: Target hit incorrect historical lane.'); },\n  default: () => ({ __FALLBACK_TRIGGERED__: true })\n});",
-          "note": "The drift framework acts as an ironclad perimeter wall for asynchronous deployments. By combining multi-track branch parsing with clean in-place field sanitization (prune: true), it maps distributed data contracts instantly while treating transformation variables as transient memory objects—garbage-collecting them immediately upon function exit to ensure total immunity from memory bloat [Commandment VIII, XII]."
+      "apis": {
+        "drift": {
+          "header": "Drift (xalor.drift)",
+          "description": "An ahead-of-time (AOT) compiled upstream versioning bridge and migration gate configured to resolve Version Deployment Desynchronization.",
+          "subDescription": "Catches legacy network payloads failing today's production models, unrolls them via its ingress perimeter, and drives them through a strict **10-Phase Chained Evolutionary Pathway** to dynamically upcast historical structures into modern production contracts on the fly.",
+          "codeTabs": [
+            {
+              "tabName": "Perimeter Firewall",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nexport type TUserModern = { id: number; username: string; active: boolean; };\nexport type TUserV1Ancestor = { id: number; username: string; };\n\nconst maliciousPayload = { id: 7701, username: 'alex_evolution', rogueField: 'INJECTION' };\n\nconst result = xalor.drift<'USER_ACCOUNT_EVOLUTION'>(maliciousPayload, {\n  currentKey: 'USER_TEST',\n  ancestralKey: 'USER_TEST_V1_ANCESTOR',\n  strict: true, // ◄ Activates inbound perimeter projection firewall mask\n  v1_ancestor: (v1Data) => ({ id: v1Data.id, username: v1Data.username }),\n  current: (v2Data) => v2Data,\n  default: { mode: 'none' }\n});",
+                "returnValue": "{\n  \"id\": 7701,\n  \"username\": \"alex_evolution\",\n  \"active\": false\n}"
+              },
+              "note": "Activating `strict: true` strips out extraneous parameter inputs at the perimeter before any timeline processing occurs, instantly auto-healing missing required primitives."
+            },
+            {
+              "tabName": "Surgical Pruning",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nexport type TStoreOrder = { orderId: string; items: { SKU: string; quantity: number; }[]; };\nexport type TStoreOrderV1Ancestor = { orderId: string; legacySKU: string; legacyQty: number; };\n\nconst legacyPayload = { orderId: 'ORD-992', legacySKU: 'PROD-A', legacyQty: 5, internalTrackingToken: 'XYZ123' };\n\nconst result = xalor.drift<'STORE_LEDGER_EVOLUTION'>(legacyPayload, {\n  currentKey: 'STORE_ORDER',\n  ancestralKey: 'STORE_ORDER_V1_ANCESTOR',\n  omit: ['items.0.internalTrackingToken'], // ◄ Typed dot-notation egress filter path\n  v1_ancestor: (v1Data) => ({ orderId: v1Data.orderId, items: [{ SKU: v1Data.legacySKU, quantity: v1Data.legacyQty }] }),\n  current: (v2Data) => v2Data,\n  default: { mode: 'defaultFill' }\n});",
+                "returnValue": "{\n  \"orderId\": \"ORD-992\",\n  \"items\": [ { \"SKU\": \"PROD-A\", \"quantity\": 5 } ]\n}"
+              },
+              "note": "Leverages your static paths compiler utility to physically scrub user-space privacy blacklists or trailing closure noise from RAM during egress sanitization."
+            },
+            {
+              "tabName": "Telemetry Interception",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nconst brokenPayload = { corrupt: 'malformed_data' };\n\nconst result = xalor.drift<'USER_ACCOUNT_EVOLUTION'>(brokenPayload, {\n  currentKey: 'USER_TEST',\n  ancestralKey: 'USER_TEST_V1_ANCESTOR',\n  onError: (error) => { // ◄ Out-of-band rule interceptor callback\n    console.warn(`[Ledger Alert] Breach caught: ${error.customMessage}`);\n  },\n  v1_ancestor: (v1Data) => ({ id: 0, username: 'anonymous' }),\n  current: (v2Data) => v2Data,\n  default: { mode: 'none' }\n});",
+                "returnValue": "null // ──► (Triggers an out-of-band intercept pass without crashing threads)"
+              },
+              "note": "Pipes structural ledger infractions cleanly into a decoupled discriminated union packet, allowing custom logging before a stream collapses."
+            },
+            {
+              "tabName": "Macro Healing",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nexport type TUserModern = { id: number; username: string; active: boolean; };\nexport type TUserV1Ancestor = { id: number; username: string; };\n\nconst highlyCorruptedPayload = { invalidState: true };\n\nconst result = xalor.drift<'USER_ACCOUNT_EVOLUTION'>(highlyCorruptedPayload, {\n  currentKey: 'USER_TEST',\n  ancestralKey: 'USER_TEST_V1_ANCESTOR',\n  v1_ancestor: (v1Data) => ({ id: v1Data.id, username: v1Data.username }),\n  current: (v2Data) => v2Data,\n  default: { \n    mode: 'mockFill' // ◄ Activates automated simulation macro engine\n  }\n});",
+                "returnValue": "{\n  \"id\": 91845,\n  \"username\": \"simulated_alpha_22\",\n  \"active\": true\n}"
+              },
+              "note": "When catastrophic anomalies break both contemporary and historical blueprint limits, the Phase 4 circuit breaker delegates directly to your Generation APIs to materialize structural fallbacks."
+            }
+          ],
+          "parametersList": [
+            {
+              "id": "e44b7f13-6d60-45c6-b448-be69d37ff133",
+              "name": "injectedKey",
+              "type": "`D extends TActiveDriftRegistryKeys`",
+              "required": true,
+              "description": "The pre-compiled drift registry namespace identifier token automatically injected positionally by the build-time transformer plugin."
+            },
+            {
+              "id": "e44b7f13-6d60-45c6-b448-be69d37ff133",
+              "name": "ctx",
+              "type": "`IXalorDriftContext<D>`",
+              "required": true,
+              "description": "Authoritative parameter layout managing Phase 1, Phase 2, Phase 3, and Phase 4 execution lanes point-free."
+            },
+            {
+              "id": "7c133939-9e44-4db5-b82b-6d60be69d37f",
+              "name": "ctx.currentKey",
+              "type": "`TResolveCurrentDriftKey<D>`",
+              "required": true,
+              "description": "Centralized registry reference key identifying today's current, active modern production contract blueprint layout configuration."
+            },
+            {
+              "id": "f54da2df-2df5-4d45-a2c6-cc89c2d3a8d4",
+              "name": "ctx.ancestralKey",
+              "type": "`TResolveAncestralDriftKey<D>`",
+              "required": true,
+              "description": "Centralized registry reference key mapping back to yesterday's historical baseline ancestral blueprint contract layout configuration."
+            },
+            {
+              "id": "bd547c12-39f1-4db5-b82b-6c6d0db9e2a1",
+              "name": "ctx.v1_ancestor",
+              "type": "`(value: TResolveAncestralInstance<D>) => Partial<TResolveAncestralInstance<D>>`",
+              "required": true,
+              "description": "The Phase 1 era-isolated upcast closure that consumes legacy configurations and mutates parameters toward modern schemas."
+            },
+            {
+              "id": "8d45ba2d-1b54-4d45-a2c6-cc89c2d3a8d4",
+              "name": "ctx.current",
+              "type": "`(value: TResolveDriftReturnConstraint<D>) => TResolveDriftReturnConstraint<D>`",
+              "required": true,
+              "description": "The Phase 2 conduit handshake that auto-normalizes missing primitives before passing modern frames to your closure."
+            },
+            {
+              "id": "2c5a2df5-1b54-4d45-a2c6-cc89c2d3a8d4",
+              "name": "ctx.strict",
+              "type": "`boolean`",
+              "required": false,
+              "description": "Optional perimeter firewall modifier that activates an inbound projection mask sweep over yesterday's legacy parameters snapshot."
+            },
+            {
+              "id": "aa25c602-cf5b-439d-b68a-02078ae44b7f",
+              "name": "ctx.omit",
+              "type": "`TDeepDotPaths<TResolveDriftReturnConstraint<D>>[]`",
+              "required": false,
+              "description": "Optional egress filter supporting typed dot-notation layout paths to drop user-space tracking tokens from memory."
+            },
+            {
+              "id": "c66d0db9-457e-3c31-7ff1-6d60be69d37f",
+              "name": "ctx.default",
+              "type": "`TDefaultTestConfig<D>`",
+              "required": false,
+              "description": "Optional Phase 4 circuit breaker recovery configuration leveraging native generation runtime APIs (`defaults`, `mocks`, or `custom`)."
+            },
+            {
+              "id": "9dfd47b2-457e-3c31-7ff1-6d60be69d37f",
+              "name": "ctx.onError",
+              "type": "`TXalorDriftErrorHandler`",
+              "required": false,
+              "description": "Optional telemetry hook callback executing out-of-band rule interception passes via a clean discriminated union layout."
+            }
+          ]
         },
-        "footnote": "Ceiling Limit: To shield the single-threaded event loop from deep latency degradation, the engine strictly restricts historical ancestry tracking to a maximum of 1 generation back (v1_ancestor). Multi-generational cascading chains are forbidden natively."
-      },
 
-      "composite": {
-        "header": "xalor.composite()",
-        "description": "A structural intersection switchboard that evaluates untyped payloads against an ad-hoc combination of multiple discrete blueprint hashes or contract keys in volatile heap memory, enforcing runtime trait composition.",
-        "subDescription": "Evaluates complex multiple-blueprint conditions using a Left-to-Right Sequential Object Assign Override rule while maintaining sub-microsecond validation loops:",
-        "codeBlock": {
-          "code": "// 🪐 DYNAMIC STRUCTURAL INTERSECTION (Ad-Hoc Composable Trait Composition)\n// Combines multiple separate, pre-compiled registry models into a fluid, transient blueprint on the fly.\nconst combinedRoute = xalor.composite('USER_ENRICHED_FLOW', mixedIncomingPayload, [\n  'USER_PROFILE',\n  'sh_14rk84m'\n], {\n  // 🪐 LANE 1: COMPOUND STRUCTURAL TRAIT SUCCESS\n  // Overlapping rules automatically adopt the strictest possible variant via Cascading Strictness.\n  success: (enrichedData) => {\n    return `Account Verified: ${enrichedData.profile.name} | Total Posts: ${enrichedData.posts}`;\n  },\n\n  // 🪐 LANE 2: SECURITY CIRCUIT BREAKER FALLBACK\n  // Triggered on contract failure or if the input array crosses the defensive Breadth Bomb Cap (max 8 keys).\n  default: () => 'SECURITY ALERT: Payload fails compound structural trait criteria'\n});\n\n// 🔍 WHAT INTELLISENSE SEES WHEN YOU HOVER OVER THIS SITE:\n// const combinedRoute: TSolidBranded<\"USER_ENRICHED_FLOW\", UserProfile & { posts: number }>",
-          "note": "The composite gateway executes a Shallow Object Deflation Bypass—flattening only top-level property keys during dynamic memory merging while passing deeply interned child references directly to the core validation layer to completely protect the host process from memory leaks or dynamic cache loop RAM bleed [Commandment VIII]."
+        "composite": {
+          "header": "xalor.composite()",
+          "description": "A structural intersection switchboard that evaluates untyped payloads against an ad-hoc combination of multiple discrete blueprint hashes or contract keys in volatile heap memory, enforcing runtime trait composition.",
+          "subDescription": "Evaluates complex multiple-blueprint conditions using a Left-to-Right Sequential Object Assign Override rule while maintaining sub-microsecond validation loops.",
+          "codeTabs": [
+            {
+              "tabName": "Trait Composition",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nexport type TUserProfile = { id: number; name: string; };\nexport type TUserPosts = { posts: number; };\n\nconst mixedIncomingPayload = { id: 101, name: 'Brennan', posts: 42 };\n\nconst combinedRoute = xalor.composite<'USER_ENRICHED_FLOW'>(\n  mixedIncomingPayload,\n  ['USER_PROFILE', 'sh_14rk84m'],\n  {\n    success: (enrichedData) => `Account Verified: ${enrichedData.name} | Total Posts: ${enrichedData.posts}`,\n    default: () => 'SECURITY ALERT: Payload fails compound structural trait criteria'\n  }\n);",
+                "returnValue": "\"Account Verified: Brennan | Total Posts: 42\""
+              },
+              "note": "Executes a Shallow Object Deflation Bypass—flattening only top-level property keys during dynamic memory merging while passing deeply interned child references directly to the core validation layer to prevent dynamic cache loop RAM bleed."
+            }
+          ],
+          "parametersList": [
+            {
+              "id": "c1a25c60-cf5b-439d-b68a-aa25c602078a",
+              "name": "payload",
+              "type": "`unknown`",
+              "required": true,
+              "description": "The unverified data payload packet to evaluate against the combined multi-blueprint composition matrix."
+            },
+            {
+              "id": "c2b5a2df-1b54-4d45-a2c6-cc89c2d3a8d4",
+              "name": "blueprintKeys",
+              "type": "`readonly string[]`",
+              "required": true,
+              "description": "An array of active contract keys or CAS blueprint hashes to merge. Strictly capped to a defensive maximum of 8 keys to protect systems from algorithmic memory exhaustion attacks."
+            },
+            {
+              "id": "c37ff133-9e44-4db5-b82b-6d60be69d37f",
+              "name": "ctx",
+              "type": "`TXalorCompositeContext<T>`",
+              "required": true,
+              "description": "Configuration object mapping control flow to the `success` validation callback or the `default` fallback handler."
+            }
+          ]
         },
-        "footnote": "Defensive Security Boundary: To protect systems from algorithmic memory exhaustion attacks, the composite array strictly caps input targets to a maximum of 8 schema keys. Cross-boundary composition cascades will immediately drop down to the default fallback handler."
-      },
-
-      "diff": {
-        "header": "xalor.diff()",
-        "description": "An ahead-of-time (AOT) compiler-assisted research layer that leverages centralized build-time serialized registry snapshots to perform immediate, O(1) runtime structural delta verifications and contract compatibility profiling between completely independent data schemas.",
-        "subDescription": "Statically unrolls complex nested interface graphs into flat, trace-optimized bitmap matrices to identify structural schema changes without requiring active runtime parsing algorithms:",
-        "codeBlock": {
-          "code": "// 🪐 CONTRACT DELTA PROFILING GATE (Asymmetric Structural Overlap Audit)\n// Compares separate keys inside your registry metadata block point-free, computing an exact compatibility matrix.\nconst compatibilityMatrix = xalor.diff('USER_ACCOUNT', 'USER_PROFILE', {\n  strict: true, // Rejects the execution if extraneous property overflows or unexpected extensions are detected\n\n  // 🪐 LANE 1: ASYMMETRIC CONFLICT ALERT (Fired on structural contract breach)\n  // Exposes exact missing keys, property paths, and type mismatches natively.\n  onMismatch: (diffReport) => {\n    throw new Error(\n      `[xalor] 🚨 MICROSERVICE CONTRACT CLASH FIRED AT: ${diffReport.violatingPath}\\n` +\n      `Expected structural type alignment matching '${diffReport.expectedType}', but received '${diffReport.receivedType}'.`\n    );\n  },\n\n  // 🪐 LANE 2: CONFORMING INTERSECTION FLOW (Executed if schemas are safe for safe cross-boundary data transfer)\n  // Verifies parameter layout compatibility using pre-calculated build-time snapshots rather than active runtime evaluation.\n  onCompatible: (intersectionGraph) => {\n    return XalethorService.initializeCrossServiceBridge(intersectionGraph);\n  }\n});",
-          "note": "The diff engine completely eliminates silent contract breakages in distributed microservice architectures. Because nested properties are converted into flat index lookups by the AOT compiler pass, live production nodes evaluate cross-service compatibility via blazing-fast index lookups with hard-zero computational overhead [Commandment I, VI]."
-        },
-        "footnote": "Architectural Limit: The structural difference analyzer evaluates data footprints using immutable pre-compiled schemas. It enforces a strict recursion depth limit ceiling to prevent infinite loops, and it cannot inspect or verify the behavioral logic of executable function bodies."
+        "diff": {
+          "header": "xalor.diff()",
+          "description": "An ahead-of-time (AOT) compiler-assisted research layer that leverages centralized build-time serialized registry snapshots to perform immediate, O(1) runtime structural delta verifications and contract compatibility profiling between completely independent data schemas.",
+          "subDescription": "Statically unrolls complex nested interface graphs into flat, trace-optimized bitmap matrices to identify structural schema changes without requiring active runtime parsing algorithms.",
+          "codeTabs": [
+            {
+              "tabName": "Delta Profiling",
+              "code": {
+                "invoked": "import { xalor } from '@bgskinner2/xalor';\n\nconst compatibilityMatrix = xalor.diff('USER_ACCOUNT', 'USER_PROFILE', {\n  strict: true,\n  onMismatch: (diffReport) => {\n    throw new Error(`[xalor] 🚨 MICROSERVICE CONTRACT CLASH FIRED AT: ${diffReport.violatingPath}`);\n  },\n  onCompatible: (intersectionGraph) => {\n    return XalethorService.initializeCrossServiceBridge(intersectionGraph);\n  }\n});",
+                "returnValue": "{\n  \"compatible\": true,\n  \"sharedVectorsCount\": 14,\n  \"deltaGraph\": { \"overlappingKeys\": [\"id\", \"createdAt\"] }\n}"
+              },
+              "note": "Live production nodes evaluate cross-service compatibility via blazing-fast index lookups with hard-zero computational overhead because nested properties are converted into flat index lookups by the AOT compiler pass."
+            }
+          ],
+          "parametersList": [
+            {
+              "id": "d1a25c60-cf5b-439d-b68a-aa25c602078a",
+              "name": "keyA",
+              "type": "`K extends TActiveRegistryKeys`",
+              "required": true,
+              "description": "The primary baseline contract registry key to contrast against the secondary target shape."
+            },
+            {
+              "id": "d2b5a2df-1b54-4d45-a2c6-cc89c2d3a8d4",
+              "name": "keyB",
+              "type": "`K extends TActiveRegistryKeys`",
+              "required": true,
+              "description": "The secondary target contract registry key evaluated for structural compatibility or delta variations."
+            },
+            {
+              "id": "d37ff133-9e44-4db5-b82b-6d60be69d37f",
+              "name": "ctx",
+              "type": "`TXalorDiffContext`",
+              "required": true,
+              "description": "Configuration rules managing execution strictness and handlers for `onMismatch` clashes and `onCompatible` pipeline intersections."
+            }
+          ]
+        }
       }
     },
     "bottomLinks": [
       {
         "id": "e74d6610-7dc1-4bbe-bf77-4d4c123403ac",
-        "href": "/xalor/docs/getting-started",
+        "href": "/xalor/docs/gettingStarted",
         "header": "Getting Started",
         "iconName": "rocket-tilted",
         "description": "Get started with setting up simply, a dive into optional configuration and advanced settings.",
@@ -744,22 +1153,81 @@
         "text": "api-ref"
       },
       "statusList": [
-        { "id": "0636-44e3-8", "name": "guard", "status": "active" },
-        { "id": "0hdk6-44e3-8", "name": "safeParse", "status": "active" },
-        { "id": "7b2a-412e-87d", "name": "parse", "status": "active" },
-        { "id": "9f8d-4b53-a", "name": "default", "status": "active" },
-        { "id": "4c2a-4573-a859", "name": "clone", "status": "active" },
-        { "id": "18f5-4d56-bc94", "name": "merge", "status": "active" },
-        { "id": "e395-47b2-9dfd", "name": "drift", "status": "active" },
-        { "id": "4bf-f5ae-e3", "name": "composite", "status": "inProgress" },
-        { "id": "cfae-e3-b9", "name": "cast", "status": "active" },
-        { "id": "cfkse-s3-b9", "name": "mock", "status": "active" },
-        { "id": "52-49b-aef7", "name": "diff", "status": "research" }
+        {
+          "id": "0636-44e3-8",
+          "name": "guard",
+          "status": "active",
+          "category": "validation"
+        },
+        {
+          "id": "0hdk6-44e3-8",
+          "name": "safeParse",
+          "status": "active",
+          "category": "validation"
+        },
+        {
+          "id": "7b2a-412e-87d",
+          "name": "parse",
+          "status": "active",
+          "category": "validation"
+        },
+        {
+          "id": "9f8d-4b53-a",
+          "name": "default",
+          "status": "active",
+          "category": "generate"
+        },
+        {
+          "id": "4c2a-4573-a859",
+          "name": "clone",
+          "status": "active",
+          "category": "transform"
+        },
+        {
+          "id": "18f5-4d56-bc94",
+          "name": "merge",
+          "status": "active",
+          "category": "transform"
+        },
+        {
+          "id": "e395-47b2-9dfd",
+          "name": "drift",
+          "status": "active",
+          "category": "match"
+        },
+        {
+          "id": "4bf-f5ae-e3",
+          "name": "composite",
+          "status": "inProgress",
+          "category": "match"
+        },
+        {
+          "id": "cfae-e3-b9",
+          "name": "cast",
+          "status": "active",
+          "category": "generate"
+        },
+        {
+          "id": "cfkse-s3-b9",
+          "name": "mock",
+          "status": "active",
+          "category": "generate"
+        },
+        {
+          "id": "52-49b-aef7",
+          "name": "diff",
+          "status": "research",
+          "category": "match"
+        }
       ],
       "contentList": [
         {
           "name": "guard",
           "description": "Generates a stateless **type predicate closure** for sub-microsecond payload narrowing at runtime boundaries."
+        },
+        {
+          "name": "safeParse",
+          "description": "Isolates execution side-effects, returning a clean result block containing a boolean flag and a flat **collected validation error list**."
         },
         {
           "name": "parse",
@@ -775,35 +1243,27 @@
         },
         {
           "name": "merge",
-          "description": "Fuses schemas symmetrically; matching primitives overwrite, nested objects fuse, and arrays combine item-by-item."
+          "description": "Fuses schemas symmetrically; matching primitives overwrite, nested objects fuse, and arrays combine **item-by-item**."
         },
         {
           "name": "drift",
-          "description": "Audits live system payloads to identify and log **structural schema mutations** against baselines."
-        },
-        {
-          "name": "composite",
-          "description": "Combines multiple **independent registry contracts** into a unified validation execution graph."
+          "description": "Executes a **10-phase upcast pipeline** to safely migrate historical backend payloads into current modern production layouts on the fly."
         },
         {
           "name": "cast",
           "description": "Forces loose external payload structures into compliance by safely mapping mismatched **primitive variants**."
         },
         {
+          "name": "mock",
+          "description": "Generates randomized, high-entropy fixtures natively from blueprints, unlocking ** strongly-typed Simulacrum property overrides**."
+        },
+        {
+          "name": "composite",
+          "description": "Combines multiple **independent registry contracts** into a unified validation execution graph."
+        },
+        {
           "name": "diff",
           "description": "Computes a flat **structural delta matrix** contrasting property discrepancies across two active shapes."
-        },
-        {
-          "name": "safeParse",
-          "description": ""
-        },
-        {
-          "name": "mock",
-          "description": ""
-        },
-        {
-          "name": "cast",
-          "description": ""
         }
       ]
     },
@@ -851,6 +1311,259 @@
           "description": "Outputs full system syntax layout parameters, available configuration flags, and explicit execution commands directly to the terminal."
         }
       ]
-    }
+    },
+    "simulacrumGeneratorUtils": [
+      {
+        "id": "6f2afcb4-2456-4a6e-9a0e-7f18f4e4c607",
+        "name": "uuid",
+        "description": "Generates a standards-compliant UUID v4 string suitable for unique identifiers, database keys, request tracing, and distributed systems. Each invocation produces a new 36-character RFC 4122 UUID.",
+        "codeBlock": "import { xalorSimGenerator } from '@bgskinner2/xalor';\n\nconst uuidA = xalorSimGenerator.uuid();\n// \"f81d4fae-7dec-41d0-a765-00a0c91e6bf6\"\n\nconst uuidB = xalorSimGenerator.uuid();\n// \"3e5a1b2c-4d5e-4f7a-8b9c-0d1e2f3a4b5c\"",
+        "returnType": "string",
+        "parameters": []
+      },
+      {
+        "id": "a6fae95d-c114-4318-943d-688dc131f738",
+        "name": "compactId",
+        "description": "Generates a cryptographically secure, URL-safe identifier optimized for database keys, routing segments, cache keys, and temporary identifiers. The generated value contains only Base64URL-safe characters and defaults to 10 characters in length.",
+        "returnType": "string",
+        "codeBlock": "import { xalorSimGenerator } from '@bgskinner2/xalor';\n\nconst idA = xalorSimGenerator.compactId();\n// \"X_7mK-9pQ2\"\n\nconst idB = xalorSimGenerator.compactId(16);\n// \"z_9pKw-LmN4q_R1x\"",
+        "parameters": [
+          {
+            "id": "7c4caa2b-7306-4f65-83d4-f26b37d69f7d",
+            "name": "length",
+            "type": "number",
+            "description": "Optional. Specifies the desired length of the generated identifier. Values are clamped between 4 and 128 characters. Defaults to 10.",
+            "defaultValue": 10
+          }
+        ]
+      },
+      {
+        "id": "51a87e0e-2265-43b7-8a54-9e6a968782f7",
+        "name": "percentage",
+        "description": "Generates a realistic percentage value using configurable statistical bias distributions. Useful for producing believable completion rates, confidence scores, utilization metrics, and other percentage-based mock data.",
+        "returnType": "number",
+        "codeBlock": "import { xalorSimGenerator } from '@bgskinner2/xalor';\n\nconst flat = xalorSimGenerator.percentage();\n// 42.73\n\nconst high = xalorSimGenerator.percentage({\n  bias: 'high',\n  decimals: 1,\n});\n// 91.4",
+        "parameters": [
+          {
+            "id": "0cce8a82-fd53-4899-b2d0-7c537ef20c7d",
+            "name": "bias",
+            "type": "'flat' | 'low' | 'high'",
+            "description": "Optional. Determines how values are distributed. 'flat' generates values evenly across the full range, 'low' favors lower percentages, and 'high' favors higher percentages. Defaults to 'flat'.",
+            "defaultValue": "flat"
+          },
+          {
+            "id": "edb09b78-fd7e-4979-b3d4-8b50714c9db8",
+            "name": "decimals",
+            "type": "number",
+            "description": "Optional. Specifies the number of decimal places to include. Values are clamped between 0 and 4. Defaults to 2.",
+            "defaultValue": 2
+          }
+        ]
+      },
+      {
+        "id": "1c70221f-24cd-46ed-a969-927f895cfc16",
+        "name": "currency",
+        "description": "Generates a realistic, localized currency amount formatted using the runtime's native Intl.NumberFormat API. Supports configurable value ranges, locales, and ISO 4217 currency codes.",
+        "returnType": "string",
+        "codeBlock": "import { xalorSimGenerator } from '@bgskinner2/xalor';\n\nconst usd = xalorSimGenerator.currency();\n// \"$483.27\"\n\nconst eur = xalorSimGenerator.currency({\n  min: 1000,\n  max: 5000,\n  locale: 'de-DE',\n  currency: 'EUR',\n});\n// \"3.420,75 €\"",
+        "parameters": [
+          {
+            "id": "8c75fc3b-79ef-40d2-b6f8-1dfb6bc0dfd7",
+            "name": "min",
+            "type": "number",
+            "defaultValue": 0,
+            "description": "Specifies the minimum value that can be generated."
+          },
+          {
+            "id": "5b5f35e4-f8f7-4cc6-a5a4-3787d6b1d16b",
+            "name": "max",
+            "type": "number",
+            "defaultValue": 1000,
+            "description": "Specifies the maximum value that can be generated."
+          },
+          {
+            "id": "97d52b49-17a5-48b8-a20f-c4542d2f32d7",
+            "name": "locale",
+            "type": "string",
+            "defaultValue": "en-US",
+            "description": "A valid BCP 47 locale used to format the generated value (for example, 'en-US', 'de-DE', or 'ja-JP')."
+          },
+          {
+            "id": "2c7fe4e6-eeb7-4a9f-a8d3-d0c117b2d4af",
+            "name": "currency",
+            "type": "string",
+            "defaultValue": "USD",
+            "description": "A valid ISO 4217 currency code used when formatting the generated amount (for example, 'USD', 'EUR', or 'JPY')."
+          }
+        ]
+      },
+      {
+        "id": "02664c83-ae97-4dd6-a47c-bd0ed3b3da24",
+        "name": "email",
+        "description": "Generates a realistic, pronounceable email address derived from a property name. The same property key will always produce the same email address, making it ideal for deterministic mock data generation.",
+        "returnType": "string",
+        "codeBlock": "import { xalorSimGenerator } from '@bgskinner2/xalor';\n\nconst emailA = xalorSimGenerator.email();\n// \"vexozacif@xalor.io\"\n\nconst emailB = xalorSimGenerator.email('userEmail');\n// \"rutewo@xalor.net\"\n\nconst emailC = xalorSimGenerator.email('primary_email');\n// \"cifuhe@xalor.net\"",
+        "parameters": [
+          {
+            "id": "f6bb5d6d-bb56-46fd-b87d-d21cf8ecb36d",
+            "name": "propertyKey",
+            "type": "string",
+            "defaultValue": "email",
+            "description": "The property name used as the deterministic seed when generating the email address. Different property names produce different, but repeatable, email addresses."
+          }
+        ]
+      },
+      {
+        "id": "135014c3-ddf6-473e-931f-b92a7b0b1b55",
+        "name": "userHandle",
+        "description": "Generates a realistic, human-readable user handle derived from a property name. The same property key will always produce the same handle, making it ideal for deterministic usernames, display names, and mock profile data.",
+        "returnType": "string",
+        "codeBlock": "import { xalorSimGenerator } from '@bgskinner2/xalor';\n\nconst handleA = xalorSimGenerator.userHandle();\n// \"@KexozAcif\"\n\nconst handleB = xalorSimGenerator.userHandle('username');\n// \"@RutewOzu\"\n\nconst handleC = xalorSimGenerator.userHandle('nickname');\n// \"@VemokRisa\"",
+        "parameters": [
+          {
+            "id": "ad4db14d-91c4-45dd-b2b6-32c0b46dce6b",
+            "name": "propertyKey",
+            "type": "string",
+            "defaultValue": "handle",
+            "description": "The property name used as the deterministic seed when generating the user handle. Different property names produce different, but repeatable, handles."
+          }
+        ]
+      },
+      {
+        "id": "6971bbda-ac4d-4380-a77b-8d045293c397",
+        "name": "loremIpsum",
+        "description": "Generates realistic placeholder text as plain text or Markdown. Configure the number of paragraphs, sentences, and words to produce anything from a single sentence to a multi-section Markdown document.",
+        "returnType": "string",
+        "codeBlock": "import { xalorSimGenerator } from '@bgskinner2/xalor';\n\nconst sentence = xalorSimGenerator.loremIpsum({\n  paragraphs: 1,\n  sentencesPerParagraph: 1,\n  includeHeader: false,\n});\n// \"Lutonux pacex baceru kexoz.\"\n\nconst document = xalorSimGenerator.loremIpsum({\n  paragraphs: 3,\n  includeHeader: true,\n});",
+        "parameters": [
+          {
+            "id": "d0eec29c-50b7-4cb9-8c7c-6c6cf0d89a22",
+            "name": "paragraphs",
+            "type": "number",
+            "defaultValue": 2,
+            "description": "The number of paragraphs to generate. Values are clamped between 1 and 16."
+          },
+          {
+            "id": "71947d58-7f4d-4321-8d43-64f2d0db4d50",
+            "name": "sentencesPerParagraph",
+            "type": "number",
+            "defaultValue": 0,
+            "description": "The number of sentences to generate per paragraph. A value of 0 produces a randomized sentence count for each paragraph. Values are clamped between 0 and 16."
+          },
+          {
+            "id": "da66fc0d-c2c4-41d7-b0b7-f67f2d10dcd8",
+            "name": "wordsPerSentence",
+            "type": "number",
+            "defaultValue": 0,
+            "description": "The number of words to generate per sentence. A value of 0 produces a randomized word count for each sentence. Values are clamped between 0 and 32."
+          },
+          {
+            "id": "0fcda49d-6d87-4906-9c35-7dc7d03f4515",
+            "name": "includeHeader",
+            "type": "boolean",
+            "defaultValue": true,
+            "description": "Determines whether Markdown formatting, including headings, quotes, and list elements, is included in the generated output."
+          }
+        ]
+      },
+      {
+        "id": "96a19a08-29b3-4b83-920f-8dd3752fcfb5",
+        "name": "timestamp",
+        "description": "Generates a realistic ISO 8601 timestamp relative to the current runtime moment. Supports configurable past or future offsets using compact relative time patterns with optional natural drift to simulate real-world event timing.",
+        "returnType": "string",
+        "codeBlock": "import { xalorSimGenerator } from '@bgskinner2/xalor';\n\nconst recent = xalorSimGenerator.timestamp();\n// \"2026-07-27T14:32:10.421Z\"\n\nconst future = xalorSimGenerator.timestamp({\n  pattern: '+5m',\n  allowDrift: false,\n});\n// \"2026-07-27T14:37:10.421Z\"",
+        "parameters": [
+          {
+            "id": "d8cb8b79-4e1d-4e2b-8d52-4d3d6d5c6a1f",
+            "name": "pattern",
+            "type": "string",
+            "description": "Optional. Defines the relative offset from the current timestamp using a compact pattern format. The first character specifies direction ('+' for future timestamps, '-' for past timestamps), the numeric portion specifies the amount, and the final character specifies the unit. Supported units include seconds (s), minutes (m), hours (h), days (d), and other configured time units. Defaults to '-0m'.",
+            "defaultValue": "-0m"
+          },
+          {
+            "id": "5a2e8d47-cb0c-4b9f-b9f4-4e6a3b6e9e21",
+            "name": "allowDrift",
+            "type": "boolean",
+            "description": "Optional. Adds a natural ±10% timing variation to the calculated offset to produce more realistic simulated event timestamps. When disabled, the timestamp is generated at the exact requested offset. Defaults to true.",
+            "defaultValue": true
+          }
+        ]
+      },
+      {
+        "id": "db0a2d22-dc32-4397-932a-c20e6e5de536",
+        "name": "mockJwt",
+        "description": "Generates a structurally valid mock JSON Web Token (JWT) string for authentication flows, testing environments, and simulated authorization scenarios. Produces a deterministic three-part Base64URL token format containing a header, payload, and signature segment without performing cryptographic signing.",
+        "returnType": "string",
+        "codeBlock": "import { xalorSimGenerator } from '@bgskinner2/xalor';\n\nconst token = xalorSimGenerator.mockJwt();\n// \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ4YWxvcl9tb2NrX3VzZXIiLCJhdXRoIjp0cnVlfQ.fGst_MockSignatureTrackingBytes_xalorEngineV3\"",
+        "parameters": []
+      },
+      {
+        "id": "9b2f145c-f99f-4585-8474-687ba07b1527",
+        "name": "maskedString",
+        "description": "Generates an anonymized version of a string by masking sensitive characters according to a selected redaction strategy. Useful for simulating privacy-safe logs, GDPR-style data scrubbing, credential protection, and partially hidden identifiers such as emails or payment references.",
+        "returnType": "string",
+        "codeBlock": "import { xalorSimGenerator } from '@bgskinner2/xalor';\n\nconst hidden = xalorSimGenerator.maskedString('john.doe@example.com');\n// \"j********e@example.com\"\n\nconst card = xalorSimGenerator.maskedString('1234567812345678', {\n  strategy: 'creditCard',\n});\n// \"1234********5678\"",
+        "parameters": [
+          {
+            "id": "2e3e0b6c-3fd9-4fd6-bd8b-6d6d0db9e2a1",
+            "name": "sourceValue",
+            "type": "string",
+            "description": "The source string value to anonymize. The generator preserves the original string structure while replacing selected characters with the configured mask character.",
+            "defaultValue": null
+          },
+          {
+            "id": "4e6e1b54-2df5-4d45-a2c6-cc89c2d3a8d4",
+            "name": "strategy",
+            "type": "'full' | 'creditCard' | 'email'",
+            "description": "Optional. Determines the masking behavior. 'full' replaces every character, 'creditCard' preserves the first and last four characters while masking the middle section, and 'email' preserves the first email character, separators, and domain structure while hiding identifying portions. Defaults to 'full'.",
+            "defaultValue": "full"
+          },
+          {
+            "id": "8d1f87c1-2e1d-4c4f-9e7b-8e3b7e0b5c21",
+            "name": "maskChar",
+            "type": "'*' | 'X'",
+            "description": "Optional. Defines the character used for redaction. '*' produces standard privacy masking, while 'X' produces an alternate replacement style. Defaults to '*'.",
+            "defaultValue": "*"
+          }
+        ]
+      },
+      {
+        "id": "8eef9e20-4e08-4d86-a913-70a5fe89a9e7",
+        "name": "miniBlockCipher",
+        "description": "Generates a lightweight reversible Feistel-style block transformation for structural string obfuscation and simulated cipher workflows.\n\nThis utility is designed as a compact mini cipher handler for testing, deterministic masking, and token transformation scenarios. It provides encryption and reification modes using a small configurable round-based Feistel network rather than production-grade cryptographic primitives.\n\nInspired by the low-level byte manipulation patterns explored in ByteBits: https://github.com/bgskinner3/ByteBits",
+        "returnType": "string",
+        "codeBlock": "import { xalorSimGenerator } from '@bgskinner2/xalor';\n\nconst encrypted = xalorSimGenerator.miniBlockCipher('hello world');\n// \"8fa31c20b91d44e2\"\n\nconst decrypted = xalorSimGenerator.miniBlockCipher(encrypted, {\n  mode: 'decrypt',\n});\n// \"reified_block:7a91bc02f14d88e3\"",
+        "parameters": [
+          {
+            "id": "1b94c6f2-8e3e-44c8-aab7-17a2e8c9f4d1",
+            "name": "plaintext",
+            "type": "string",
+            "description": "The input string to transform. In 'encrypt' mode this represents the raw payload. In 'decrypt' mode this should be the generated 16-character hexadecimal cipher block.",
+            "defaultValue": null
+          },
+          {
+            "id": "7f4f5d42-8a7b-42c5-9b3e-8f4f0c2d1a77",
+            "name": "key",
+            "type": "number",
+            "description": "Optional. Defines the deterministic seed used to generate the internal Feistel round keys. Different keys produce different reversible transformations. Defaults to 1337.",
+            "defaultValue": 1337
+          },
+          {
+            "id": "c4e83a7d-9d1b-4f55-b8f8-6b8f1f4c9d22",
+            "name": "rounds",
+            "type": "number",
+            "description": "Optional. Controls the number of Feistel transformation rounds. Values are clamped between 2 and 16 to maintain predictable execution cost. Defaults to 4.",
+            "defaultValue": 4
+          },
+          {
+            "id": "e7a7f2c9-5b4d-43f1-93a7-6c8f0b2d5e11",
+            "name": "mode",
+            "type": "'encrypt' | 'decrypt'",
+            "description": "Optional. Selects the transformation direction. 'encrypt' converts plaintext into a fixed hexadecimal block representation, while 'decrypt' reverses a previously generated block representation. Defaults to 'encrypt'.",
+            "defaultValue": "encrypt"
+          }
+        ]
+      }
+    ]
   }
 }

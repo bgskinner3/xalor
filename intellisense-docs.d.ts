@@ -29,27 +29,6 @@ declare global {
      *             cycles for flat production-ready schema compilation and minification.
      */
     static BOOT_MODE_STRATEGY_MAPPER(): void;
-    /**
-     * isBlueprintShapeString
-     * 📦 STRUCTURAL PREDICATE GUARD: SHAPE STRING VALIDATOR
-     *
-     * ROLE:
-     * Verifies if an unknown runtime string is a valid serialized schema definition,
-     * casting it into a type-safe, nominal `TSerializedShape` branded token.
-     *
-     * STRATEGY:
-     * Coerces the argument into a string block and attempts to parse it as JSON. If
-     * parsing succeeds, it applies point-free validation to verify the presence of the
-     * schema fields (`kind` and `properties`) required by your global vault blueprint system.
-     *
-     * SAFETY MODEL:
-     * Wraps all JSON parsing actions inside a safe try/catch block to prevent broken,
-     * half-written user saves from crashing your persistent, live CLI process thread.
-     *
-     * @param str - The raw incoming payload text or variable extracted on file save
-     * @returns True if the value matches your vault's structural schema layout
-     */
-    static isBlueprintShapeString(): void;
 
     /**
      *
@@ -83,46 +62,8 @@ declare global {
      *
      *
      */
-    static areIdenticalStrings(): void;
-    /**
-     * areTShapeEquivalents
-     * 🧠 TUPLE PREDICATE GUARD: VALIDATE SHAPE PAIRS
-     *
-     * ROLE:
-     * Narrows a pair of unknown inputs into a type-safe tuple of two validated
-     * `TSolidShape` objects. This serves as the execution gateway for the deep
-     * structural comparison engine.
-     *
-     * STRATEGY:
-     * Intercepts a binary tuple and evaluates both index elements independently.
-     * If both pass your `isBlueprintShapeString` structural JSON verification,
-     * the compiler safely unlocks downstream shape comparison APIs switchlessly.
-     *
-     *
-     *
-     *
-     * @param vals - A runtime tuple containing two unknown values to check
-     * @returns True if both values are valid structural shape strings, otherwise false
-     */
-    static areTShapeEquivalents(): void;
+    static isStringMirrored(): void;
 
-    /**
-     * extractSourcePosition
-     * 🛠️ UTILITY: SPATIAL POSITION EXTRACTOR
-     *
-     * ROLE:
-     * Extracts line and column character metrics from a standardized location area coordinate string.
-     *
-     * STRATEGY:
-     * Employs a pre-compiled, frozen regular expression tail-match pattern to isolate digit
-     * segments switchlessly. If a pattern matches, digits are converted to type-safe 1-based numbers
-     * natively. This provides your downstream diagnostic logging and tracking engines with high-speed,
-     * zero-allocation coordinate deconstruction.
-     *
-     * @param coordinateAreaString - The raw location sequence string containing file path and coordinates (e.g., "src/index.ts:14:1").
-     * @returns A validated TSourcePosition object payload, or null if the string coordinates string layout is invalid.
-     */
-    static extractSourcePosition(): void;
     /**
      * isBluePrintModified
      * 🧬 THE ULTIMATE POINTER SHIELD: GRAPH INSTANCE COMPARER
