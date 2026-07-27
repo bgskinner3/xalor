@@ -161,3 +161,32 @@ export const RUNTIME_SHAPE_VALIDATION_ERROR_KEYS = [
   'INSTANCEOF_VALIDATION_PROTOTYPE_MISMATCH',
   'ENGINE_FATAL_UNSUPPORTED_SHAPE_KIND',
 ] as const;
+
+/**
+ *  KEYED CONFIG LIBRARY FOR SIMULACRUM GENERATOR UTILS
+ *
+ * SIMULACRUM FOUNDATION:
+ * Canonical configuration keys recognized by Simulacrum's generator engine.
+ * Each key represents a declarative generation strategy and serves as the
+ * stable contract between configuration objects and the corresponding
+ * generation implementation.
+ *
+ * Rather than relying on hard-coded string literals throughout the codebase,
+ * this registry provides a single immutable source of truth for all supported
+ * generator identifiers, ensuring consistency, discoverability, and type
+ * safety across the generation pipeline.
+ *
+ */
+export const XALOR_SIM_GENERATOR_UTIL_KEYS = {
+  uuid: 'pure',
+  compactId: 'pure',
+  percentage: 'pure',
+  currency: 'pure',
+  loremIpsum: 'pure',
+  timestamp: 'pure',
+  mockJwt: 'pure',
+  email: 'contextual',
+  userHandle: 'contextual',
+  maskedString: 'transformer',
+  miniBlockCipher: 'transformer',
+} as const;

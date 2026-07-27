@@ -1,5 +1,5 @@
 import { PERCENTAGE_BIAS_STRATEGIES } from '../../models/constants';
-import type { TCurrencyControl, TPercentageControl } from '../../models/types';
+import type { TXalorSimTypeMap } from '../../models/types';
 
 // ================================================================================
 // ================================================================================
@@ -18,7 +18,7 @@ export const currencyAmount = ({
   max = 1000,
   locale = 'en-US',
   currency = 'USD',
-}: TCurrencyControl = {}): string => {
+}: TXalorSimTypeMap<'TCurrencyConfig'> = {}): string => {
   const amount = Math.random() * (max - min) + min;
 
   const cacheKey = `${locale}:${currency}`;
@@ -46,7 +46,7 @@ export const currencyAmount = ({
 export const generateMockPercentage = ({
   bias = 'flat',
   decimals = 2,
-}: TPercentageControl = {}): number => {
+}: TXalorSimTypeMap<'TPercentageConfig'> = {}): number => {
   const strategy = PERCENTAGE_BIAS_STRATEGIES[bias];
   const factor = strategy();
 

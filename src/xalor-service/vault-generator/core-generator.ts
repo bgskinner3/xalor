@@ -1,14 +1,29 @@
 import { xalethorVaultKeeper } from '../vault-keeper';
-import { isValidSolidShape } from '../../../shared';
-import type { TSolidShape } from '../../../shared/shape-domain';
 import { xalethorVaultDiagnostics } from '../vault-diagnostics';
+import { isValidSolidShape, hasOwnProperty } from '../../../shared';
+import type { TSolidShape } from '../../../shared/shape-domain';
 import { IS_SOLID_CONFIG_ITEMS } from '../../../shared/constants';
 import {
   DEFAULT_SHAPE_MATERIALIZER,
   MOCK_SHAPE_MATERIALIZER,
   CAST_SHAPE_MAPPER,
 } from '../../mappers';
-import { isTargetRegistryStructure } from '../../utils';
+import {
+  isTargetRegistryStructure,
+  isUserMutationCallback,
+  isValidMockOverrideBlock,
+  ARCHETYPE_STRATEGY_ROUTER,
+  xalorSimGenerator,
+} from '../../utils';
+import type {
+  TMockOverrides,
+  TXalorSimGeneratorKeys,
+  TArchTypePureKeys,
+  TArchTypeContextualKeys,
+  TArchTypeTransformerKeys,
+  TXalorTupleMapping,
+} from '../../models/types';
+import { XALOR_SIM_GENERATOR_UTIL_KEYS } from '../../models';
 
 /**
  * XALETHOR VAULT GENERATOR
@@ -35,6 +50,108 @@ class XalethorVaultGenerator {
       return xalethorVaultDiagnostics.panic(key, msg);
     }
     return shape;
+  }
+
+  private evaluateTupleDescriptor<U extends TXalorSimGeneratorKeys>(
+    utilKey: U,
+    tupleRule: TXalorTupleMapping<U>,
+    propertyName: string,
+    baselineValue: unknown,
+  ): unknown {
+    const behavioralArchetype = XALOR_SIM_GENERATOR_UTIL_KEYS[utilKey];
+    const strategyRunner = ARCHETYPE_STRATEGY_ROUTER[behavioralArchetype];
+
+    if (behavioralArchetype === 'pure') {
+      const fn = xalorSimGenerator[utilKey as TArchTypePureKeys];
+
+      // Index 1 safely extracts the user configuration object from the tuple array if present
+      const userConfig = (tupleRule as readonly unknown[])[1];
+
+      const packedArgs = (userConfig !== undefined
+        ? Object.freeze([userConfig])
+        : Object.freeze([])) as unknown as readonly unknown[];
+
+      return strategyRunner.executePure(fn, packedArgs);
+    }
+
+    if (behavioralArchetype === 'contextual') {
+      const fn = xalorSimGenerator[utilKey as TArchTypeContextualKeys];
+      return strategyRunner.executeContextual(fn, propertyName);
+    }
+
+    if (behavioralArchetype === 'transformer') {
+      const fn = xalorSimGenerator[utilKey as TArchTypeTransformerKeys];
+      const stringBaseline =
+        typeof baselineValue === 'string' ? baselineValue : '';
+
+      // Index 1 contains your transformer configuration options payload natively
+      const userConfig = (tupleRule as readonly unknown[])[1];
+
+      return strategyRunner.executeTransformer(fn, stringBaseline, userConfig);
+    }
+
+    return '';
+  }
+  private applySimGeneratorUtils<K extends TActiveRegistryKeys>(
+    overrides: TMockOverrides<K>,
+    rawStructure: TResolveRegistryStructure<K>,
+  ): void {
+    const targetStructure = rawStructure as Record<string, unknown>;
+
+    for (const propertyName in targetStructure) {
+      if (
+        !hasOwnProperty(targetStructure, propertyName) ||
+        !hasOwnProperty(overrides, propertyName)
+      ) {
+        continue;
+      }
+
+      const rule = overrides[propertyName];
+      if (!rule) {
+        continue;
+      }
+
+      const baselineValue = targetStructure[propertyName];
+
+      // 🎯 Case A: Tuple Descriptor Array Match
+      if (Array.isArray(rule)) {
+        // Index 0 is always your deterministic utility identifier string token key
+        const utilKey = rule[0] as TXalorSimGeneratorKeys;
+
+        const updatedValue = this.evaluateTupleDescriptor(
+          utilKey,
+          rule as unknown as TXalorTupleMapping<typeof utilKey>,
+          propertyName,
+          baselineValue,
+        );
+
+        targetStructure[propertyName] = updatedValue;
+        continue;
+      }
+
+      // 🎯 Case B: Standard Custom Developer Callbacks
+      if (isUserMutationCallback<Record<string, unknown>, string>(rule)) {
+        this.commitUserMutation(
+          targetStructure,
+          propertyName,
+          rule,
+          baselineValue,
+        );
+      }
+    }
+  }
+
+  private commitUserMutation<
+    Structure extends Record<string, unknown>,
+    P extends keyof Structure,
+  >(
+    rawStructure: Structure,
+    propertyName: P,
+    callbackFn: (baseValue: Structure[P]) => Structure[P],
+    baselineValue: unknown,
+  ): void {
+    // TypeScript perfectly verifies that the input and output align with the structural key slot
+    rawStructure[propertyName] = callbackFn(baselineValue as Structure[P]);
   }
 
   public executeDefaultBuild = (shape: TSolidShape, depth = 0): unknown => {
@@ -144,19 +261,27 @@ class XalethorVaultGenerator {
    * Resolves the structural blueprint node, passes the graph directly into the
    * high-speed simulation runner map, and lazily populates collections and field primitives
    * without creating duplicate local intermediate array allocations.
-   *
+   *(parameter) overrides: TMockOverrides<K extends keyof ISolidRegistry ? TExpandStructure<ISolidRegistry[K], never> : Record<string, any>>
    * @typeParam K - The unique active identity token string registered within the system vault.
    * @param key - The unique authoritative key string identifier of the target type contract.
    * @returns {TResolveRegistryStructure<K>} A randomized, unbranded data layout instance container.
    */
   public getMockRaw<K extends TActiveRegistryKeys>(
     key: K,
+    overrides?: TMockOverrides<K>,
   ): TResolveRegistryStructure<K> {
     /* prettier-ignore */
     const shape = this.requireShape<K>( key, 'Generation failed: Blueprint missing from Vault.');
 
     const rawStructure = this.executeMockBuild(shape, 0);
 
+    /* prettier-ignore */
+    // Boundary confirmation checks match against your type guards cleanly
+    if (overrides && isValidMockOverrideBlock<K>(overrides) && isTargetRegistryStructure<K>(rawStructure)) {
+      this.applySimGeneratorUtils<K>(overrides, rawStructure);
+      
+      // return rawStructure;
+    }
     // Structural boundary check narrowing target generic output naturally via native type guards
     if (isTargetRegistryStructure<K>(rawStructure)) {
       return rawStructure;

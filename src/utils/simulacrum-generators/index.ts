@@ -2,8 +2,9 @@ import * as identity from './identity';
 import * as primitives from './primitives';
 import * as contextual from './contextual';
 import * as securityGen from './security-gen';
+import { TXalorGeneratorValidatorMap } from '../../models/types';
 
-export const xalorSimGenerator = Object.freeze({
+export const xalorSimGenerator: TXalorGeneratorValidatorMap = Object.freeze({
   uuid: identity.generateFastUuidV4,
   compactId: identity.generateCompactId,
   percentage: primitives.generateMockPercentage,
@@ -14,7 +15,8 @@ export const xalorSimGenerator = Object.freeze({
   timestamp: contextual.generateRelativeTimestamp,
   mockJwt: securityGen.generateMockJwt,
   maskedString: securityGen.generateAnonymizedMask,
-});
+  miniBlockCipher: securityGen.generateFeistelBlockCipher,
+}) satisfies TXalorGeneratorValidatorMap;
 
 export * from './identity';
 export * from './contextual';

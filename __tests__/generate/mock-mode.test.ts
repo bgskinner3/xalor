@@ -175,13 +175,29 @@ describe('Runtime Generator API - Mock Mode', () => {
       TEST_SHAPE_REGISTRY.COLLIDING_INTERSECTION_TEST,
     );
   });
-
+  /**
+ const result = xalor.mock<'OPTIONAL_FIELDS_TEST'>({
+  mandatoryId: ['percentage']
+  and if they want to use the config then somehtign ike that ?
+  optionalMeta: ['maskedString',{ strategy: 'creditCard', maskChar: '*' }]
+});
+ */
   describe('GENERATE XALOR MOCK OBJECT', () => {
+    // it('🎯 should preserve exact explicit values when materializing literal shape segments', () => {
+    //   const result = xalor.mock<'OPTIONAL_FIELDS_TEST'>({
+    //     mandatoryId: ['percentage'],
+    //   });
+    //   console.log(result);
+    // const result2 = xalor.mock<'DEEPLY_NESTED_STORE'>({
+    //   // orderId: ['maskedString', {}],
+    //   orderId: ['compactId', {}],
+    // });
+    //   console.log(result2);
+    // });
     it('🎯 should successfully compile native JavaScript built-ins, web platform, and binary formats', () => {
       // 🚀 FIX: Connects straight to the actual platform registry token key
       const result = xalor.mock<'ALL_PLATFORM_INSTANCES_SHAPE'>();
       expect(result).toBeDefined();
-
       // Verify Core JS & Collection instances construct natively from the platform shape mapping
       expect(result.dateVal).toBeInstanceOf(Date);
       expect(result.regExpVal).toBeInstanceOf(RegExp);
@@ -189,7 +205,6 @@ describe('Runtime Generator API - Mock Mode', () => {
       expect(result.setVal).toBeInstanceOf(Set);
       expect(result.weakMapVal).toBeInstanceOf(WeakMap);
       expect(result.weakSetVal).toBeInstanceOf(WeakSet);
-
       // Verify Web Platform Frames are materialized with functional signatures
       expect(result.urlVal).toBeInstanceOf(URL);
       expect(result.urlParamsVal).toBeInstanceOf(URLSearchParams);
@@ -198,17 +213,14 @@ describe('Runtime Generator API - Mock Mode', () => {
       expect(result.responseVal).toBeInstanceOf(Response);
       expect(result.blobVal).toBeInstanceOf(Blob);
       expect(result.fileVal).toBeInstanceOf(File);
-
       // Verify Typed Array Buffers allocate memory structures successfully
       expect(result.arrayBufferVal).toBeInstanceOf(ArrayBuffer);
       expect(result.dataViewVal).toBeInstanceOf(DataView);
       expect(result.uint8ArrayVal).toBeInstanceOf(Uint8Array);
     });
-
     it('🎯 should preserve exact explicit values when materializing literal shape segments', () => {
       const result = xalor.mock<'API_RESPONSE'>();
       expect(result).toBeDefined();
-
       const allowedOutputs: unknown[] = ['success', 'failed'];
       if (typeof result.status === 'string') {
         expect(allowedOutputs).toContain(result.status);
@@ -216,29 +228,24 @@ describe('Runtime Generator API - Mock Mode', () => {
         expect(typeof result.status).toBe('number');
       }
     });
-
     it('🎯 should evaluate array mapping blocks and populate mock items with fluid counts', () => {
       const result = xalor.mock<'STORE_ORDER'>();
       expect(result).toBeDefined();
       expect(typeof result.orderId).toBe('string');
       expect(Array.isArray(result.items)).toBe(true);
-
       // Engine limits constraint array loop generations from 1 to 3 items randomly
       expect(result.items.length).toBeGreaterThanOrEqual(1);
       expect(result.items.length).toBeLessThanOrEqual(3);
-
       for (let i = 0; i < result.items.length; i++) {
         const item = result.items[i];
         expect(typeof item.SKU).toBe('string');
         expect(typeof item.quantity).toBe('number');
       }
     });
-
     it('🎯 should execute structural checks across multi-dimensional nested boundaries recursively', () => {
       const result = xalor.mock<'DEEPLY_NESTED_STORE'>();
       expect(result).toBeDefined();
       expect(Array.isArray(result.items)).toBe(true);
-
       if (result.items.length > 0) {
         const firstNestedItem = result.items[0];
         expect(firstNestedItem.logistics).toBeDefined();
@@ -298,7 +305,9 @@ describe('Runtime Generator API - Mock Mode', () => {
     it('🧱 BRANCH MATCH: should ensure nominal identity branding is accurately applied onto generated mock objects', () => {
       const result = xalor.mock<'TRANSACTION'>();
       expect(result).toBeDefined();
-
+      //  const result = xalor.mock<'TRANSACTION'>({
+      //   id: () => fn()
+      //  });
       const brandToken = Reflect.get(result, BRAND_SYMBOL);
       expect(Array.isArray(brandToken)).toBe(true);
       expect(brandToken).toContain('Solid');
@@ -351,30 +360,30 @@ describe('Runtime Generator API - Mock Mode', () => {
       }
     });
 
-    // it('🚨 FAILURE 3: should halt gracefully and return an empty block layout when recursive traversals cross max depth bounds', () => {
-    //   const executeCircularPass = () => {
-    //     return xalor.mock<'CIRCULAR_DEPTH_TEST'>();
-    //   };
+    //   // it('🚨 FAILURE 3: should halt gracefully and return an empty block layout when recursive traversals cross max depth bounds', () => {
+    //   //   const executeCircularPass = () => {
+    //   //     return xalor.mock<'CIRCULAR_DEPTH_TEST'>();
+    //   //   };
 
-    //   expect(executeCircularPass).not.toThrow();
+    //   //   expect(executeCircularPass).not.toThrow();
 
-    //   const result = executeCircularPass();
-    //   expect(result).toBeDefined();
+    //   //   const result = executeCircularPass();
+    //   //   expect(result).toBeDefined();
 
-    //   if (isRecord(result)) {
-    //     let cursor: Record<string, unknown> = result;
+    //   //   if (isRecord(result)) {
+    //   //     let cursor: Record<string, unknown> = result;
 
-    //     for (let depth = 0; depth < 25; depth++) {
-    //       const nextNode = cursor.selfRef;
-    //       if (!isRecord(nextNode)) {
-    //         // 🚀 FIXED: Terminal fallback safely maps onto an empty record layout boundary object
-    //         expect(nextNode).toMatchObject({});
-    //         break;
-    //       }
-    //       cursor = nextNode;
-    //     }
-    //   }
-    // });
+    //   //     for (let depth = 0; depth < 25; depth++) {
+    //   //       const nextNode = cursor.selfRef;
+    //   //       if (!isRecord(nextNode)) {
+    //   //         // 🚀 FIXED: Terminal fallback safely maps onto an empty record layout boundary object
+    //   //         expect(nextNode).toMatchObject({});
+    //   //         break;
+    //   //       }
+    //   //       cursor = nextNode;
+    //   //     }
+    //   //   }
+    //   // });
     it('🚨 FAILURE 4: should handle severe structural type divergence gracefully when merging conflicting intersection properties', () => {
       const executeCollisionPass = (() => {
         try {

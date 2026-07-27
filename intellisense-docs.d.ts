@@ -1028,26 +1028,84 @@ declare global {
     static generateXalorDefault(): void;
 
     /**
-     * RUNTIME API: GENERATE XALOR MOCK
+     * RUNTIME API: Generate Xalor Mock
      *
-     * Converts a static TSolidShape blueprint into a randomized, high-entropy
-     * physical mock layout using a clean O(1) dictionary lookup map.
-     * generateXalorMock
+     * Generates a randomized, high-entropy mock object from a registered
+     * TypeScript blueprint.
+     *
+     * SIMULACRUM FOUNDATION:
+     * Converts a static `TSolidShape` blueprint into a randomized physical mock
+     * layout using an O(1) registry lookup. Native TypeScript definitions remain
+     * the single source of truth and are mined transparently by the background
+     * compiler watcher, eliminating schema duplication while preserving complete
+     * type fidelity.
+     *
+     * In addition to automatic generation, callers may selectively override the
+     * generation strategy for individual properties. Each property can be mapped
+     * to a registered Simulacrum generator utility along with an optional,
+     * strongly-typed configuration object specific to that utility.
+     *
+     * This enables precise customization while preserving the surrounding object's
+     * automatic generation behavior.
+     *
      * DESIGN INVARIANTS:
-     * - Satisfies COMMANDMENT I & III: Reads static type specifications flatly out of the main Vault Registry.
-     * - Satisfies COMMANDMENT IV: Performs a single, isolated semantic operation (Random Mock Simulation).
-     * - Satisfies COMMANDMENT VIII: Zero-allocation inline strategy dispatch; tree-shakes fully from client bundles.
-     * - Satisfies COMMANDMENT IX: Zero 'any' variables, zero manual type escape hatches or casting overrides.
+     * - COMMANDMENT I & III:
+     *   Reads static type specifications directly from the Vault Registry.
+     * - COMMANDMENT IV:
+     *   Performs exactly one semantic responsibility—mock simulation.
+     * - COMMANDMENT VIII:
+     *   Uses zero-allocation strategy dispatch and tree-shakes from client bundles.
+     * - COMMANDMENT IX:
+     *   Contains no `any`, unsafe casts, or manual type escape hatches.
+     *
+     * @typeParam K
+     * The registry key identifying the target type definition.
+     *
+     * @param overrides
+     * Optional per-property generation overrides.
+     *
+     * Each property may specify:
+     * - A registered Simulacrum generator utility.
+     * - An optional configuration object unique to that utility.
+     *
+     * This allows individual fields to be generated using specialized algorithms
+     * without affecting the remainder of the object.
+     *
+     * @returns
+     * A nominally branded, high-entropy mock object matching the registered type.
+     *
+     * BUILT-IN GENERATORS:
+     *
+     * | Generator | Description |
+     * |-----------|-------------|
+     * | `uuid` | Generates a random RFC 4122 UUID v4. |
+     * | `compactId` | Generates a short, URL-safe unique identifier. |
+     * | `percentage` | Generates a randomized percentage with configurable bias. |
+     * | `currency` | Generates a localized currency amount. |
+     * | `email` | Generates a realistic semantic email address. |
+     * | `userHandle` | Generates a human-readable username or handle. |
+     * | `loremIpsum` | Generates sentences, paragraphs, or markdown content. |
+     * | `timestamp` | Generates a realistic relative timestamp. |
+     * | `mockJwt` | Generates a structurally valid mock JWT token. |
+     * | `maskedString` | Masks or anonymizes sensitive string values. |
+     * | `miniBlockCipher` | Generates reversible Feistel-style encrypted strings for testing. |
+     *
+     * Each generator exposes its own strongly-typed configuration object when used
+     * as a property override.
      *
      * @example
      * ```ts
-     * const fakeUser = generateXalorMock('USER_ACCOUNT');
-     * console.log(fakeUser.username); // "abcde12345" -> Random high-entropy data string!
+     * const order = xalor.mock<'DEEPLY_NESTED_STORE'>({
+     *   orderId: ['compactId', {}],
+     *   email: ['email', {
+     *     domain: 'acme.com',
+     *   }],
+     *   secret: ['maskedString', {
+     *     visibleStart: 2,
+     *     visibleEnd: 2,
+     *   }],
+     * });
      * ```
-     *
-     * @param {keyof ISolidRegistry} injectedKey - The authoritative pre-compiled registry target key token.
-     * @returns {TSolidBranded<K, ISolidRegistry[K]>} An ironclad, nominally-branded, high-entropy simulated data asset object.
-     *
      */
     static generateXalorMock(): void;
     /**

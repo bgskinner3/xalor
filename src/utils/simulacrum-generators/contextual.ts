@@ -3,7 +3,7 @@ import {
   SIMULACRUM_ASCII_SYNTAX_MARKERS,
   TIME_UNIT_MULTIPLIERS,
 } from '../../models/constants';
-import type { TMarkdownControl, TTimestampControl } from '../../models/types';
+import type { TXalorSimTypeMap } from '../../models/types';
 
 // ================================================================================
 // ================================================================================
@@ -130,7 +130,7 @@ export const generateLoremMarkdown = ({
   sentencesPerParagraph = 0, // 0 dictates mathematical randomization fallback
   wordsPerSentence = 0, // 0 dictates mathematical randomization fallback
   includeHeader = true,
-}: TMarkdownControl = {}): string => {
+}: TXalorSimTypeMap<'TMarkdownConfig'> = {}): string => {
   // Clamp configuration limits safely via Math primitives to block unsafe inputs
   const pCount = Math.max(1, Math.min(paragraphs, 16));
   const sMax = Math.max(0, Math.min(sentencesPerParagraph, 16));
@@ -282,7 +282,7 @@ export const generateLoremMarkdown = ({
 export const generateRelativeTimestamp = ({
   pattern = '-0m',
   allowDrift = true,
-}: TTimestampControl = {}): string => {
+}: TXalorSimTypeMap<'TTimestampConfig'> = {}): string => {
   const patternLength = pattern.length;
 
   const safeLength = Math.max(2, Math.min(patternLength, 8));

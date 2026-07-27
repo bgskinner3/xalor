@@ -4,6 +4,7 @@ import { assertRegistryKey } from '../../../shared/utils/guards';
 import { BRAND_SYMBOL, isRecord, hasKey } from '../../../shared';
 import type { TSolidBranded } from '../../../shared';
 import { xalethorVaultDiagnostics } from '../../xalor-service/vault-diagnostics';
+import type { TMockOverrides } from '../../models/types';
 
 // Holds long-lived, pre-allocated memory pointers for nominal tokens to keep memory flat
 const brandTokenCache = new Map<string, [string, string]>();
@@ -25,13 +26,17 @@ const brandTokenCache = new Map<string, [string, string]>();
  * ```
  * @see {@link RuntimeApiCoreDocs.generateXalorMock}
  */
-export function generateXalorMock<
-  K extends TActiveRegistryKeys = TActiveRegistryKeys,
->(injectedKey?: K): TSolidBranded<K, TResolveRegistryStructure<K>> {
+/* prettier-ignore */
+export function generateXalorMock<K extends TActiveRegistryKeys>(
+  injectedKey?: K,
+  overrides?: TMockOverrides<K>,
+): TSolidBranded<K, TResolveRegistryStructure<K>> {
+
   ensureGlobalVault();
   assertRegistryKey(injectedKey);
 
-  const mockPayload = xalethorVaultGenerator.getMockRaw(injectedKey);
+
+  const mockPayload = xalethorVaultGenerator.getMockRaw(injectedKey, overrides);
 
   if (isRecord(mockPayload)) {
     let brandToken = brandTokenCache.get(injectedKey);

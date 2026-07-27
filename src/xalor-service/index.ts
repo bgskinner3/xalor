@@ -120,11 +120,11 @@ class XalethorService {
   ): TResolveRegistryStructure<K> {
     return xalethorVaultGenerator.getDefaultRaw(key);
   }
-  public produceMock<K extends TActiveRegistryKeys>(
-    key: K,
-  ): TResolveRegistryStructure<K> {
-    return xalethorVaultGenerator.getMockRaw(key);
-  }
+  // public produceMock<K extends TActiveRegistryKeys>(
+  //   key: K,
+  // ): TResolveRegistryStructure<K> {
+  //   return xalethorVaultGenerator.getMockRaw(key);
+  // }
 
   public produceCast<K extends TActiveRegistryKeys>(
     data: unknown,

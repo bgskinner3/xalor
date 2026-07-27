@@ -1,5 +1,5 @@
 import { SIMULACRUM_ASCII_TABLES } from '../../models/constants';
-import type { TMaskControl, TFeistelControl } from '../../models/types';
+import type { TXalorSimTypeMap } from '../../models/types';
 
 // ================================================================================
 // ================================================================================
@@ -51,7 +51,7 @@ export const generateMockJwt = (_payloadShape?: unknown): string => {
  */
 export const generateAnonymizedMask = (
   sourceValue: string,
-  { strategy = 'full', maskChar = '*' }: TMaskControl = {},
+  { strategy = 'full', maskChar = '*' }: TXalorSimTypeMap<'TMaskConfig'> = {},
 ): string => {
   // Resolve target ASCII replacement codes natively: '*'=42, 'X'=88
   const maskByte = maskChar === '*' ? 42 : 88;
@@ -150,7 +150,11 @@ const executeFeistelRoundFunction = (num: number, roundKey: number): number => {
  */
 export const generateFeistelBlockCipher = (
   plaintext: string,
-  { key = 1337, rounds = 4, mode = 'encrypt' }: TFeistelControl = {},
+  {
+    key = 1337,
+    rounds = 4,
+    mode = 'encrypt',
+  }: TXalorSimTypeMap<'TFeistelConfig'> = {},
 ): string => {
   const { FEISTEL_HEX_BYTES } = SIMULACRUM_ASCII_TABLES;
 
