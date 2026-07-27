@@ -5,7 +5,13 @@ import type {
   TXalorTupleMapping,
 } from '../../models/types';
 import { XALOR_SIM_GENERATOR_UTIL_KEYS } from '../../models';
-import { isKeyInObject, isString, isArray } from '../../../shared';
+import {
+  isKeyInObject,
+  isString,
+  isArray,
+  isObject,
+  isUndefined,
+} from '../../../shared';
 
 export function isUserMutationCallback<Structure, Key extends keyof Structure>(
   rule: unknown,
@@ -50,15 +56,12 @@ export function isValidTupleRule<K extends TXalorSimGeneratorKeys>(
 // Strategy A: Unpacks known object wrapper properties to match positional parameters cleanly
 const pureStrategy: IArchetypeStrategy = Object.freeze({
   execute: (generatorFn, _, __, config) => {
-    // 🎯 FIX: Check if the config is an object wrapper container (like { length: 12 })
-    if (config && typeof config === 'object' && 'length' in config) {
-      const positionalLength = (config as Record<string, unknown>).length;
+    if (isObject(config) && isKeyInObject('length')(config)) {
+      const positionalLength = config.length;
       return generatorFn(positionalLength);
     }
-
-    // Default fallback for pure object config shapes (currency, percentage, etc.)
-    const packedArgs =
-      config !== undefined ? Object.freeze([config]) : Object.freeze([]);
+    /* prettier-ignore */
+    const packedArgs = !isUndefined(config) ? Object.freeze([config]) : Object.freeze([]);
     return generatorFn(...packedArgs);
   },
 });
@@ -73,10 +76,9 @@ const contextualStrategy: IArchetypeStrategy = Object.freeze({
 // Strategy C: Passes the baseline mock primitive first, followed by custom configurations
 const transformerStrategy: IArchetypeStrategy = Object.freeze({
   execute: (generatorFn, _, baselineValue, config) => {
-    const transformerArgs =
-      config !== undefined
-        ? Object.freeze([baselineValue, config])
-        : Object.freeze([baselineValue]);
+    const transformerArgs = !isUndefined(config)
+      ? Object.freeze([baselineValue, config])
+      : Object.freeze([baselineValue]);
 
     return generatorFn(...transformerArgs);
   },
