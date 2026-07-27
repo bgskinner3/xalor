@@ -19,11 +19,11 @@
       "blockTwo": {
         "header": "One Source of Truth",
         "iconName": "brain-bulb",
-        "description": "TypeScript erases every type definition during compilation. This leaves your production code blind, unable to verify incoming network data. Existing tools try to fix this by forcing you to maintain duplicate runtime schemas or by outputting large, auto-generated files that slow down your code editors.  \n Xalor solves both problems automatically by capturing your types during your standard build pass.",
+        "description": "TypeScript removes type definitions during compilation, leaving production code unable to verify network data. Other tools fix this with duplicate schemas or bloated generated files that slow down code editors. Xalor solves both problems automatically by capturing your types during the standard build pass.",
         "list": [
           "_Write native TypeScript once_ —  Eliminate duplicate schemas, manual syncing errors, and custom validation languages.",
-          "_Reuse the same types at runtime_ Enforce clean structural contracts natively for instant validation, type-guards, and parsing gates.",
-          "_Unlock runtime type intelligence_ Go beyond validation to power automated data normalization, safe default populating, and legacy schema updates."
+          "_Reuse the same types at runtime_ —  Enforce clean structural contracts natively for instant validation, type-guards, and parsing gates.",
+          "_Unlock runtime type intelligence_ —  Go beyond validation to power automated data normalization, safe default populating, and legacy schema updates."
         ]
       },
       "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\n// 1. Define your pristine, native TypeScript model\nexport interface User {\n  id: number;\n  name: string;\n  role: 'user' | 'admin';\n}\n\n// 2. Register your contract (Intercepted entirely at build-time)\nxalor.register<'USER_PROFILE', User>();\n\n// 3. Process raw, untrusted network payloads synchronously\ntry {\n  const verifiedUser = xalor.parse<'USER_PROFILE'>(incomingPayload);\n  \n  // ✅ Data is fully validated, cast, and nominally branded!\n  console.log(verifiedUser.name);\n} catch (error) {\n  console.error(\"Traceable GPS Diagnostics:\", error.message);\n}"
@@ -90,9 +90,9 @@
       "isActive": true,
       "description": "Traditional validation engines collapse when a network payload is malformed because they stop execution to build complex error objects in the heap. Xalor utilizes a **Hybrid Architecture Split** that executes a fail-fast linear check at raw hardware velocity, delivering an identical runtime performance budget regardless of data quality.",
       "bulletPoints": [
-        "**O(1) Boot Hydration** — Bypasses the heavy `1.21 ms` macro ingestion tax entirely, settling into memory in an astonishing **356 nanoseconds** on system boot.",
-        "**Fail-Fast Rejections** — Rejects corrupted data packets or malicious API surges in **284 nanoseconds**, outperforming alternative runtimes by over **4,000%**.",
-        "**Transient Memory Preservation** — Processes complex schema upgrades in a single pass without holding long-lived memory allocations or de-optimizing V8 class shapes."
+        "_O(1) Boot Hydration_ — Bypasses the heavy `1.21 ms` macro ingestion tax entirely, settling into memory in an astonishing **356 nanoseconds** on system boot.",
+        "_Fail-Fast Rejections_ — Rejects corrupted data packets or malicious API surges in **284 nanoseconds**, outperforming alternative runtimes by over **4,000%**.",
+        "_Transient Memory Preservation_ — Processes complex schema upgrades in a single pass without holding long-lived memory allocations or de-optimizing V8 class shapes."
       ],
       "links": {
         "seeMore": {
@@ -161,7 +161,7 @@
       "visuals": {
         "codeBlock": {
           "code": "[ AST Node Pass ] ──► Analyzed by theMiner loop\n        │\n        ▼\n[ Pre-Reification Gates ] ──► Lineage verification via Symbol IDs\n        │\n        ▼\n[ Deep Shape Unroller ] ──► Extracted into un-normalized TSolidShape\n        │\n        ▼\n[ Canonical Serialization ] ──► Flattened by serializeCanonicalFingerprint\n        │\n        ▼\n[ Content-Addressable Pool ] ──► Deduplicated into invariant sh_ entries",
-          "note": "Every type registration passes through this single-entry funnel (`transformer/index.ts`). Before structural exploration occurs, the orchestrator routes nodes through our **Purity and Recursion Radars**. Sibling paths allocate completely isolated tracking frames, ensuring that parallel horizontal evaluation lines never leak memory references into one another or trigger false-positive compiler locks."
+          "note": "All type registrations enter through a unified funnel (`transformer/index.ts`). Each evaluation path receives an isolated tracking frame, preserving purity, recursion safety, and deterministic compilation."
         },
         "image": {
           "alt": "",
@@ -199,7 +199,7 @@
         },
         "codeBlock": {
           "code": "// 📂 dist/server/xalor.blueprints.json\n{\n  \"blueprints\": {\n    \"sh_16c0mbs\": {\n      \"kind\": \"object\",\n      \"properties\": {\n        \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"status\": { \"shape\": { \"kind\": \"union\", \"values\": [\"pending\", \"completed\"] } },\n        \"amount\": { \"shape\": { \"kind\": \"reference\", \"name\": \"sh_1cr65y8\" } }\n      }\n    },\n    \"sh_1nculbp\": {\n      \"kind\": \"object\",\n      \"properties\": {\n        \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"currency\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"amount\": { \"shape\": { \"kind\": \"reference\", \"name\": \"sh_1cr65y8\" } }\n      }\n    }\n  },\n  \"references\": {\n    \"TRANSACTION_SAFE\": \"sh_16c0mbs\",\n    \"BASE_TRANSACTION\": \"sh_1nculbp\"\n  }\n}",
-          "note": "Trace the lifecycle across the infographic. When you declare multiple source models (`Step I`), Xalor triggers an `AOT Compaction Sweep` (`Step II`) that erases identical nested shapes. Notice how the `amount` fields inside both `sh_16c0mbs` and `sh_1nculbp` point directly to a single shared leaf cell inside the `Decoupled Vault` (`Step III`). On system boot, your application skips recursive graph parsing entirely, achieving instant **O(1) pointer hydration**."
+          "note": "Repeated structures collapse into shared blueprint references during the `AOT Compaction Sweep`. Nested shapes are stored once and resolved through lightweight pointers, enabling deterministic **O(1) hydration** at runtime."
         }
       }
     },
@@ -212,7 +212,8 @@
       "visuals": {
         "codeBlock": {
           "code": " ┌────────────────────────────────────────────────────────┐\n │    NATIVE AST ENTRY TRACK: src/models/registry.ts      │\n └───────────────────────────┬────────────────────────────┘\n                             │\n                ┌────────────┴────────────┐\n                ▼                         ▼\n   ┌─────────────────────────┐  ┌─────────────────────────┐\n   │   NODE A: TRANSACTION   │  │  NODE B: USER_PROFILE   │\n   │    Hash: sh_16c0mbs     │  │    Hash: sh_pnaa6g      │\n   └────────────┬────────────┘  └────────────┬────────────┘\n                │                            │\n                └─────────────┬──────────────┘\n                              │ (Isomorphic Shared Edge Vector)\n                              ▼\n               ┌──────────────────────────────┐\n               │   CONVERGENT CAS LEAF CELL   │\n               │    Vault Key: sh_1cr65y8     │\n               │    • value ➔ [string]        │\n               │    • exponent ➔ [number]     │\n               └──────────────┬───────────────┘\n                              │\n ═════════════════════════════▼═════════════════════════════════════\n          XALOR RUNTIME INFRASTRUCTURE INJECTION MATRIX\n ═══════════════════════════════════════════════════════════════════\n    │                │                │                │\n    ▼                ▼                ▼                ▼\n┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐\n│ xalor.parse  │ │ xalor.guard  │ │ xalor.match  │ │ xalor.default│\n│  Fast O(1)   │ │  Bare-Metal  │ │ Polymorphic  │ │  Test Suite  │\n│  Structural  │ │  Assertive   │ │ Pattern-Match│ │  Mock Data   │\n│  Validation  │ │  Type Gates  │ │ Closure Handl│ │  Hydrator DTO│\n└───────┬──────┘ └───────┬──────┘ └───────┬──────┘ └───────┬──────┘\n        │                │                │                │\n        └────────────────┼────────────────┼────────────────┘\n                         ▼                ▼\n                 ┌──────────────┐ ┌──────────────┐\n                 │ xalor.merge  │ │ xalor.clone  │\n                 │ Polymorphic  │ │  Deep Copy   │\n                 │ AST Combine  │ │   Identity   │\n                 │ Node Utility │ │ Preservation │\n                 └──────────────┘ └──────────────┘",
-          "note": "Because your codebase geometry is pre-compiled into an optimized key-value mapping, your types unlock an extensible runtime intelligence layer. Pass your reference keys natively into our 6 core strategy vectors:\n\n• `xalor.parse` — Executes high-velocity structural verification returning nominally-branded variables.\n• `xalor.guard` — Functions as an assertive inline type-guard function passing unknown objects safely.\n• `xalor.match` — Evaluates polymorphic payload webhooks directly into strongly-typed closure handlers.\n• `xalor.default` — Instantly hydrates zero-state fallback models using safe system primitive values.\n• `xalor.merge` — Combines separate, pre-compiled structural blueprints together on the fly in memory.\n• `xalor.clone` — Performs circular-safe object duplication while fully preserving internal structural identity."
+          "note": "Because your codebase geometry is pre-compiled into an optimized key-value mapping, your types unlock an extensible runtime intelligence layer. Pass your reference keys into our 6 core strategy vectors:\n\n• `xalor.parse()` — #Executes high-velocity structural verification and returns nominally-branded variables.#\n• `xalor.guard()` — #Provides an assertive inline type-guard function for safely passing unknown objects.#\n• `xalor.match()` — #Evaluates polymorphic payloads and routes them into strongly-typed execution handlers.#\n• `xalor.default()` — #Hydrates zero-state fallback models using safe system primitive values.#\n• `xalor.merge()` — #Combines pre-compiled structural blueprints through controlled in-memory composition.#\n• `xalor.clone()` — #Performs circular-safe object duplication while preserving internal structural identity.#",
+          "noteOld": "Your pre-compiled codebase geometry enables a specialized runtime strategy layer. The vectors below define the core execution primitives, their responsibilities, performance characteristics, and impact across your data pipeline."
         },
         "strategyVectorsRegistry": [
           {
@@ -977,7 +978,7 @@
         },
 
         "composite": {
-          "header": "xalor.composite()",
+          "header": "Composite (xalor.composite)",
           "description": "A structural intersection switchboard that evaluates untyped payloads against an ad-hoc combination of multiple discrete blueprint hashes or contract keys in volatile heap memory, enforcing runtime trait composition.",
           "subDescription": "Evaluates complex multiple-blueprint conditions using a Left-to-Right Sequential Object Assign Override rule while maintaining sub-microsecond validation loops.",
           "codeTabs": [
@@ -1015,7 +1016,7 @@
           ]
         },
         "diff": {
-          "header": "xalor.diff()",
+          "header": "Diff (xalor.diff)",
           "description": "An ahead-of-time (AOT) compiler-assisted research layer that leverages centralized build-time serialized registry snapshots to perform immediate, O(1) runtime structural delta verifications and contract compatibility profiling between completely independent data schemas.",
           "subDescription": "Statically unrolls complex nested interface graphs into flat, trace-optimized bitmap matrices to identify structural schema changes without requiring active runtime parsing algorithms.",
           "codeTabs": [
@@ -1155,114 +1156,136 @@
       "statusList": [
         {
           "id": "0636-44e3-8",
-          "name": "guard",
+          "name": "`xalor.guard()`",
           "status": "active",
           "category": "validation"
         },
         {
           "id": "0hdk6-44e3-8",
-          "name": "safeParse",
+          "name": "`xalor.safeParse()`",
           "status": "active",
           "category": "validation"
         },
         {
           "id": "7b2a-412e-87d",
-          "name": "parse",
+          "name": "`xalor.parse()`",
           "status": "active",
           "category": "validation"
         },
         {
           "id": "9f8d-4b53-a",
-          "name": "default",
+          "name": "`xalor.default()`",
           "status": "active",
           "category": "generate"
         },
         {
           "id": "4c2a-4573-a859",
-          "name": "clone",
+          "name": "`xalor.clone()`",
           "status": "active",
           "category": "transform"
         },
         {
           "id": "18f5-4d56-bc94",
-          "name": "merge",
+          "name": "`xalor.merge()`",
           "status": "active",
           "category": "transform"
         },
         {
           "id": "e395-47b2-9dfd",
-          "name": "drift",
+          "name": "`xalor.drift()`",
           "status": "active",
           "category": "match"
         },
         {
           "id": "4bf-f5ae-e3",
-          "name": "composite",
+          "name": "`xalor.composite()`",
           "status": "inProgress",
           "category": "match"
         },
         {
           "id": "cfae-e3-b9",
-          "name": "cast",
+          "name": "`xalor.cast()`",
           "status": "active",
           "category": "generate"
         },
         {
           "id": "cfkse-s3-b9",
-          "name": "mock",
+          "name": "`xalor.mock()`",
           "status": "active",
           "category": "generate"
         },
         {
           "id": "52-49b-aef7",
-          "name": "diff",
+          "name": "`xalor.diff()`",
           "status": "research",
           "category": "match"
         }
       ],
       "contentList": [
         {
-          "name": "guard",
+          "id": "0636-44e3-8",
+          "responsibility": "Perimeter Narrowing",
+          "allocation": "Near-zero footprint",
           "description": "Generates a stateless **type predicate closure** for sub-microsecond payload narrowing at runtime boundaries."
         },
         {
-          "name": "safeParse",
+          "id": "0hdk6-44e3-8",
+          "responsibility": "Safe Parsing",
+          "allocation": "Controlled result allocation",
           "description": "Isolates execution side-effects, returning a clean result block containing a boolean flag and a flat **collected validation error list**."
         },
         {
-          "name": "parse",
+          "id": "7b2a-412e-87d",
+          "responsibility": "Ingress Security",
+          "allocation": "Hard zero heap additions",
           "description": "Synchronously evaluates incoming shapes against blueprints, throwing **traceable GPS diagnostics** on failure."
         },
         {
-          "name": "default",
+          "id": "9f8d-4b53-a",
+          "responsibility": "Boilerplate Seeding",
+          "allocation": "Zero strategy overhead",
           "description": "Manufactures **safe fallback structures** pre-hydrated with system primitives to prevent undefined crashes."
         },
         {
-          "name": "clone",
-          "description": "Performs a **deep, circular-safe copy** while physically scrubbing away keys missing from blueprints."
+          "id": "4c2a-4573-a859",
+          "responsibility": "Malicious Purging",
+          "allocation": "Zero-allocation dispatch",
+          "description": "Performs a **deep, circular-safe copy** of an input object while completely scrubbing away lingering keys, unmapped attributes, or trailing closure noise not explicitly permitted by the type contract."
         },
         {
-          "name": "merge",
+          "id": "18f5-4d56-bc94",
+          "responsibility": "Deep Graph Mutation",
+          "allocation": "Single-pass linear loops",
           "description": "Fuses schemas symmetrically; matching primitives overwrite, nested objects fuse, and arrays combine **item-by-item**."
         },
         {
-          "name": "drift",
-          "description": "Executes a **10-phase upcast pipeline** to safely migrate historical backend payloads into current modern production layouts on the fly."
+          "id": "e395-47b2-9dfd",
+          "responsibility": "Payload Evolution",
+          "allocation": "Incremental migration path",
+          "description": "Executes a **10-phase upcast pipeline** to safely migrate historical backend payloads into current production layouts on the fly."
         },
         {
-          "name": "cast",
-          "description": "Forces loose external payload structures into compliance by safely mapping mismatched **primitive variants**."
-        },
-        {
-          "name": "mock",
-          "description": "Generates randomized, high-entropy fixtures natively from blueprints, unlocking ** strongly-typed Simulacrum property overrides**."
-        },
-        {
-          "name": "composite",
+          "id": "4bf-f5ae-e3",
+          "responsibility": "Contract Composition",
+          "allocation": "Shared execution graph",
           "description": "Combines multiple **independent registry contracts** into a unified validation execution graph."
         },
         {
-          "name": "diff",
+          "id": "cfae-e3-b9",
+          "responsibility": "Runtime Coercion",
+          "allocation": "Targeted primitive mapping",
+          "description": "Forces loose external payload structures into compliance by safely mapping mismatched **primitive variants**."
+        },
+        {
+          "id": "cfkse-s3-b9",
+          "responsibility": "Fixture Generation",
+          "allocation": "Blueprint-derived synthesis",
+          "description": "Generates randomized, high-entropy fixtures natively from blueprints, unlocking **strongly-typed Simulacrum property overrides**."
+        },
+        {
+          "id": "52-49b-aef7",
+          "responsibility": "Structural Comparison",
+          "allocation": "Flat delta computation",
           "description": "Computes a flat **structural delta matrix** contrasting property discrepancies across two active shapes."
         }
       ]
