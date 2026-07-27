@@ -1,6 +1,6 @@
 import { xalethorVaultKeeper } from '../vault-keeper';
 import { xalethorVaultDiagnostics } from '../vault-diagnostics';
-import { isValidSolidShape, hasOwnProperty } from '../../../shared';
+import { isValidSolidShape, hasOwnProperty, isArray } from '../../../shared';
 import type { TSolidShape } from '../../../shared/shape-domain';
 import { IS_SOLID_CONFIG_ITEMS } from '../../../shared/constants';
 import {
@@ -10,8 +10,10 @@ import {
 } from '../../mappers';
 import {
   isTargetRegistryStructure,
+  isValidTupleRule,
   isUserMutationCallback,
   isValidMockOverrideBlock,
+  isXalorSimGeneratorKey,
   ARCHETYPE_STRATEGY_ROUTER,
   xalorSimGenerator,
 } from '../../utils';
@@ -22,23 +24,6 @@ import type {
 } from '../../models/types';
 import { XALOR_SIM_GENERATOR_UTIL_KEYS } from '../../models';
 
-/**
- * XALETHOR VAULT GENERATOR
- *
- * ROLE:
- * The "Factory." It uses Blueprints to materialize brand-new
- * JavaScript objects from thin air.
- *
- * WHAT GOES HERE:
- * - 'getDefault' materialization.
- * - Mocking, Templating, and Data Casting.
- * - Sanitization logic (cloning objects to strip extra keys).
- *
- * WHAT DOES NOT GO HERE:
- * - NO Validation (Factories don't inspect; they build).
- * - NO GPS or Traceability logic.
- * - NO Disk persistence.
- */
 class XalethorVaultGenerator {
   private requireShape<K extends TActiveRegistryKeys>(key: K, msg: string) {
     const shape = xalethorVaultKeeper.peek('blueprint', key);
@@ -49,6 +34,18 @@ class XalethorVaultGenerator {
     return shape;
   }
 
+  /**
+   * DISTRIBUTIVE TUPLE EVALUATOR
+   *
+   * Extracts tuple array parameters and routes them into localized execution paths natively
+   * under a single generic token context U, completely satisfying correlated union checks.
+   *
+   * @param utilKey
+   * @param tupleRule
+   * @param propertyName
+   * @param baselineValue
+   * @returns
+   */
   private evaluateTupleDescriptor<U extends TXalorSimGeneratorKeys>(
     utilKey: U,
     tupleRule: TXalorTupleMapping<U>,
@@ -57,19 +54,14 @@ class XalethorVaultGenerator {
   ): unknown {
     const behavioralArchetype = XALOR_SIM_GENERATOR_UTIL_KEYS[utilKey];
     const strategyRunner = ARCHETYPE_STRATEGY_ROUTER[behavioralArchetype];
+    // TODO: remove any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const underlyingFn: (...args: readonly any[]) => unknown =
+      xalorSimGenerator[utilKey];
 
-    const underlyingFn = xalorSimGenerator[utilKey] as (
-      ...args: readonly unknown[]
-    ) => unknown;
-
-    const userConfig = (tupleRule as readonly unknown[])[1];
-
-    const result = strategyRunner.execute(
-      underlyingFn,
-      propertyName,
-      baselineValue,
-      userConfig,
-    );
+    const userConfig = tupleRule[1];
+    /* prettier-ignore */
+    const result = strategyRunner.execute( underlyingFn, propertyName, baselineValue, userConfig );
 
     return result;
   }
@@ -88,59 +80,74 @@ class XalethorVaultGenerator {
     const targetStructure = rawStructure as Record<string, unknown>;
 
     for (const propertyName in targetStructure) {
-      if (
-        !hasOwnProperty(targetStructure, propertyName) ||
-        !hasOwnProperty(overrides, propertyName)
-      ) {
+      /* prettier-ignore */
+      if (!hasOwnProperty(targetStructure, propertyName) || !hasOwnProperty(overrides, propertyName)) {
         continue;
       }
 
       const rule = overrides[propertyName];
-      if (!rule) {
-        continue;
-      }
+
+      if (!rule) continue;
 
       const baselineValue = targetStructure[propertyName];
 
-      if (Array.isArray(rule)) {
-        const utilKey = rule[0] as TXalorSimGeneratorKeys;
+      if (isArray(rule) && isXalorSimGeneratorKey(rule[0])) {
+        const utilKey = rule[0];
 
-        const updatedValue = this.evaluateTupleDescriptor(
-          utilKey,
-          rule as unknown as TXalorTupleMapping<typeof utilKey>,
-          propertyName,
-          baselineValue,
-        );
+        if (isValidTupleRule(rule, utilKey)) {
+          const updatedValue = this.evaluateTupleDescriptor(
+            utilKey,
+            rule,
+            propertyName,
+            baselineValue,
+          );
 
-        targetStructure[propertyName] = updatedValue;
-        continue;
+          targetStructure[propertyName] = updatedValue;
+          continue;
+        }
       }
 
-      // 🎯 Case B: Standard Custom Developer Callbacks
       if (isUserMutationCallback<Record<string, unknown>, string>(rule)) {
-        this.commitUserMutation(
-          targetStructure,
-          propertyName,
-          rule,
-          baselineValue,
-        );
+        /* prettier-ignore */
+        this.commitUserMutation( targetStructure, propertyName, rule, baselineValue );
       }
     }
   }
-
-  private commitUserMutation<
-    Structure extends Record<string, unknown>,
-    P extends keyof Structure,
-  >(
+  /**
+   * COMMIT USER MUTATION SINK
+   *
+   * Binds a single property slot and its corresponding callback under a locked
+   * generic variable P, ensuring end-to-end parameter parity.
+   *
+   * DESIGN INVARIANTS:
+   * - Satisfies COMMANDMENT IX: 100% free of 'as' keywords, type assertions, or erasures.
+   */
+  /* prettier-ignore */
+  private commitUserMutation< Structure extends Record<string, unknown>, P extends keyof Structure>(
     rawStructure: Structure,
     propertyName: P,
     callbackFn: (baseValue: Structure[P]) => Structure[P],
-    baselineValue: unknown,
+    baselineValue: Structure[P],
   ): void {
-    // TypeScript perfectly verifies that the input and output align with the structural key slot
-    rawStructure[propertyName] = callbackFn(baselineValue as Structure[P]);
+    rawStructure[propertyName] = callbackFn(baselineValue);
   }
-
+  /**
+   * EXECUTE DEFAULT BUILD
+   *
+   * ROLE:
+   * The core recursive default materialization engine. Walks a shape definition
+   * and produces a zero-value object graph by delegating each node to its
+   * registered default materializer.
+   *
+   * STRATEGY:
+   * Prevents runaway recursion by enforcing the configured depth limit, validates
+   * the incoming shape, resolves the correct materializer from the registry based
+   * on the shape kind, and recursively builds child structures as needed.
+   *
+   * @param shape - The shape definition to materialize.
+   * @param depth - The current recursive traversal depth.
+   * @returns The fully materialized default value for the supplied shape.
+   */
   public executeDefaultBuild = (shape: TSolidShape, depth = 0): unknown => {
     if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) {
       return {};
@@ -159,13 +166,21 @@ class XalethorVaultGenerator {
   };
 
   /**
-   * executeMockBuild
+   * EXECUTE MOCK BUILD
    *
+   * ROLE:
+   * The recursive mock data materialization engine. Traverses a shape definition
+   * and generates representative mock values using the registered mock
+   * materializers for each shape kind.
    *
+   * STRATEGY:
+   * Enforces the configured recursion limit, validates the incoming shape,
+   * dispatches to the appropriate mock materializer, and recursively generates
+   * child values until the complete mock object graph is produced.
    *
-   * @param shape
-   * @param depth
-   * @returns
+   * @param shape - The shape definition to materialize.
+   * @param depth - The current recursive traversal depth.
+   * @returns The fully materialized mock value for the supplied shape.
    */
   public executeMockBuild = (shape: TSolidShape, depth = 0): unknown => {
     if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) return {};
@@ -181,7 +196,23 @@ class XalethorVaultGenerator {
 
     return executeMaterializer(shape.kind, shape);
   };
-
+  /**
+   * EXECUTE CAST BUILD
+   *
+   * ROLE:
+   * The recursive casting engine. Walks a shape definition while transforming
+   * arbitrary input data into a structure that conforms to the target shape.
+   *
+   * STRATEGY:
+   * Stops traversal at the configured recursion limit, validates the incoming
+   * shape, dispatches to the appropriate shape-specific caster, and recursively
+   * converts nested values into their expected runtime representation.
+   *
+   * @param shape - The target shape definition.
+   * @param data - The source data being transformed.
+   * @param depth - The current recursive traversal depth.
+   * @returns The casted value matching the supplied shape.
+   */
   /* prettier-ignore */
   public executeCastBuild = (shape: TSolidShape,  data: unknown, depth = 0): unknown => {
     if (depth >= IS_SOLID_CONFIG_ITEMS.reifyLimit.maxDepth) {

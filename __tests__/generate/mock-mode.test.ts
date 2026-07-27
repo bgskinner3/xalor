@@ -587,7 +587,7 @@ describe('Runtime Generator API - Mock Mode', () => {
       const result = xalor.mock<'USER_PROFILE'>({
         displayName: ['userHandle'],
       });
-      console.log(result);
+
       expect(typeof result.displayName).toBe('string');
       // Ensures the contextual @ structural prefix is present regardless of entropy
       expect(result.displayName.startsWith('@')).toBe(true);
@@ -719,7 +719,6 @@ describe('Runtime Generator API - Mock Mode', () => {
         status: () => 'success' as 'success' | 'failed',
       });
 
-      console.log(result);
       expect(result).toBeDefined();
 
       // 🎯 FIXED: Re-defining a property on a frozen object ALWAYS forces a fatal

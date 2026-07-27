@@ -27,15 +27,9 @@ const brandTokenCache = new Map<string, [string, string]>();
  * @see {@link RuntimeApiCoreDocs.generateXalorMock}
  */
 /* prettier-ignore */
-export function generateXalorMock<K extends TActiveRegistryKeys>(
-  injectedKey?: K,
-): TSolidBranded<K, Readonly<TResolveRegistryStructure<K>>>;
-
-export function generateXalorMock<K extends TActiveRegistryKeys>(
-  overrides: TMockOverrides<K>,
-  injectedKey?: K,
-): TSolidBranded<K, Readonly<TResolveRegistryStructure<K>>>;
-
+export function generateXalorMock<K extends TActiveRegistryKeys>(injectedKey?: K): TSolidBranded<K, Readonly<TResolveRegistryStructure<K>>>;
+/* prettier-ignore */
+export function generateXalorMock<K extends TActiveRegistryKeys>( overrides: TMockOverrides<K>, injectedKey?: K): TSolidBranded<K, Readonly<TResolveRegistryStructure<K>>>;
 export function generateXalorMock<K extends TActiveRegistryKeys>(
   arg1: K | TMockOverrides<K>,
   arg2?: K,
