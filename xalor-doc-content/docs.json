@@ -1157,67 +1157,67 @@
       "statusList": [
         {
           "id": "0636-44e3-8",
-          "name": "`xalor.guard()`",
+          "name": "guard",
           "status": "active",
           "category": "validation"
         },
         {
           "id": "0hdk6-44e3-8",
-          "name": "`xalor.safeParse()`",
+          "name": "safeParse",
           "status": "active",
           "category": "validation"
         },
         {
           "id": "7b2a-412e-87d",
-          "name": "`xalor.parse()`",
+          "name": "parse",
           "status": "active",
           "category": "validation"
         },
         {
           "id": "9f8d-4b53-a",
-          "name": "`xalor.default()`",
+          "name": "default",
           "status": "active",
           "category": "generate"
         },
         {
           "id": "4c2a-4573-a859",
-          "name": "`xalor.clone()`",
+          "name": "clone",
           "status": "active",
           "category": "transform"
         },
         {
           "id": "18f5-4d56-bc94",
-          "name": "`xalor.merge()`",
+          "name": "merge",
           "status": "active",
           "category": "transform"
         },
         {
           "id": "e395-47b2-9dfd",
-          "name": "`xalor.drift()`",
+          "name": "drift",
           "status": "active",
           "category": "match"
         },
         {
           "id": "4bf-f5ae-e3",
-          "name": "`xalor.composite()`",
+          "name": "composite",
           "status": "inProgress",
           "category": "match"
         },
         {
           "id": "cfae-e3-b9",
-          "name": "`xalor.cast()`",
+          "name": "cast",
           "status": "active",
           "category": "generate"
         },
         {
           "id": "cfkse-s3-b9",
-          "name": "`xalor.mock()`",
+          "name": "mock",
           "status": "active",
           "category": "generate"
         },
         {
           "id": "52-49b-aef7",
-          "name": "`xalor.diff()`",
+          "name": "diff",
           "status": "research",
           "category": "match"
         }
