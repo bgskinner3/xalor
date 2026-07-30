@@ -56,7 +56,12 @@ export function xalorNextTurboWatchPlugin(
       const absoluteFilePath = path
         .join(absoluteWatchTarget, relativeFileName)
         .replace(/\\/g, '/');
-
+      if (
+        absoluteFilePath.includes('/.xalor/') ||
+        absoluteFilePath.endsWith('solid-env.ts')
+      ) {
+        return;
+      }
       // Step B: Defensive perimeter filter. Ignore files that aren't TypeScript modules
       if (
         !absoluteFilePath.endsWith('.ts') &&

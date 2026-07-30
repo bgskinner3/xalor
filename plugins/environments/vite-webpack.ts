@@ -1,4 +1,4 @@
-// plugins/core.ts
+// plugins/enviorments/vite-webpack.ts
 /**
  * 🪐 XALOR AMBIENT DEVELOPMENT INTEGRATION GATEWAYS
  *
@@ -78,6 +78,15 @@ export const assertWebpackShapeIntegrity: TTypeGuard<
 export function executeAmbientTransformationPass(
   absoluteFilePath: string,
 ): void {
+  const normalizedAbsolute = path.resolve(absoluteFilePath).replace(/\\/g, '/');
+
+  if (
+    normalizedAbsolute.includes('/.xalor/') ||
+    normalizedAbsolute.endsWith('solid-env.ts')
+  ) {
+    return;
+  }
+
   if (!absoluteFilePath.endsWith('.ts') && !absoluteFilePath.endsWith('.tsx')) {
     return;
   }
@@ -97,7 +106,6 @@ export function executeAmbientTransformationPass(
    *  primitive string value natively
    */
   const rootStr = fsContext.envPaths.rootDir.valueOf();
-  const normalizedAbsolute = path.resolve(absoluteFilePath).replace(/\\/g, '/');
   const normalizedRoot = path.resolve(rootStr).replace(/\\/g, '/');
 
   let relativePathKey = normalizedAbsolute.replace(normalizedRoot, '');

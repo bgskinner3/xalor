@@ -33,7 +33,7 @@ export function runVacuumCommand(projectRootPath: string) {
     noEmit: false,
     emitDeclarationOnly: false,
     //  declaration: true,
-    ignoreDeprecations: '6.0',
+    // ignoreDeprecations: '6.0',
     incremental: false,
     composite: false,
     tsBuildInfoFile: undefined,
