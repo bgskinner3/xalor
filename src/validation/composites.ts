@@ -41,30 +41,7 @@ export function validateIntersection(
   }
   return true;
 }
-// export function validateIntersection(
-//   data: unknown,
-//   shape: TSolidIntersectionShape,
-//   ctx: TValidationContext,
-// ): boolean {
-//   const parts = shape.values;
-//   const len = parts.length;
 
-//   for (let i = 0; i < len; i++) {
-//     const part = parts[i];
-//     if (part !== undefined) {
-//       // 🚀 Let the sub-error survive! Do not roll it back!
-//       if (!xalethorVaultValidation.validateShape(data, part, ctx)) {
-//         return xalethorVaultValidation.reportError({
-//           ctx,
-//           errorKey: 'INTERSECTION_VALIDATION_PART_FAILED',
-//           received: data,
-//           shapeContext: shape,
-//         });
-//       }
-//     }
-//   }
-//   return true;
-// }
 /**
  * Validates Literal value equations.
  * COMPLIANCE: Ultra-fast strict equality evaluation with flat metadata handoff.

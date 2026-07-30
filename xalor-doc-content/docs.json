@@ -402,7 +402,7 @@
     "bottomLinks": [
       {
         "id": "3d42b389-9a49-4cfa-9a16-a890a7709518",
-        "href": "/xalor/docs/xalor-explained",
+        "href": "/xalor/docs/whatIsXalor",
         "header": "What is Xalor?",
         "iconName": "layers-duotone",
         "description": "A deeper overview of Xalor — what it is, why it exists, and how it works under the hood.",
@@ -410,7 +410,7 @@
       },
       {
         "id": "da04f4d2-74a7-439b-9dec-ed41cdc5d5db",
-        "href": "/xalor/docs/apis",
+        "href": "/xalor/docs/api",
         "header": "Runtime APIs",
         "iconName": "cpu-duotone",
         "description": "Complete reference for Xalor’s runtime APIs, including system status, internal behavior, and core interactions.",
@@ -1084,6 +1084,164 @@
       "overline": "Build Toolchain",
       "iconName": "terminal-duotone"
     },
+    "cliCommands": {
+      "audit": {
+        "intro": {
+          "id": "audit",
+          "active": true,
+          "header": "Audit Traceability GPS",
+          "description": "Scans production payloads against source paths to guarantee your precise structural debugging lines match file declarations.",
+          "overline": "Telemetry Validation",
+          "iconName": "shield-check-duotone"
+        },
+        "runCommand": {
+          "codeBlock": {
+            "code": "npx xalor audit",
+            "note": "Executes a zero-overhead structural safety scan against your source types."
+          }
+        },
+        "exampleOutput": {
+          "codeBlock": {
+            "referenceKey": "MOCK_CLI_AUDIT_REPORT",
+            "note": "#Live terminal snapshot demonstrating active# _Content-Addressable Storage (CAS) interning_ #and unreferenced# `ORPHANED TYPE KEYS` #tracking.#"
+          }
+        },
+        "content": {
+          "sections": [
+            {
+              "title": "1. Storage Compaction & Speed",
+              "subtitle": "Analyzes storage deduplication and AST parsing efficiency.",
+              "bullets": [
+                "**User Registration Keys**: #The total number of# _pristine native TypeScript types_ #extracted out of your active workspace source files.#",
+                "**Deduplicated CAS Nodes**: #The count of unique structural fingerprints written to disk.# _Identical schemas across paths collapse into single storage slots._",
+                "**Vault Compact Ratio**: #Your overall storage spaces deduplication percentage achieved via# _Content-Addressable Storage (CAS) interning_.",
+                "**Compiler Trace Latency**: #The raw background processing time in milliseconds taken by the background AST compiler worker to index files.#"
+              ]
+            },
+            {
+              "title": "2. Graph Safety & Hygiene",
+              "subtitle": "Monitors deep equality check limits and internal caching.",
+              "bullets": [
+                "**Critical Depth Alarms**: #Safety flags tripped whenever an object nesting path layout breaches your designated default ceiling configuration threshold of# `10` #layers.#",
+                "**System Deepest Apex**: #Identifies the vertical depth score of your single most heavily nested interface configuration tree template inside the workspace.#",
+                "**Stale Orphaned Keys**: #Leftover tracking references sitting passively inside the workspace compilation cache frames that no longer match any active files.#"
+              ]
+            },
+            {
+              "title": "3. Lifecycle Metadata Evaporation",
+              "subtitle": "Tracks your client bundle footprint savings metrics.",
+              "bullets": [
+                "**Dev Environment Cache**: #The full binary memory weight footprint of your raw compiler type graphs layout mapped on local development disk frames.#",
+                "**Bare-Metal Prod Bundle**: #The remaining lightweight package size shipped to production browsers after stripping out development telemetry metadata layers.#",
+                "**Metadata Volume Cleansed**: #The exact metric footprint in Kilobytes permanently shredded away from production bundle tracks to maintain absolute zero asset weight bloat.#",
+                "**Trim Efficiency Rating**: #The mathematical efficiency percentage tracking exactly how much heavy compiler parsing asset weight was stripped before deployment.#"
+              ]
+            },
+            {
+              "title": "4. Runtime Hooks & Telemetry Insights",
+              "subtitle": "Maps active code usages against unreferenced schemas.",
+              "bullets": [
+                "**Dead Code Orphan Count**: #Flags compiled schemas that currently return zero active live macro tracking lookups inside your workspace paths, making them safe to delete.#",
+                "**Strategy Call Breakdown**: #A live tally tracking active static invocation count instances across every core operational macro rule including# `xalor.safeParse`, `xalor.guard`, #and# `xalor.mock`#.#"
+              ]
+            },
+            {
+              "title": "5. API Contract Drift Status",
+              "subtitle": "Your proactive barrier against schema updates breaking live systems.",
+              "bullets": [
+                "**Breaking Drifts Tripped**: #Returns a glowing green# _✅ CLEAN BASES_ #status, or fires a crimson emergency alert lock if incoming payload properties mutate away from source declarations.#",
+                "**Mutation Delta Records**: #The precise count of evolutionary property changes, parameter deletions, or missing structural updates tracked against your project baseline framework.#"
+              ]
+            }
+          ]
+        }
+      },
+      "help": {
+        "intro": {
+          "id": "help",
+          "active": true,
+          "header": "Engine Command Help",
+          "description": "Displays specific flag telemetry, global orchestration summaries, and ambient sub-command primitive validation guides.",
+          "overline": "Documentation Manual",
+          "iconName": "help-circle-duotone"
+        },
+        "runCommand": {
+          "codeBlock": {
+            "code": "npx xalor help",
+            "note": "Prints global runtime parameters and active utility flags straight to the shell."
+          }
+        },
+        "exampleOutput": {
+          "codeBlock": {
+            "referenceKey": "MOCK_CLI_HELP_MANUAL",
+            "note": "#Live snapshot of the active# _Xalor Command Core Directory_ #and global environment navigation mapping rules.#"
+          }
+        }
+      },
+      "clear": {
+        "intro": {
+          "id": "clear",
+          "active": true,
+          "header": "Clear Hydration Cache",
+          "description": "Performs a hard flash-purge that resets local cache layers, internal registry tracking frames, and Intellisense bridge files back to pristine templates.",
+          "overline": "Cache Control",
+          "iconName": "refresh-duotone"
+        },
+        "runCommand": {
+          "codeBlock": {
+            "code": "npx xalor clear",
+            "note": "Performs an atomic dual-layer system evacuation to completely clear out cached schemas."
+          }
+        },
+        "content": {
+          "sections": [
+            {
+              "title": "1. What is Being Cleared?",
+              "subtitle": "An inside look at Xalor's two-step atomic baseline system evacuation pass.",
+              "bullets": [
+                "**In-Memory Registry**: #Boots a short-lived virtual TypeScript environment context to instruct the active core transformer plugin to fully dump its active memory maps.#",
+                "**The Physical Cache Vault**: #Safely replaces your populated live database vault files# (`vault.json`) #inside the cache folder back to pristine storage templates.#",
+                "**The Ghost Bridge Layer**: #Wipes out and rewires your local project IntelliSense typing definitions bridge structures# (`bridge.dts`) #to remove unreferenced artifacts.#"
+              ]
+            },
+            {
+              "title": "2. When Should You Run This?",
+              "subtitle": "Key scenarios for running a system flash-purge.",
+              "bullets": [
+                "**Stale Tracking Recovery**: #When your project accumulates multiple dead code reference pointers or orphaned type layouts following massive refactoring steps.#",
+                "**Package Restructuring**: #If your local framework dependencies mutate drastically or your workspace moves files across nested boundary frameworks.#",
+                "**Editor Introspection Lag**: #When your local IDE environment fails to pick up real-time structural layout hot-swaps due to OS-level file permission locks.#"
+              ]
+            }
+          ]
+        }
+      },
+
+      "compile": {
+        "intro": {
+          "id": "compile",
+          "active": true,
+          "header": "Compile Layout Blueprints",
+          "description": "#Reduces your complex TypeScript AST layout into flat, content-addressed primitive snapshots.# _Bypasses recursive graph evaluations to guarantee microsecond-fast linear lookups at runtime._",
+          "overline": "Core Engine Pass",
+          "iconName": "terminal-box-duotone"
+        },
+        "runCommand": {
+          "codeBlock": {
+            "code": "npx xalor compile",
+            "note": "Executes a single-pass synchronized build to index and freeze your pristine TypeScript types into highly compressed primitive maps."
+          }
+        }
+      },
+      "vacuum": {
+        "id": "vacuum",
+        "active": true,
+        "header": "",
+        "description": "",
+        "overline": "",
+        "iconName": ""
+      }
+    },
     "bottomLinks": [
       {
         "id": "da04f4d2-74a7-439b-9dec-ed41cdc5d5db",
@@ -1315,6 +1473,12 @@
           "name": "xalor audit",
           "status": "active",
           "description": "Profiles internal metadata compaction metrics, inspects Content-Addressable Storage deduplication ratios, and scans call-sites for dead-code orphans."
+        },
+        {
+          "id": "f7a8-9b0c-1d2e",
+          "name": "xalor studio",
+          "status": "inProgress",
+          "description": "Launches a secure local UI dashboard featuring an interactive, GraphQL-like playground to visually explore, query, and test your compiled type graph structures in real time."
         },
         {
           "id": "a9b0-1c2d-3e4f",

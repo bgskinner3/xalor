@@ -216,8 +216,8 @@ Example:
 ```ts
 interface User {
   id: number;
-  name: string;
-  role: 'admin' | 'user';
+  username: string;
+  role: 'user' | 'moderator' | 'admin';
 }
 ```
 
@@ -234,13 +234,13 @@ Becomes:
         "kind": "primitive",
         "type": "number"
       },
-      "name": {
+      "username": {
         "kind": "primitive",
         "type": "string"
       },
       "role": {
         "kind": "union",
-        "values": ["admin", "user"]
+        "values": ["admin", "user", "moderator"]
       }
     }
   }
@@ -387,6 +387,7 @@ export type TUser = {
   role: 'user' | 'moderator' | 'admin';
 };
 
+// Register your type contract token for AOT extraction
 xalor.register<'USER_PROFILE', TUser>();
 ```
 
@@ -412,6 +413,7 @@ Runtime Metadata
 const result = xalor.safeParse<'USER_PROFILE'>(payload);
 
 if (result.success) {
+  // Fully typed: TypeScript automatically recognizes 'username'
   console.log(result.data.username);
 }
 ```

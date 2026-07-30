@@ -65,7 +65,13 @@
       "href": "/xalor/docs/cli",
       "iconName": "terminal-duotone",
       "active": true,
-      "sectionLinks": [{ "id": "intro", "text": "What CLI" }]
+      "sectionLinks": [
+        { "id": "intro", "text": "What CLI" },
+        { "id": "audit", "text": "Audit" },
+        { "id": "help", "text": "Help" },
+        { "id": "clear", "text": "Clear" },
+        { "id": "compile", "text": "Compile" }
+      ]
     },
     {
       "id": "1f9b7c3a-6d44-4e22-8a91-0c5e2f8a3b77",

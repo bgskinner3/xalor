@@ -30,7 +30,6 @@ export default defineConfig({
 
     // 3. Modern Node.js Prefixed Protocol Subpaths (The absolute most critical line)
     /^node:/, // Catches 'node:fs', 'node:path', 'node:crypto', 'node:child_process', etc.
-
     // 4. Legacy Node.js Standard Library Strings (For older import syntax compatibility)
     'fs',
     'path',
@@ -51,12 +50,8 @@ export default defineConfig({
     'readline',
     'process',
     'v8',
-    // 'worker_threads',
-    // 'diagnostics_channel',
   ],
   tsconfig: 'tsconfig.build.json',
-
-  // 🪐 THE CURE: Turn on active minification for the unified build pass!
   // This squashes long variable names down to single letters just like Zod.
   minify: true,
   sourcemap: true,
@@ -68,8 +63,8 @@ export default defineConfig({
   // Custom compiler properties instructing the underlying builder engine
   // to aggressively minify internal dictionary, class, and method names.
   esbuildOptions(options) {
-    options.mangleProps =
-      /_ROUTER|AreaError|ConfigRule|TerminalPanel|TransformerError|Anomaly/;
+    options.mangleProps = undefined;
+    // /_ROUTER|AreaError|ConfigRule|TerminalPanel|TransformerError|Anomaly/;
   },
 
   dts: {
@@ -103,20 +98,20 @@ export default defineConfig({
     }
 
     // 3. 🧠 THE PRODUCTION TYPES OVERRIDE:
-    const builtDtsFile = path.join(distDir, 'index.d.ts');
-    if (fs.existsSync(builtDtsFile)) {
-      const originalContent = fs.readFileSync(builtDtsFile, 'utf8');
-      const tripleSlashDirective =
-        '/// <reference path="../../../../.xalor/solid-env.ts" />\n';
-      fs.writeFileSync(
-        builtDtsFile,
-        tripleSlashDirective + originalContent,
-        'utf8',
-      );
-      console.log(
-        '[xalor:build] 🔗 Ambient workspace triple-slash directive successfully injected into production types!',
-      );
-    }
+    // const builtDtsFile = path.join(distDir, 'index.d.ts');
+    // if (fs.existsSync(builtDtsFile)) {
+    //   const originalContent = fs.readFileSync(builtDtsFile, 'utf8');
+    //   const tripleSlashDirective =
+    //     '/// <reference path="../../../../.xalor/solid-env.ts" />\n';
+    //   fs.writeFileSync(
+    //     builtDtsFile,
+    //     tripleSlashDirective + originalContent,
+    //     'utf8',
+    //   );
+    //   console.log(
+    //     '[xalor:build] 🔗 Ambient workspace triple-slash directive successfully injected into production types!',
+    //   );
+    // }
 
     // 4. Embed Static Templates cleanly using explicit filesystem cloning paths
     const srcTemplatesDir = path.join(__dirname, 'static-templates');

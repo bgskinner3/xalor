@@ -27,7 +27,6 @@ export default tseslint.config(
     files: ['**/*.ts', '**/*.tsx', '**/*.js', 'scripts/**/*.ts'],
     languageOptions: {
       parserOptions: {
-        // 🚀 SINGLETON STREAMLINING: Pointing exactly to your unified root tsconfig
         project: ['./tsconfig.json'],
         tsconfigRootDir: import.meta.dirname,
       },
