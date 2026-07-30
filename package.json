@@ -1,7 +1,7 @@
 {
   "name": "@bgskinner2/xalor",
   "description": "Ahead-of-Time Type Metadata Engine for TypeScript. Solidifies ghost types into an immutable, global runtime vault.",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.1-alpha.2",
   "author": "Brennan Skinner",
   "license": "MIT",
   "type": "module",
@@ -110,13 +110,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bgskinner3/axiom-kit/tree/main/packages/xalor",
+    "url": "git+https://github.com/bgskinner3/xalor",
     "directory": "packages/xalor"
   },
   "bugs": {
-    "url": "https://github.com/bgskinner3/axiom-kit/tree/main/packages/xalor"
+    "url": "https://github.com/bgskinner3/xalor"
   },
-  "homepage": "git+https://github.com/bgskinner3/axiom-kit/tree/main/packages/xalor",
+  "homepage": "git+https://github.com/bgskinner3/xalor",
   "engines": {
     "node": ">=16.0.0",
     "pnpm": ">=8.0.0"

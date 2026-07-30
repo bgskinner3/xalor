@@ -70,7 +70,8 @@
         { "id": "audit", "text": "Audit" },
         { "id": "help", "text": "Help" },
         { "id": "clear", "text": "Clear" },
-        { "id": "compile", "text": "Compile" }
+        { "id": "compile", "text": "Compile" },
+        { "id": "vacuum", "text": "Vacuum" }
       ]
     },
     {

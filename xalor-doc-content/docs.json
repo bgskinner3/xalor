@@ -301,6 +301,16 @@
           "note": "The compiler plugin intercepts your type parameters silently in memory, erasing 100% of the developer telemetry to guarantee **absolute zero client bundle inflation**."
         }
       },
+      "toolchainCompatibility": {
+        "header": "Ecosystem & Version Compatibility",
+        "description": "Because Xalor operates directly against the native TypeScript Compiler AST graphs, your project workspace must conform to the following baseline structural requirements:",
+        "bullets": [
+          "_TypeScript Compatibility Range_: #Fully verified and structurally locked for TypeScript v6.0.0 integrations.#",
+          "_The Ecosystem Upgrade Gate_: Please Note: With the ecosystem actively migrating toward TypeScript v7.0, Xalor intentionally freezes its operational validation parameters at the stable v6 boundary. This prevents cross-module syntax conflicts and ensures absolute pipeline predictability until the v7 specification reaches full, stable general availability.",
+          "_Module Resolution Strategy_: #Requires your tsconfig.json to utilize modern resolution models# (\"moduleResolution\": \"Bundler\" or \"NodeNext\").",
+          "_Node.js Runtime Core_: #Requires Node.js v16.0.0 or higher to support modern isomorphic ESM import protocols natively.#"
+        ]
+      },
       "configureHooks": {
         "header": "Configure the Production Lifecycle Hook",
         "description": "Before your bundler packages your production code chunks, your shell environment requires a vacuum pass to strip development dead weight and lock remaining keys into their tightest footprints.",
@@ -331,16 +341,16 @@
             "fileName": "next.config.js",
             "description": "Isolate the plugin injection with a local development flag condition to guarantee your ambient watch runs strictly inside local development servers:",
             "codeBlock": {
-              "code": "const { XalorWebpackWatchPlugin } = require('@bgskinner2/xalor/plugins');\n\n/** @type {import('next').NextConfig} */\nconst nextConfig = {\n  webpack: (config, { dev }) => {\n    if (dev) {\n      config.plugins.push(new XalorWebpackWatchPlugin());\n    }\n    return config;\n  }\n};\n\nmodule.exports = nextConfig;"
+              "code": "import { XalorWebpackWatchPlugin } from '@bgskinner2/xalor/plugins';\n\n/** @type {import('next').NextConfig} /\nconst nextConfig = {\n  webpack: (config, { dev }) => {\n    if (dev) {\n      config.plugins.push(new XalorWebpackWatchPlugin());\n    }\n    return config;\n  }\n};\n\nexport default nextConfig;"
             }
           },
           "nextTurbo": {
             "overline": "Supports Next.js App layouts operating under the native Rust-based compiler",
             "header": "Next.js Turbopack Pipelines",
             "fileName": "next.config.js",
-            "description": "Mount the specialized experimental wrapper inside your Next configuration block to safely intercept background telemetry passes before compilation trees serialize:",
+            "description": "Initialize the specialized Turbopack watch daemon directly at the root entry of your configuration file to safely intercept background telemetry passes before compilation trees serialize:",
             "codeBlock": {
-              "code": "const { xalorNextTurboWatchPlugin } = require('@bgskinner2/xalor/plugins');\n\n/** @type {import('next').NextConfig} */\nconst nextConfig = {\n  experimental: {\n    turbo: {\n      plugins: [\n        xalorNextTurboWatchPlugin() // ◄ Turbopack native Rust asset bridge\n      ]\n    }\n  }\n};\n\nmodule.exports = nextConfig;"
+              "code": "import { xalorNextTurboWatchPlugin } from '@bgskinner2/xalor/plugins';\n\n// 🪐 Wakes up the raw OS background watch daemon inside local development servers natively\nif (process.env.NODE_ENV !== 'production') {\n  xalorNextTurboWatchPlugin();\n}\n\n/* @type {import('next').NextConfig} /\nconst nextConfig = {\n  / Your standard next configuration rules */\n};\n\nexport default nextConfig;"
             }
           }
         }
@@ -1176,6 +1186,9 @@
             "referenceKey": "MOCK_CLI_HELP_MANUAL",
             "note": "#Live snapshot of the active# _Xalor Command Core Directory_ #and global environment navigation mapping rules.#"
           }
+        },
+        "content": {
+          "sections": []
         }
       },
       "clear": {
@@ -1183,7 +1196,7 @@
           "id": "clear",
           "active": true,
           "header": "Clear Hydration Cache",
-          "description": "Performs a hard flash-purge that resets local cache layers, internal registry tracking frames, and Intellisense bridge files back to pristine templates.",
+          "description": "Performs a hard flash-purge that resets local cache layers, internal registry tracking frames, and ambient environment files back to pristine templates.",
           "overline": "Cache Control",
           "iconName": "refresh-duotone"
         },
@@ -1191,6 +1204,12 @@
           "codeBlock": {
             "code": "npx xalor clear",
             "note": "Performs an atomic dual-layer system evacuation to completely clear out cached schemas."
+          }
+        },
+        "exampleOutput": {
+          "codeBlock": {
+            "referenceKey": "",
+            "note": ""
           }
         },
         "content": {
@@ -1216,7 +1235,6 @@
           ]
         }
       },
-
       "compile": {
         "intro": {
           "id": "compile",
@@ -1231,21 +1249,144 @@
             "code": "npx xalor compile",
             "note": "Executes a single-pass synchronized build to index and freeze your pristine TypeScript types into highly compressed primitive maps."
           }
+        },
+        "exampleOutput": {
+          "codeBlock": {
+            "referenceKey": "",
+            "note": ""
+          }
+        },
+        "content": {
+          "sections": [
+            {
+              "title": "1. The Compilation Phase Blueprint",
+              "subtitle": "How the AOT extraction engine reifies your static type layout structures safely out-of-band.",
+              "bullets": [
+                "**AST Graph Mining**: #The compiler engine sweeps your whitelisted production file trees to discover custom macro expressions and extract native type geometries inline.#",
+                "**Canonical Hashing (CAS)**: Unique shapes are processed through a bitwise fingerprinter possessing built-in circular-reference shielding to output immutable keys (like sh_4vztgu).",
+                "**Pointer Interning**: #Reusable nested interfaces are mapped exactly once into memory, replacing parent nodes with tiny pointer reference strings to guarantee zero bundle inflation.#"
+              ]
+            },
+            {
+              "title": "2. When Should You Run This?",
+              "subtitle": "Key workflows for executing a one-shot synchronized compilation build.",
+              "bullets": [
+                "**Cold CI/CD Pipeline Gates**: Essential for headless production build servers (Vercel, GitHub Actions) where active local development watchers are not running in background threads.",
+                "**Immutable Snapshot Verification**: #Forces an immediate workspace evaluation pass to freeze your type registry structures straight into your project's static assets layer.#",
+                "**Pre-Flight Security Audits**: Ensures 100% of local type contract keys resolve with perfect integrity right before compiling your deployment distribution chunks."
+              ]
+            }
+          ]
         }
       },
       "vacuum": {
-        "id": "vacuum",
-        "active": true,
-        "header": "",
-        "description": "",
-        "overline": "",
-        "iconName": ""
+        "intro": {
+          "id": "vacuum",
+          "active": true,
+          "header": "Vacuum Telemetry Stripping",
+          "description": "#Sweeps through your active type graphs out-of-band to amputate heavy development-only metrics before compilation files finalize.# Guarantees absolute zero client asset weight by shipping purely optimized layout registries.",
+          "overline": "Optimization Guard",
+          "iconName": "filter-duotone"
+        },
+        "runCommand": {
+          "codeBlock": {
+            "code": "npx xalor vacuum",
+            "note": "Executes a single-pass synchronized build to index and freeze your pristine TypeScript types into highly compressed primitive maps."
+          }
+        },
+        "exampleOutput": {
+          "codeBlock": {
+            "referenceKey": "",
+            "note": ""
+          }
+        },
+        "content": {
+          "sections": [
+            {
+              "title": "1. The Amputation Pass Mechanics",
+              "subtitle": "An inside look at how Xalor shreds development metadata down to raw production primitives.",
+              "bullets": [
+                "**Telemetry Deletion**: #The engine isolates your active type registries and completely deletes the heavy manifest (exact lines, columns, file paths) and registry (raw symbol strings) data graphs.#",
+                "**Lean Graph Consolidation**: What remains is compacted exclusively into three immutable parameters: blueprints (flat maps), references (symbol hashes), and driftTracking (schema evolution models).",
+                "**Workspace Root Baking**: #The stripped result is written directly to your project root as a pure xalor-vault.json snapshot file, entirely free of JavaScript boilerplate or runtime clutter.#"
+              ]
+            },
+            {
+              "title": "2. Why Run the Vacuum Pass?",
+              "subtitle": "The core infrastructure and security advantages of the vacuum command.",
+              "bullets": [
+                "**0 KB Bundle Overhead**: By sweeping away code comments, raw type strings, and directory traces, your frontend assets remain completely uninflated and optimized for client delivery.",
+                "**Architecture Shielding**: #Prevents reverse-engineering by ensuring internal backend database schemas and server telemetry tracking structures are never leaked into the browser dev tools.#",
+                "**Serverless Optimization**: Slashes cold-start initialization times on edge worker processes by shifting type graph parsing overhead entirely to your build-time pipeline."
+              ]
+            }
+          ]
+        }
+      },
+      "studio": {
+        "intro": {
+          "id": "studio",
+          "active": true,
+          "header": "Interactive Studio Dashboard",
+          "description": "#Launches a local, hardware-accelerated visualization server to map, inspect, and audit your type graph networks live in the browser.# Provides architects with a total platform interface to simulate schema upgrades and track blueprint evolution profiles.",
+          "overline": "Visual Workspace",
+          "iconName": "filter-duotone"
+        },
+        "infoBanner": {
+          "variant": "info",
+          "infoDescription": "",
+          "infoHeader": "",
+          "infoIcon": "layers"
+        },
+        "runCommand": {
+          "codeBlock": {
+            "code": "npx xalor studio",
+            "note": "Boots up the local in-memory visualization server and automatically opens the interactive control panel inside your browser tab."
+          }
+        },
+        "exampleOutput": {
+          "codeBlock": {
+            "referenceKey": "",
+            "note": ""
+          }
+        },
+        "mediaGallery": [
+          {
+            "id": "",
+            "href": "",
+            "description": "",
+            "header": "",
+            "mediaLookupName": ""
+          }
+        ],
+        "content": {
+          "sections": [
+            {
+              "title": "1. Operational Capabilities",
+              "subtitle": "Unlocking deep visibility into your application's compiled type intelligence layer.",
+              "bullets": [
+                "Visual Dependency Graphing: #Renders your exact CAS type nodes as an interactive map, making it easy to isolate circular references or over-engineered interface trees.#",
+                "Real-Time Blueprint Diffing: Compares historical cache snapshots against your active compiler pass structures to catch unexpected API payload drift instantly.",
+                "Telemetry Inspection: #Allows developers to drill straight into individual primitive blueprints to verify field optionality, array ranges, and union literal configurations point-free.#"
+              ]
+            },
+            {
+              "title": "2. Production Architecture Strategy",
+              "subtitle": "How the Studio leverages development metrics safely without leaking client overhead.",
+              "bullets": [
+                "Local-Only Lifespans: The studio server reads directly from your un-purged hidden folders, ensuring developers get maximum telemetry data maps without touching production assets.",
+                "Isolated Memory Testing: #The sandboxed simulation ring maps model changes instantly using microsecond-fast runtime instances, protecting active dev files from pollution.#",
+                "Framework Agnostic Execution: Runs entirely inside an independent Node thread pool environment, eliminating framework integration interference with Vite, Webpack, or Next.js build engines."
+              ]
+            }
+          ]
+        }
       }
     },
     "bottomLinks": [
       {
         "id": "da04f4d2-74a7-439b-9dec-ed41cdc5d5db",
-        "href": "/xalor/docs/apis",
+        "href": "/xalor/docs/api",
         "header": "Runtime APIs",
         "iconName": "jigsaw",
         "description": "Complete reference for Xalor’s runtime APIs, including system status, internal behavior, and core interactions.",
