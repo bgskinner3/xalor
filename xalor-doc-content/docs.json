@@ -50,7 +50,12 @@
           "header": "Build-Time Structural Intelligence",
           "iconName": "cpu-duotone",
           "description": "Xalor mines your code's type topology out-of-band during your toolchain's standard compilation window. Enjoy _zero-maintenance syncing freedom_ with **hard-zero local folder pollution**, generated files, or editor save lag.",
-          "codeBlock": "[ Developer Writes Native TypeScript ]\ninterface User {\n  id: number;\n  name: string;\n}\n\n      ↓\n\n┌─────────────────────────────┐\n│   XALOR COMPILER WATCHER    │\n├─────────────────────────────┤\n│  In-Memory AST Extraction   │\n│              ↓              │\n│  Stable Shape Reification   │\n│              ↓              │\n│  CAS Blueprint Interning    │\n│              ↓              │\n│  Atomic Shield Sync Pass    │\n└─────────────────────────────┘\n\n      ↓\n\n[ O(1) Boot Hydration Ready ]\nxalor.safeParse<'USER'>(payload);"
+          "codeBlock": "[ Developer Writes Native TypeScript ]\ninterface User {\n  id: number;\n  name: string;\n}\n\n      ↓\n\n┌─────────────────────────────┐\n│   XALOR COMPILER WATCHER    │\n├─────────────────────────────┤\n│  In-Memory AST Extraction   │\n│              ↓              │\n│  Stable Shape Reification   │\n│              ↓              │\n│  CAS Blueprint Interning    │\n│              ↓              │\n│  Atomic Shield Sync Pass    │\n└─────────────────────────────┘\n\n      ↓\n\n[ O(1) Boot Hydration Ready ]\nxalor.safeParse<'USER'>(payload);",
+          "image": {
+            "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/xalor/build-time-intel.png",
+            "alt": "Build-Time Structural Intelligence",
+            "note": ""
+          }
         },
         "four": {
           "header": "Beyond Validation",
@@ -1334,8 +1339,8 @@
         },
         "infoBanner": {
           "variant": "info",
-          "infoDescription": "",
-          "infoHeader": "",
+          "infoHeader": "CLI Studio is coming soon",
+          "infoDescription": "We're actively building a visual development experience for the Xalor CLI. Until then, all compiler and runtime features are available through the command-line interface.",
           "infoIcon": "layers"
         },
         "runCommand": {
@@ -1388,7 +1393,7 @@
         "id": "da04f4d2-74a7-439b-9dec-ed41cdc5d5db",
         "href": "/xalor/docs/api",
         "header": "Runtime APIs",
-        "iconName": "jigsaw",
+        "iconName": "cpu-duotone",
         "description": "Complete reference for Xalor’s runtime APIs, including system status, internal behavior, and core interactions.",
         "direction": "back"
       },

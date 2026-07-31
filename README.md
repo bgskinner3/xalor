@@ -1,10 +1,23 @@
 <p align="center">
   <img
-    src="https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/xalor/read-me-container.png"
+    src="https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/xalor/read-me-container-bg-v2.png"
     alt="Xalor hero"
     width="100%"
   />
 </p>
+
+<div align="center">
+<h1 style="color: #51FFFF; letter-spacing: 8px;">XALOR</h1>
+</div>
+
+<div align="center">
+  <p style="font-size:24px; max-width:750px; font-weight: 600; margin-bottom: 5px;">
+    <em>“Don't just erase your types. Run them.”</em>
+  </p>
+  <p style="font-size: 16px; color: #555; margin-top: 0; max-width: 700px;">
+   Turn pristine TypeScript interfaces into live runtime metadata networks—with zero local code pollution, zero third-party compiler dependencies, and 0 KB client schema inflation.
+  </p>
+</div>
 
 <div align="center">
   <a href="https://www.npmjs.com/package/@bgskinner2/xalor">
@@ -20,23 +33,11 @@
 
 &nbsp;
 
-<h2 align="center">
+<h3 align="center">
   📦 <a href="http://masterofsum.dev/xalor/docs/getting-started">Installation</a>
   • 📖 <a href="http://masterofsum.dev/xalor/docs">Documentation</a>
   • ⚙️ <a href="http://masterofsum.dev/xalor/docs/api">API Reference</a>
-</h2>
-
-<br/>
-<br/>
-
-<div align="center">
-  <p style="font-size:24px; max-width:750px; font-weight: 600; margin-bottom: 5px;">
-    <em>“Don't just erase your types. Run them.”</em>
-  </p>
-  <p style="font-size: 16px; color: #555; margin-top: 0; max-width: 700px;">
-   Turn pristine TypeScript interfaces into live runtime metadata networks—with zero local code pollution, zero third-party compiler dependencies, and 0 KB client schema inflation.
-  </p>
-</div>
+</h3>
 
 <br/>
 <br/>
@@ -63,7 +64,7 @@ Your TypeScript types become runtime-aware structural contracts.
 <br/>
 <br/>
 
-### The Problem
+## The Problem
 
 TypeScript provides exceptional developer safety, but its type system disappears during compilation.
 
@@ -99,7 +100,7 @@ Xalor takes a different approach.
 <br/>
 <br/>
 
-### The Xalor Approach
+## The Xalor Approach
 
 Xalor captures type information **before compilation erasure** and converts it into compact runtime blueprints.
 
@@ -134,9 +135,9 @@ The resulting metadata powers:
 <br/>
 <br/>
 
----
+## 🚀 Quick Start
 
-## 📦 Installation
+### 1. Installation & Configuration
 
 ```bash
 npm install @bgskinner2/xalor
@@ -146,11 +147,9 @@ npm install @bgskinner2/xalor
 
 See the [Bundler Integration Guide](http://masterofsum.dev/xalor/docs/gettingStarted).
 
----
+<br/>
 
-# 🚀 Quick Start
-
-## 1. Define Your Type
+### 2. Define Your Type
 
 Write normal TypeScript.
 
@@ -185,9 +184,7 @@ Runtime Metadata
 
 <br/>
 
----
-
-## 2. Validate Runtime Data
+### 3. Validate Runtime Data
 
 ```ts
 const result = xalor.safeParse<'USER_PROFILE'>(payload);
@@ -202,8 +199,6 @@ Your returned data is fully typed.
 
 <br/>
 <br/>
-
----
 
 # ⚖️ Why Xalor Exists
 
@@ -222,7 +217,7 @@ Xalor takes a different path:
 <br/>
 <br/>
 
-### Traditional Flow
+## Traditional Flow
 
 ```text
 TypeScript Type
@@ -238,7 +233,7 @@ Two Sources Of Truth
 
 <br/>
 
-### Xalor Flow
+## Xalor Flow
 
 ```text
 TypeScript Type
@@ -258,8 +253,6 @@ Every Runtime Capability
 
 <br/>
 <br/>
-
----
 
 # 🧬 The Xalor Metadata Layer
 
@@ -296,7 +289,7 @@ Becomes:
       },
       "role": {
         "kind": "union",
-        "values": ["admin", "user", "moderator"]
+        "values": ["user", "moderator", "admin"]
       }
     }
   }
@@ -316,8 +309,6 @@ Benefits:
 <br/>
 <br/>
 
----
-
 # 🚀 Beyond Validation
 
 Validation is simply the first consumer of Xalor's metadata layer.
@@ -331,8 +322,6 @@ if (result.success) {
   console.log(result.data.username);
 }
 ```
-
----
 
 ## 🏗 Runtime Generation
 
@@ -351,8 +340,6 @@ Useful for:
 - UI scaffolding
 - Empty application states
 
----
-
 ## 🔄 Schema Evolution
 
 Distributed systems rarely deploy everything at once.
@@ -364,8 +351,6 @@ xalor.drift<'USER_PROFILE'>(legacyPayload, context);
 ```
 
 Xalor can identify previous structural versions and migrate payloads into the current contract.
-
----
 
 ## 🧩 Structural Operations
 
@@ -383,8 +368,6 @@ Your type system becomes a reusable runtime intelligence layer.
 
 <br/>
 <br/>
-
----
 
 # 📊 Performance Characteristics
 
@@ -406,8 +389,6 @@ Full benchmark suite:
 <br/>
 <br/>
 
----
-
 ## 📖 Explore The Architecture
 
 Learn how Xalor's compiler pipeline, CAS storage, and runtime vault work:
@@ -416,8 +397,6 @@ Learn how Xalor's compiler pipeline, CAS storage, and runtime vault work:
 
 <br/>
 <br/>
-
----
 
 ## 📄 License
 

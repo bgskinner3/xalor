@@ -106,7 +106,12 @@
     "format": "prettier --write '**/*.{js,ts,jsx,tsx,json,css,md,mdx}'",
     "format:check": "prettier --check '**/*.{js,ts,jsx,tsx,json,css,md,mdx}'",
     "sandbox:pack": "pnpm run clean:pack && pnpm run build && pnpm pack",
-    "codegen": "npx tsx scripts/generate-configs.ts && npm run format"
+    "codegen": "npx tsx scripts/generate-configs.ts && npm run format",
+    "publish:prod": "npm run test && npm publish --access public"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "repository": {
     "type": "git",
@@ -116,7 +121,7 @@
   "bugs": {
     "url": "https://github.com/bgskinner3/xalor"
   },
-  "homepage": "git+https://github.com/bgskinner3/xalor",
+  "homepage": "https://www.masterofsum.dev/xalor/docs",
   "engines": {
     "node": ">=16.0.0",
     "pnpm": ">=8.0.0"
