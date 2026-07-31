@@ -1,5 +1,6 @@
 {
   "introduction": {
+    "pageLive": true,
     "hero": {
       "overline": "Ahead-of-Time Type Reification Platform",
       "subText": "Type-First Build Compilation with Runtime Orchestration",
@@ -173,6 +174,7 @@
     ]
   },
   "whatIsXalor": {
+    "pageLive": true,
     "header": {
       "id": "intro",
       "active": true,
@@ -322,6 +324,7 @@
     ]
   },
   "gettingStarted": {
+    "pageLive": true,
     "header": {
       "id": "intro",
       "active": true,
@@ -475,6 +478,7 @@
     ]
   },
   "api": {
+    "pageLive": true,
     "header": {
       "id": "intro",
       "active": true,
@@ -483,7 +487,6 @@
       "overline": "Client Subsystems",
       "iconName": "cpu-duotone"
     },
-
     "xalorRegister": {
       "id": "register",
       "header": "Register (xalor.register)",
@@ -912,7 +915,6 @@
         }
       }
     },
-
     "xalorMatch": {
       "id": "match",
       "intro": {
@@ -1132,6 +1134,7 @@
     ]
   },
   "cli": {
+    "pageLive": true,
     "header": {
       "id": "intro",
       "active": true,

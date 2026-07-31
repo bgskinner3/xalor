@@ -4,7 +4,8 @@
     "header": "Validation Benchmarks",
     "description": "Performance comparisons across complex data validation workloads, measuring execution time, latency distribution, and memory allocation.",
     "overline": "Runtime Performance",
-    "iconName": "terminal-duotone"
+    "iconName": "terminal-duotone",
+    "pageLive": true
   },
   "systemMetadata": {
     "clockSpeed": "~3.26 GHz",
