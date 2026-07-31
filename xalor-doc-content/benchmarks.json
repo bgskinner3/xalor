@@ -13,6 +13,105 @@
     "architecture": "arm64-darwin",
     "runtime": "Node 22.13.1"
   },
+  "executiveSummaryTable": {
+    "id": "executiveSummaryTable",
+    "header": "Summary Table",
+    "description": "Overview of validation workloads, execution characteristics, and observed performance patterns.",
+    "table": {
+      "columns": [
+        {
+          "id": "benchmark",
+          "label": "Benchmark",
+          "toolTip": "The validation workload scenario tested against each runtime engine."
+        },
+        {
+          "id": "category",
+          "label": "Category",
+          "toolTip": "The workload classification describing the type of data structure being validated."
+        },
+        {
+          "id": "successPathLeader",
+          "label": "Success Path Leader",
+          "toolTip": "The engine with the lowest average execution time when validating correctly shaped payloads."
+        },
+        {
+          "id": "failurePathLeader",
+          "label": "Failure Path Leader",
+          "toolTip": "The engine with the lowest average execution time when detecting malformed payloads."
+        },
+        {
+          "id": "xalorProfile",
+          "label": "Xalor Profile",
+          "toolTip": "The observed runtime characteristic of Xalor during this workload, focusing on latency consistency, allocation behavior, and execution stability."
+        }
+      ],
+      "rows": [
+        {
+          "benchmark": "Cold Start Initialization",
+          "category": "Startup Performance",
+          "successPathLeader": "Xalor",
+          "failurePathLeader": "Xalor",
+          "xalorProfile": "Lowest initialization overhead"
+        },
+        {
+          "benchmark": "Customer Order Graph",
+          "category": "Complex Object Validation",
+          "successPathLeader": "Typia",
+          "failurePathLeader": "Xalor",
+          "xalorProfile": "Stable structural verification under complex payloads"
+        },
+        {
+          "benchmark": "Heavy Telemetry Matrix",
+          "category": "Structured Data Validation",
+          "successPathLeader": "Typia",
+          "failurePathLeader": "Xalor",
+          "xalorProfile": "Predictable latency across wide numerical payloads"
+        },
+        {
+          "benchmark": "Application Configuration Registry",
+          "category": "Configuration Validation",
+          "successPathLeader": "Typia",
+          "failurePathLeader": "Typia",
+          "xalorProfile": "Predictable structural evaluation despite generated-code competition"
+        },
+        {
+          "benchmark": "Core Product SKU",
+          "category": "Primitive Object Validation",
+          "successPathLeader": "Typia",
+          "failurePathLeader": "Xalor",
+          "xalorProfile": "Stable execution with predictable latency bounds"
+        },
+        {
+          "benchmark": "Access Session Matrix",
+          "category": "Security Data Validation",
+          "successPathLeader": "Typia",
+          "failurePathLeader": "Xalor",
+          "xalorProfile": "Deterministic security boundary enforcement"
+        },
+        {
+          "benchmark": "Warehouse Inventory Bins",
+          "category": "Operational Data Validation",
+          "successPathLeader": "Typia",
+          "failurePathLeader": "Xalor",
+          "xalorProfile": "Consistent collection validation performance"
+        },
+        {
+          "benchmark": "API Network Log",
+          "category": "Network Data Validation",
+          "successPathLeader": "Typia",
+          "failurePathLeader": "Typia",
+          "xalorProfile": "Stable high-frequency ingress validation"
+        },
+        {
+          "benchmark": "Legacy Invoice Evolution",
+          "category": "Schema Migration Performance",
+          "successPathLeader": "Typia",
+          "failurePathLeader": "N/A",
+          "xalorProfile": "Deterministic schema transformation pipeline"
+        }
+      ]
+    }
+  },
   "benchmarks": {
     "bootInitializationPenalty": {
       "id": "bootInitializationPenalty",

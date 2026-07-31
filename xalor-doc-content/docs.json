@@ -3,31 +3,66 @@
     "pageLive": true,
     "hero": {
       "overline": "Ahead-of-Time Type Reification Platform",
-      "subText": "Type-First Build Compilation with Runtime Orchestration",
-      "description": "Pristine TypeScript types compiled into live runtime blueprints. Zero schema duplication, zero bundle inflation.",
+      "subText": "Bring TypeScript Types Into Runtime",
+      "description": "Xalor captures your TypeScript type information during compilation and transforms it into optimized runtime blueprints for validation, generation, migration, and transformation.",
       "image": {
         "id": "26ca0d6a-7aa8-4db5-88a2-a9f239d58cdf",
         "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/Display%20Images/xalor-header-noe-fade.png",
         "alt": "header-image"
       }
     },
+    "mentalModel": {
+      "id": "mental-model",
+      "header": "The TypeScript Runtime Gap",
+      "iconName": "bridge",
+      "isActive": true,
+      "description": "TypeScript gives developers powerful static types, but those types disappear when applications run. Xalor bridges this gap by preserving your type definitions as optimized runtime metadata.",
+
+      "blocks": [
+        {
+          "id": "acdd4e36-88e5-4014-bb95-2e11b90b5d6c",
+          "header": "The Problem",
+          "description": "Your application has two worlds. During development, TypeScript understands your data structures. During runtime, your application receives unknown JSON payloads with no knowledge of those same contracts.",
+          "codeBlock": "DEVELOPMENT\n\ninterface User {\n  id: number;\n  email: string;\n}\n\n        ↓ Type Erasure ↓\n\nRUNTIME\n\n{\n  \"id\": 123,\n  \"email\": \"user@example.com\"\n}\n\n// The structure is gone."
+        },
+
+        {
+          "id": "bcdbcdc7-4b83-47de-97f6-fc107074e167",
+          "header": "The Traditional Solution",
+          "description": "Most libraries solve runtime uncertainty by requiring a second definition: manually maintained runtime schemas that duplicate your TypeScript models.",
+          "codeBlock": "TypeScript Model\n        +\nRuntime Schema\n        ↓\nTwo Sources of Truth\n\n❌ Duplicate maintenance\n❌ Schema drift\n❌ Additional runtime logic"
+        },
+
+        {
+          "id": "1b6b46fc-5e07-46d5-9c3c-2c9c4b58908c",
+          "header": "The Xalor Solution",
+          "description": "Xalor extracts your existing TypeScript definitions during compilation and preserves them as compact runtime `blueprints`.",
+          "codeBlock": "Native TypeScript\n        ↓\nAOT Extraction\n        ↓\nStructural Blueprint\n        ↓\nRuntime Intelligence\n\n✓ Validation\n✓ Generation\n✓ Migration\n✓ Transformation"
+        }
+      ],
+
+      "callout": {
+        "header": "Xalor is not a validation library.",
+        "description": "Validation is only the first capability unlocked when runtime gains access to your application's existing type architecture."
+      }
+    },
     "introduction": {
       "id": "introduction",
       "blockOne": {
         "header": "What is Xalor?",
-        "description": "Xalor is an ahead-of-time (AOT) type metadata engine for TypeScript. Instead of forcing you to write complex runtime validation schemas by hand or generating messy boilerplate files that clutter your project, Xalor extracts your native TypeScript definitions during compilation and makes them instantly available at runtime."
+        "description": "Xalor is an ahead-of-time (AOT) type metadata engine for TypeScript. It captures your existing TypeScript definitions during compilation and converts them into optimized runtime blueprints that your application can use for validation, generation, migration, and transformation."
       },
       "blockTwo": {
         "header": "One Source of Truth",
         "iconName": "brain-bulb",
-        "description": "TypeScript removes type definitions during compilation, leaving production code unable to verify network data. Other tools fix this with duplicate schemas or bloated generated files that slow down code editors. Xalor solves both problems automatically by capturing your types during the standard build pass.",
+        "description": "Your TypeScript types remain the source of truth. Xalor removes the need to manually recreate those same structures as runtime schemas or generated files.",
         "list": [
-          "_Write native TypeScript once_ —  Eliminate duplicate schemas, manual syncing errors, and custom validation languages.",
-          "_Reuse the same types at runtime_ —  Enforce clean structural contracts natively for instant validation, type-guards, and parsing gates.",
-          "_Unlock runtime type intelligence_ —  Go beyond validation to power automated data normalization, safe default populating, and legacy schema updates."
+          "_Write TypeScript once_ — Keep your existing development workflow without duplicate schemas or synchronization overhead.",
+          "_Use types at runtime_ — Apply the same structural contracts for validation, parsing, type guards, and data operations.",
+          "_Build on runtime intelligence_ — Unlock generation, migration, normalization, and transformations powered by your existing type definitions."
         ]
       },
-      "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\n// 1. Define your pristine, native TypeScript model\nexport interface User {\n  id: number;\n  name: string;\n  role: 'user' | 'admin';\n}\n\n// 2. Register your contract (Intercepted entirely at build-time)\nxalor.register<'USER_PROFILE', User>();\n\n// 3. Process raw, untrusted network payloads synchronously\ntry {\n  const verifiedUser = xalor.parse<'USER_PROFILE'>(incomingPayload);\n  \n  // ✅ Data is fully validated, cast, and nominally branded!\n  console.log(verifiedUser.name);\n} catch (error) {\n  console.error(\"Traceable GPS Diagnostics:\", error.message);\n}"
+      "codeBlock": "import { xalor } from '@bgskinner2/xalor';\n\n// Define your native TypeScript model\nexport interface User {\n  id: number;\n  name: string;\n  role: 'user' | 'admin';\n}\n\n// Register the type for runtime extraction\nxalor.register<'USER_PROFILE', User>();\n\n// Use the runtime blueprint\nconst user = xalor.parse<'USER_PROFILE'>(incomingPayload);\n\nconsole.log(user.name);"
     },
     "features": {
       "id": "features",
@@ -36,13 +71,13 @@
       "isActive": true,
       "features": {
         "one": {
-          "header": "Native TypeScript Validation",
+          "header": "Runtime Validation From Your TypeScript",
+          "description": "_Define your models once_ using normal TypeScript. Xalor converts those definitions into runtime contracts during compilation, allowing your application to validate external data without maintaining separate schemas.",
           "iconName": "shield-solid",
-          "description": "_Write your data models once_ using native, pristine TypeScript. Xalor transforms them into **ironclad runtime contracts** automatically during your `build pass`—completely eliminating duplicate schema authoring or non-native validation languages.",
           "visuals": {
             "codeBlock": {
               "code": "// Define your data models natively\ntype User = {\n  id: number;\n  name: string;\n};\n\n// Enforce perimeter security gates\nconst result = xalor.safeParse<'USER'>(payload);\nif (result.success) {\n  console.log(result.data.name); // Fully typed string\n}",
-              "note": "The developer defines a model using standard TypeScript syntax, which remains the single source of truth throughout the application. During the build process, Xalor derives the runtime contract from that existing type information, allowing `safeParse` to enforce the same structure at runtime while preserving full TypeScript inference and eliminating the need for manually maintained schemas."
+              "note": "The same TypeScript model powers both development-time safety and runtime validation. Xalor extracts the structure during compilation so no separate schema needs to be maintained."
             },
             "image": {
               "href": "",
@@ -53,9 +88,9 @@
           "featureDisplay": "code"
         },
         "two": {
-          "header": "Zero Runtime Bundle Inflation",
+          "header": "No Runtime Schema Overhead",
           "iconName": "flash-bolt",
-          "description": "Heavy `Abstract Syntax Tree (AST)` analysis happens entirely during compilation, never in production. Your application ships only with compact, **content-addressed metadata maps** instead of thousands of lines of heavy validation source code.",
+          "description": "Xalor performs type analysis during compilation, not in production. Applications ship with compact runtime blueprints instead of large schema definitions or validation interpreters.",
           "visuals": {
             "codeBlock": {
               "code": "// TypeScript Source Interface\ninterface User {\n  id: number;\n  name: string;\n}\n\n//  ↓ (Build-Time CAS Compaction Sweep)\n\n// Pre-Compiled Invariant Blueprint\n{\n  \"USER\": \"sh_4vztgu\",\n  \"sh_4vztgu\": {\n    \"kind\": \"object\",\n    \"properties\": {\n      \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"number\" } },\n      \"name\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } }\n    }\n  }\n}\n\n//  ↓ (Linear Pass At Hardware Velocity)\n\nxalor.parse<'USER'>(payload);",
@@ -73,7 +108,7 @@
         "three": {
           "header": "Build-Time Structural Intelligence",
           "iconName": "cpu-duotone",
-          "description": "Xalor mines your code's type topology out-of-band during your toolchain's standard compilation window. Enjoy _zero-maintenance syncing freedom_ with **hard-zero local folder pollution**, generated files, or editor save lag.",
+          "description": "Xalor extracts your TypeScript type structures during the build process and converts them into reusable runtime blueprints. No generated files. No duplicate definitions. No extra developer workflow.",
           "visuals": {
             "codeBlock": {
               "code": "[ Developer Writes Native TypeScript ]\ninterface User {\n  id: number;\n  name: string;\n}\n\n      ↓\n\n┌─────────────────────────────┐\n│   XALOR COMPILER WATCHER    │\n├─────────────────────────────┤\n│  In-Memory AST Extraction   │\n│              ↓              │\n│  Stable Shape Reification   │\n│              ↓              │\n│  CAS Blueprint Interning    │\n│              ↓              │\n│  Atomic Shield Sync Pass    │\n└─────────────────────────────┘\n\n      ↓\n\n[ O(1) Boot Hydration Ready ]\nxalor.safeParse<'USER'>(payload);",
@@ -91,7 +126,7 @@
         "four": {
           "header": "Beyond Validation",
           "iconName": "shuffle",
-          "description": "Pre-compiled structural blueprints unlock capabilities **far beyond simple data validation**. Generate safe zero-state templates via `xalor.default()`, create strongly-typed mocks using `xalor.mock()`, and upcast legacy payloads with `xalor.drift()`.",
+          "description": "Runtime type intelligence enables more than checking data. Use the same blueprints to generate defaults, create mocks, migrate legacy structures, and perform type-aware transformations.",
           "visuals": {
             "codeBlock": {
               "code": "// Hydrate fallback models safely\nxalor.default<'USER'>();\n\n// Generate randomized test fixtures\nxalor.mock<'USER'>();\n\n// Upcast legacy service versions\nxalor.drift<'USER'>(historicalPayload, ctx);\n\n// Execute single-pass deep mutations\nxalor.merge<'USER'>(mergeContext);",
@@ -112,16 +147,16 @@
       "header": "Installation Guide",
       "iconName": "shipping-box",
       "isActive": true,
-      "description": "Deploy the core contract governance engine using your native package manager. Xalor integrates natively with **modern TypeScript build pipelines** to enforce edge-level perimeter security with zero runtime parsing overhead.",
-      "footnote": "> _Getting Started:_ Some environments require a brief, one-time bundler setup to coordinate type mining passes out-of-band. Follow the `Full Setup Guide` below for step-by-step instructions across Vite, Next.js, and Webpack ecosystems.",
+      "description": "Install Xalor using your preferred package manager. Xalor integrates with your TypeScript build pipeline to extract type information during compilation and make it available at runtime.",
+      "footnote": "> _Getting Started:_ Some environments require a small build configuration step to enable type extraction. Follow the setup guide below for Vite, Next.js, and Webpack examples.",
       "codeBlock": "npm install @bgskinner2/xalor\n\npnpm add @bgskinner2/xalor\n\nyarn add @bgskinner2/xalor"
     },
     "requirements": {
       "id": "requirements",
-      "header": "Toolchain Activation",
+      "header": "Build Configuration",
       "iconName": "cog-duotone",
       "isActive": true,
-      "description": "To allow the background watcher to extract your static type layouts before erasure, you must register our AOT plugin directly inside your project's `tsconfig.json` file:",
+      "description": "Xalor requires a small TypeScript transformer configuration so it can capture your type definitions before TypeScript removes them during compilation:",
       "codeBlock": "{\n  \"compilerOptions\": {\n    \"plugins\": [\n      {\n        \"transform\": \"@bgskinner2/xalor/transformer\",\n        \"type\": \"program\"\n      }\n    ]\n  }\n}",
       "links": {
         "seeMore": {
@@ -132,15 +167,16 @@
     },
     "performanceTeaser": {
       "id": "performance-teaser",
-      "header": "Bare-Metal Predictability",
+      "header": "Performance Characteristics",
       "iconName": "activity-solid",
       "isActive": true,
-      "description": "Traditional validation engines collapse when a network payload is malformed because they stop execution to build complex error objects in the heap. Xalor utilizes a **Hybrid Architecture Split** that executes a fail-fast linear check at raw hardware velocity, delivering an identical runtime performance budget regardless of data quality.",
+      "description": "Because Xalor performs type analysis ahead of time, runtime execution operates against precompiled structural blueprints instead of rebuilding type information during application execution.",
       "bulletPoints": [
-        "_O(1) Boot Hydration_ — Bypasses the heavy `1.21 ms` macro ingestion tax entirely, settling into memory in an astonishing **356 nanoseconds** on system boot.",
-        "_Fail-Fast Rejections_ — Rejects corrupted data packets or malicious API surges in **284 nanoseconds**, outperforming alternative runtimes by over **4,000%**.",
-        "_Transient Memory Preservation_ — Processes complex schema upgrades in a single pass without holding long-lived memory allocations or de-optimizing V8 class shapes."
+        "_Precompiled Metadata_ — Structural analysis happens during the build process, reducing runtime work.",
+        "_Predictable Execution_ — Runtime operations consume optimized blueprints designed for consistent performance.",
+        "_Low Runtime Overhead_ — Shared metadata structures reduce unnecessary processing and memory duplication."
       ],
+
       "links": {
         "seeMore": {
           "text": "View Full Performance Dashboard",
@@ -154,14 +190,13 @@
       "iconName": "rocket-tilted",
       "isActive": true,
       "list": [
-        "_Single Source of Truth_ — Write native TypeScript types once to completely eliminate the double-maintenance tax of duplicate schemas.",
-        "_Zero Client Bundle Bloat_ — Heavy structural evaluation rules live in your build-time CLI layer, shipping zero validation lines to production.",
-        "_Line-Precise GPS Diagnostics_ — Validation breaches point back to the exact source code file and coordinate path, saving development hours.",
-        "_Zero Folder Pollution_ — Connects to your ecosystem out-of-band without using `ts-patch` or outputting messy auto-generated files.",
-        "_Built for Scale_ — Deep Graph Interning hashes and deduplicates nested shapes into compact blueprints, keeping memory budgets small."
+        "_Single Source of Truth_ — Write native TypeScript types once and eliminate duplicate schema maintenance.",
+        "_Zero Runtime Schema Bloat_ — Heavy structural analysis happens during build-time, shipping only compact runtime metadata.",
+        "_Source-Aware Diagnostics_ — Validation failures retain structural context for easier debugging.",
+        "_Zero Generated File Pollution_ — Extract type intelligence without cluttering your repository with generated artifacts.",
+        "_Built for Scale_ — Shared structural blueprints are deduplicated and reused across your application."
       ]
     },
-
     "bottomLinks": [
       {
         "id": "3d42b389-9a49-4cfa-9a16-a890a7709518",
@@ -181,35 +216,35 @@
       "header": "About Xalor",
       "overline": "Core Concept",
       "iconName": "layers-duotone",
-      "description": "A high-performance type engine that reads your native TypeScript definitions to handle automatic, ultra-fast data validation at runtime—with zero code bloat, zero duplicate schemas, and zero background resource waste."
+      "description": "Xalor is a type reification engine that transforms erased TypeScript definitions into reusable runtime blueprints. These blueprints provide applications with structural knowledge that can power validation, generation, migration, and type-aware transformations."
     },
     "singleSourceOfTruth": {
       "id": "single-source-truth",
       "active": true,
-      "header": "Eradicating the Dual-Source Schema Tax",
-      "description": "Every other validation framework forces you into a _double-maintenance tax_. You have to manually write custom runtime validation schema language blocks (like a Zod schema) and then write a mirrored TypeScript interface right next to it just to get basic editor autocompletion.",
-      "subDescription": "Xalor treats your standard, everyday TypeScript types as the absolute, **single source of truth**. You write a standard type, pass its token to Xalor's execution perimeters, and the engine takes over. If you modify or delete a type property, your workspace data layers adapt instantly with **hard-zero duplication overhead**.",
+      "header": "Your TypeScript Types Remain the Source of Truth",
+      "description": "Many runtime data approaches require maintaining a second representation of your data model. You define runtime schemas or metadata for execution and TypeScript types for development, creating two places where structural changes must stay synchronized.",
+      "subDescription": "Xalor uses your existing TypeScript definitions as the source of truth. During compilation, those definitions are transformed into runtime blueprints that power validation, generation, migration, and structural operations without requiring duplicate schemas.",
       "visuals": {
         "image": {
           "alt": "Xalor Pipeline Overview: Eradicating the Dual-Source Schema Tax",
           "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/xalor/single-source-of-truth.png"
         },
         "codeBlock": {
-          "code": "// ❌ THE COMPETITOR METHOD (The Dual-Source Tax)\n// You are forced to maintain a runtime schema AND a separate compiled type\nconst ZUserSchema = z.object({\n  id: z.string().uuid(),\n  email: z.string().email(),\n  profile: z.object({\n    firstName: z.string(),\n    lastName: z.string()\n  })\n});\ntype TZUser = z.infer<typeof ZUserSchema>; // ◄ Secondary inferred abstraction layer\n\n\n// ⚡ THE XALOR METHOD (Pure Native TypeScript)\n// One pristine source of truth. No runtime duplication. No inferred boilerplate.\nexport type TUser = {\n  id: string;\n  email: string;\n  profile: {\n    firstName: string;\n    lastName: string;\n  };\n};\n\n// Xalor processes the native type directly in-memory via the proxy handle\nconst clientData = xalor.parse<TUser>(incomingPayload);",
-          "note": "Study the programmatic lifecycle flow in the diagram. When you save a type declaration (`Step I`), our background watcher intercepts the pass. The **Ghost Emitter** (`Step II`) deploys an `Atomic Shield` to stream your layout keys safely to autocomplete maps, while the engine triggers an in-memory **Vault Compaction** pass (`Step III`). When raw production data hits your `Boundary Gate` (`Step IV`), lookups run at bare-metal velocity via hard $O(1)$ pointer assignments."
+          "code": "// Traditional Schema Approach\n// Runtime schema becomes the primary artifact\nconst ZUserSchema = z.object({\n  id: z.string().uuid(),\n  email: z.string().email(),\n  profile: z.object({\n    firstName: z.string(),\n    lastName: z.string()\n  })\n});\n\ntype TZUser = z.infer<typeof ZUserSchema>;\n\n\n// Xalor Approach\n// Native TypeScript remains the source of truth\nexport type TUser = {\n  id: string;\n  email: string;\n  profile: {\n    firstName: string;\n    lastName: string;\n  };\n};\n\n// Register the contract for build-time extraction\nxalor.register<'USER_PROFILE', TUser>();\n\n// Execute against the compiled runtime blueprint\nconst clientData = xalor.parse<'USER_PROFILE'>(incomingPayload);",
+          "note": "Traditional schema approaches create a separate runtime representation that must remain synchronized with your TypeScript models. Xalor keeps TypeScript as the source of truth by extracting its structure during compilation and converting it into reusable runtime blueprints. Those blueprints can then power parsing, validation, generation, migration, and other type-aware operations."
         }
       }
     },
     "aotPipeline": {
       "id": "aot-pipeline",
       "active": true,
-      "header": "The 5-Phase Extraction Pipeline",
-      "description": "Xalor permanently eliminates runtime type erasure by mining your code's type topology *before compilation erasure* takes place. The engine hooks directly into the native TypeScript Compiler API pass, routing nodes point-free through a cascade of specialized, self-cleaning type-predicate reifiers.",
-      "subDescription": "This functional extraction loop guarantees **absolute zero structural mutation** or unsafe type-casting (`as any`). It evaluates your code's raw geometric layout entirely inside an isolated, volatile in-memory scratchpad, preparing the types to be serialized into invariant blueprints with zero folder pollution.",
+      "header": "The Ahead-of-Time Extraction Pipeline",
+      "description": "Xalor captures TypeScript type information during the compilation process, before those types are erased from the runtime output. The extraction pipeline analyzes your existing type structures and converts them into reusable runtime blueprints.",
+      "subDescription": "Type extraction happens during build-time inside an isolated compiler pass. Xalor analyzes structural relationships, resolves nested types, and prepares deterministic blueprint data without generating files or modifying your source code.",
       "visuals": {
         "codeBlock": {
-          "code": "[ AST Node Pass ] ──► Analyzed by theMiner loop\n        │\n        ▼\n[ Pre-Reification Gates ] ──► Lineage verification via Symbol IDs\n        │\n        ▼\n[ Deep Shape Unroller ] ──► Extracted into un-normalized TSolidShape\n        │\n        ▼\n[ Canonical Serialization ] ──► Flattened by serializeCanonicalFingerprint\n        │\n        ▼\n[ Content-Addressable Pool ] ──► Deduplicated into invariant sh_ entries",
-          "note": "All type registrations enter through a unified funnel (`transformer/index.ts`). Each evaluation path receives an isolated tracking frame, preserving purity, recursion safety, and deterministic compilation."
+          "code": "[ TypeScript Type Definition ]\n          │\n          ▼\n[ Compiler Extraction Pass ]\n          │\n          ▼\n[ Structural Reification ]\n          │\n          ▼\n[ Canonical Blueprint Serialization ]\n          │\n          ▼\n[ Runtime Blueprint Registry ]",
+          "note": "Each registered type enters through a unified extraction pipeline. Xalor analyzes the TypeScript compiler representation, converts the structure into a stable runtime format, and prepares it for use by runtime operations."
         },
         "image": {
           "alt": "",
@@ -220,13 +255,13 @@
     "casFingerprinting": {
       "id": "cas-fingerprinting",
       "active": true,
-      "header": "Content-Addressable Token Compaction",
-      "description": "Standard compiler macros duplicate checking structures repeatedly across your application source files. Xalor implements an immutable, zero-dependency **Content-Addressable Storage (CAS)** system driven by a stable bitwise `FNV-1a` hashing engine that treats structural signatures exactly like a Git repository committing code changes.",
-      "subDescription": "By passing reified nodes into `serializeCanonicalFingerprint()`, the engine runs an allocation-free flattening sweep that strips nominal data to isolate absolute geometric layouts. Properties are sorted alphabetically, circular stacks are defused via a transient `visited` cache frame, and the resulting invariant DNA string is compressed into an **8-character footprint** prefixed with `sh_`.",
+      "header": "Content-Addressable Blueprint Storage",
+      "description": "Xalor uses content-addressable storage to identify and reuse identical type structures across an application. Instead of storing duplicate runtime descriptions, shared structures are compiled once and referenced by a stable blueprint identifier.",
+      "subDescription": "During extraction, Xalor converts each type structure into a deterministic fingerprint. Equivalent structures produce the same blueprint key, allowing nested and repeated shapes to be deduplicated automatically while keeping runtime metadata compact.",
       "visuals": {
         "codeBlock": {
-          "code": "// 🚀 RAW DEVELOPER DATA INTERFACE CONTRACT\ninterface IUser {\n  role: 'user' | 'admin';\n  email: string;\n  id: number;\n}\n\n// 🧬 INVARIANT CANONICAL FINGERPRINT OUTPUT STRING\n// Systematically ordered and unrolled point-free into a flat text footprint:\n'o:{email:p:string[l:4096],id:p:number,role:u:[l:string:admin|l:string:user]}'\n\n// 🗲 BITWISE TRANSFORM ➔ OPTIMIZED STORAGE TAG ADDRESS\nconst stableHashKey = computeStableShapeHash(canonicalString); // ──► \"sh_4vztgu\"",
-          "note": "Look at the compaction ratio. If an interface pattern (like `Address` or `UserMetadata`) is referenced across 500 separate endpoints, it is compiled and loaded into your RAM exactly once inside `blueprints[\"sh_4vztgu\"]`. The other 500 parent records simply store a tiny reference string pointer token, completely flattening your application's overall memory footprint budget curve."
+          "code": "// Developer Type\ninterface IUser {\n  role: 'user' | 'admin';\n  email: string;\n  id: number;\n}\n\n// Canonical Structural Representation\n'o:{email:p:string,id:p:number,role:u:[l:string:admin|l:string:user]}'\n\n// Stable Blueprint Identifier\nconst blueprintKey = computeStableShapeHash(canonicalString);\n// => \"sh_4vztgu\"",
+          "note": "When identical structures appear throughout an application, Xalor stores the compiled blueprint once and reuses it by reference. Large applications benefit from reduced metadata duplication and smaller runtime memory footprints."
         },
         "image": {
           "alt": "",
@@ -238,8 +273,8 @@
       "id": "phantom-build-clean",
       "active": true,
       "header": "The Hybrid Build Split",
-      "description": "Traditional validation frameworks force production systems to ingest, compile, and execute thousands of lines of heavy, nested JavaScript schema code. As your application models scale from **10 to 500** complex definitions, your client-facing build scripts bloat with un-tree-shakable validation logic that directly degrades your _Google Lighthouse scores_.",
-      "subDescription": "Xalor eliminates this performance degradation through an automated **Parallel Production Split**. Our ahead-of-time (AOT) toolchain watcher strips away all development type telemetry from your client-side application scripts, moving the raw type configurations into a decoupled, server-side `CAS blueprint vault`.",
+      "description": "Traditional runtime validation libraries ship executable schema logic directly with your application. As projects grow, these validation definitions can increase bundle size and introduce additional production overhead because the runtime must carry both the _validation rules_ and the execution logic required to interpret them.",
+      "subDescription": "Xalor separates _development-time type intelligence_ from _production execution_. During the build process, Xalor analyzes your TypeScript definitions and converts them into compact runtime `blueprints`. Your application ships only the optimized structural metadata required for execution, keeping heavy type analysis outside the production bundle.",
       "visuals": {
         "image": {
           "alt": "phantomBuild",
@@ -247,16 +282,17 @@
         },
         "codeBlock": {
           "code": "// 📂 dist/server/xalor.blueprints.json\n{\n  \"blueprints\": {\n    \"sh_16c0mbs\": {\n      \"kind\": \"object\",\n      \"properties\": {\n        \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"status\": { \"shape\": { \"kind\": \"union\", \"values\": [\"pending\", \"completed\"] } },\n        \"amount\": { \"shape\": { \"kind\": \"reference\", \"name\": \"sh_1cr65y8\" } }\n      }\n    },\n    \"sh_1nculbp\": {\n      \"kind\": \"object\",\n      \"properties\": {\n        \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"currency\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } },\n        \"amount\": { \"shape\": { \"kind\": \"reference\", \"name\": \"sh_1cr65y8\" } }\n      }\n    }\n  },\n  \"references\": {\n    \"TRANSACTION_SAFE\": \"sh_16c0mbs\",\n    \"BASE_TRANSACTION\": \"sh_1nculbp\"\n  }\n}",
-          "note": "Repeated structures collapse into shared blueprint references during the `AOT Compaction Sweep`. Nested shapes are stored once and resolved through lightweight pointers, enabling deterministic **O(1) hydration** at runtime."
+          "note": "During compilation, repeated structures are stored once and referenced wherever they are reused. This reduces duplicated metadata, keeps runtime blueprints compact, and enables deterministic **O(1) blueprint hydration** during application startup."
         }
       }
     },
     "typeGraphTelemetry": {
       "id": "type-graph-telemetry",
       "active": true,
-      "header": "Isomorphic Type-Graph Telemetry",
-      "description": "Validation is merely a beneficial runtime side-effect. By extracting deep, structural compile-time metadata blueprints, Xalor answers the ultimate engineering question: `What else can you do with types?` It transforms your static contracts into an active infrastructure layer that powers automated mock simulation, live graph tracing, and cross-era schema transformations.",
-      "subDescription": "While our local orchestration web dashboard is finalizing, invoking `npx xalor studio` forces the background compiler toolchain to map out your application's complete structural schema network. The background watcher flattens your codebase dependencies into an **isomorphic shared edge topology matrix**, ready to be visualized as live 3D relationship lineages or piped natively into runtime strategy engines.",
+      "header": "Beyond Runtime Validation",
+      "description": "Validation is only the first capability unlocked by runtime type information. Once Xalor transforms your TypeScript definitions into reusable runtime `blueprints`, the same structural metadata can power parsing, type guards, default generation, mock creation, schema evolution, and other type-aware operations—all from a _single source of truth_.",
+
+      "subDescription": "Every registered type becomes part of a shared runtime blueprint graph. Because each structure is extracted once during compilation, every Xalor API operates on the same underlying metadata instead of rebuilding structural knowledge independently. This shared foundation also powers `Xalor Studio`, where your application's type relationships can be explored and visualized.",
       "visuals": {
         "codeBlock": {
           "code": " ┌────────────────────────────────────────────────────────┐\n │    NATIVE AST ENTRY TRACK: src/models/registry.ts      │\n └───────────────────────────┬────────────────────────────┘\n                             │\n                ┌────────────┴────────────┐\n                ▼                         ▼\n   ┌─────────────────────────┐  ┌─────────────────────────┐\n   │   NODE A: TRANSACTION   │  │  NODE B: USER_PROFILE   │\n   │    Hash: sh_16c0mbs     │  │    Hash: sh_pnaa6g      │\n   └────────────┬────────────┘  └────────────┬────────────┘\n                │                            │\n                └─────────────┬──────────────┘\n                              │ (Isomorphic Shared Edge Vector)\n                              ▼\n               ┌──────────────────────────────┐\n               │   CONVERGENT CAS LEAF CELL   │\n               │    Vault Key: sh_1cr65y8     │\n               │    • value ➔ [string]        │\n               │    • exponent ➔ [number]     │\n               └──────────────┬───────────────┘\n                              │\n ═════════════════════════════▼═════════════════════════════════════\n          XALOR RUNTIME INFRASTRUCTURE INJECTION MATRIX\n ═══════════════════════════════════════════════════════════════════\n    │                │                │                │\n    ▼                ▼                ▼                ▼\n┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐\n│ xalor.parse  │ │ xalor.guard  │ │ xalor.match  │ │ xalor.default│\n│  Fast O(1)   │ │  Bare-Metal  │ │ Polymorphic  │ │  Test Suite  │\n│  Structural  │ │  Assertive   │ │ Pattern-Match│ │  Mock Data   │\n│  Validation  │ │  Type Gates  │ │ Closure Handl│ │  Hydrator DTO│\n└───────┬──────┘ └───────┬──────┘ └───────┬──────┘ └───────┬──────┘\n        │                │                │                │\n        └────────────────┼────────────────┼────────────────┘\n                         ▼                ▼\n                 ┌──────────────┐ ┌──────────────┐\n                 │ xalor.merge  │ │ xalor.clone  │\n                 │ Polymorphic  │ │  Deep Copy   │\n                 │ AST Combine  │ │   Identity   │\n                 │ Node Utility │ │ Preservation │\n                 └──────────────┘ └──────────────┘",
@@ -264,42 +300,43 @@
 
           "noteOld": "Your pre-compiled codebase geometry enables a specialized runtime strategy layer. The vectors below define the core execution primitives, their responsibilities, performance characteristics, and impact across your data pipeline."
         },
+        "topNote": "#Every runtime API is powered by the same shared blueprint graph.#",
         "strategyVectorsRegistry": [
           {
             "vector": "`xalor.parse`",
-            "responsibility": "Ingress Security",
-            "allocation": "Hard zero heap additions",
-            "impact": "Executes high-speed structural payload verification, attaching an immutable nominal cryptographic brand token using `Reflect.set()` to permanently protect downstream application state."
+            "responsibility": "Runtime Validation",
+            "allocation": "Single-pass execution",
+            "impact": "#Validate unknown data against a registered blueprint and return strongly typed values.#"
           },
           {
             "vector": "`xalor.guard`",
-            "responsibility": "Perimeter Narrowing",
-            "allocation": "Near-zero footprint",
-            "impact": "Generates a stateless, highly reusable type predicate closure or executes an instant inline check to pass unknown object payloads across edge servers or serverless routing components safely."
+            "responsibility": "Type Narrowing",
+            "allocation": "Reusable predicate",
+            "impact": "#Narrow unknown values with reusable runtime type guards.#"
           },
           {
-            "vector": "`xalor.match`",
-            "responsibility": "Pattern Resolution",
-            "allocation": "Linear O(1) matching",
-            "impact": "Evaluates complex polymorphic payroad webhooks directly against your precompiled content-addressed relational matrix, routing data into strongly-typed execution handlers automatically."
+            "vector": "`xalor.drift`",
+            "responsibility": "Schema Evolution",
+            "allocation": "Single-pass transformation",
+            "impact": "#Upgrade historical or versioned payloads to the latest registered type using shared runtime blueprints.#"
           },
           {
             "vector": "`xalor.default`",
-            "responsibility": "Boilerplate Seeding",
-            "allocation": "Zero strategy overhead",
-            "impact": "Manufactures clean, pristine zero-state object models pre-populated exclusively with system primitives (`\"\"`, `0`, `false`) to completely shield local workflows from undefined property crashes."
+            "responsibility": "Default Generation",
+            "allocation": "Zero-allocation creation",
+            "impact": "#Generate safe default instances directly from your registered type definitions.#"
           },
           {
             "vector": "`xalor.merge`",
-            "responsibility": "Deep Graph Mutation",
-            "allocation": "Single-pass linear loops",
-            "impact": "Fuses separate blueprints, overlays incoming delta patches, processes selection filters (`pick` / `omit`), and adjusts property casings on the fly without causing hidden class de-optimization."
+            "responsibility": "Structural Composition",
+            "allocation": "Single-pass merge",
+            "impact": "#Apply type-aware structural merges using the shared blueprint graph.#"
           },
           {
             "vector": "`xalor.clone`",
-            "responsibility": "Malicious Purging",
-            "allocation": "Zero-allocation dispatch",
-            "impact": "Performs a deep, circular-safe copy of an input object while completely scrubbing away lingering keys, unmapped attributes, or trailing closure noise not explicitly permitted by the type contract."
+            "responsibility": "Deep Cloning",
+            "allocation": "Circular-safe traversal",
+            "impact": "#Create deep, circular-safe copies while preserving the validated structure.#"
           }
         ]
       }
@@ -328,78 +365,79 @@
     "header": {
       "id": "intro",
       "active": true,
-      "header": "Get Started",
-      "overline": "Environment Ingress",
+      "header": "Getting Started",
+      "overline": "Quick Start",
       "iconName": "rocket-tilted",
-      "description": "Learn the foundational workflow loops of the Xalor engine. We will walk through **toolchain activation**, registering your first native type model, enforcing security parsing gates, and exploring ecosystem plugins."
+      "description": "Install Xalor, configure the build-time transformer, register your first TypeScript type, and validate runtime data in just a few minutes. By the end of this guide, you'll understand the complete workflow from native TypeScript definitions to runtime type intelligence."
     },
     "installationConfig": {
       "id": "installation",
       "active": true,
-      "header": "Installation & Toolchain Activation",
-      "description": "Deploy the core contract governance engine into your local application workspace using your native package manager choice:",
+      "header": "Installation & Configuration",
+      "description": "Install Xalor and configure the build-time transformer. Once enabled, Xalor automatically extracts your TypeScript types during compilation and makes them available at runtime.",
       "installation": {
         "code": "npm install @bgskinner2/xalor\npnpm add @bgskinner2/xalor\nyarn add @bgskinner2/xalor",
-        "footnote": "Note: Because Xalor handles type extraction ambiently out-of-band, your environment needs to include our build-time transformer configuration during your normal compilation cycles."
+        "footnote": "Xalor relies on a build-time transformer to extract type information before TypeScript erases it. The next step enables that transformer."
       },
       "registerAst": {
-        "header": "Register the Core AST Transformer",
-        "description": "To instruct the underlying compiler to mine your static data shapes before erasure, register our AOT plugin directly inside your project's `tsconfig.json` file:",
+        "header": "Enable the TypeScript Transformer",
+        "description": "Add the Xalor transformer to your project's `tsconfig.json` so it can capture your TypeScript definitions during compilation:",
         "codeBlock": {
           "code": "{\n  \"compilerOptions\": {\n    \"plugins\": [\n      {\n        \"transform\": \"@bgskinner2/xalor/transformer\",\n        \"type\": \"program\"\n      }\n    ]\n  }\n}",
-          "note": "The compiler plugin intercepts your type parameters silently in memory, erasing 100% of the developer telemetry to guarantee **absolute zero client bundle inflation**."
+          "note": "The transformer runs during compilation and generates the runtime blueprints used by Xalor's APIs. It does not ship additional validation code with your application."
         }
       },
+
       "toolchainCompatibility": {
-        "header": "Ecosystem & Version Compatibility",
-        "description": "Because Xalor operates directly against the native TypeScript Compiler AST graphs, your project workspace must conform to the following baseline structural requirements:",
+        "header": "Requirements",
+        "description": "Xalor integrates directly with the TypeScript compiler and requires a modern development environment:",
         "bullets": [
-          "_TypeScript Compatibility Range_: #Fully verified and structurally locked for TypeScript v6.0.0 integrations.#",
-          "_The Ecosystem Upgrade Gate_: Please Note: With the ecosystem actively migrating toward TypeScript v7.0, Xalor intentionally freezes its operational validation parameters at the stable v6 boundary. This prevents cross-module syntax conflicts and ensures absolute pipeline predictability until the v7 specification reaches full, stable general availability.",
-          "_Module Resolution Strategy_: #Requires your tsconfig.json to utilize modern resolution models# (\"moduleResolution\": \"Bundler\" or \"NodeNext\").",
-          "_Node.js Runtime Core_: #Requires Node.js v16.0.0 or higher to support modern isomorphic ESM import protocols natively.#"
+          "_TypeScript_ — Tested and supported with `TypeScript 6.x`.",
+          "_Module Resolution_ — Use `Bundler` or `NodeNext` module resolution.",
+          "_Node.js_ — Requires `Node.js 16` or later."
         ]
       },
+
       "configureHooks": {
-        "header": "Configure the Production Lifecycle Hook",
-        "description": "Before your bundler packages your production code chunks, your shell environment requires a vacuum pass to strip development dead weight and lock remaining keys into their tightest footprints.",
-        "subDescription": "Update your project's `package.json` scripts block to activate the implicit validation and telemetry amputation gates automatically:",
+        "header": "Add the Build Step",
+        "description": "Run Xalor before your production build so runtime blueprints are generated and synchronized automatically.",
+        "subDescription": "Add the following scripts to your project's `package.json`:",
         "codeBlock": {
           "code": "{\n  \"scripts\": {\n    \"prebuild\": \"xalor vacuum\",\n    \"build\": \"tsc && vite build\",\n    \"reset\": \"rm -rf .xalor src/vault-snapshot.json dist node_modules/.cache/xalor\"\n  }\n}",
-          "note": "**The Gatekeeper Protection:** If a duplicate contract key registration or critical type rule infraction is caught during `xalor vacuum`, the process triggers an immediate hard crash (`process.exit(1)`). This snaps the shell script loop, safely blocking compilation and protecting live servers from deployment corruption."
+          "note": "If Xalor detects duplicate registrations or invalid type configurations during the build, it stops the compilation so issues can be resolved before deployment."
         },
         "footnote": ""
       },
 
       "environmentConfig": {
-        "header": "Local Development Watch Integrations",
-        "description": "During local development, Xalor utilizes zero-dependency watch plugins to synchronize your editor's Intellisense and ghost bridges in-memory on every file save pass.",
+        "header": "Development Watch Plugins",
+        "description": "For the best development experience, install the appropriate watch plugin for your build tool. These plugins keep runtime blueprints synchronized automatically while you edit your TypeScript files.",
         "environments": {
           "vite": {
-            "overline": "Supports Vite Serve, React-Vite Sandboxes, Nuxt 3, SvelteKit, and Vitest",
-            "header": "Vite-Based Ecosystems",
+            "overline": "Vite · React · Nuxt · SvelteKit · Vitest",
+            "header": "Vite-Based Projects",
             "fileName": "vite.config.ts",
-            "description": "Mount the watch plugin function directly inside your toolchain's active plugins configuration array to synchronize type layouts safely in memory during local dev saves:",
+            "description": "Add the Xalor watch plugin to your Vite configuration to keep runtime blueprints synchronized during local development.",
             "codeBlock": {
-              "code": "import { defineConfig } from 'vite';\nimport { xalorViteWatchPlugin } from '@bgskinner2/xalor/plugins';\n\nexport default defineConfig({\n  plugins: [\n    xalorViteWatchPlugin() // ◄ Ambient, out-of-band in-memory updates\n  ]\n});"
+              "code": "import { defineConfig } from 'vite';\nimport { xalorViteWatchPlugin } from '@bgskinner2/xalor/plugins';\n\nexport default defineConfig({\n  plugins: [\n    xalorViteWatchPlugin()\n  ]\n});"
             }
           },
           "nextJs": {
-            "overline": "Supports Next.js (Pages/App Routers utilizing Webpack) and standalone Webpack microservices",
-            "header": "Next.js & Webpack Toolchains",
+            "overline": "Next.js · Webpack",
+            "header": "Next.js & Webpack Projects",
             "fileName": "next.config.js",
-            "description": "Isolate the plugin injection with a local development flag condition to guarantee your ambient watch runs strictly inside local development servers:",
+            "description": "Register the Xalor Webpack plugin during development to automatically update extracted type metadata while you work.",
             "codeBlock": {
-              "code": "import { XalorWebpackWatchPlugin } from '@bgskinner2/xalor/plugins';\n\n/** @type {import('next').NextConfig} /\nconst nextConfig = {\n  webpack: (config, { dev }) => {\n    if (dev) {\n      config.plugins.push(new XalorWebpackWatchPlugin());\n    }\n    return config;\n  }\n};\n\nexport default nextConfig;"
+              "code": "import { XalorWebpackWatchPlugin } from '@bgskinner2/xalor/plugins';\n\nconst nextConfig = {\n  webpack: (config, { dev }) => {\n    if (dev) {\n      config.plugins.push(new XalorWebpackWatchPlugin());\n    }\n    return config;\n  }\n};\n\nexport default nextConfig;"
             }
           },
           "nextTurbo": {
-            "overline": "Supports Next.js App layouts operating under the native Rust-based compiler",
-            "header": "Next.js Turbopack Pipelines",
+            "overline": "Next.js · Turbopack",
+            "header": "Next.js Turbopack Projects",
             "fileName": "next.config.js",
-            "description": "Initialize the specialized Turbopack watch daemon directly at the root entry of your configuration file to safely intercept background telemetry passes before compilation trees serialize:",
+            "description": "Enable the Xalor Turbopack watcher for local development environments using Next.js's Rust-based compiler pipeline.",
             "codeBlock": {
-              "code": "import { xalorNextTurboWatchPlugin } from '@bgskinner2/xalor/plugins';\n\n// 🪐 Wakes up the raw OS background watch daemon inside local development servers natively\nif (process.env.NODE_ENV !== 'production') {\n  xalorNextTurboWatchPlugin();\n}\n\n/* @type {import('next').NextConfig} /\nconst nextConfig = {\n  / Your standard next configuration rules */\n};\n\nexport default nextConfig;"
+              "code": "import { xalorNextTurboWatchPlugin } from '@bgskinner2/xalor/plugins';\n\nif (process.env.NODE_ENV !== 'production') {\n  xalorNextTurboWatchPlugin();\n}\n\nconst nextConfig = {};\n\nexport default nextConfig;"
             }
           }
         }
@@ -409,7 +447,7 @@
       "id": "typeRegistration",
       "active": true,
       "header": "Register Your First Contract",
-      "description": "Registration bridges your development types into the live metadata layer. Xalor allows you to map your data structures in **two distinct ways** natively during your standard compiler passes.",
+      "description": "Registration connects your TypeScript definitions to Xalor's runtime blueprint system. You can create contracts from existing TypeScript types or infer them directly from JavaScript values.",
       "link": {
         "text": "Deep Diver",
         "href": "/xalor/docs/api#register",
@@ -418,19 +456,19 @@
       "subDescription": "",
       "tracks": {
         "trackOne": {
-          "header": "Explicit Type Binding",
-          "description": "Extracts structural blueprints straight out of native TypeScript generic arguments, erasing the type telemetry post-save:",
+          "header": "Explicit Type Registration",
+          "description": "Register an existing TypeScript type by providing a stable contract key. Xalor extracts the structure during compilation and creates the runtime blueprint.",
           "codeBlock": {
-            "code": "import { xalor } from '@bgskinner2/xalor';\n\ntype TUser = {\n  id: number;\n  username: string;\n  role: 'user' | 'admin';\n};\n\n// Maps the static type layout to a global string literal key\nxalor.register<'USER_ACCOUNT', TUser>();",
-            "note": "The compiler plugin intercepts the generic parameter tokens, unrolls the complete `Abstract Syntax Tree (AST)` structure, and completely strips the developer telemetry from your client-facing build file."
+            "code": "import { xalor } from '@bgskinner2/xalor';\n\ntype TUser = {\n  id: number;\n  username: string;\n  role: 'user' | 'admin';\n};\n\nxalor.register<'USER_ACCOUNT', TUser>();",
+            "note": "The compiler transformer reads the registered type during the build process and converts it into a reusable runtime blueprint without requiring a separate schema definition."
           }
         },
         "trackTwo": {
-          "header": "Implicit Value Inference",
-          "description": "Bypasses manual interface typing entirely by dynamically inferring your structural layout from a concrete JavaScript object instantiation:",
+          "header": "Value-Based Registration",
+          "description": "Register a contract directly from an existing object value. Xalor analyzes the structure and creates the corresponding runtime blueprint automatically.",
           "codeBlock": {
-            "code": "import { xalor } from '@bgskinner2/xalor';\n\nconst productionConfig = {\n  host: \"localhost\",\n  port: 8080\n};\n\n// The background toolchain analyzes the properties of the data shape natively\nxalor.register<'APP_CONFIG'>(productionConfig);",
-            "note": "Xalor mines the layout constraints straight out of live values on save. This generates a **self-healing contract manifest mapping** natively without dirtying your directory with messy auto-generated interface files."
+            "code": "import { xalor } from '@bgskinner2/xalor';\n\nconst productionConfig = {\n  host: \"localhost\",\n  port: 8080\n};\n\nxalor.register<'APP_CONFIG'>(productionConfig);",
+            "note": "Value-based registration is useful for configuration objects and runtime-defined structures where creating a separate TypeScript type is unnecessary."
           }
         }
       }
@@ -438,11 +476,11 @@
     "validateWithParse": {
       "id": "dataValidation",
       "active": true,
-      "header": "Validate Your Data Natively",
-      "description": "Traditional frameworks execute heavy, recursive graph traversals over runtime schemas. Xalor bypasses runtime graph generation entirely, using your pre-compiled build blueprints to evaluate unknown payloads via **lightning-fast linear property checks** and direct pointer verification.",
+      "header": "Validate Runtime Data",
+      "description": "Once a contract is registered, Xalor can validate unknown runtime values against the generated blueprint. External payloads are checked against the same structure defined by your TypeScript model.",
       "codeBlock": {
-        "code": "import { xalor } from '@bgskinner2/xalor';\n\nconst rawPayload: unknown = {\n  id: 101,\n  username: \"brennan_dev\",\n  role: \"admin\"\n};\n\n// Execute perimeter security checking with zero side-effects\nconst result = xalor.safeParse<'USER_ACCOUNT'>(rawPayload);\n\nif (result.success) {\n  // ✅ result.data is officially verified, cast, and branded!\n  console.log(result.data.username);\n}",
-        "note": "When an incoming payload violates a structural layout boundary, the parsing pass aborts instantly without allocating complex error subgraphs in the RAM heap. The exception loops directly into the Auditor Telemetry Pipeline, identifying the exact file and line coordinates of your original TypeScript contract."
+        "code": "import { xalor } from '@bgskinner2/xalor';\n\nconst rawPayload: unknown = {\n  id: 101,\n  username: \"brennan_dev\",\n  role: \"admin\"\n};\n\nconst result = xalor.safeParse<'USER_ACCOUNT'>(rawPayload);\n\nif (result.success) {\n  console.log(result.data.username);\n}",
+        "note": "Successful parsing returns a verified value with the registered contract applied. Failed validations return structured errors describing where the incoming data differs from the expected type."
       },
       "link": {
         "text": "Explore All Validation Subsystems",
@@ -454,7 +492,7 @@
     "exploreOtherApis": {
       "id": "exploreMore",
       "active": true,
-      "header": "Extend Your Type Ecosystem Architecture",
+      "header": "Your Type System, Extended",
       "description": "Validation is merely the entry gate. Xalor treats your standard types as a multi-dimensional source of system intelligence to power safe structural cloning, automated test seed factories, or legacy schema drift monitors.",
       "subDescription": "By content-addressing the deep Abstract Syntax Tree relationships, a single source type shifts from a static text file into a dynamic runtime primitive capable of generating **self-healing infrastructure** natively."
     },
@@ -483,7 +521,7 @@
       "id": "intro",
       "active": true,
       "header": "Runtime APIs Reference",
-      "description": "Explore the stateless client-side proxies and high-velocity utilities configured to validate, transform, and evolve payload data streams using **pre-compiled content-addressed blueprints** with hard-zero runtime compilation overhead.",
+      "description": "Explore Xalor's runtime APIs for validating, transforming, and evolving data using pre-compiled content-addressed blueprints. Each subsystem operates against generated structural metadata, allowing applications to consume type intelligence without rebuilding schemas at runtime.",
       "overline": "Client Subsystems",
       "iconName": "cpu-duotone"
     },
@@ -510,7 +548,6 @@
           "note": "Xalor analyzes raw values natively on save. This generates an invariant metadata blueprint without forcing you to write duplicate interfaces or clogging your directories with messy auto-generated files."
         }
       ],
-
       "parametersList": [
         {
           "id": "f133939e-44b7-45c6-b448-6d60be69d37f",
@@ -646,8 +683,8 @@
       "intro": {
         "iconName": "shield-solid",
         "header": "The Validation Pillar",
-        "description": "High-velocity runtime execution channels configured to intercept and verify unknown data streams using **pre-compiled blueprint memory pointer matching**.",
-        "subDescription": "By bypassing traditional recursive object tree traversals entirely, this suite evaluates payloads via a flat, strict linear properties assessment at raw hardware velocity—delivering an identical performance budget for both valid assets and malformed rejections."
+        "description": "Runtime validation APIs that execute against pre-compiled Xalor blueprints to verify unknown data while preserving full TypeScript inference.",
+        "subDescription": "Instead of rebuilding schemas at runtime, validation operations resolve against the structural metadata generated during compilation, enabling predictable execution across parsing, guarding, and safe result workflows."
       },
       "apis": {
         "guard": {
