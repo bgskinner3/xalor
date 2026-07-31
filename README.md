@@ -1,6 +1,6 @@
 <p align="center">
   <img
-    src="./assets/read-me-container.png"
+    src="https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/xalor/read-me-container.png"
     alt="Xalor hero"
     width="100%"
   />
@@ -13,7 +13,7 @@
   <a href="https://www.npmjs.com/package/@bgskinner2/xalor">
     <img src="https://img.shields.io/npm/types/@bgskinner2/xalor.svg" alt="TypeScript Support" />
   </a>
-  <a href="https://github.com">
+  <a href="https://github.com/bgskinner3/xalor/blob/main/LICENSE">
     <img src="https://img.shields.io/npm/l/@bgskinner2/xalor.svg" alt="License" />
   </a>
 </div>
@@ -146,8 +146,64 @@ npm install @bgskinner2/xalor
 
 See the [Bundler Integration Guide](http://masterofsum.dev/xalor/docs/gettingStarted).
 
+---
+
+# 🚀 Quick Start
+
+## 1. Define Your Type
+
+Write normal TypeScript.
+
+No schemas.  
+No DSLs.  
+No duplicated validation objects.
+
+```ts
+import { xalor } from '@bgskinner2/xalor';
+
+export type TUser = {
+  id: number;
+  username: string;
+  role: 'user' | 'moderator' | 'admin';
+};
+
+// Register your type contract token for AOT extraction
+xalor.register<'USER_PROFILE', TUser>();
+```
+
+During build:
+
+```text
+TypeScript
+    ↓
+Extraction
+    ↓
+Blueprint
+    ↓
+Runtime Metadata
+```
+
+<br/>
+
+---
+
+## 2. Validate Runtime Data
+
+```ts
+const result = xalor.safeParse<'USER_PROFILE'>(payload);
+
+if (result.success) {
+  // Fully typed: TypeScript automatically recognizes 'username'
+  console.log(result.data.username);
+}
+```
+
+Your returned data is fully typed.
+
 <br/>
 <br/>
+
+---
 
 # ⚖️ Why Xalor Exists
 
@@ -346,79 +402,6 @@ Because Xalor operates against precompiled metadata instead of interpreting sche
 Full benchmark suite:
 
 [View Performance Benchmarks](http://masterofsum.dev/xalor/docs/benchmarks)
-
-<br/>
-<br/>
-
----
-
-# 📊 Ecosystem Comparison
-
-| Capability                      | Runtime Schemas | Code Generation | Xalor |
-| ------------------------------- | --------------: | --------------: | ----: |
-| Types remain source of truth    |              ❌ |              ✔️ |    ✔️ |
-| No duplicate schema authoring   |              ❌ |              ✔️ |    ✔️ |
-| No runtime schema engine        |              ❌ |              ✔️ |    ✔️ |
-| Runtime metadata available      |              ❌ |         Limited |    ✔️ |
-| Schema evolution support        |              ❌ |         Limited |    ✔️ |
-| Generated source files required |       Sometimes |           Often |    ❌ |
-
-<br/>
-<br/>
-
----
-
-# 📦 Quick Start
-
-## 1. Define Your Type
-
-Write normal TypeScript.
-
-No schemas.  
-No DSLs.  
-No duplicated validation objects.
-
-```ts
-import { xalor } from '@bgskinner2/xalor';
-
-export type TUser = {
-  id: number;
-  username: string;
-  role: 'user' | 'moderator' | 'admin';
-};
-
-// Register your type contract token for AOT extraction
-xalor.register<'USER_PROFILE', TUser>();
-```
-
-During build:
-
-```text
-TypeScript
-    ↓
-Extraction
-    ↓
-Blueprint
-    ↓
-Runtime Metadata
-```
-
-<br/>
-
----
-
-## 2. Validate Runtime Data
-
-```ts
-const result = xalor.safeParse<'USER_PROFILE'>(payload);
-
-if (result.success) {
-  // Fully typed: TypeScript automatically recognizes 'username'
-  console.log(result.data.username);
-}
-```
-
-Your returned data is fully typed.
 
 <br/>
 <br/>

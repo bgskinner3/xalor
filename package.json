@@ -1,7 +1,7 @@
 {
   "name": "@bgskinner2/xalor",
   "description": "Ahead-of-Time Type Metadata Engine for TypeScript. Solidifies ghost types into an immutable, global runtime vault.",
-  "version": "0.0.1-alpha.2",
+  "version": "1.0.0",
   "author": "Brennan Skinner",
   "license": "MIT",
   "type": "module",

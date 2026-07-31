@@ -1173,7 +1173,7 @@
           "header": "Engine Command Help",
           "description": "Displays specific flag telemetry, global orchestration summaries, and ambient sub-command primitive validation guides.",
           "overline": "Documentation Manual",
-          "iconName": "help-circle-duotone"
+          "iconName": "cog-duotone"
         },
         "runCommand": {
           "codeBlock": {
@@ -1198,7 +1198,7 @@
           "header": "Clear Hydration Cache",
           "description": "Performs a hard flash-purge that resets local cache layers, internal registry tracking frames, and ambient environment files back to pristine templates.",
           "overline": "Cache Control",
-          "iconName": "refresh-duotone"
+          "iconName": "arrow-refresh"
         },
         "runCommand": {
           "codeBlock": {
@@ -1242,7 +1242,7 @@
           "header": "Compile Layout Blueprints",
           "description": "#Reduces your complex TypeScript AST layout into flat, content-addressed primitive snapshots.# _Bypasses recursive graph evaluations to guarantee microsecond-fast linear lookups at runtime._",
           "overline": "Core Engine Pass",
-          "iconName": "terminal-box-duotone"
+          "iconName": "terminal-duotone"
         },
         "runCommand": {
           "codeBlock": {
@@ -1286,7 +1286,7 @@
           "header": "Vacuum Telemetry Stripping",
           "description": "#Sweeps through your active type graphs out-of-band to amputate heavy development-only metrics before compilation files finalize.# Guarantees absolute zero client asset weight by shipping purely optimized layout registries.",
           "overline": "Optimization Guard",
-          "iconName": "filter-duotone"
+          "iconName": "funnel"
         },
         "runCommand": {
           "codeBlock": {
@@ -1330,7 +1330,7 @@
           "header": "Interactive Studio Dashboard",
           "description": "#Launches a local, hardware-accelerated visualization server to map, inspect, and audit your type graph networks live in the browser.# Provides architects with a total platform interface to simulate schema upgrades and track blueprint evolution profiles.",
           "overline": "Visual Workspace",
-          "iconName": "filter-duotone"
+          "iconName": "activity"
         },
         "infoBanner": {
           "variant": "info",

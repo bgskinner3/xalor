@@ -64,7 +64,6 @@ export default defineConfig({
   // to aggressively minify internal dictionary, class, and method names.
   esbuildOptions(options) {
     options.mangleProps = undefined;
-    // /_ROUTER|AreaError|ConfigRule|TerminalPanel|TransformerError|Anomaly/;
   },
 
   dts: {
@@ -96,22 +95,6 @@ export default defineConfig({
     if (!fs.existsSync(scriptsDir)) {
       fs.mkdirSync(scriptsDir, { recursive: true });
     }
-
-    // 3. 🧠 THE PRODUCTION TYPES OVERRIDE:
-    // const builtDtsFile = path.join(distDir, 'index.d.ts');
-    // if (fs.existsSync(builtDtsFile)) {
-    //   const originalContent = fs.readFileSync(builtDtsFile, 'utf8');
-    //   const tripleSlashDirective =
-    //     '/// <reference path="../../../../.xalor/solid-env.ts" />\n';
-    //   fs.writeFileSync(
-    //     builtDtsFile,
-    //     tripleSlashDirective + originalContent,
-    //     'utf8',
-    //   );
-    //   console.log(
-    //     '[xalor:build] 🔗 Ambient workspace triple-slash directive successfully injected into production types!',
-    //   );
-    // }
 
     // 4. Embed Static Templates cleanly using explicit filesystem cloning paths
     const srcTemplatesDir = path.join(__dirname, 'static-templates');
