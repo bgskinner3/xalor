@@ -22,92 +22,87 @@
         {
           "id": "benchmark",
           "label": "Benchmark",
-          "toolTip": "The validation workload scenario tested against each runtime engine."
-        },
-        {
-          "id": "category",
-          "label": "Category",
-          "toolTip": "The workload classification describing the type of data structure being validated."
+          "toolTip": "The validation workload scenario and structural category evaluated across each runtime engine."
         },
         {
           "id": "successPathLeader",
           "label": "Success Path Leader",
-          "toolTip": "The engine with the lowest average execution time when validating correctly shaped payloads."
+          "toolTip": "Runtime engine with the lowest average latency when validating correctly structured payloads."
         },
         {
           "id": "failurePathLeader",
           "label": "Failure Path Leader",
-          "toolTip": "The engine with the lowest average execution time when detecting malformed payloads."
+          "toolTip": "Runtime engine with the lowest average latency when rejecting malformed payloads."
         },
         {
           "id": "xalorProfile",
           "label": "Xalor Profile",
-          "toolTip": "The observed runtime characteristic of Xalor during this workload, focusing on latency consistency, allocation behavior, and execution stability."
+          "toolTip": "Observed Xalor runtime behavior for this workload, emphasizing latency consistency, allocation patterns, and execution stability."
         }
       ],
       "rows": [
         {
           "benchmark": "Cold Start Initialization",
-          "category": "Startup Performance",
+          "category": "Runtime Initialization",
           "successPathLeader": "Xalor",
           "failurePathLeader": "Xalor",
-          "xalorProfile": "Lowest initialization overhead"
+          "xalorProfile": "Minimal initialization footprint with near-zero schema preparation overhead"
         },
         {
           "benchmark": "Customer Order Graph",
           "category": "Complex Object Validation",
           "successPathLeader": "Typia",
           "failurePathLeader": "Xalor",
-          "xalorProfile": "Stable structural verification under complex payloads"
+          "xalorProfile": "Stable nested object traversal with consistent rejection latency across complex payloads"
         },
         {
           "benchmark": "Heavy Telemetry Matrix",
           "category": "Structured Data Validation",
           "successPathLeader": "Typia",
           "failurePathLeader": "Xalor",
-          "xalorProfile": "Predictable latency across wide numerical payloads"
+          "xalorProfile": "Predictable execution across wide numerical structures with tight latency distribution"
         },
         {
           "benchmark": "Application Configuration Registry",
           "category": "Configuration Validation",
           "successPathLeader": "Typia",
           "failurePathLeader": "Typia",
-          "xalorProfile": "Predictable structural evaluation despite generated-code competition"
+          "xalorProfile": "Consistent structural evaluation through indexed schema layouts and deterministic access paths"
         },
         {
           "benchmark": "Core Product SKU",
           "category": "Primitive Object Validation",
           "successPathLeader": "Typia",
           "failurePathLeader": "Xalor",
-          "xalorProfile": "Stable execution with predictable latency bounds"
+          "xalorProfile": "Stable primitive validation with bounded latency and consistent memory behavior"
         },
         {
           "benchmark": "Access Session Matrix",
           "category": "Security Data Validation",
           "successPathLeader": "Typia",
           "failurePathLeader": "Xalor",
-          "xalorProfile": "Deterministic security boundary enforcement"
+          "xalorProfile": "Deterministic security validation with predictable boundary enforcement behavior"
         },
         {
           "benchmark": "Warehouse Inventory Bins",
           "category": "Operational Data Validation",
           "successPathLeader": "Typia",
           "failurePathLeader": "Xalor",
-          "xalorProfile": "Consistent collection validation performance"
+          "xalorProfile": "Consistent collection processing with stable throughput across repeated structures"
         },
         {
           "benchmark": "API Network Log",
           "category": "Network Data Validation",
           "successPathLeader": "Typia",
           "failurePathLeader": "Typia",
-          "xalorProfile": "Stable high-frequency ingress validation"
+          "xalorProfile": "Stable high-frequency ingestion with predictable structural matching behavior"
         },
         {
           "benchmark": "Legacy Invoice Evolution",
           "category": "Schema Migration Performance",
           "successPathLeader": "Typia",
           "failurePathLeader": "N/A",
-          "xalorProfile": "Deterministic schema transformation pipeline"
+          "xalorProfile": "Deterministic schema transformation through structured migration and mapping layers"
         }
       ]
     }
