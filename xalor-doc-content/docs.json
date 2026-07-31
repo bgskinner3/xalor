@@ -38,30 +38,71 @@
           "header": "Native TypeScript Validation",
           "iconName": "shield-solid",
           "description": "_Write your data models once_ using native, pristine TypeScript. Xalor transforms them into **ironclad runtime contracts** automatically during your `build pass`—completely eliminating duplicate schema authoring or non-native validation languages.",
-          "codeBlock": "// Define your data models natively\ntype User = {\n  id: number;\n  name: string;\n};\n\n// Enforce perimeter security gates\nconst result = xalor.safeParse<'USER'>(payload);\nif (result.success) {\n  console.log(result.data.name); // Fully typed string\n}"
+          "visuals": {
+            "codeBlock": {
+              "code": "// Define your data models natively\ntype User = {\n  id: number;\n  name: string;\n};\n\n// Enforce perimeter security gates\nconst result = xalor.safeParse<'USER'>(payload);\nif (result.success) {\n  console.log(result.data.name); // Fully typed string\n}",
+              "note": "The developer defines a model using standard TypeScript syntax, which remains the single source of truth throughout the application. During the build process, Xalor derives the runtime contract from that existing type information, allowing `safeParse` to enforce the same structure at runtime while preserving full TypeScript inference and eliminating the need for manually maintained schemas."
+            },
+            "image": {
+              "href": "",
+              "alt": "",
+              "note": "TypeScript definitions flow directly into runtime protection without requiring a separate schema layer. The same model developers write becomes both the development contract and the production validation boundary."
+            }
+          },
+          "featureDisplay": "code"
         },
         "two": {
           "header": "Zero Runtime Bundle Inflation",
           "iconName": "flash-bolt",
           "description": "Heavy `Abstract Syntax Tree (AST)` analysis happens entirely during compilation, never in production. Your application ships only with compact, **content-addressed metadata maps** instead of thousands of lines of heavy validation source code.",
-          "codeBlock": "// TypeScript Source Interface\ninterface User {\n  id: number;\n  name: string;\n}\n\n//  ↓ (Build-Time CAS Compaction Sweep)\n\n// Pre-Compiled Invariant Blueprint\n{\n  \"USER\": \"sh_4vztgu\",\n  \"sh_4vztgu\": {\n    \"kind\": \"object\",\n    \"properties\": {\n      \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"number\" } },\n      \"name\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } }\n    }\n  }\n}\n\n//  ↓ (Linear Pass At Hardware Velocity)\n\nxalor.parse<'USER'>(payload);"
+          "visuals": {
+            "codeBlock": {
+              "code": "// TypeScript Source Interface\ninterface User {\n  id: number;\n  name: string;\n}\n\n//  ↓ (Build-Time CAS Compaction Sweep)\n\n// Pre-Compiled Invariant Blueprint\n{\n  \"USER\": \"sh_4vztgu\",\n  \"sh_4vztgu\": {\n    \"kind\": \"object\",\n    \"properties\": {\n      \"id\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"number\" } },\n      \"name\": { \"shape\": { \"kind\": \"primitive\", \"type\": \"string\" } }\n    }\n  }\n}\n\n//  ↓ (Linear Pass At Hardware Velocity)\n\nxalor.parse<'USER'>(payload);",
+              "note": "Instead of shipping a runtime validator that contains complex parsing logic, Xalor performs the expensive structural analysis ahead of time. The original TypeScript interface is reduced into a compact, content-addressed blueprint that contains only the information needed for execution, allowing production validation to run against optimized metadata rather than carrying unnecessary compiler-like overhead."
+            },
+            "image": {
+              "href": "",
+              "alt": "",
+              "note": "Xalor shifts complexity away from production by converting rich TypeScript structures into compact runtime metadata during compilation, keeping deployed applications smaller and faster."
+            }
+          },
+
+          "featureDisplay": "code"
         },
         "three": {
           "header": "Build-Time Structural Intelligence",
           "iconName": "cpu-duotone",
           "description": "Xalor mines your code's type topology out-of-band during your toolchain's standard compilation window. Enjoy _zero-maintenance syncing freedom_ with **hard-zero local folder pollution**, generated files, or editor save lag.",
-          "codeBlock": "[ Developer Writes Native TypeScript ]\ninterface User {\n  id: number;\n  name: string;\n}\n\n      ↓\n\n┌─────────────────────────────┐\n│   XALOR COMPILER WATCHER    │\n├─────────────────────────────┤\n│  In-Memory AST Extraction   │\n│              ↓              │\n│  Stable Shape Reification   │\n│              ↓              │\n│  CAS Blueprint Interning    │\n│              ↓              │\n│  Atomic Shield Sync Pass    │\n└─────────────────────────────┘\n\n      ↓\n\n[ O(1) Boot Hydration Ready ]\nxalor.safeParse<'USER'>(payload);",
-          "image": {
-            "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/xalor/build-time-intel.png",
-            "alt": "Build-Time Structural Intelligence",
-            "note": ""
-          }
+          "visuals": {
+            "codeBlock": {
+              "code": "[ Developer Writes Native TypeScript ]\ninterface User {\n  id: number;\n  name: string;\n}\n\n      ↓\n\n┌─────────────────────────────┐\n│   XALOR COMPILER WATCHER    │\n├─────────────────────────────┤\n│  In-Memory AST Extraction   │\n│              ↓              │\n│  Stable Shape Reification   │\n│              ↓              │\n│  CAS Blueprint Interning    │\n│              ↓              │\n│  Atomic Shield Sync Pass    │\n└─────────────────────────────┘\n\n      ↓\n\n[ O(1) Boot Hydration Ready ]\nxalor.safeParse<'USER'>(payload);",
+              "note": "A developer writes normal native TypeScript with no additional schemas or annotations. During the build phase, Xalor's compiler watcher analyzes the TypeScript AST entirely in memory, identifies the structure and relationships of your types, and converts them into stable runtime blueprints. These blueprints are content-addressed, synchronized atomically, and ready for immediate hydration when your application starts—allowing runtime validation to skip expensive structural discovery."
+            },
+            "image": {
+              "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/xalor/build-time-intel.png",
+              "alt": "Build-Time Structural Intelligence",
+              "note": "Xalor moves intelligence from runtime into the build process. Type definitions are transformed into optimized structural representations before deployment, allowing production environments to consume precomputed metadata instead of rebuilding understanding of your data models on demand."
+            }
+          },
+
+          "featureDisplay": "image"
         },
         "four": {
           "header": "Beyond Validation",
           "iconName": "shuffle",
           "description": "Pre-compiled structural blueprints unlock capabilities **far beyond simple data validation**. Generate safe zero-state templates via `xalor.default()`, create strongly-typed mocks using `xalor.mock()`, and upcast legacy payloads with `xalor.drift()`.",
-          "codeBlock": "// Hydrate fallback models safely\nxalor.default<'USER'>();\n\n// Generate randomized test fixtures\nxalor.mock<'USER'>();\n\n// Upcast legacy service versions\nxalor.drift<'USER'>(historicalPayload, ctx);\n\n// Execute single-pass deep mutations\nxalor.merge<'USER'>(mergeContext);"
+          "visuals": {
+            "codeBlock": {
+              "code": "// Hydrate fallback models safely\nxalor.default<'USER'>();\n\n// Generate randomized test fixtures\nxalor.mock<'USER'>();\n\n// Upcast legacy service versions\nxalor.drift<'USER'>(historicalPayload, ctx);\n\n// Execute single-pass deep mutations\nxalor.merge<'USER'>(mergeContext);",
+              "note": "The same pre-compiled structural blueprints that power validation can also describe how data should be created, transformed, and evolved. Xalor uses this existing model intelligence to generate safe defaults, produce type-aware mock data, migrate older payload shapes, and perform controlled deep operations without requiring additional schemas or manually maintained transformation logic."
+            },
+            "image": {
+              "href": "",
+              "alt": "Build-Time Structural Intelligence",
+              "note": ""
+            }
+          },
+          "featureDisplay": "code"
         }
       }
     },
