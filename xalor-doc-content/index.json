@@ -278,9 +278,17 @@
       "iconName": "cli-solid",
       "header": "COMMAND LINE INTERFACE",
       "description": "Control your Xalor workflow directly from the terminal. Generate insights, validate systems, manage environments, and launch developer tools through a fast, scriptable CLI built for modern development workflows.",
-      "link": {
-        "text": "Explore CLI Docs",
-        "href": "/xalor/docs/cli"
+      "links": {
+        "primaryButton": {
+          "text": "Explore CLI Docs",
+          "href": "/xalor/docs/cli",
+          "iconName": "open-book"
+        },
+        "secondaryButton": {
+          "text": "Install Package",
+          "href": "https://www.npmjs.com/package/@bgskinner2/xalor",
+          "iconName": "npm"
+        }
       },
       "orbitListCenterItem": {
         "iconName": "cli-solid",
@@ -327,6 +335,79 @@
           "description": "Launch an interactive workspace to inspect, visualize, and manage your Xalor systems.",
           "overline": "VISUAL WORKSPACE",
           "iconName": "activity"
+        }
+      ]
+    },
+    "faqContactSection": {
+      "header": {
+        "overline": "ENGINEERING QUESTIONS",
+        "iconName": "question-mark-lined",
+        "description": "Answers to the most common questions about how Xalor works, why it exists, and how it approaches the gap between TypeScript types and runtime data.",
+        "header": "Frequently Asked Questions",
+        "image": {
+          "href": "https://alcyhpembwnuztcsthtx.supabase.co/storage/v1/object/public/Page%20Images/Display%20Images/xalor-header-noe-fade.png",
+          "alt": "FAQ"
+        }
+      },
+      "faqItemsList": [
+        {
+          "id": "7f3b1d7e-8c4a-4f4e-9d2b-8a6f2c1e5b91",
+          "question": "What is Xalor?",
+          "description": "Xalor is an ambient type reification engine for TypeScript. It preserves the structural knowledge that TypeScript normally erases during compilation and turns it into lightweight runtime blueprints for validation, transformation, diagnostics, and future runtime capabilities.\n\n→ Read: [What is Xalor?](/docs/xalor-overview/01_WHAT_IS_XALOR)"
+        },
+
+        {
+          "id": "c6e8a2d4-91f3-4b7a-8e25-6d1c9f4a3b72",
+          "question": "Is Xalor another runtime validation library?",
+          "description": "No. Validation is one application of Xalor, but the core idea is much larger. Traditional validators recreate runtime schemas manually. Xalor preserves your existing TypeScript type information and makes that knowledge available at runtime.\n\n→ Read: [Xalor Value](/docs/xalor-overview/03_XALOR_VALUE)"
+        },
+
+        {
+          "id": "bb741990-9617-4d77-b65b-4b535f9ba22b",
+          "question": "Why not just use Zod?",
+          "description": "Zod provides an excellent schema-first approach to runtime validation. Xalor takes a different approach by treating native TypeScript types as the source of truth and extracting runtime knowledge automatically, eliminating the need to maintain duplicate schemas.\n\n→ Read: [Xalor vs Traditional Approaches](/docs/xalor-overview/06_XALOR_VS_TRADITIONAL_APPROACHES)"
+        },
+
+        {
+          "id": "wa40f2a3e-6fbf-45b3-8ab6-601a554e3201",
+          "question": "How is Xalor different from tools like Typia?",
+          "description": "Tools like Typia generate optimized validation code from TypeScript types. Xalor focuses on creating a reusable runtime type layer, where structural information can be stored, shared, inspected, and used beyond validation alone.\n\n→ Read: [Xalor vs Traditional Approaches](/docs/xalor-overview/06_XALOR_VS_TRADITIONAL_APPROACHES)"
+        },
+
+        {
+          "id": "b585daef-8f53-4f32-90fc-6e08d8bc3855",
+          "question": "Do I need to rewrite my existing TypeScript types?",
+          "description": "No. Xalor is designed around standard TypeScript interfaces and types. Your existing TypeScript definitions remain the source of truth instead of requiring a new schema language or duplicate representation.\n\n→ Read: [Why Use Xalor?](/docs/xalor-overview/05_WHY_USE_XALOR)"
+        },
+
+        {
+          "id": "590e10ae-3ef4-4b33-9312-1795fb77836f",
+          "question": "Does Xalor send my TypeScript types to production?",
+          "description": "No. Xalor performs extraction during build time and produces compact runtime artifacts. The compiler tooling and type interpretation logic remain outside of your production application bundle.\n\n→ Read: [Package Build Architecture](/docs/architecture/05_PACKAGE_BUILD_ARCHITECTURE)"
+        },
+
+        {
+          "id": "47213dd1-07cc-424d-9763-b50e9bf0a189",
+          "question": "When does Xalor do its work?",
+          "description": "Xalor moves expensive structural analysis into the build process. Runtime execution uses precomputed blueprints instead of repeatedly interpreting schemas or rebuilding type information on demand.\n\n→ Read: [Build Pipeline](/docs/architecture/02_BUILD_PIPELINE)"
+        },
+
+        {
+          "id": "0ca47469-8da3-4cf2-9942-f011db280b81",
+          "question": "Does Xalor require decorators or a new way of writing TypeScript?",
+          "description": "No. Xalor is designed to work alongside normal TypeScript development patterns. Developers continue writing native interfaces and types while Xalor handles the runtime representation layer.\n\n→ Read: [Getting Started](/docs/getting-started)"
+        },
+
+        {
+          "id": "8b350e2c-5b66-4cb6-a41e-2ec10fb8555a",
+          "question": "What can Xalor enable beyond validation?",
+          "description": "Once runtime type knowledge exists, applications can build capabilities that traditionally require manually maintained schemas, including diagnostics, data transformation, API contracts, migrations, developer tooling, and entirely new runtime APIs.\n\n→ Read: [Xalor Value](/docs/xalor-overview/03_XALOR_VALUE)"
+        },
+
+        {
+          "id": "5991f0dc-ca51-4e70-8f19-06b896f44010",
+          "question": "Who benefits most from using Xalor?",
+          "description": "Xalor is designed for teams working on large TypeScript systems where maintaining schemas, contracts, validation logic, and data models becomes increasingly difficult. It is especially useful for applications with complex data boundaries and performance requirements.\n\n→ Read: [Who Is Xalor For?](/docs/xalor-overview/04_WHO_IS_XALOR_FOR)"
         }
       ]
     },
