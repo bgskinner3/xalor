@@ -273,6 +273,63 @@
         }
       ]
     },
+    "cliModule": {
+      "overline": "DEVELOPER TOOLING",
+      "iconName": "cli-solid",
+      "header": "COMMAND LINE INTERFACE",
+      "description": "Control your Xalor workflow directly from the terminal. Generate insights, validate systems, manage environments, and launch developer tools through a fast, scriptable CLI built for modern development workflows.",
+      "link": {
+        "text": "Explore CLI Docs",
+        "href": "/xalor/docs/cli"
+      },
+      "orbitListCenterItem": {
+        "iconName": "cli-solid",
+        "header": "XALOR CLI",
+        "description": "Terminal-first developer workflow"
+      },
+      "orbitList": [
+        {
+          "id": "ec055f5e-5167-4ce4-bff5-14a8c821b6d5",
+          "command": "npx xalor audit",
+          "header": "Audit",
+          "description": "Analyze your project structure and identify configuration, type, and runtime issues before they reach production.",
+          "overline": "SYSTEM ANALYSIS",
+          "iconName": "shield-check-duotone"
+        },
+        {
+          "id": "3306d841-4aba-4643-8de7-16262419d014",
+          "command": "npx xalor help",
+          "header": "Help",
+          "description": "Explore available commands, options, and workflows directly from your terminal.",
+          "overline": "CLI REFERENCE",
+          "iconName": "cog-duotone"
+        },
+        {
+          "id": "7b3a72c9-109c-404a-bdcc-4b23c2774bf7",
+          "command": "npx xalor clear",
+          "header": "Clear",
+          "description": "Reset generated data and cached artifacts to maintain a clean development environment.",
+          "overline": "ENVIRONMENT CONTROL",
+          "iconName": "arrow-refresh"
+        },
+        {
+          "id": "d2d49a92-1630-4bf1-af8e-568682e226a8",
+          "command": "npx xalor compile",
+          "header": "Compile",
+          "description": "Transform your project definitions into optimized runtime artifacts ready for execution.",
+          "overline": "BUILD PIPELINE",
+          "iconName": "terminal-duotone"
+        },
+        {
+          "id": "9ef8ac3d-2b39-4154-8634-ab018f05a27f",
+          "command": "npx xalor studio",
+          "header": "Studio",
+          "description": "Launch an interactive workspace to inspect, visualize, and manage your Xalor systems.",
+          "overline": "VISUAL WORKSPACE",
+          "iconName": "activity"
+        }
+      ]
+    },
     "docsCta": {
       "header": "Ready to see it in action?",
       "description": "The fastest way to understand the performance power of Xalor is to experience it yourself. Explore our preloaded testing layouts or spin up your own configuration environment.",

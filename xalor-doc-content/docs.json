@@ -25,14 +25,12 @@
           "description": "Your application has two worlds. During development, TypeScript understands your data structures. During runtime, your application receives unknown JSON payloads with no knowledge of those same contracts.",
           "codeBlock": "DEVELOPMENT\n\ninterface User {\n  id: number;\n  email: string;\n}\n\n        ↓ Type Erasure ↓\n\nRUNTIME\n\n{\n  \"id\": 123,\n  \"email\": \"user@example.com\"\n}\n\n// The structure is gone."
         },
-
         {
           "id": "bcdbcdc7-4b83-47de-97f6-fc107074e167",
           "header": "The Traditional Solution",
           "description": "Most libraries solve runtime uncertainty by requiring a second definition: manually maintained runtime schemas that duplicate your TypeScript models.",
           "codeBlock": "TypeScript Model\n        +\nRuntime Schema\n        ↓\nTwo Sources of Truth\n\n❌ Duplicate maintenance\n❌ Schema drift\n❌ Additional runtime logic"
         },
-
         {
           "id": "1b6b46fc-5e07-46d5-9c3c-2c9c4b58908c",
           "header": "The Xalor Solution",
@@ -1260,6 +1258,7 @@
           "description": "Displays specific flag telemetry, global orchestration summaries, and ambient sub-command primitive validation guides.",
           "overline": "Documentation Manual",
           "iconName": "cog-duotone"
+          
         },
         "runCommand": {
           "codeBlock": {
@@ -1285,6 +1284,7 @@
           "description": "Performs a hard flash-purge that resets local cache layers, internal registry tracking frames, and ambient environment files back to pristine templates.",
           "overline": "Cache Control",
           "iconName": "arrow-refresh"
+          
         },
         "runCommand": {
           "codeBlock": {
@@ -1329,6 +1329,7 @@
           "description": "#Reduces your complex TypeScript AST layout into flat, content-addressed primitive snapshots.# _Bypasses recursive graph evaluations to guarantee microsecond-fast linear lookups at runtime._",
           "overline": "Core Engine Pass",
           "iconName": "terminal-duotone"
+          
         },
         "runCommand": {
           "codeBlock": {
@@ -1423,6 +1424,7 @@
           "infoHeader": "CLI Studio is coming soon",
           "infoDescription": "We're actively building a visual development experience for the Xalor CLI. Until then, all compiler and runtime features are available through the command-line interface.",
           "infoIcon": "layers"
+
         },
         "runCommand": {
           "codeBlock": {
